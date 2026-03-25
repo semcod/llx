@@ -10,28 +10,65 @@
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
   
-  // GitHub Copilot Alternative - Local LLM Configuration
+  // Disable GitHub Copilot completely
   "github.copilot.enable": false,
   "github.copilot.advanced.enabled": false,
+  "github.copilot.inlineSuggest.enable": false,
   
-  // Continue.dev Alternative Configuration
+  // Disable Continue.dev
   "continue.enable": false,
   
-  // Local LLM Chat Configuration
-  "ai.chat.enabled": true,
-  "ai.chat.model.provider": "openai-compatible",
-  "ai.chat.model.modelId": "qwen2.5-coder:7b",
-  "ai.chat.model.apiKey": "sk-proxy-local-dev",
-  "ai.chat.model.apiBaseUrl": "http://localhost:4000",
-  "ai.chat.model.temperature": 0.2,
-  "ai.chat.model.maxTokens": 4096,
+  // RooCode Configuration - Primary AI Assistant
+  "roocode.enable": true,
+  "roocode.autoStart": true,
+  "roocode.defaultProvider": "openai-compatible",
+  "roocode.model": "qwen2.5-coder:7b",
+  "roocode.apiKey": "sk-proxy-local-dev",
+  "roocode.apiBaseUrl": "http://localhost:4000/v1",
+  "roocode.temperature": 0.2,
+  "roocode.maxTokens": 4096,
+  "roocode.stream": true,
+  "roocode.contextLength": 32000,
   
-  // Alternative: Use Ollama directly
-  "ai.alternative.provider": "ollama",
-  "ai.alternative.model": "qwen2.5-coder:7b",
-  "ai.alternative.baseUrl": "http://localhost:11434",
+  // RooCode Chat Settings
+  "roocode.chat.enabled": true,
+  "roocode.chat.position": "right",
+  "roocode.chat.size": "medium",
+  "roocode.chat.autoFocus": true,
+  "roocode.chat.preserveHistory": true,
   
-  // Code Llama / Local Model Settings
+  // RooCode Inline Suggestions
+  "roocode.inline.enabled": true,
+  "roocode.inline.triggerMode": "automatic",
+  "roocode.inline.delay": 500,
+  "roocode.inline.maxSuggestions": 3,
+  
+  // RooCode Code Actions
+  "roocode.codeActions.enabled": true,
+  "roocode.codeActions.generateCode": true,
+  "roocode.codeActions.refactor": true,
+  "roocode.codeActions.explainCode": true,
+  "roocode.codeActions.addComments": true,
+  "roocode.codeActions.fixBugs": true,
+  "roocode.codeActions.writeTests": true,
+  
+  // RooCode Shortcuts
+  "roocode.shortcuts.chat": "ctrl+shift+r",
+  "roocode.shortcuts.inline": "ctrl+shift+i",
+  "roocode.shortcuts.explain": "ctrl+shift+e",
+  "roocode.shortcuts.refactor": "ctrl+shift+f",
+  
+  // Alternative: Local Ollama Configuration
+  "roocode.fallbackProvider": "ollama",
+  "roocode.fallbackModel": "qwen2.5-coder:7b",
+  "roocode.fallbackBaseUrl": "http://localhost:11434",
+  
+  // Disable native VS Code AI features
+  "ai.chat.enabled": false,
+  "ai.inlineChat.enabled": false,
+  "ai.assistant.enabled": false,
+  
+  // Code Runner Settings
   "code-runner.runInTerminal": true,
   "code-runner.executorMap": {
     "python": "python",
@@ -49,9 +86,13 @@
   "python.linting.pylintEnabled": true,
   "python.formatting.provider": "black",
   
-  // Git settings (disable GitHub auth)
+  // Git settings
   "git.enableSmartCommit": true,
   "git.autofetch": true,
   "git.confirmSync": false,
-  "extensions.ignoreRecommendations": true
+  "extensions.ignoreRecommendations": false,
+  
+  // Auto-install extensions
+  "extensions.autoUpdate": false,
+  "extensions.autoCheckUpdates": false
 }

@@ -59,16 +59,31 @@ services:
     environment:
       - PASSWORD=${VSCODE_PASSWORD:-llx-dev}
       - DEFAULT_WORKSPACE=/home/coder/project
+      - DOCKER_USER=vscode
+      - SHELL=/bin/bash
     env_file:
       - ./.env
     volumes:
       - vscode_data:/home/coder
       - ./:/home/coder/project
       - ./.env:/home/coder/.env:ro
-      - ./docker/vscode/settings.json:/home/coder/.local/share/code-server/User/settings.json:ro
+      - ./docker/vscode/settings.json:/home/coder/.local/share/code-server/User/settings.json
+      - ./docker/vscode/install-extensions.sh:/home/coder/install-extensions.sh:ro
+      - vscode_extensions:/home/coder/.local/share/code-server/extensions
     networks:
       - llx-network
     restart: unless-stopped
+    entrypoint: ["/bin/bash", "-c"]
+    command: |
+      echo "🔧 Setting up VS Code with RooCode..."
+      # Install extensions
+      if [ -f "/home/coder/install-extensions.sh" ]; then
+        bash /home/coder/install-extensions.sh
+      else
+        echo "⚠️  Extensions script not found"
+      fi
+      # Start code-server
+      exec /usr/bin/entrypoint.sh --bind-addr=0.0.0.0:8080
 
   # AI Tools Shell Environment (Aider, Claude Code, Cursor, etc.)
   ai-tools:
@@ -135,6 +150,7 @@ networks:
 volumes:
   redis_data:
   vscode_data:
+  vscode_extensions:
   llx_cache:
   ai_tools_data:
   ai_tools_git:

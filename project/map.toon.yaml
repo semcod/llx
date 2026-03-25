@@ -1,12 +1,16 @@
-# llx | 18f 2555L | python:15,shell:3 | 2026-03-25
-# stats: 74 func | 0 cls | 18 mod | CC̄=4.5 | critical:6 | cycles:0
-# alerts[5]: CC print_models_table=32; CC print_info_tables=26; CC _apply_map_text=20; CC _compute_tier=20; CC _apply_yaml=19
-# hotspots[5]: print_models_table fan=18; LlxConfig.load fan=17; _apply_map_text fan=14; chat fan=14; _apply_evolution_yaml fan=13
-# evolution: CC̄ 4.5→4.5 (flat 0.0)
+# llx | 31f 8890L | python:24,shell:7 | 2026-03-25
+# stats: 230 func | 0 cls | 31 mod | CC̄=5.0 | critical:15 | cycles:0
+# alerts[5]: CC main=35; CC print_models_table=32; CC main=30; fan-out LLXToolsCLI.create_parser=30; fan-out main=27
+# hotspots[5]: LLXToolsCLI.create_parser fan=30; main fan=27; main fan=25; main fan=25; main fan=22
+# evolution: CC̄ 3.6→5.0 (regressed +1.4)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[18]:
+M[31]:
+  ai-tools-manage.sh,351
   docker-manage.sh,406
+  docker/ai-tools/entrypoint.sh,175
+  docker/ai-tools/install-tools.sh,369
   docker/ollama/entrypoint.sh,31
+  docker/vscode/install-extensions.sh,409
   llx/__init__.py,29
   llx/__main__.py,4
   llx/analysis/__init__.py,1
@@ -19,17 +23,38 @@ M[18]:
   llx/integrations/__init__.py,1
   llx/integrations/proxy.py,131
   llx/litellm_config.py,151
+  llx/orchestration/__init__.py,26
+  llx/orchestration/session_manager.py,602
   llx/routing/__init__.py,1
   llx/routing/client.py,198
   llx/routing/selector.py,259
+  llx/tools/__init__.py,22
+  llx/tools/ai_tools_manager.py,607
+  llx/tools/cli.py,783
+  llx/tools/config_manager.py,746
+  llx/tools/health_checker.py,774
+  llx/tools/model_manager.py,710
+  llx/tools/vscode_manager.py,761
   project.sh,21
 D:
+  llx/tools/config_manager.py:
+    e: ConfigManager,main
+    ConfigManager: __init__(1),load_config(1),save_config(2),_load_env_file(1),_save_env_file(2),create_default_env(1),update_env_var(2),get_env_var(2),validate_env_config(0),get_llx_config(0),update_llx_config(1),get_model_config(0),add_model(2),remove_model(1),list_models(0),backup_configs(1),restore_configs(1),generate_docker_env_file(1),validate_docker_configs(0),create_profile(2),load_profile(1),list_profiles(0),get_config_summary(0),print_config_summary(0)  # Manages llx configuration files and settings...
+    main()
   llx/cli/formatters.py:
     e: output_rich,output_json,print_models_table,print_info_tables
     output_rich(metrics;result;verbose)
     output_json(metrics;result)
     print_models_table(config;tag;provider;tier)
     print_info_tables(config)
+  llx/tools/model_manager.py:
+    e: ModelManager,main
+    ModelManager: __init__(1),check_ollama_running(0),check_llx_running(0),get_ollama_models(0),get_llx_models(0),pull_model(2),remove_model(1),test_model(2),test_llx_model(2),get_model_info(1),list_recommended_models(1),get_system_resources(0),recommend_models(1),create_model_profile(1),load_model_profile(1),benchmark_model(2),cleanup_unused_models(1),estimate_model_requirements(1),print_model_summary(0)  # Manages local Ollama models and llx configurations...
+    main()
+  llx/tools/ai_tools_manager.py:
+    e: AIToolsManager,main
+    AIToolsManager: __init__(1),is_container_running(0),start_ai_tools(1),stop_ai_tools(0),restart_ai_tools(0),access_shell(0),execute_command(2),get_status(0),test_connectivity(0),run_chat_test(2),get_available_models(0),install_tool(1),update_tools(0),get_logs(1),create_workspace_example(1),backup_configurations(1),restore_configurations(1),print_status_summary(0),print_usage_examples(0)  # Manages AI tools container and operations...
+    main()
   llx/analysis/collector.py:
     e: ProjectMetrics,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope
     ProjectMetrics:  # Aggregated project metrics that drive model selection.
@@ -49,6 +74,10 @@ Ever...
     _extract_cc_value(msg)
     _estimate_context_tokens(m)
     _classify_scope(m)
+  llx/tools/vscode_manager.py:
+    e: VSCodeManager,main
+    VSCodeManager: __init__(1),is_vscode_running(0),start_vscode(1),stop_vscode(0),restart_vscode(0),wait_for_vscode_ready(1),check_vscode_health(0),get_vscode_url(0),get_vscode_password(0),install_extensions(1),list_installed_extensions(0),uninstall_extension(1),update_extensions(0),get_vscode_logs(1),configure_roocode(0),create_workspace_tasks(0),create_launch_config(0),backup_settings(1),restore_settings(1),get_status(0),print_status_summary(0),print_quick_start(0)  # Manages VS Code server with AI extensions...
+    main()
   llx/routing/selector.py:
     e: ModelTier,SelectionResult,select_model,_compute_tier,_compute_alternative,check_context_fit,select_with_context_check
     ModelTier(str,Enum):  # LLM model tiers ranked by capability and cost...
@@ -58,6 +87,14 @@ Ever...
     _compute_alternative(tier;order)
     check_context_fit(metrics;model)
     select_with_context_check(metrics;config)
+  llx/orchestration/session_manager.py:
+    e: SessionType,SessionStatus,SessionConfig,SessionState,SessionManager,main
+    SessionType(Enum):  # Types of sessions...
+    SessionStatus(Enum):  # Session status...
+    SessionConfig:  # Configuration for a session...
+    SessionState:  # Current state of a session...
+    SessionManager: __init__(1),load_sessions(0),save_sessions(0),create_session(1),remove_session(1),get_available_session(4),request_session(2),release_session(3),get_session_status(1),list_sessions(2),get_queue_status(0),_is_rate_limited(2),_should_rate_limit(1),_get_utilization(1),_get_time_until_available(1),_get_next_available_time(0),_cleanup_worker(0),_cleanup_expired_limits(0),_update_session_stats(0),print_status_summary(0)  # Manages multiple LLM and VS Code sessions with intelligent r...
+    main()
   llx/config.py:
     e: ModelConfig,TierThresholds,ProxyConfig,LlxConfig,_apply_toml,_apply_yaml,_apply_env
     ModelConfig:  # Configuration for a single model tier...
@@ -69,6 +106,14 @@ Based on...
     _apply_toml(config;data)
     _apply_yaml(config;data)
     _apply_env(config)
+  llx/tools/health_checker.py:
+    e: HealthChecker,main
+    HealthChecker: __init__(1),check_service_health(1),check_container_health(1),check_system_resources(0),check_filesystem_health(0),check_network_connectivity(0),run_comprehensive_health_check(0),_generate_recommendations(1),_print_health_summary(1),run_quick_health_check(0),monitor_services(2),_analyze_monitoring_data(1)  # Comprehensive health monitoring for llx ecosystem...
+    main()
+  llx/tools/cli.py:
+    e: LLXToolsCLI,main
+    LLXToolsCLI: __init__(1),create_parser(0),run_command(1),_handle_start(1),_handle_stop(1),_handle_restart(1),_handle_status(1),_handle_health(1),_handle_docker(1),_handle_ai_tools(1),_handle_vscode(1),_handle_models(1),_handle_config(1),_handle_utils(1)  # Unified CLI for llx ecosystem management...
+    main()
   llx/integrations/proxy.py:
     e: generate_proxy_config,start_proxy,check_proxy
     generate_proxy_config(config;output_path)
@@ -106,12 +151,31 @@ Based on...
     LiteLLMModelConfig:  # Configuration for a single LiteLLM model...
     LiteLLMConfig: load(1),_default_config(0),get_model_config(1),get_models_by_tag(1),get_models_by_provider(1),get_models_by_tier(1),resolve_alias(1),to_llx_models(0),get_proxy_config(0)  # Complete LiteLLM configuration...
     load_litellm_config(project_path)
-  llx/__main__.py:
   llx/__init__.py:
+  llx/__main__.py:
   llx/analysis/__init__.py:
+  llx/tools/__init__.py:
   llx/cli/__init__.py:
+  llx/orchestration/__init__.py:
   llx/integrations/__init__.py:
   llx/routing/__init__.py:
+  ai-tools-manage.sh:
+    e: print_header,print_status,print_error,print_warning,get_compose_cmd,is_running,start_ai_tools,stop_ai_tools,shell,status,test,logs,restart,quick_chat,help
+    print_header()
+    print_status()
+    print_error()
+    print_warning()
+    get_compose_cmd()
+    is_running()
+    start_ai_tools()
+    stop_ai_tools()
+    shell()
+    status()
+    test()
+    logs()
+    restart()
+    quick_chat()
+    help()
   docker-manage.sh:
     e: print_header,print_status,print_warning,print_error,check_docker,check_compose,get_compose_cmd
     print_header()
@@ -121,5 +185,15 @@ Based on...
     check_docker()
     check_compose()
     get_compose_cmd()
-  project.sh:
   docker/ollama/entrypoint.sh:
+  docker/vscode/install-extensions.sh:
+    e: is_extension_installed,install_extension
+    is_extension_installed()
+    install_extension()
+  project.sh:
+  docker/ai-tools/entrypoint.sh:
+    e: hello_world,print,hello_world
+    hello_world()
+    print()
+    hello_world()
+  docker/ai-tools/install-tools.sh:

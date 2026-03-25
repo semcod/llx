@@ -1,9 +1,24 @@
-# redup/duplication | 0 groups | 15f 3466L | 2026-03-25
+# redup/duplication | 1 groups | 25f 9841L | 2026-03-25
 
 SUMMARY:
-  files_scanned: 15
-  total_lines:   3466
-  dup_groups:    0
-  dup_fragments: 0
-  saved_lines:   0
-  scan_ms:       3531
+  files_scanned: 25
+  total_lines:   9841
+  dup_groups:    1
+  dup_fragments: 3
+  saved_lines:   54
+  scan_ms:       1945
+
+DUPLICATES[1] (ranked by impact):
+  [dc09cc756f598570] ! STRU  demonstrate_aider  L=27 N=3 saved=54 sim=1.00
+      examples/ai-tools/main.py:73-99  (demonstrate_aider)
+      examples/ai-tools/main.py:101-127  (demonstrate_claude_code)
+      examples/ai-tools/main.py:129-156  (demonstrate_cursor)
+
+REFACTOR[1] (ranked by priority):
+  [1] ○ extract_function   → examples/ai-tools/utils/demonstrate_aider.py
+      WHY: 3 occurrences of 27-line block across 1 files — saves 54 lines
+      FILES: examples/ai-tools/main.py
+
+METRICS-TARGET:
+  dup_groups:  1 → 0
+  saved_lines: 54 lines recoverable

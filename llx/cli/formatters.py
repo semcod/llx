@@ -77,13 +77,15 @@ def output_json(metrics: ProjectMetrics, result: SelectionResult) -> None:
     console.print(json.dumps(output, indent=2))
 
 
-def print_models_table(config, tag: str = None, provider: str = None, tier: str = None) -> None:
-    """Print models table with optional filtering."""
-    from rich.table import Table
-    
-    # Filter models
+def _filter_models(
+    models: dict[str, any],
+    tag: str | None,
+    provider: str | None,
+    tier: str | None,
+) -> dict[str, any]:
+    """Apply tag/provider/tier filters. Returns filtered dict."""
     filtered_models = {}
-    for tier_name, model in config.models.items():
+    for tier_name, model in models.items():
         # Apply filters
         if tier and tier_name != tier:
             continue
@@ -94,6 +96,90 @@ def print_models_table(config, tag: str = None, provider: str = None, tier: str 
         
         filtered_models[tier_name] = model
     
+    return filtered_models
+
+
+def _build_model_row(model: any) -> dict[str, str]:
+    """Extract display fields from a single model config."""
+    # Shorten model names for display
+    display_name = model.model_id
+    if len(display_name) > 18:
+        # Split on first slash or dash to get shorter name
+        if '/' in display_name:
+            parts = display_name.split('/')
+            if len(parts) > 1:
+                display_name = parts[-1]  # Take last part
+        if '-' in display_name and len(display_name) > 18:
+            display_name = display_name.split('-')[0]
+        if len(display_name) > 18:
+            display_name = display_name[:15] + "..."
+    
+    # Color code tags for better readability
+    colored_tags = []
+    for tag_item in model.tags:
+        if tag_item in ["FREE", "FAST"]:
+            colored_tags.append(f"[green]{tag_item}[/green]")
+        elif tag_item in ["EXPENSIVE", "SLOW"]:
+            colored_tags.append(f"[red]{tag_item}[/red]")
+        elif tag_item in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING"]:
+            colored_tags.append(f"[blue]{tag_item}[/blue]")
+        elif tag_item in ["HIGH_QUALITY", "COMPLEX_REASONING"]:
+            colored_tags.append(f"[magenta]{tag_item}[/magenta]")
+        elif tag_item in ["OFFLINE", "PRIVATE"]:
+            colored_tags.append(f"[cyan]{tag_item}[/cyan]")
+        else:
+            colored_tags.append(f"[yellow]{tag_item}[/yellow]")
+    
+    tags_colored = " ".join(colored_tags) if colored_tags else "—"
+    
+    return {
+        "tier": "",  # Will be set by caller
+        "display_name": display_name,
+        "provider": model.provider,
+        "context": f"{model.max_context:,}",
+        "cost": f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
+        "tags_colored": tags_colored,
+    }
+
+
+def _render_models_table(rows: list[dict[str, str]], title: str) -> None:
+    """Render Rich table from pre-built rows."""
+    from rich.table import Table
+    
+    model_table = Table(title=title, show_header=True)
+    model_table.add_column("Tier", style="bold", width=10)
+    model_table.add_column("Model", width=20)
+    model_table.add_column("Provider", width=12)
+    model_table.add_column("Context", justify="right", width=8)
+    model_table.add_column("Cost (1K in/out)", width=14)
+    model_table.add_column("Tags", width=30)
+
+    for row_data in rows:
+        model_table.add_row(
+            row_data["tier"],
+            row_data["display_name"],
+            row_data["provider"],
+            row_data["context"],
+            row_data["cost"],
+            row_data["tags_colored"],
+        )
+    console.print(model_table)
+
+
+def _build_title(tag: str | None, provider: str | None, tier: str | None) -> str:
+    """Build table title from filters."""
+    title_parts = ["Available Models"]
+    if tag: title_parts.append(f"Tag: {tag.upper()}")
+    if provider: title_parts.append(f"Provider: {provider}")
+    if tier: title_parts.append(f"Tier: {tier}")
+    return " | ".join(title_parts)
+
+
+def print_models_table(config, tag: str = None, provider: str = None, tier: str = None) -> None:
+    """Print models table with optional filtering."""
+    # Filter models
+    filtered_models = _filter_models(config.models, tag, provider, tier)
+    
     if not filtered_models:
         filter_desc = []
         if tag: filter_desc.append(f"tag='{tag}'")
@@ -103,59 +189,16 @@ def print_models_table(config, tag: str = None, provider: str = None, tier: str 
         console.print(f"[red]No models found for filter: {', '.join(filter_desc)}[/red]")
         return
     
-    # Build title
-    title_parts = ["Available Models"]
-    if tag: title_parts.append(f"Tag: {tag.upper()}")
-    if provider: title_parts.append(f"Provider: {provider}")
-    if tier: title_parts.append(f"Tier: {tier}")
-    
-    model_table = Table(title=" | ".join(title_parts), show_header=True)
-    model_table.add_column("Tier", style="bold", width=10)
-    model_table.add_column("Model", width=20)
-    model_table.add_column("Provider", width=12)
-    model_table.add_column("Context", justify="right", width=8)
-    model_table.add_column("Cost (1K in/out)", width=14)
-    model_table.add_column("Tags", width=30)
-
+    # Build rows
+    rows = []
     for tier_name, model in filtered_models.items():
-        # Shorten model names for display
-        display_name = model.model_id
-        if len(display_name) > 18:
-            # Split on first slash or dash to get shorter name
-            if '/' in display_name:
-                parts = display_name.split('/')
-                if len(parts) > 1:
-                    display_name = parts[-1]  # Take last part
-            if '-' in display_name and len(display_name) > 18:
-                display_name = display_name.split('-')[0]
-            if len(display_name) > 18:
-                display_name = display_name[:15] + "..."
-        
-        # Color code tags for better readability
-        colored_tags = []
-        for tag_item in model.tags:
-            if tag_item in ["FREE", "FAST"]:
-                colored_tags.append(f"[green]{tag_item}[/green]")
-            elif tag_item in ["EXPENSIVE", "SLOW"]:
-                colored_tags.append(f"[red]{tag_item}[/red]")
-            elif tag_item in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING"]:
-                colored_tags.append(f"[blue]{tag_item}[/blue]")
-            elif tag_item in ["HIGH_QUALITY", "COMPLEX_REASONING"]:
-                colored_tags.append(f"[magenta]{tag_item}[/magenta]")
-            elif tag_item in ["OFFLINE", "PRIVATE"]:
-                colored_tags.append(f"[cyan]{tag_item}[/cyan]")
-            else:
-                colored_tags.append(f"[yellow]{tag_item}[/yellow]")
-        
-        tags_colored = " ".join(colored_tags) if colored_tags else "—"
-        
-        model_table.add_row(
-            tier_name, display_name, model.provider,
-            f"{model.max_context:,}",
-            f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
-            tags_colored,
-        )
-    console.print(model_table)
+        row = _build_model_row(model)
+        row["tier"] = tier_name
+        rows.append(row)
+    
+    # Render table
+    title = _build_title(tag, provider, tier)
+    _render_models_table(rows, title)
 
     # Show available tags
     all_tags = set()
@@ -167,8 +210,8 @@ def print_models_table(config, tag: str = None, provider: str = None, tier: str 
         console.print("[dim]Usage: llx models <tag>  or  llx models --provider <provider>  or  llx models --tier <tier>[/dim]")
 
 
-def print_info_tables(config) -> None:
-    """Print tools and models info tables."""
+def _render_tools_table() -> None:
+    """Check tool availability and render table."""
     from llx.analysis.runner import check_tool
 
     tools_table = Table(title="Available Tools", show_header=True)
@@ -187,6 +230,9 @@ def print_info_tables(config) -> None:
         tools_table.add_row(name, status, purpose)
     console.print(tools_table)
 
+
+def _render_tiers_table(config) -> None:
+    """Render model tiers from config."""
     model_table = Table(title="Model Tiers", show_header=True)
     model_table.add_column("Tier", style="bold", width=10)
     model_table.add_column("Model", width=20)
@@ -209,7 +255,6 @@ def print_info_tables(config) -> None:
             if len(display_name) > 18:
                 display_name = display_name[:15] + "..."
         
-        tags_str = ", ".join(model.tags) if model.tags else "—"
         # Color code tags for better readability
         colored_tags = []
         for tag in model.tags:
@@ -236,6 +281,25 @@ def print_info_tables(config) -> None:
         )
     console.print(model_table)
 
+
+def _render_agents_table() -> None:
+    """Render compatible IDE/agent tools."""
+    console.print("\n[bold]Compatible IDE/Agent Tools:[/bold]")
+    for name, kind, hint in [
+        ("Roo Code", "VS Code extension", "localhost:4000"),
+        ("Cline", "VS Code extension", "localhost:4000"),
+        ("Continue.dev", "VS Code / JetBrains", "localhost:4000"),
+        ("Aider", "Terminal", "OPENAI_API_BASE=localhost:4000"),
+        ("Claude Code", "Terminal", "ANTHROPIC_BASE_URL"),
+        ("Cursor", "IDE", "OpenAI-compatible endpoint"),
+        ("Windsurf", "IDE", "OpenAI-compatible endpoint"),
+        ("avante.nvim", "Neovim", "localhost:4000"),
+    ]:
+        console.print(f"  • [cyan]{name}[/cyan] ({kind}) → {hint}")
+
+
+def _render_tags_legend() -> None:
+    """Render tags legend with color coding."""
     # Tags legend
     console.print("\n[bold]Tags Legend:[/bold]")
     tag_groups = [
@@ -265,15 +329,10 @@ def print_info_tables(config) -> None:
         
         console.print(f"  [dim]{group_name}:[/dim] {' '.join(colored_tags)}")
 
-    console.print("\n[bold]Compatible IDE/Agent Tools:[/bold]")
-    for name, kind, hint in [
-        ("Roo Code", "VS Code extension", "localhost:4000"),
-        ("Cline", "VS Code extension", "localhost:4000"),
-        ("Continue.dev", "VS Code / JetBrains", "localhost:4000"),
-        ("Aider", "Terminal", "OPENAI_API_BASE=localhost:4000"),
-        ("Claude Code", "Terminal", "ANTHROPIC_BASE_URL"),
-        ("Cursor", "IDE", "OpenAI-compatible endpoint"),
-        ("Windsurf", "IDE", "OpenAI-compatible endpoint"),
-        ("avante.nvim", "Neovim", "localhost:4000"),
-    ]:
-        console.print(f"  • [cyan]{name}[/cyan] ({kind}) → {hint}")
+
+def print_info_tables(config) -> None:
+    """Print tools and models info tables."""
+    _render_tools_table()
+    _render_tiers_table(config)
+    _render_tags_legend()
+    _render_agents_table()

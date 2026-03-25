@@ -1,10 +1,10 @@
-# vallm batch | 69f | 33✓ 36✗
+# vallm batch | 76f | 38✓ 38✗
 
 SUMMARY:
-  total: 69
-  passed: 33
-  failed: 36
-  success: 47.8%
+  total: 76
+  passed: 38
+  failed: 38
+  success: 50.0%
 
 FILES:
   [yaml]
@@ -14,9 +14,11 @@ FILES:
     ✓ llx.yaml
       verdict: pass
       score: 1.00
-    ✓ project/duplication.toon.yaml
-      verdict: pass
-      score: 1.00
+    ✗ project/duplication.toon.yaml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
     ✗ project/validation.toon.yaml
       verdict: fail
       score: 0.00
@@ -38,6 +40,9 @@ FILES:
       issues: 1
         [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
   [bash]
+    ✓ ai-tools-manage.sh
+      verdict: pass
+      score: 1.00
     ✓ docker-manage.sh
       verdict: pass
       score: 1.00
@@ -45,6 +50,12 @@ FILES:
       verdict: pass
       score: 1.00
     ✓ docker/ollama/entrypoint.sh
+      verdict: pass
+      score: 1.00
+    ✓ docker/ai-tools/entrypoint.sh
+      verdict: pass
+      score: 1.00
+    ✓ docker/ai-tools/install-tools.sh
       verdict: pass
       score: 1.00
     ✓ examples/proxy/run.sh
@@ -62,11 +73,13 @@ FILES:
     ✓ examples/basic/run.sh
       verdict: pass
       score: 1.00
-  [toml]
-    ✓ pyproject.toml
-      verdict: pass
-      score: 1.00
   [python]
+    ✓ test-local-chat.py
+      verdict: pass
+      score: 0.97
+      issues: 2
+        [warning] complexity.cyclomatic: main has cyclomatic complexity 19 (max: 15)@99
+        [warning] complexity.lizard_cc: main: CC=17 exceeds limit 15@99
     ✓ tests/test_core.py
       verdict: pass
       score: 1.00
@@ -151,7 +164,14 @@ FILES:
     ✓ examples/local/main.py
       verdict: pass
       score: 1.00
+    ✓ examples/ai-tools/main.py
+      verdict: pass
+      score: 1.00
     ✓ examples/basic/main.py
+      verdict: pass
+      score: 1.00
+  [toml]
+    ✓ pyproject.toml
       verdict: pass
       score: 1.00
   [sql]
@@ -160,6 +180,10 @@ FILES:
       score: 0.00
       issues: 1
         [error] syntax.tree_sitter: tree-sitter found 7 parse error(s) in sql
+  [json]
+    ✓ docker/vscode/settings.json
+      verdict: pass
+      score: 1.00
 
 FAILED:
   ✗ requirements-dev.txt: Unsupported file type
@@ -180,6 +204,7 @@ FAILED:
   ✗ project/compact_flow.mmd: Unsupported file type
   ✗ project/calls.mmd: Unsupported file type
   ✗ project/index.html: Unsupported file type
+  ✗ project/duplication.toon.yaml: Validation fail
   ✗ project/context.md: Unsupported file type
   ✗ project/validation.toon.yaml: Validation fail
   ✗ project/map.toon.yaml: Validation fail
@@ -197,4 +222,5 @@ FAILED:
   ✗ examples/docker/README.md: Unsupported file type
   ✗ examples/multi-provider/README.md: Unsupported file type
   ✗ examples/local/README.md: Unsupported file type
+  ✗ examples/ai-tools/README.md: Unsupported file type
   ✗ examples/basic/README.md: Unsupported file type

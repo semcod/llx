@@ -1,89 +1,149 @@
 flowchart LR
-    subgraph examples_basic
-        examples__basic__main__main["main"]
+    subgraph docker_ai_tools
+        docker__ai_tools__entrypoint__print["print"]
     end
     subgraph examples_docker
-        examples__docker__main__main["main"]
-        examples__docker__main__check_redis_connection["check_redis_connection"]
-        examples__docker__main__check_ollama_connection["check_ollama_connection"]
-        examples__docker__main__demonstrate_ollama_integration["demonstrate_ollama_integration"]
         examples__docker__main__demonstrate_docker_integration["demonstrate_docker_integration"]
+        examples__docker__main__demonstrate_redis_usage["demonstrate_redis_usage"]
+        examples__docker__main__demonstrate_ollama_integration["demonstrate_ollama_integration"]
         examples__docker__main__demonstrate_container_metrics["demonstrate_container_metrics"]
         examples__docker__main__check_service_health["check_service_health"]
+        examples__docker__main__main["main"]
+        examples__docker__main__check_redis_connection["check_redis_connection"]
         examples__docker__main__demonstrate_service_discovery["demonstrate_service_discovery"]
+        examples__docker__main__check_ollama_connection["check_ollama_connection"]
     end
     subgraph examples_local
+        examples__local__main__check_ollama_service["check_ollama_service"]
+        examples__local__main__list_recommended_local_models["list_recommended_local_models"]
         examples__local__main__main["main"]
-        examples__local__main__demonstrate_local_model_selection["demonstrate_local_model_select"]
         examples__local__main__check_ollama_installation["check_ollama_installation"]
         examples__local__main__estimate_resource_requirements["estimate_resource_requirements"]
-        examples__local__main__list_recommended_local_models["list_recommended_local_models"]
-        examples__local__main__check_ollama_service["check_ollama_service"]
+        examples__local__main__demonstrate_local_model_selection["demonstrate_local_model_select"]
+        examples__local__main__show_ollama_setup_instructions["show_ollama_setup_instructions"]
     end
     subgraph examples_multi_provider
-        examples__multi_provider__main__main["main"]
-        examples__multi-provider__main__demonstrate_fallback_strateg["demonstrate_fallback_strategy"]
-        examples__multi_provider__main__compare_provider_costs["compare_provider_costs"]
         examples__multi-provider__main__simulate_multi_provider_sele["simulate_multi_provider_select"]
+        examples__multi-provider__main__demonstrate_fallback_strateg["demonstrate_fallback_strategy"]
+        examples__multi_provider__main__main["main"]
         examples__multi_provider__main__check_provider_keys["check_provider_keys"]
+        examples__multi_provider__main__compare_provider_costs["compare_provider_costs"]
+    end
+    subgraph examples_proxy
+        examples__proxy__main__ProxyExample__setup_server["setup_server"]
+        examples__proxy__main__ProxyExample__test_proxy["test_proxy"]
+        examples__proxy__main__ProxyExample__show_ide_integration["show_ide_integration"]
+        examples__proxy__main__ProxyExample__start_server["start_server"]
+        examples__proxy__main__ProxyExample__cleanup["cleanup"]
+        examples__proxy__main__signal_handler["signal_handler"]
+        examples__proxy__main__main["main"]
+    end
+    subgraph examples_vscode_roocode
+        examples__RooCodeDemo__demonstrate_refactoring["demonstrate_refactoring"]
+        examples__RooCodeDemo__demonstrate_code_generation["demonstrate_code_generation"]
+        examples__RooCodeDemo__demonstrate_test_generation["demonstrate_test_generation"]
+        examples__RooCodeDemo__test_chat_completion["test_chat_completion"]
+        examples__RooCodeDemo__demonstrate_documentation["demonstrate_documentation"]
+        examples__vscode_roocode__demo__RooCodeDemo__run_demo["run_demo"]
+        examples__RooCodeDemo__demonstrate_code_explanation["demonstrate_code_explanation"]
     end
     subgraph llx_analysis
-        llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
-        llx__analysis__runner__run_code2llm["run_code2llm"]
-        llx__analysis__runner__run_vallm["run_vallm"]
-        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
+        llx__analysis__collector__analyze_project["analyze_project"]
         llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
+        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
+        llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
+        llx__analysis__runner__run_vallm["run_vallm"]
+        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
+        llx__analysis__runner___run_tool["_run_tool"]
+        llx__analysis__collector___load_file["_load_file"]
+        llx__analysis__runner__run_code2llm["run_code2llm"]
         llx__analysis__runner__check_tool["check_tool"]
         llx__analysis__runner__run_redup["run_redup"]
-        llx__analysis__runner__run_all_tools["run_all_tools"]
-        llx__analysis__runner___run_tool["_run_tool"]
-        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
-        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
-        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
         llx__analysis__collector___classify_scope["_classify_scope"]
-        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
-        llx__analysis__collector___load_file["_load_file"]
         llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
-        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
-    end
-    subgraph llx_cli
-        llx__cli__app__chat["chat"]
-        llx__cli__formatters__print_models_table["print_models_table"]
-        llx__cli__app__proxy_config["proxy_config"]
-        llx__cli__formatters__print_info_tables["print_info_tables"]
-        llx__cli__app__info["info"]
-        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
-        llx__cli__app__models["models"]
-        llx__cli__app__proxy_status["proxy_status"]
-        llx__cli__app__select["select"]
-        llx__cli__app__proxy_start["proxy_start"]
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
     end
     subgraph llx_config
         llx__config__LlxConfig__load["load"]
         llx__config___apply_env["_apply_env"]
     end
     subgraph llx_integrations
-        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
-        llx__integrations__proxy__check_proxy["check_proxy"]
         llx__integrations__proxy__start_proxy["start_proxy"]
+        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
     end
     subgraph llx_litellm_config
-        llx__litellm_config__LiteLLMConfig__load["load"]
         llx__litellm_config__load_litellm_config["load_litellm_config"]
+        llx__litellm_config__LiteLLMConfig__load["load"]
     end
     subgraph llx_routing
-        llx__routing__selector___compute_alternative["_compute_alternative"]
         llx__routing__selector__select_model["select_model"]
-        llx__routing__selector__check_context_fit["check_context_fit"]
-        llx__routing__selector__select_with_context_check["select_with_context_check"]
-        llx__routing__selector___compute_tier["_compute_tier"]
     end
-    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
-    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
-    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
-    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
-    llx__config__LlxConfig__load --> llx__litellm_config__LiteLLMConfig__load
-    llx__config__LlxConfig__load --> llx__config___apply_env
+    subgraph llx_tools
+        llx__ModelManager__get_system_resources["get_system_resources"]
+        llx__tools__vscode_manager__VSCodeManager__stop_vscode["stop_vscode"]
+        llx__tools__model_manager__ModelManager__test_llx_model["test_llx_model"]
+        llx__tools__config_manager__ConfigManager__load_profile["load_profile"]
+        llx__tools__model_manager__ModelManager__pull_model["pull_model"]
+        llx__tools__cli__LLXToolsCLI___handle_ai_tools["_handle_ai_tools"]
+        llx__tools__model_manager__ModelManager__benchmark_model["benchmark_model"]
+        llx__AIToolsManager__restore_configurations["restore_configurations"]
+        llx__tools__cli__LLXToolsCLI___handle_stop["_handle_stop"]
+        llx__AIToolsManager__backup_configurations["backup_configurations"]
+        llx__tools__cli__LLXToolsCLI___handle_config["_handle_config"]
+        llx__tools__cli__LLXToolsCLI___handle_utils["_handle_utils"]
+        llx__tools__cli__LLXToolsCLI___handle_health["_handle_health"]
+        llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
+        llx__tools__config_manager__ConfigManager__load_config["load_config"]
+        llx__tools__cli__LLXToolsCLI___handle_restart["_handle_restart"]
+        llx__tools__vscode_manager__VSCodeManager__print_quick_start["print_quick_start"]
+        llx__ConfigManager__print_config_summary["print_config_summary"]
+        llx__AIToolsManager__print_status_summary["print_status_summary"]
+        llx__VSCodeManager__install_extensions["install_extensions"]
+        llx__tools__cli__LLXToolsCLI__run_command["run_command"]
+        llx__VSCodeManager__wait_for_vscode_ready["wait_for_vscode_ready"]
+        llx__HealthChecker__run_comprehensive_health_check["run_comprehensive_health_check"]
+        llx__VSCodeManager__create_workspace_tasks["create_workspace_tasks"]
+        llx__tools__vscode_manager__VSCodeManager__update_extensions["update_extensions"]
+        llx__tools__config_manager__ConfigManager__backup_configs["backup_configs"]
+        llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
+        llx__tools__health_checker__HealthChecker__monitor_services["monitor_services"]
+        llx__AIToolsManager__create_workspace_example["create_workspace_example"]
+        llx__VSCodeManager__create_launch_config["create_launch_config"]
+        llx__tools__vscode_manager__VSCodeManager__restore_settings["restore_settings"]
+        llx__tools__config_manager__ConfigManager__list_models["list_models"]
+        llx__tools__config_manager__ConfigManager__remove_model["remove_model"]
+        llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
+        llx__HealthChecker__run_quick_health_check["run_quick_health_check"]
+        llx__ModelManager__cleanup_unused_models["cleanup_unused_models"]
+        llx__VSCodeManager__print_status_summary["print_status_summary"]
+        llx__tools__cli__LLXToolsCLI___handle_models["_handle_models"]
+        llx__ConfigManager__create_default_env["create_default_env"]
+        llx__tools__model_manager__ModelManager__test_model["test_model"]
+        llx__tools__cli__LLXToolsCLI___handle_start["_handle_start"]
+        llx__tools__vscode_manager__VSCodeManager__restart_vscode["restart_vscode"]
+        llx__ModelManager__create_model_profile["create_model_profile"]
+        llx__tools__config_manager__ConfigManager__restore_configs["restore_configs"]
+        llx__ConfigManager__generate_docker_env_file["generate_docker_env_file"]
+        llx__tools__model_manager__ModelManager__print_model_summary["print_model_summary"]
+        llx__AIToolsManager__restart_ai_tools["restart_ai_tools"]
+        llx__tools__config_manager__ConfigManager__create_profile["create_profile"]
+        llx__tools__cli__LLXToolsCLI___handle_status["_handle_status"]
+        llx__AIToolsManager__print_usage_examples["print_usage_examples"]
+        llx__tools__cli__LLXToolsCLI___handle_docker["_handle_docker"]
+        llx__tools__vscode_manager__VSCodeManager__backup_settings["backup_settings"]
+        llx__tools__cli__LLXToolsCLI___handle_vscode["_handle_vscode"]
+        llx__HealthChecker___print_health_summary["_print_health_summary"]
+        llx__tools__ai_tools_manager__AIToolsManager__update_tools["update_tools"]
+        llx__tools__ai_tools_manager__AIToolsManager__run_chat_test["run_chat_test"]
+        llx__VSCodeManager__uninstall_extension["uninstall_extension"]
+        llx__tools__vscode_manager__VSCodeManager__configure_roocode["configure_roocode"]
+        llx__tools__config_manager__ConfigManager__save_config["save_config"]
+        llx__tools__vscode_manager__VSCodeManager__start_vscode["start_vscode"]
+        llx__tools__ai_tools_manager__AIToolsManager__install_tool["install_tool"]
+        llx__tools__model_manager__ModelManager__remove_model["remove_model"]
+    end
     llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_filesystem_metrics
     llx__analysis__collector__analyze_project --> llx__analysis__collector___estimate_context_tokens
     llx__analysis__collector__analyze_project --> llx__analysis__collector___classify_scope
@@ -96,49 +156,130 @@ flowchart LR
     llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_map_yaml
     llx__analysis__collector___collect_redup_metrics --> llx__analysis__collector___load_file
     llx__analysis__collector___collect_vallm_metrics --> llx__analysis__collector___load_file
+    llx__config__LlxConfig__load --> llx__litellm_config__LiteLLMConfig__load
+    llx__config__LlxConfig__load --> llx__config___apply_env
+    llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__restart_ai_tools --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager__access_shell --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager__run_chat_test --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager__install_tool --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager__update_tools --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__create_workspace_example --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__backup_configurations --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__restore_configurations --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__print_status_summary --> docker__ai_tools__entrypoint__print
+    llx__AIToolsManager__print_usage_examples --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI__run_command --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_start --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_stop --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_restart --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_status --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_health --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_docker --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_ai_tools --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_vscode --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_models --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_config --> docker__ai_tools__entrypoint__print
+    llx__tools__cli__LLXToolsCLI___handle_utils --> docker__ai_tools__entrypoint__print
+    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
+    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
+    llx__tools__vscode_manager__VSCodeManager__start_vscode --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__stop_vscode --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__restart_vscode --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__wait_for_vscode_ready --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__install_extensions --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__uninstall_extension --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__update_extensions --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__create_workspace_tasks --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__create_launch_config --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__backup_settings --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__restore_settings --> docker__ai_tools__entrypoint__print
+    llx__VSCodeManager__print_status_summary --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__print_quick_start --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__load_config --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__save_config --> docker__ai_tools__entrypoint__print
+    llx__ConfigManager__create_default_env --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__remove_model --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__list_models --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__backup_configs --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__restore_configs --> docker__ai_tools__entrypoint__print
+    llx__ConfigManager__generate_docker_env_file --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__create_profile --> docker__ai_tools__entrypoint__print
+    llx__tools__config_manager__ConfigManager__load_profile --> docker__ai_tools__entrypoint__print
+    llx__ConfigManager__print_config_summary --> docker__ai_tools__entrypoint__print
+    llx__HealthChecker__run_comprehensive_health_check --> docker__ai_tools__entrypoint__print
+    llx__HealthChecker___print_health_summary --> docker__ai_tools__entrypoint__print
+    llx__HealthChecker__run_quick_health_check --> docker__ai_tools__entrypoint__print
+    llx__tools__health_checker__HealthChecker__monitor_services --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__pull_model --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__remove_model --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__test_model --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__test_llx_model --> docker__ai_tools__entrypoint__print
+    llx__ModelManager__get_system_resources --> docker__ai_tools__entrypoint__print
+    llx__ModelManager__create_model_profile --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__benchmark_model --> docker__ai_tools__entrypoint__print
+    llx__ModelManager__cleanup_unused_models --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__print_model_summary --> docker__ai_tools__entrypoint__print
     llx__integrations__proxy__start_proxy --> llx__integrations__proxy__generate_proxy_config
+    llx__litellm_config__load_litellm_config --> llx__litellm_config__LiteLLMConfig__load
+    examples__proxy__main__ProxyExample__setup_server --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__ProxyExample__start_server --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__ProxyExample__test_proxy --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__ProxyExample__show_ide_integration --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__ProxyExample__cleanup --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__signal_handler --> docker__ai_tools__entrypoint__print
+    examples__proxy__main__main --> docker__ai_tools__entrypoint__print
+    examples__docker__main__check_service_health --> docker__ai_tools__entrypoint__print
+    examples__docker__main__check_redis_connection --> docker__ai_tools__entrypoint__print
+    examples__docker__main__check_ollama_connection --> docker__ai_tools__entrypoint__print
+    examples__docker__main__demonstrate_docker_integration --> docker__ai_tools__entrypoint__print
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_service_health
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_redis_connection
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_ollama_connection
+    examples__docker__main__demonstrate_redis_usage --> docker__ai_tools__entrypoint__print
+    examples__docker__main__demonstrate_ollama_integration --> docker__ai_tools__entrypoint__print
     examples__docker__main__demonstrate_ollama_integration --> llx__config__LlxConfig__load
+    examples__docker__main__demonstrate_container_metrics --> docker__ai_tools__entrypoint__print
+    examples__docker__main__demonstrate_service_discovery --> docker__ai_tools__entrypoint__print
+    examples__docker__main__main --> docker__ai_tools__entrypoint__print
     examples__docker__main__main --> examples__docker__main__demonstrate_docker_integration
     examples__docker__main__main --> examples__docker__main__demonstrate_container_metrics
     examples__docker__main__main --> examples__docker__main__demonstrate_service_discovery
+    examples__multi_provider__main__compare_provider_costs --> docker__ai_tools__entrypoint__print
     examples__multi_provider__main__compare_provider_costs --> examples__multi_provider__main__check_provider_keys
+    examples__multi-provider__main__demonstrate_fallback_strateg --> docker__ai_tools__entrypoint__print
     examples__multi-provider__main__demonstrate_fallback_strateg --> examples__multi_provider__main__check_provider_keys
+    examples__multi-provider__main__simulate_multi_provider_sele --> docker__ai_tools__entrypoint__print
     examples__multi-provider__main__simulate_multi_provider_sele --> examples__multi_provider__main__check_provider_keys
     examples__multi-provider__main__simulate_multi_provider_sele --> llx__config__LlxConfig__load
     examples__multi-provider__main__simulate_multi_provider_sele --> llx__routing__selector__select_model
+    examples__multi_provider__main__main --> docker__ai_tools__entrypoint__print
     examples__multi_provider__main__main --> examples__multi_provider__main__check_provider_keys
     examples__multi_provider__main__main --> examples__multi_provider__main__compare_provider_costs
     examples__multi_provider__main__main --> examples__multi-provider__main__demonstrate_fallback_strateg
     examples__multi_provider__main__main --> examples__multi-provider__main__simulate_multi_provider_sele
+    examples__local__main__check_ollama_installation --> docker__ai_tools__entrypoint__print
+    examples__local__main__check_ollama_service --> docker__ai_tools__entrypoint__print
+    examples__local__main__list_recommended_local_models --> docker__ai_tools__entrypoint__print
+    examples__local__main__demonstrate_local_model_selection --> docker__ai_tools__entrypoint__print
     examples__local__main__demonstrate_local_model_selection --> llx__config__LlxConfig__load
     examples__local__main__demonstrate_local_model_selection --> examples__local__main__check_ollama_service
     examples__local__main__demonstrate_local_model_selection --> llx__analysis__collector__analyze_project
+    examples__local__main__show_ollama_setup_instructions --> docker__ai_tools__entrypoint__print
+    examples__local__main__estimate_resource_requirements --> docker__ai_tools__entrypoint__print
+    examples__local__main__main --> docker__ai_tools__entrypoint__print
     examples__local__main__main --> examples__local__main__check_ollama_installation
     examples__local__main__main --> examples__local__main__check_ollama_service
     examples__local__main__main --> examples__local__main__list_recommended_local_models
     examples__local__main__main --> examples__local__main__estimate_resource_requirements
-    examples__basic__main__main --> llx__config__LlxConfig__load
-    llx__litellm_config__load_litellm_config --> llx__litellm_config__LiteLLMConfig__load
-    llx__cli__app__select --> llx__config__LlxConfig__load
-    llx__cli__app__select --> llx__analysis__collector__analyze_project
-    llx__cli__app__select --> llx__routing__selector__select_model
-    llx__cli__app__chat --> llx__config__LlxConfig__load
-    llx__cli__app__chat --> llx__analysis__collector__analyze_project
-    llx__cli__app__proxy_start --> llx__config__LlxConfig__load
-    llx__cli__app__proxy_start --> llx__integrations__proxy__start_proxy
-    llx__cli__app__proxy_config --> llx__config__LlxConfig__load
-    llx__cli__app__proxy_config --> llx__integrations__proxy__generate_proxy_config
-    llx__cli__app__proxy_status --> llx__config__LlxConfig__load
-    llx__cli__app__proxy_status --> llx__integrations__proxy__check_proxy
-    llx__cli__app__models --> llx__config__LlxConfig__load
-    llx__cli__app__models --> llx__cli__formatters__print_models_table
-    llx__cli__app__info --> llx__cli__formatters__print_info_tables
-    llx__cli__app__info --> llx__config__LlxConfig__load
-    llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
-    llx__routing__selector__select_model --> llx__routing__selector___compute_tier
-    llx__routing__selector__select_model --> llx__routing__selector___compute_alternative
-    llx__routing__selector__select_with_context_check --> llx__routing__selector__select_model
-    llx__routing__selector__select_with_context_check --> llx__routing__selector__check_context_fit
+    examples__RooCodeDemo__test_chat_completion --> docker__ai_tools__entrypoint__print
+    examples__RooCodeDemo__demonstrate_code_generation --> docker__ai_tools__entrypoint__print
+    examples__RooCodeDemo__demonstrate_code_explanation --> docker__ai_tools__entrypoint__print
+    examples__RooCodeDemo__demonstrate_refactoring --> docker__ai_tools__entrypoint__print
+    examples__RooCodeDemo__demonstrate_test_generation --> docker__ai_tools__entrypoint__print
+    examples__RooCodeDemo__demonstrate_documentation --> docker__ai_tools__entrypoint__print
+    examples__vscode_roocode__demo__RooCodeDemo__run_demo --> docker__ai_tools__entrypoint__print

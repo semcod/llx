@@ -1,7 +1,7 @@
 <!-- code2docs:start --># llx
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-104-green)
-> **104** functions | **14** classes | **28** files | CC̄ = 4.7
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-130-green)
+> **130** functions | **14** classes | **32** files | CC̄ = 4.7
 
 > Auto-generated project documentation from source code analysis.
 
@@ -152,7 +152,7 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 llx/
-├── llx/    ├── __main__    ├── analysis/    ├── config        ├── collector    ├── cli/        ├── runner        ├── formatters    ├── integrations/        ├── proxy    ├── routing/        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main├── docker-manage├── project        ├── entrypoint        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
+├── llx/    ├── __main__    ├── analysis/    ├── config        ├── collector    ├── cli/        ├── runner        ├── proxy    ├── integrations/    ├── routing/        ├── formatters        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main        ├── main├── ai-tools-manage├── docker-manage├── project        ├── entrypoint        ├── entrypoint        ├── install-tools        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
 
 ## API Overview
 
@@ -181,13 +181,13 @@ llx/
 - `run_redup(project_path, output_dir, fmt)` — —
 - `run_vallm(project_path, output_dir)` — —
 - `run_all_tools(project_path, output_dir, on_progress)` — —
+- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
+- `start_proxy(config)` — Start LiteLLM proxy server.
+- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
 - `output_rich(metrics, result, verbose)` — Rich terminal output for analysis results.
 - `output_json(metrics, result)` — JSON output for machine consumption.
 - `print_models_table(config, tag, provider, tier)` — Print models table with optional filtering.
 - `print_info_tables(config)` — Print tools and models info tables.
-- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
-- `start_proxy(config)` — Start LiteLLM proxy server.
-- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
 - `signal_handler(signum, frame)` — Handle shutdown signals
 - `main()` — Main proxy example execution
 - `check_service_health(service_name, url, timeout)` — Check if a service is healthy
@@ -211,7 +211,31 @@ llx/
 - `show_ollama_setup_instructions()` — Show instructions for setting up Ollama
 - `estimate_resource_requirements()` — Estimate resource requirements for local models
 - `main()` — Main local models example execution
+- `check_docker_services()` — Check if Docker services are running
+- `get_available_models()` — Get available models from Ollama
+- `test_ai_tools_container()` — Test AI tools container functionality
+- `demonstrate_aider()` — Demonstrate Aider usage
+- `demonstrate_claude_code()` — Demonstrate Claude Code usage
+- `demonstrate_cursor()` — Demonstrate Cursor usage
+- `test_chat_completion()` — Test chat completion through AI tools
+- `show_usage_examples()` — Show usage examples for AI tools
+- `main()` — —
 - `main()` — Main example execution
+- `print_header()` — —
+- `print_status()` — —
+- `print_error()` — —
+- `print_warning()` — —
+- `get_compose_cmd()` — —
+- `is_running()` — —
+- `start_ai_tools()` — —
+- `stop_ai_tools()` — —
+- `shell()` — —
+- `status()` — —
+- `test()` — —
+- `logs()` — —
+- `restart()` — —
+- `quick_chat()` — —
+- `help()` — —
 - `print_header()` — —
 - `print_status()` — —
 - `print_warning()` — —
@@ -219,6 +243,8 @@ llx/
 - `check_docker()` — —
 - `check_compose()` — —
 - `get_compose_cmd()` — —
+- `hello_world()` — —
+- `print()` — —
 - `load_litellm_config(project_path)` — Convenience function to load LiteLLM configuration.
 - `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
 - `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
@@ -237,8 +263,12 @@ llx/
 
 ## Project Structure
 
+📄 `ai-tools-manage` (15 functions)
 📄 `docker-manage` (7 functions)
+📄 `docker.ai-tools.entrypoint` (3 functions)
+📄 `docker.ai-tools.install-tools`
 📄 `docker.ollama.entrypoint`
+📄 `examples.ai-tools.main` (9 functions)
 📄 `examples.basic.main` (1 functions)
 📄 `examples.basic.run`
 📄 `examples.docker.main` (9 functions)

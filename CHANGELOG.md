@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-03-25
+
+### Docs
+- Update docs/README.md
+- Update docs/llx-tools.md
+- Update examples/vscode-roocode/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update docker-compose-dev.yml
+- Update docker/vscode/install-extensions.sh
+- Update docker/vscode/settings.json
+- Update examples/vscode-roocode/demo.py
+- Update llx-tools
+- Update llx/cli/formatters.py
+- Update llx/orchestration/__init__.py
+- Update llx/orchestration/instance_manager.py
+- Update llx/orchestration/queue_manager.py
+- Update llx/orchestration/rate_limiter.py
+- ... and 21 more files
+
 ## [0.1.4] - 2026-03-25
 
 ### Docs
