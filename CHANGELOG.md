@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-03-25
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update examples/ai-tools/README.md
+- Update project/context.md
+
+### Test
+- Update test-local-chat.py
+
+### Other
+- Update ai-tools-manage.sh
+- Update docker-compose-dev.yml
+- Update docker-compose-prod.yml
+- Update docker/ai-tools/entrypoint.sh
+- Update docker/ai-tools/install-tools.sh
+- Update docker/vscode/settings.json
+- Update examples/ai-tools/main.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- ... and 7 more files
+
 ## [0.1.3] - 2026-03-25
 
 ### Docs

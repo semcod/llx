@@ -1,8 +1,6 @@
 # Development Docker Compose configuration
 # Uses local Ollama instead of containerized version
 
-version: '3.8'
-
 services:
   # Core llx API
   llx-api:
@@ -36,14 +34,14 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    command: python -m llx proxy start --reload
+    command: python -m llx proxy start
 
   # Redis for caching
   redis:
     image: redis:7-alpine
     container_name: llx-redis-dev
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
       - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
@@ -59,14 +57,76 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PASSWORD=llx-dev
+      - PASSWORD=${VSCODE_PASSWORD:-llx-dev}
       - DEFAULT_WORKSPACE=/home/coder/project
+    env_file:
+      - ./.env
     volumes:
       - vscode_data:/home/coder
       - ./:/home/coder/project
+      - ./.env:/home/coder/.env:ro
+      - ./docker/vscode/settings.json:/home/coder/.local/share/code-server/User/settings.json:ro
     networks:
       - llx-network
     restart: unless-stopped
+
+  # AI Tools Shell Environment (Aider, Claude Code, Cursor, etc.)
+  ai-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: llx-ai-tools-dev
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+      # llx API Configuration
+      - LITELLM_PROXY_HOST=0.0.0.0
+      - LITELLM_PROXY_PORT=4000
+      - LITELLM_PROXY_MASTER_KEY=sk-proxy-local-dev
+      # Local Ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # AI Tool Configuration
+      - OPENAI_API_KEY=sk-proxy-local-dev
+      - OPENAI_API_BASE=http://llx-api:4000/v1
+      - ANTHROPIC_API_KEY=sk-proxy-local-dev
+      - ANTHROPIC_BASE_URL=http://llx-api:4000/v1
+      # Aider Configuration
+      - AIDER_MODEL=qwen2.5-coder:7b
+      - AIDER_API_KEY=sk-proxy-local-dev
+      - AIDER_API_BASE=http://llx-api:4000/v1
+      # Claude Code Configuration
+      - CLAUDE_API_KEY=sk-proxy-local-dev
+      - CLAUDE_API_BASE=http://llx-api:4000/v1
+      - CLAUDE_MODEL=qwen2.5-coder:7b
+      # Cursor Configuration
+      - CURSOR_API_KEY=sk-proxy-local-dev
+      - CURSOR_API_BASE=http://llx-api:4000/v1
+      - CURSOR_MODEL=qwen2.5-coder:7b
+      # Git Configuration
+      - GIT_AUTHOR_NAME=llx-ai-tools
+      - GIT_AUTHOR_EMAIL=ai-tools@llx.local
+      - GIT_COMMITTER_NAME=llx-ai-tools
+      - GIT_COMMITTER_EMAIL=ai-tools@llx.local
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/workspace
+      - /workspace/.venv
+      - ai_tools_data:/root/.cache
+      - ai_tools_git:/root/.gitconfig
+      - ~/.ssh:/root/.ssh:ro
+      - ~/.gitconfig:/root/.gitconfig:ro
+      # Mount AI tool configurations
+      - ./docker/ai-tools:/root/ai-tools-config:ro
+    networks:
+      - llx-network
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    entrypoint: ["/root/ai-tools-config/entrypoint.sh"]
+    command: ["/root/ai-tools-config/install-tools.sh", "sleep", "infinity"]
+    working_dir: /workspace
 
 networks:
   llx-network:
@@ -76,3 +136,5 @@ volumes:
   redis_data:
   vscode_data:
   llx_cache:
+  ai_tools_data:
+  ai_tools_git:

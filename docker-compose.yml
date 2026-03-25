@@ -103,8 +103,8 @@ services:
     environment:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-llx-webui-secret}
-      - WEBUI_NAME=llx WebUI
-      - WEBUI_DESCRIPTION=Intelligent LLM model router
+      - WEBUI_NAME="llx WebUI"
+      - WEBUI_DESCRIPTION="Intelligent LLM model router"
     volumes:
       - webui_data:/app/backend/data
     networks:

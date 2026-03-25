@@ -152,7 +152,7 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 llx/
-├── llx/    ├── config    ├── analysis/    ├── __main__        ├── collector    ├── cli/        ├── runner        ├── formatters    ├── integrations/    ├── routing/        ├── proxy        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main├── docker-manage├── project        ├── entrypoint        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
+├── llx/    ├── __main__    ├── analysis/    ├── config        ├── collector    ├── cli/        ├── runner        ├── formatters    ├── integrations/        ├── proxy    ├── routing/        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main├── docker-manage├── project        ├── entrypoint        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
 
 ## API Overview
 

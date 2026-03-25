@@ -1,11 +1,11 @@
-# llx | 18f 2539L | python:15,shell:3 | 2026-03-25
+# llx | 18f 2555L | python:15,shell:3 | 2026-03-25
 # stats: 74 func | 0 cls | 18 mod | CC̄=4.5 | critical:6 | cycles:0
 # alerts[5]: CC print_models_table=32; CC print_info_tables=26; CC _apply_map_text=20; CC _compute_tier=20; CC _apply_yaml=19
 # hotspots[5]: print_models_table fan=18; LlxConfig.load fan=17; _apply_map_text fan=14; chat fan=14; _apply_evolution_yaml fan=13
-# evolution: CC̄ 5.1→4.5 (improved -0.6)
+# evolution: CC̄ 4.5→4.5 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[18]:
-  docker-manage.sh,390
+  docker-manage.sh,406
   docker/ollama/entrypoint.sh,31
   llx/__init__.py,29
   llx/__main__.py,4

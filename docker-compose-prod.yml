@@ -118,8 +118,8 @@ services:
     environment:
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
-      - WEBUI_NAME=llx WebUI
-      - WEBUI_DESCRIPTION=Intelligent LLM model router
+      - WEBUI_NAME="llx WebUI"
+      - WEBUI_DESCRIPTION="Intelligent LLM model router"
       - WEBUI_AUTH=False
     volumes:
       - webui_data:/app/backend/data
@@ -146,7 +146,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_INSTALL_PLUGINS="grafana-clock-panel,grafana-simple-json-datasource"
       - GF_SMTP_ENABLED=false
       - GF_LOG_LEVEL=info
     volumes:

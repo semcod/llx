@@ -1,0 +1,57 @@
+{
+  "workbench.colorTheme": "Default Dark+",
+  "editor.fontSize": 14,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
+  "editor.suggestSelection": "first",
+  "editor.inlineSuggest.enabled": true,
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  
+  // GitHub Copilot Alternative - Local LLM Configuration
+  "github.copilot.enable": false,
+  "github.copilot.advanced.enabled": false,
+  
+  // Continue.dev Alternative Configuration
+  "continue.enable": false,
+  
+  // Local LLM Chat Configuration
+  "ai.chat.enabled": true,
+  "ai.chat.model.provider": "openai-compatible",
+  "ai.chat.model.modelId": "qwen2.5-coder:7b",
+  "ai.chat.model.apiKey": "sk-proxy-local-dev",
+  "ai.chat.model.apiBaseUrl": "http://localhost:4000",
+  "ai.chat.model.temperature": 0.2,
+  "ai.chat.model.maxTokens": 4096,
+  
+  // Alternative: Use Ollama directly
+  "ai.alternative.provider": "ollama",
+  "ai.alternative.model": "qwen2.5-coder:7b",
+  "ai.alternative.baseUrl": "http://localhost:11434",
+  
+  // Code Llama / Local Model Settings
+  "code-runner.runInTerminal": true,
+  "code-runner.executorMap": {
+    "python": "python",
+    "javascript": "node",
+    "typescript": "ts-node"
+  },
+  
+  // Terminal settings
+  "terminal.integrated.shell.linux": "/bin/bash",
+  "terminal.integrated.fontSize": 14,
+  
+  // Python settings
+  "python.defaultInterpreterPath": "/usr/local/bin/python",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.formatting.provider": "black",
+  
+  // Git settings (disable GitHub auth)
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "extensions.ignoreRecommendations": true
+}

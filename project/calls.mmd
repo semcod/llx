@@ -3,64 +3,64 @@ flowchart LR
         examples__basic__main__main["main"]
     end
     subgraph examples_docker
-        examples__docker__main__demonstrate_container_metrics["demonstrate_container_metrics"]
         examples__docker__main__main["main"]
-        examples__docker__main__demonstrate_docker_integration["demonstrate_docker_integration"]
-        examples__docker__main__check_service_health["check_service_health"]
+        examples__docker__main__check_redis_connection["check_redis_connection"]
         examples__docker__main__check_ollama_connection["check_ollama_connection"]
         examples__docker__main__demonstrate_ollama_integration["demonstrate_ollama_integration"]
+        examples__docker__main__demonstrate_docker_integration["demonstrate_docker_integration"]
+        examples__docker__main__demonstrate_container_metrics["demonstrate_container_metrics"]
+        examples__docker__main__check_service_health["check_service_health"]
         examples__docker__main__demonstrate_service_discovery["demonstrate_service_discovery"]
-        examples__docker__main__check_redis_connection["check_redis_connection"]
     end
     subgraph examples_local
         examples__local__main__main["main"]
         examples__local__main__demonstrate_local_model_selection["demonstrate_local_model_select"]
-        examples__local__main__estimate_resource_requirements["estimate_resource_requirements"]
-        examples__local__main__check_ollama_service["check_ollama_service"]
         examples__local__main__check_ollama_installation["check_ollama_installation"]
+        examples__local__main__estimate_resource_requirements["estimate_resource_requirements"]
         examples__local__main__list_recommended_local_models["list_recommended_local_models"]
+        examples__local__main__check_ollama_service["check_ollama_service"]
     end
     subgraph examples_multi_provider
-        examples__multi_provider__main__check_provider_keys["check_provider_keys"]
-        examples__multi-provider__main__simulate_multi_provider_sele["simulate_multi_provider_select"]
-        examples__multi_provider__main__compare_provider_costs["compare_provider_costs"]
         examples__multi_provider__main__main["main"]
         examples__multi-provider__main__demonstrate_fallback_strateg["demonstrate_fallback_strategy"]
+        examples__multi_provider__main__compare_provider_costs["compare_provider_costs"]
+        examples__multi-provider__main__simulate_multi_provider_sele["simulate_multi_provider_select"]
+        examples__multi_provider__main__check_provider_keys["check_provider_keys"]
     end
     subgraph llx_analysis
-        llx__analysis__runner__run_all_tools["run_all_tools"]
-        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
-        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
-        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
-        llx__analysis__runner___run_tool["_run_tool"]
-        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
+        llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
+        llx__analysis__runner__run_code2llm["run_code2llm"]
         llx__analysis__runner__run_vallm["run_vallm"]
         llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
+        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
+        llx__analysis__runner__check_tool["check_tool"]
+        llx__analysis__runner__run_redup["run_redup"]
+        llx__analysis__runner__run_all_tools["run_all_tools"]
+        llx__analysis__runner___run_tool["_run_tool"]
+        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___classify_scope["_classify_scope"]
+        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
         llx__analysis__collector___load_file["_load_file"]
         llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
-        llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
-        llx__analysis__collector__analyze_project["analyze_project"]
-        llx__analysis__runner__run_code2llm["run_code2llm"]
-        llx__analysis__runner__run_redup["run_redup"]
-        llx__analysis__collector___classify_scope["_classify_scope"]
-        llx__analysis__runner__check_tool["check_tool"]
         llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
     end
     subgraph llx_cli
-        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
-        llx__cli__formatters__print_models_table["print_models_table"]
-        llx__cli__app__proxy_status["proxy_status"]
-        llx__cli__app__proxy_start["proxy_start"]
-        llx__cli__app__select["select"]
-        llx__cli__formatters__print_info_tables["print_info_tables"]
         llx__cli__app__chat["chat"]
-        llx__cli__app__models["models"]
+        llx__cli__formatters__print_models_table["print_models_table"]
         llx__cli__app__proxy_config["proxy_config"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
         llx__cli__app__info["info"]
+        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
+        llx__cli__app__models["models"]
+        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__app__select["select"]
+        llx__cli__app__proxy_start["proxy_start"]
     end
     subgraph llx_config
-        llx__config___apply_env["_apply_env"]
         llx__config__LlxConfig__load["load"]
+        llx__config___apply_env["_apply_env"]
     end
     subgraph llx_integrations
         llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
@@ -73,11 +73,17 @@ flowchart LR
     end
     subgraph llx_routing
         llx__routing__selector___compute_alternative["_compute_alternative"]
-        llx__routing__selector__select_with_context_check["select_with_context_check"]
         llx__routing__selector__select_model["select_model"]
         llx__routing__selector__check_context_fit["check_context_fit"]
+        llx__routing__selector__select_with_context_check["select_with_context_check"]
         llx__routing__selector___compute_tier["_compute_tier"]
     end
+    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
+    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
+    llx__config__LlxConfig__load --> llx__litellm_config__LiteLLMConfig__load
+    llx__config__LlxConfig__load --> llx__config___apply_env
     llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_filesystem_metrics
     llx__analysis__collector__analyze_project --> llx__analysis__collector___estimate_context_tokens
     llx__analysis__collector__analyze_project --> llx__analysis__collector___classify_scope
@@ -90,13 +96,7 @@ flowchart LR
     llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_map_yaml
     llx__analysis__collector___collect_redup_metrics --> llx__analysis__collector___load_file
     llx__analysis__collector___collect_vallm_metrics --> llx__analysis__collector___load_file
-    llx__config__LlxConfig__load --> llx__litellm_config__LiteLLMConfig__load
-    llx__config__LlxConfig__load --> llx__config___apply_env
     llx__integrations__proxy__start_proxy --> llx__integrations__proxy__generate_proxy_config
-    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
-    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
-    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
-    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_service_health
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_redis_connection
     examples__docker__main__demonstrate_docker_integration --> examples__docker__main__check_ollama_connection
@@ -122,10 +122,6 @@ flowchart LR
     examples__local__main__main --> examples__local__main__estimate_resource_requirements
     examples__basic__main__main --> llx__config__LlxConfig__load
     llx__litellm_config__load_litellm_config --> llx__litellm_config__LiteLLMConfig__load
-    llx__routing__selector__select_model --> llx__routing__selector___compute_tier
-    llx__routing__selector__select_model --> llx__routing__selector___compute_alternative
-    llx__routing__selector__select_with_context_check --> llx__routing__selector__select_model
-    llx__routing__selector__select_with_context_check --> llx__routing__selector__check_context_fit
     llx__cli__app__select --> llx__config__LlxConfig__load
     llx__cli__app__select --> llx__analysis__collector__analyze_project
     llx__cli__app__select --> llx__routing__selector__select_model
@@ -142,3 +138,7 @@ flowchart LR
     llx__cli__app__info --> llx__cli__formatters__print_info_tables
     llx__cli__app__info --> llx__config__LlxConfig__load
     llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
+    llx__routing__selector__select_model --> llx__routing__selector___compute_tier
+    llx__routing__selector__select_model --> llx__routing__selector___compute_alternative
+    llx__routing__selector__select_with_context_check --> llx__routing__selector__select_model
+    llx__routing__selector__select_with_context_check --> llx__routing__selector__check_context_fit

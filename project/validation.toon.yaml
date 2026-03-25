@@ -1,9 +1,9 @@
-# vallm batch | 67f | 32✓ 35✗
+# vallm batch | 69f | 33✓ 36✗
 
 SUMMARY:
-  total: 67
-  passed: 32
-  failed: 35
+  total: 69
+  passed: 33
+  failed: 36
   success: 47.8%
 
 FILES:
@@ -142,11 +142,9 @@ FILES:
     ✓ examples/proxy/main.py
       verdict: pass
       score: 1.00
-    ✗ examples/docker/main.py
-      verdict: fail
-      score: 0.95
-      issues: 1
-        [error] python.import.resolvable: Module 'redis' not found@16
+    ✓ examples/docker/main.py
+      verdict: pass
+      score: 1.00
     ✓ examples/multi-provider/main.py
       verdict: pass
       score: 1.00
@@ -164,11 +162,13 @@ FILES:
         [error] syntax.tree_sitter: tree-sitter found 7 parse error(s) in sql
 
 FAILED:
+  ✗ requirements-dev.txt: Unsupported file type
   ✗ .env.backup: Unsupported file type
   ✗ .env.new: Unsupported file type
   ✗ Makefile: Unsupported file type
   ✗ docker-compose.yml: Unsupported file type
   ✗ VERSION: Unsupported file type
+  ✗ requirements.txt: Unsupported file type
   ✗ LICENSE: Unsupported file type
   ✗ docker-compose-prod.yml: Unsupported file type
   ✗ CHANGELOG.md: Unsupported file type
@@ -194,7 +194,6 @@ FAILED:
   ✗ docker/redis/redis.conf: Unsupported file type
   ✗ docker/nginx/conf.d/llx.conf: Unsupported file type
   ✗ examples/proxy/README.md: Unsupported file type
-  ✗ examples/docker/main.py: Validation fail
   ✗ examples/docker/README.md: Unsupported file type
   ✗ examples/multi-provider/README.md: Unsupported file type
   ✗ examples/local/README.md: Unsupported file type

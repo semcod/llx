@@ -1,10 +1,10 @@
-# code2llm | 18f 2539L | python:15,shell:3 | 2026-03-25
+# code2llm | 18f 2555L | python:15,shell:3 | 2026-03-25
 # CC̄=4.5 | critical:6/104 | dups:0 | cycles:0
 
 HEALTH[6]:
+  🟡 CC    _apply_yaml CC=19 (limit:15)
   🟡 CC    _apply_evolution_yaml CC=16 (limit:15)
   🟡 CC    _apply_map_text CC=20 (limit:15)
-  🟡 CC    _apply_yaml CC=19 (limit:15)
   🟡 CC    print_models_table CC=32 (limit:15)
   🟡 CC    print_info_tables CC=26 (limit:15)
   🟡 CC    _compute_tier CC=20 (limit:15)
@@ -13,13 +13,13 @@ REFACTOR[1]:
   1. split 6 high-CC methods  (CC>15)
 
 PIPELINES[40]:
-  [1] Src [load]: load → _apply_env
+  [1] Src [run_code2llm]: run_code2llm → _run_tool → check_tool
       PURITY: 100% pure
-  [2] Src [run_code2llm]: run_code2llm → _run_tool → check_tool
+  [2] Src [run_redup]: run_redup → _run_tool → check_tool
       PURITY: 100% pure
-  [3] Src [run_redup]: run_redup → _run_tool → check_tool
+  [3] Src [run_vallm]: run_vallm → _run_tool → check_tool
       PURITY: 100% pure
-  [4] Src [run_vallm]: run_vallm → _run_tool → check_tool
+  [4] Src [load]: load → _apply_env
       PURITY: 100% pure
   [5] Src [__init__]: __init__
       PURITY: 100% pure
@@ -43,7 +43,7 @@ LAYERS:
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ docker-manage.sh           390L  0C    7m  CC=0.0    ←0
+  │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
   │ project.sh                  21L  0C    0m  CC=0.0    ←0
   │
   docker/                         CC̄=0.0    ←in:0  →out:0

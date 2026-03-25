@@ -194,13 +194,13 @@ Args:
 > Convert LiteLLM models to llx ModelConfig format.
 - **Calls**: ModelConfig, model.pricing.get, model.pricing.get
 
-### llx.routing.selector.SelectionResult.explain
-> Human-readable explanation of why this model was selected.
-- **Calls**: None.join, lines.append, lines.append
-
 ### llx.cli.app.info
 > Show available tools, models, and configuration.
 - **Calls**: app.command, llx.cli.formatters.print_info_tables, LlxConfig.load
+
+### llx.routing.selector.SelectionResult.explain
+> Human-readable explanation of why this model was selected.
+- **Calls**: None.join, lines.append, lines.append
 
 ### llx.analysis.runner.run_vallm
 - **Calls**: llx.analysis.runner._run_tool, str
@@ -300,6 +300,9 @@ Every field maps to a real, measurable prope
 - **Methods**: 1
 - **Key Methods**: llx.config.LlxConfig.load
 
+### llx.analysis.runner.ToolResult
+- **Methods**: 0
+
 ### llx.config.ModelConfig
 > Configuration for a single model tier.
 - **Methods**: 0
@@ -312,9 +315,6 @@ Based on real project metrics from code2llm anal
 
 ### llx.config.ProxyConfig
 > LiteLLM proxy settings.
-- **Methods**: 0
-
-### llx.analysis.runner.ToolResult
 - **Methods**: 0
 
 ### llx.routing.client.ChatMessage
@@ -381,8 +381,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.analysis.collector.analyze_project` - 10 calls
 - `examples.docker.main.demonstrate_service_discovery` - 10 calls
 - `examples.proxy.main.ProxyExample.start_server` - 9 calls
-- `llx.routing.selector.select_with_context_check` - 9 calls
 - `llx.cli.app.init` - 9 calls
+- `llx.routing.selector.select_with_context_check` - 9 calls
 - `llx.routing.client.LlxClient.chat` - 8 calls
 - `llx.cli.formatters.output_rich` - 7 calls
 - `examples.docker.main.check_ollama_connection` - 7 calls
