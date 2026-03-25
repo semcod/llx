@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-03-25
+
+### Other
+- Update llx/analysis/collector.py
+- Update llx/cli/app.py
+- Update llx/config.py
+- Update llx/mcp/__init__.py
+- Update llx/mcp/__main__.py
+- Update llx/mcp/server.py
+- Update llx/mcp/tools.py
+- Update llx/orchestration/llm_orchestrator.py
+- Update llx/orchestration/routing_engine.py
+- Update llx/orchestration/vscode_orchestrator.py
+- ... and 2 more files
+
 ## [0.1.5] - 2026-03-25
 
 ### Docs

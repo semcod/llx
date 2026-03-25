@@ -32,7 +32,9 @@ from llx.routing.selector import ModelTier, select_model, select_with_context_ch
 console = Console()
 app = typer.Typer(name="llx", help="Intelligent LLM model router driven by real code metrics.", no_args_is_help=True)
 proxy_app = typer.Typer(help="Manage LiteLLM proxy server.")
+mcp_app = typer.Typer(help="MCP server management.")
 app.add_typer(proxy_app, name="proxy")
+app.add_typer(mcp_app, name="mcp")
 
 
 @app.command()
@@ -241,6 +243,38 @@ def _run_analysis_tools(project_path: Path, config: LlxConfig) -> None:
             console.print(f"[{'green' if 'done' in status else 'yellow'}]{status}[/]")
 
     run_all_tools(project_path, output_dir, on_progress=on_progress)
+
+
+# ─── MCP Commands ─────────────────────────────────────────────
+
+@mcp_app.command("start")
+def mcp_start(
+    mode: str = typer.Option("stdio", help="Server mode: stdio or sse"),
+    port: int = typer.Option(3000, help="Port for SSE mode"),
+) -> None:
+    """Start the llx MCP server."""
+    import asyncio
+    from llx.mcp.server import main as mcp_main
+    console.print(f"Starting llx MCP server ({mode} mode)...")
+    if mode == "sse":
+        console.print(f"[yellow]SSE mode not yet implemented, using stdio[/yellow]")
+    asyncio.run(mcp_main())
+
+@mcp_app.command("config")
+def mcp_config() -> None:
+    """Print Claude Desktop config snippet."""
+    import sys
+    snippet = {
+        "mcpServers": {
+            "llx": {
+                "command": sys.executable,
+                "args": ["-m", "llx.mcp.server"],
+            }
+        }
+    }
+    import json
+    console.print(json.dumps(snippet, indent=2))
+    console.print("\n[dim]Add to claude_desktop_config.json[/dim]")
 
 
 def main() -> None:

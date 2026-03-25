@@ -123,15 +123,8 @@ def select_model(
     )
 
 
-def _compute_tier(
-    m: ProjectMetrics,
-    t: TierThresholds,
-    reasons: list[str],
-    task_hint: str | None,
-) -> ModelTier:
-    """Core tier selection logic based on metric thresholds."""
-
-    # Premium indicators
+def _count_premium_signals(m: ProjectMetrics, t: TierThresholds, reasons: list[str]) -> int:
+    """Count how many premium thresholds are exceeded."""
     premium_signals = 0
 
     if m.total_files >= t.files_premium:
@@ -162,19 +155,11 @@ def _compute_tier(
         premium_signals += 1
         reasons.append(f"Dependency cycles detected: {m.dependency_cycles}")
 
-    # Task hint adjustments
-    if task_hint == "refactor":
-        premium_signals += 1
-        reasons.append("Task: refactoring (favors stronger model)")
-    elif task_hint == "quick_fix":
-        premium_signals = max(0, premium_signals - 2)
-        reasons.append("Task: quick fix (lighter model acceptable)")
+    return premium_signals
 
-    # Decision tree
-    if premium_signals >= 3:
-        return ModelTier.PREMIUM
 
-    # Balanced indicators
+def _count_balanced_signals(m: ProjectMetrics, t: TierThresholds, reasons: list[str]) -> int:
+    """Count how many balanced thresholds are exceeded."""
     balanced_signals = 0
 
     if m.total_files >= t.files_balanced:
@@ -197,7 +182,37 @@ def _compute_tier(
         balanced_signals += 1
         reasons.append(f"Some duplication: {m.dup_groups} groups (≥{t.dup_groups_balanced})")
 
-    if premium_signals >= 1 or balanced_signals >= 2:
+    return balanced_signals
+
+
+def _apply_task_adjustment(signals: int, task_hint: str | None, reasons: list[str]) -> int:
+    """Adjust signal count based on task hint."""
+    if task_hint == "refactor":
+        signals += 1
+        reasons.append("Task: refactoring (favors stronger model)")
+    elif task_hint == "quick_fix":
+        signals = max(0, signals - 2)
+        reasons.append("Task: quick fix (lighter model acceptable)")
+    return signals
+
+
+def _compute_tier(
+    m: ProjectMetrics,
+    t: TierThresholds,
+    reasons: list[str],
+    task_hint: str | None,
+) -> ModelTier:
+    """Core tier selection logic based on metric thresholds."""
+    # Count premium signals and apply task adjustment
+    premium = _count_premium_signals(m, t, reasons)
+    premium = _apply_task_adjustment(premium, task_hint, reasons)
+    
+    if premium >= 3:
+        return ModelTier.PREMIUM
+
+    # Count balanced signals
+    balanced = _count_balanced_signals(m, t, reasons)
+    if premium >= 1 or balanced >= 2:
         return ModelTier.BALANCED
 
     # Cheap indicators

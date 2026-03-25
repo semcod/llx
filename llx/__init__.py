@@ -14,7 +14,7 @@ Usage:
     model = select_model(metrics)
 """
 
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 
 from llx.analysis.collector import ProjectMetrics, analyze_project
 from llx.routing.selector import ModelTier, select_model

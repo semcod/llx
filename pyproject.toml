@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.5"
+version = "0.1.6"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 license = "Apache-2.0"
@@ -34,10 +34,12 @@ dependencies = [
 ]
 
 [project.scripts]
+llx = "llx.cli.app:main"
 llx-tools = "llx.tools.cli:main"
-]
+llx-mcp = "llx.mcp.server:main_sync"
 
 [project.optional-dependencies]
+mcp = ["mcp>=1.0"]
 litellm = ["litellm>=1.40"]
 code2llm = ["code2llm>=0.9"]
 redup = ["redup>=0.4"]
@@ -49,6 +51,7 @@ all = [
     "redup>=0.4",
     "vallm>=0.1",
     "ollama>=0.3",
+    "mcp>=1.0",
 ]
 dev = [
     "pytest>=8.0",
@@ -60,9 +63,6 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/wronai/llx"
 Repository = "https://github.com/wronai/llx"
-
-[project.scripts]
-llx = "llx.cli.app:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

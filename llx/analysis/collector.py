@@ -196,6 +196,51 @@ def _apply_analysis_yaml(data: dict, m: ProjectMetrics) -> None:
             m.max_cc = cc_val
 
 
+def _extract_metrics_target(mt: dict, m: ProjectMetrics) -> None:
+    """Extract god_modules, max_cc from metrics_target dict."""
+    god = mt.get("god_modules", mt.get("god-modules", {}))
+    if isinstance(god, dict):
+        m.god_modules = int(god.get("current", 0))
+    elif isinstance(god, (int, float)):
+        m.god_modules = int(god)
+    elif isinstance(god, str) and "→" in god:
+        try:
+            m.god_modules = int(god.split("→")[0].strip())
+        except ValueError:
+            pass
+
+    # Extract max CC from metrics_target
+    max_cc = mt.get("max_cc", mt.get("max-cc", {}))
+    if isinstance(max_cc, dict):
+        val = int(max_cc.get("current", 0))
+        m.max_cc = max(m.max_cc, val)
+
+
+def _extract_evolution_stats(stats: dict, m: ProjectMetrics) -> None:
+    """Extract total_funcs, avg_cc, max_cc from stats section."""
+    m.total_functions = max(m.total_functions, stats.get("total_funcs", 0))
+    m.total_files = max(m.total_files, stats.get("total_files", 0))
+    if stats.get("avg_cc"):
+        m.avg_cc = max(m.avg_cc, float(stats["avg_cc"]))
+    if stats.get("max_cc"):
+        m.max_cc = max(m.max_cc, int(stats["max_cc"]))
+    m.critical_count = max(m.critical_count, stats.get("critical_count", 0))
+
+
+def _extract_evolution_actions(actions: list, m: ProjectMetrics) -> None:
+    """Extract fan_out and god-module indicators from refactoring actions."""
+    # Count god-module splits
+    for action in actions:
+        if isinstance(action, dict) and action.get("action") == "SPLIT":
+            m.god_modules = max(m.god_modules, 1)  # at least one god module exists
+
+    # Fan-out from refactoring actions
+    for action in actions:
+        if isinstance(action, dict):
+            fan = action.get("fan_out", 0)
+            m.max_fan_out = max(m.max_fan_out, fan)
+
+
 def _apply_evolution_yaml(data: dict, m: ProjectMetrics) -> None:
     """Extract metrics from evolution.toon.yaml (valid YAML format).
 
@@ -205,44 +250,16 @@ def _apply_evolution_yaml(data: dict, m: ProjectMetrics) -> None:
     # preLLM / new format: metrics_target.god_modules.current
     mt = data.get("metrics_target", data.get("METRICS-TARGET", {}))
     if isinstance(mt, dict):
-        god = mt.get("god_modules", mt.get("god-modules", {}))
-        if isinstance(god, dict):
-            m.god_modules = int(god.get("current", 0))
-        elif isinstance(god, (int, float)):
-            m.god_modules = int(god)
-        elif isinstance(god, str) and "→" in god:
-            try:
-                m.god_modules = int(god.split("→")[0].strip())
-            except ValueError:
-                pass
-
-        # Extract max CC from metrics_target
-        max_cc = mt.get("max_cc", mt.get("max-cc", {}))
-        if isinstance(max_cc, dict):
-            val = int(max_cc.get("current", 0))
-            m.max_cc = max(m.max_cc, val)
-
+        _extract_metrics_target(mt, m)
+    
     # Stats section (preLLM format)
     stats = data.get("stats", {})
     if isinstance(stats, dict):
-        m.total_functions = max(m.total_functions, stats.get("total_funcs", 0))
-        m.total_files = max(m.total_files, stats.get("total_files", 0))
-        if stats.get("avg_cc"):
-            m.avg_cc = max(m.avg_cc, float(stats["avg_cc"]))
-        if stats.get("max_cc"):
-            m.max_cc = max(m.max_cc, int(stats["max_cc"]))
-        m.critical_count = max(m.critical_count, stats.get("critical_count", 0))
-
-    # Refactoring actions — count god-module splits
-    for action in data.get("refactoring", {}).get("actions", []):
-        if isinstance(action, dict) and action.get("action") == "SPLIT":
-            m.god_modules = max(m.god_modules, 1)  # at least one god module exists
-
-    # Fan-out from refactoring actions
-    for action in data.get("refactoring", {}).get("actions", []):
-        if isinstance(action, dict):
-            fan = action.get("fan_out", 0)
-            m.max_fan_out = max(m.max_fan_out, fan)
+        _extract_evolution_stats(stats, m)
+    
+    # Refactoring actions
+    actions = data.get("refactoring", {}).get("actions", [])
+    _extract_evolution_actions(actions, m)
 
 
 def _apply_evolution_text(text: str, m: ProjectMetrics) -> None:
@@ -273,6 +290,54 @@ def _apply_map_yaml(data: dict, m: ProjectMetrics) -> None:
         m.hotspot_count = max(m.hotspot_count, len(hotspots))
 
 
+def _parse_map_stats_line(line: str, m: ProjectMetrics) -> None:
+    """Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6"""
+    for part in line.split("|"):
+        part = part.strip()
+        match = re.search(r"(\d+)\s*func", part)
+        if match:
+            m.total_functions = max(m.total_functions, int(match.group(1)))
+        match = re.search(r"(\d+)\s*mod", part)
+        if match:
+            m.total_modules = max(m.total_modules, int(match.group(1)))
+        match = re.search(r"(\d+)\s*cls", part)
+        if match:
+            m.total_classes = max(m.total_classes, int(match.group(1)))
+        match = re.search(r"CC̄=([0-9.]+)", part)
+        if match:
+            m.avg_cc = max(m.avg_cc, float(match.group(1)))
+        match = re.search(r"critical:(\d+)", part)
+        if match:
+            m.critical_count = max(m.critical_count, int(match.group(1)))
+        match = re.search(r"cycles:(\d+)", part)
+        if match:
+            m.dependency_cycles = max(m.dependency_cycles, int(match.group(1)))
+
+
+def _parse_map_alerts_line(line: str, m: ProjectMetrics) -> None:
+    """Parse: # alerts[5]: CC _extract=65; fan-out _extract=45"""
+    for match in re.finditer(r"fan-out\s+\S+=(\d+)", line):
+        m.max_fan_out = max(m.max_fan_out, int(match.group(1)))
+    for match in re.finditer(r"CC\s+\S+=(\d+)", line):
+        m.max_cc = max(m.max_cc, int(match.group(1)))
+
+
+def _parse_map_hotspots_line(line: str, m: ProjectMetrics) -> None:
+    """Parse: # hotspots[5]: _extract fan=45; ..."""
+    match = re.search(r"hotspots\[(\d+)\]", line)
+    if match:
+        m.hotspot_count = max(m.hotspot_count, int(match.group(1)))
+    for match in re.finditer(r"fan=(\d+)", line):
+        m.max_fan_out = max(m.max_fan_out, int(match.group(1)))
+
+
+def _count_map_modules(text: str, m: ProjectMetrics) -> None:
+    """Count M[] module entries from body."""
+    module_lines = re.findall(r"^\s{2}\S+\.py,\d+", text, re.MULTILINE)
+    if module_lines:
+        m.total_modules = max(m.total_modules, len(module_lines))
+
+
 def _apply_map_text(text: str, m: ProjectMetrics) -> None:
     """Parse plain-text map.toon header comments for metrics.
 
@@ -287,50 +352,15 @@ def _apply_map_text(text: str, m: ProjectMetrics) -> None:
         if not line.startswith("#"):
             continue
 
-        # Parse stats line
+        # Dispatch each header line to its parser
         if "func" in line and "mod" in line:
-            for part in line.split("|"):
-                part = part.strip()
-                match = re.search(r"(\d+)\s*func", part)
-                if match:
-                    m.total_functions = max(m.total_functions, int(match.group(1)))
-                match = re.search(r"(\d+)\s*mod", part)
-                if match:
-                    m.total_modules = max(m.total_modules, int(match.group(1)))
-                match = re.search(r"(\d+)\s*cls", part)
-                if match:
-                    m.total_classes = max(m.total_classes, int(match.group(1)))
-                match = re.search(r"CC̄=([0-9.]+)", part)
-                if match:
-                    m.avg_cc = max(m.avg_cc, float(match.group(1)))
-                match = re.search(r"critical:(\d+)", part)
-                if match:
-                    m.critical_count = max(m.critical_count, int(match.group(1)))
-                match = re.search(r"cycles:(\d+)", part)
-                if match:
-                    m.dependency_cycles = max(m.dependency_cycles, int(match.group(1)))
-
-        # Parse alerts for fan-out
-        if "alerts" in line:
-            for match in re.finditer(r"fan-out\s+\S+=(\d+)", line):
-                m.max_fan_out = max(m.max_fan_out, int(match.group(1)))
-            for match in re.finditer(r"CC\s+\S+=(\d+)", line):
-                m.max_cc = max(m.max_cc, int(match.group(1)))
-
-        # Parse hotspots
-        if "hotspots" in line:
-            match = re.search(r"hotspots\[(\d+)\]", line)
-            if match:
-                m.hotspot_count = max(m.hotspot_count, int(match.group(1)))
-            for match in re.finditer(r"fan=(\d+)", line):
-                m.max_fan_out = max(m.max_fan_out, int(match.group(1)))
-
-    # Count M[] modules
-    m_count = text.count("\n  ") if "M[" in text else 0
-    # Better: count lines matching module pattern (indent + filename,number)
-    module_lines = re.findall(r"^\s{2}\S+\.py,\d+", text, re.MULTILINE)
-    if module_lines:
-        m.total_modules = max(m.total_modules, len(module_lines))
+            _parse_map_stats_line(line, m)
+        elif "alerts" in line:
+            _parse_map_alerts_line(line, m)
+        elif "hotspots" in line:
+            _parse_map_hotspots_line(line, m)
+    
+    _count_map_modules(text, m)
 
 
 # ---------------------------------------------------------------------------

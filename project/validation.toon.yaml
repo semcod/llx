@@ -1,10 +1,10 @@
-# vallm batch | 76f | 38✓ 38✗
+# vallm batch | 93f | 41✓ 52✗
 
 SUMMARY:
-  total: 76
-  passed: 38
-  failed: 38
-  success: 50.0%
+  total: 93
+  passed: 41
+  failed: 52
+  success: 44.1%
 
 FILES:
   [yaml]
@@ -28,7 +28,7 @@ FILES:
       verdict: fail
       score: 0.00
       issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 2 parse error(s) in yaml
+        [error] syntax.tree_sitter: tree-sitter found 5 parse error(s) in yaml
     ✗ project/evolution.toon.yaml
       verdict: fail
       score: 0.00
@@ -50,6 +50,9 @@ FILES:
       verdict: pass
       score: 1.00
     ✓ docker/ollama/entrypoint.sh
+      verdict: pass
+      score: 1.00
+    ✓ docker/vscode/install-extensions.sh
       verdict: pass
       score: 1.00
     ✓ docker/ai-tools/entrypoint.sh
@@ -114,9 +117,62 @@ FILES:
       score: 0.93
       issues: 4
         [warning] complexity.cyclomatic: _apply_evolution_yaml has cyclomatic complexity 16 (max: 15)@199
-        [warning] complexity.cyclomatic: _apply_map_text has cyclomatic complexity 20 (max: 15)@276
+        [warning] complexity.cyclomatic: _apply_map_text has cyclomatic complexity 20 (max: 15)@324
         [warning] complexity.lizard_cc: _apply_evolution_yaml: CC=16 exceeds limit 15@199
-        [warning] complexity.lizard_cc: _apply_map_text: CC=20 exceeds limit 15@276
+        [warning] complexity.lizard_cc: _apply_map_text: CC=20 exceeds limit 15@324
+    ✗ llx/tools/ai_tools_manager.py
+      verdict: fail
+      score: 0.96
+      issues: 1
+        [error] python.import.resolvable: Module 'docker_manager' not found@14
+    ✗ llx/tools/docker_manager.py
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.parse: SyntaxError: parameter without a default follows parameter with a default@374
+    ✗ llx/tools/cli.py
+      verdict: fail
+      score: 0.77
+      issues: 6
+        [error] python.import.resolvable: Module 'docker_manager' not found@13
+        [error] python.import.resolvable: Module 'ai_tools_manager' not found@14
+        [error] python.import.resolvable: Module 'vscode_manager' not found@15
+        [error] python.import.resolvable: Module 'model_manager' not found@16
+        [error] python.import.resolvable: Module 'config_manager' not found@17
+        [error] python.import.resolvable: Module 'health_checker' not found@18
+    ✗ llx/tools/vscode_manager.py
+      verdict: fail
+      score: 0.96
+      issues: 1
+        [error] python.import.resolvable: Module 'docker_manager' not found@14
+    ✗ llx/tools/config_manager.py
+      verdict: fail
+      score: 0.96
+      issues: 1
+        [error] python.import.resolvable: Module 'toml' not found@9
+    ✗ llx/tools/__init__.py
+      verdict: fail
+      score: 0.57
+      issues: 6
+        [error] python.import.resolvable: Module 'docker_manager' not found@6
+        [error] python.import.resolvable: Module 'ai_tools_manager' not found@7
+        [error] python.import.resolvable: Module 'vscode_manager' not found@8
+        [error] python.import.resolvable: Module 'model_manager' not found@9
+        [error] python.import.resolvable: Module 'config_manager' not found@10
+        [error] python.import.resolvable: Module 'health_checker' not found@11
+    ✗ llx/tools/health_checker.py
+      verdict: fail
+      score: 0.88
+      issues: 4
+        [error] python.import.resolvable: Module 'docker_manager' not found@14
+        [error] python.import.resolvable: Module 'model_manager' not found@15
+        [error] python.import.resolvable: Module 'vscode_manager' not found@16
+        [error] python.import.resolvable: Module 'ai_tools_manager' not found@17
+    ✗ llx/tools/model_manager.py
+      verdict: fail
+      score: 0.96
+      issues: 1
+        [error] python.import.resolvable: Module 'docker_manager' not found@14
     ✓ llx/cli/app.py
       verdict: pass
       score: 1.00
@@ -125,12 +181,37 @@ FILES:
       score: 1.00
     ✓ llx/cli/formatters.py
       verdict: pass
-      score: 0.93
-      issues: 4
-        [warning] complexity.cyclomatic: print_models_table has cyclomatic complexity 32 (max: 15)@80
-        [warning] complexity.cyclomatic: print_info_tables has cyclomatic complexity 26 (max: 15)@170
-        [warning] complexity.lizard_cc: print_models_table: CC=32 exceeds limit 15@80
-        [warning] complexity.lizard_cc: print_info_tables: CC=26 exceeds limit 15@170
+      score: 1.00
+    ✗ llx/orchestration/instance_manager.py
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.parse: SyntaxError: expected an indented block after 'if' statement on line 396@397
+    ✗ llx/orchestration/__init__.py
+      verdict: fail
+      score: 0.57
+      issues: 8
+        [error] python.import.resolvable: Module 'session_manager' not found@6
+        [error] python.import.resolvable: Module 'instance_manager' not found@7
+        [error] python.import.resolvable: Module 'rate_limiter' not found@8
+        [error] python.import.resolvable: Module 'queue_manager' not found@9
+        [error] python.import.resolvable: Module 'routing_engine' not found@10
+        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@11
+        [error] python.import.resolvable: Module 'llm_orchestrator' not found@12
+        [error] python.import.resolvable: Module 'orchestrator_cli' not found@13
+    ✓ llx/orchestration/rate_limiter.py
+      verdict: pass
+      score: 0.96
+      issues: 3
+        [warning] complexity.cyclomatic: main has cyclomatic complexity 29 (max: 15)@561
+        [warning] complexity.maintainability: Low maintainability index: 16.5 (threshold: 20)
+        [warning] complexity.lizard_cc: main: CC=29 exceeds limit 15@561
+    ✓ llx/orchestration/session_manager.py
+      verdict: pass
+      score: 0.97
+      issues: 2
+        [warning] complexity.cyclomatic: main has cyclomatic complexity 20 (max: 15)@518
+        [warning] complexity.lizard_cc: main: CC=20 exceeds limit 15@518
     ✓ llx/integrations/proxy.py
       verdict: pass
       score: 1.00
@@ -164,6 +245,9 @@ FILES:
     ✓ examples/local/main.py
       verdict: pass
       score: 1.00
+    ✓ examples/vscode-roocode/demo.py
+      verdict: pass
+      score: 1.00
     ✓ examples/ai-tools/main.py
       verdict: pass
       score: 1.00
@@ -171,9 +255,11 @@ FILES:
       verdict: pass
       score: 1.00
   [toml]
-    ✓ pyproject.toml
-      verdict: pass
-      score: 1.00
+    ✗ pyproject.toml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in toml
   [sql]
     ✗ docker/postgres/init.sql
       verdict: fail
@@ -194,11 +280,14 @@ FAILED:
   ✗ VERSION: Unsupported file type
   ✗ requirements.txt: Unsupported file type
   ✗ LICENSE: Unsupported file type
+  ✗ llx-tools: Unsupported file type
+  ✗ pyproject.toml: Validation fail
   ✗ docker-compose-prod.yml: Unsupported file type
   ✗ CHANGELOG.md: Unsupported file type
   ✗ Dockerfile: Unsupported file type
   ✗ docker-compose-dev.yml: Unsupported file type
   ✗ README.md: Unsupported file type
+  ✗ docs/llx-tools.md: Unsupported file type
   ✗ docs/README.md: Unsupported file type
   ✗ examples/README.md: Unsupported file type
   ✗ project/compact_flow.mmd: Unsupported file type
@@ -214,6 +303,16 @@ FAILED:
   ✗ project/analysis.toon.yaml: Validation fail
   ✗ llx/litellm_config.py: Validation fail
   ✗ llx/config.py: Validation fail
+  ✗ llx/tools/ai_tools_manager.py: Validation fail
+  ✗ llx/tools/docker_manager.py: Validation fail
+  ✗ llx/tools/cli.py: Validation fail
+  ✗ llx/tools/vscode_manager.py: Validation fail
+  ✗ llx/tools/config_manager.py: Validation fail
+  ✗ llx/tools/__init__.py: Validation fail
+  ✗ llx/tools/health_checker.py: Validation fail
+  ✗ llx/tools/model_manager.py: Validation fail
+  ✗ llx/orchestration/instance_manager.py: Validation fail
+  ✗ llx/orchestration/__init__.py: Validation fail
   ✗ docker/nginx/nginx.conf: Unsupported file type
   ✗ docker/postgres/init.sql: Validation fail
   ✗ docker/redis/redis.conf: Unsupported file type
@@ -222,5 +321,6 @@ FAILED:
   ✗ examples/docker/README.md: Unsupported file type
   ✗ examples/multi-provider/README.md: Unsupported file type
   ✗ examples/local/README.md: Unsupported file type
+  ✗ examples/vscode-roocode/README.md: Unsupported file type
   ✗ examples/ai-tools/README.md: Unsupported file type
   ✗ examples/basic/README.md: Unsupported file type

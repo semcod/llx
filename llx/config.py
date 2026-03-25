@@ -218,6 +218,50 @@ def _apply_toml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
     return config
 
 
+def _apply_yaml_thresholds(config: LlxConfig, thresholds: dict) -> None:
+    """Apply threshold overrides from YAML."""
+    if "files" in thresholds:
+        files = thresholds["files"]
+        config.thresholds.files_premium = files.get("premium", config.thresholds.files_premium)
+        config.thresholds.files_balanced = files.get("balanced", config.thresholds.files_balanced)
+        config.thresholds.files_cheap = files.get("cheap", config.thresholds.files_cheap)
+    if "lines" in thresholds:
+        lines = thresholds["lines"]
+        config.thresholds.lines_premium = lines.get("premium", config.thresholds.lines_premium)
+        config.thresholds.lines_balanced = lines.get("balanced", config.thresholds.lines_balanced)
+        config.thresholds.lines_cheap = lines.get("cheap", config.thresholds.lines_cheap)
+    if "complexity" in thresholds:
+        complexity = thresholds["complexity"]
+        config.thresholds.cc_premium = complexity.get("premium", config.thresholds.cc_premium)
+        config.thresholds.cc_balanced = complexity.get("balanced", config.thresholds.cc_balanced)
+        config.thresholds.cc_cheap = complexity.get("cheap", config.thresholds.cc_cheap)
+
+
+def _apply_yaml_models(config: LlxConfig, models: dict) -> None:
+    """Apply model definitions from YAML."""
+    for tier_name, mdata in models.items():
+        if isinstance(mdata, dict):
+            config.models[tier_name] = ModelConfig(
+                name=tier_name,
+                provider=mdata.get("provider", "litellm"),
+                model_id=mdata.get("model_id", mdata.get("model", "")),
+                max_context=mdata.get("max_context", 200_000),
+                cost_per_1k_input=mdata.get("cost_per_1k_input", 0.0),
+                cost_per_1k_output=mdata.get("cost_per_1k_output", 0.0),
+            )
+
+
+def _apply_yaml_proxy(config: LlxConfig, proxy: dict) -> None:
+    """Apply proxy settings from YAML."""
+    if "server" in proxy:
+        server = proxy["server"]
+        config.proxy.host = server.get("host", config.proxy.host)
+        config.proxy.port = server.get("port", config.proxy.port)
+    if "cache" in proxy:
+        cache = proxy["cache"]
+        config.proxy.redis_url = cache.get("redis_url", config.proxy.redis_url)
+
+
 def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
     """Apply YAML data to config."""
     # Apply basic settings
@@ -231,39 +275,13 @@ def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
     
     # Apply proxy settings
     if "proxy" in data:
-        proxy = data["proxy"]
-        if "server" in proxy:
-            server = proxy["server"]
-            config.proxy.host = server.get("host", config.proxy.host)
-            config.proxy.port = server.get("port", config.proxy.port)
-        if "auth" in proxy:
-            auth = proxy["auth"]
-            # Note: master_key should come from environment variables for security
-        if "cache" in proxy:
-            cache = proxy["cache"]
-            config.proxy.redis_url = cache.get("redis_url", config.proxy.redis_url)
+        _apply_yaml_proxy(config, data["proxy"])
     
     # Apply analysis settings
     if "analysis" in data:
         analysis = data["analysis"]
         if "thresholds" in analysis:
-            thresholds = analysis["thresholds"]
-            # Apply threshold mappings
-            if "files" in thresholds:
-                files = thresholds["files"]
-                config.thresholds.files_premium = files.get("premium", config.thresholds.files_premium)
-                config.thresholds.files_balanced = files.get("balanced", config.thresholds.files_balanced)
-                config.thresholds.files_cheap = files.get("cheap", config.thresholds.files_cheap)
-            if "lines" in thresholds:
-                lines = thresholds["lines"]
-                config.thresholds.lines_premium = lines.get("premium", config.thresholds.lines_premium)
-                config.thresholds.lines_balanced = lines.get("balanced", config.thresholds.lines_balanced)
-                config.thresholds.lines_cheap = lines.get("cheap", config.thresholds.lines_cheap)
-            if "complexity" in thresholds:
-                complexity = thresholds["complexity"]
-                config.thresholds.cc_premium = complexity.get("premium", config.thresholds.cc_premium)
-                config.thresholds.cc_balanced = complexity.get("balanced", config.thresholds.cc_balanced)
-                config.thresholds.cc_cheap = complexity.get("cheap", config.thresholds.cc_cheap)
+            _apply_yaml_thresholds(config, analysis["thresholds"])
     
     # Apply budget settings
     if "budget" in data:
