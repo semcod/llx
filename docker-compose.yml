@@ -1,0 +1,352 @@
+version: '3.8'
+
+services:
+  # ===========================================
+  # CORE llx SERVICES
+  # ===========================================
+  
+  llx-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llx-api
+    ports:
+      - "4000:4000"
+    environment:
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - LITELLM_PROXY_HOST=0.0.0.0
+      - LITELLM_PROXY_PORT=4000
+      - LITELLM_PROXY_MASTER_KEY=${LLX_PROXY_MASTER_KEY:-sk-proxy-local-dev}
+      # Use local Ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    env_file:
+      - .env
+    volumes:
+      - ./llx.yaml:/app/llx.yaml:ro
+      - ./litellm-config.yaml:/app/litellm-config.yaml:ro
+      - ./logs:/app/logs
+      - llx_cache:/app/cache
+      # Mount local Ollama models directory for access
+      - ~/.ollama:/root/.ollama:ro
+    networks:
+      - llx-network
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ===========================================
+  # DATABASE & CACHE
+  # ===========================================
+  
+  redis:
+    image: redis:7-alpine
+    container_name: llx-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - llx-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: llx-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-llx}
+      POSTGRES_USER: ${POSTGRES_USER:-llx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-llx123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - llx-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-llx} -d ${POSTGRES_DB:-llx}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================
+  # LOCAL LLM SERVICES (using host Ollama)
+  # ===========================================
+  
+  # Note: Ollama runs on host machine, not in container
+  # llx-api connects to host.docker.internal:11434
+
+  # ===========================================
+  # WEB INTERFACES
+  # ===========================================
+  
+  webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: llx-webui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-llx-webui-secret}
+      - WEBUI_NAME=llx WebUI
+      - WEBUI_DESCRIPTION=Intelligent LLM model router
+    volumes:
+      - webui_data:/app/backend/data
+    networks:
+      - llx-network
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ===========================================
+  # DEVELOPMENT TOOLS
+  # ===========================================
+  
+  vscode-server:
+    image: linuxserver/vscode-server:latest
+    container_name: llx-vscode
+    ports:
+      - "8080:8443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Warsaw
+      - PASSWORD=${VSCODE_PASSWORD:-llx-vscode}
+      - SUDO_PASSWORD=${VSCODE_PASSWORD:-llx-vscode}
+    volumes:
+      - vscode_data:/config
+      - ./:/config/workspace
+      - vscode_extensions:/config/extensions
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+  code-server:
+    image: codercom/code-server:latest
+    container_name: llx-code-server
+    ports:
+      - "8443:8080"
+    environment:
+      - PASSWORD=${CODE_SERVER_PASSWORD:-llx-code}
+      - PROXY_DOMAIN=localhost
+      - DEFAULT_WORKSPACE=/home/coder/project
+    volumes:
+      - code_server_data:/home/coder
+      - ./:/home/coder/project
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+  # ===========================================
+  # MONITORING & LOGGING
+  # ===========================================
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: llx-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-llx123}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - llx-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: llx-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./docker/prometheus/rules:/etc/prometheus/rules:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: llx-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+      - ./docker/loki/local-config.yaml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: llx-promtail
+    volumes:
+      - ./docker/promtail/config.yml:/etc/promtail/config.yml:ro
+      - ./logs:/var/log/llx:ro
+      - /var/log:/var/log/host:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - llx-network
+    restart: unless-stopped
+    depends_on:
+      - loki
+
+  # ===========================================
+  # PROXY & LOAD BALANCING
+  # ===========================================
+  
+  nginx:
+    image: nginx:alpine
+    container_name: llx-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    networks:
+      - llx-network
+    restart: unless-stopped
+    depends_on:
+      - llx-api
+      - webui
+      - grafana
+
+  # ===========================================
+  # BACKUP & MAINTENANCE
+  # ===========================================
+  
+  backup:
+    image: postgres:15-alpine
+    container_name: llx-backup
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-llx}
+      POSTGRES_USER: ${POSTGRES_USER:-llx}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-llx123}
+      POSTGRES_HOST: postgres
+    volumes:
+      - ./backups:/backups
+      - ./docker/backup/backup.sh:/backup.sh:ro
+    networks:
+      - llx-network
+    restart: "no"
+    depends_on:
+      - postgres
+    entrypoint: ["/bin/sh", "/backup.sh"]
+
+# ===========================================
+# NETWORKS
+# ===========================================
+networks:
+  llx-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# ===========================================
+# VOLUMES
+# ===========================================
+volumes:
+  # Data volumes
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+  webui_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  loki_data:
+    driver: local
+  
+  # Config volumes
+  vscode_data:
+    driver: local
+  code_server_data:
+    driver: local
+  vscode_extensions:
+    driver: local
+  
+  # Cache volumes
+  llx_cache:
+    driver: local
+  
+  # Log volumes
+  nginx_logs:
+    driver: local
+
+# ===========================================
+# PROFILES FOR DIFFERENT USE CASES
+# ===========================================
+# Basic development stack
+x-development: &development
+  services:
+    - llx-api
+    - redis
+    - ollama
+    - vscode-server
+
+# Full production stack
+x-production: &production
+  services:
+    - llx-api
+    - redis
+    - postgres
+    - ollama
+    - webui
+    - grafana
+    - prometheus
+    - loki
+    - promtail
+    - nginx
+
+# Monitoring stack
+x-monitoring: &monitoring
+  services:
+    - grafana
+    - prometheus
+    - loki
+    - promtail
+
+# Web interfaces
+x-web: &web
+  services:
+    - webui
+    - vscode-server
+    - code-server

@@ -1,0 +1,164 @@
+# vallm batch | 51f | 30✓ 21✗
+
+SUMMARY:
+  total: 51
+  passed: 30
+  failed: 21
+  success: 58.8%
+
+FILES:
+  [yaml]
+    ✓ litellm-config.yaml
+      verdict: pass
+      score: 1.00
+    ✓ goal.yaml
+      verdict: pass
+      score: 1.00
+    ✓ llx.yaml
+      verdict: pass
+      score: 1.00
+    ✓ project/duplication.toon.yaml
+      verdict: pass
+      score: 1.00
+    ✗ project/validation.toon.yaml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
+    ✗ project/map.toon.yaml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 2 parse error(s) in yaml
+    ✗ project/evolution.toon.yaml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
+    ✗ project/analysis.toon.yaml
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
+  [toml]
+    ✓ pyproject.toml
+      verdict: pass
+      score: 1.00
+  [bash]
+    ✓ project.sh
+      verdict: pass
+      score: 1.00
+    ✓ examples/proxy/run.sh
+      verdict: pass
+      score: 1.00
+    ✓ examples/multi-provider/run.sh
+      verdict: pass
+      score: 1.00
+    ✓ examples/local/run.sh
+      verdict: pass
+      score: 1.00
+    ✓ examples/basic/run.sh
+      verdict: pass
+      score: 1.00
+  [python]
+    ✓ tests/test_core.py
+      verdict: pass
+      score: 1.00
+    ✓ tests/__init__.py
+      verdict: pass
+      score: 1.00
+    ✗ llx/config.py
+      verdict: fail
+      score: 0.96
+      issues: 1
+        [error] python.import.resolvable: Module 'tomli' not found@27
+    ✓ llx/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/__main__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/analysis/runner.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/analysis/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/analysis/collector.py
+      verdict: pass
+      score: 0.93
+      issues: 4
+        [warning] complexity.cyclomatic: _apply_evolution_yaml has cyclomatic complexity 16 (max: 15)@199
+        [warning] complexity.cyclomatic: _apply_map_text has cyclomatic complexity 20 (max: 15)@276
+        [warning] complexity.lizard_cc: _apply_evolution_yaml: CC=16 exceeds limit 15@199
+        [warning] complexity.lizard_cc: _apply_map_text: CC=20 exceeds limit 15@276
+    ✓ llx/cli/app.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/cli/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/cli/formatters.py
+      verdict: pass
+      score: 0.93
+      issues: 4
+        [warning] complexity.cyclomatic: print_models_table has cyclomatic complexity 32 (max: 15)@80
+        [warning] complexity.cyclomatic: print_info_tables has cyclomatic complexity 26 (max: 15)@170
+        [warning] complexity.lizard_cc: print_models_table: CC=32 exceeds limit 15@80
+        [warning] complexity.lizard_cc: print_info_tables: CC=26 exceeds limit 15@170
+    ✓ llx/integrations/proxy.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/integrations/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/integrations/context_builder.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/routing/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/routing/client.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/routing/selector.py
+      verdict: pass
+      score: 0.97
+      issues: 2
+        [warning] complexity.cyclomatic: _compute_tier has cyclomatic complexity 20 (max: 15)@126
+        [warning] complexity.lizard_cc: _compute_tier: CC=20 exceeds limit 15@126
+    ✓ examples/proxy/main.py
+      verdict: pass
+      score: 1.00
+    ✓ examples/multi-provider/main.py
+      verdict: pass
+      score: 1.00
+    ✓ examples/local/main.py
+      verdict: pass
+      score: 1.00
+    ✓ examples/basic/main.py
+      verdict: pass
+      score: 1.00
+
+FAILED:
+  ✗ VERSION: Unsupported file type
+  ✗ LICENSE: Unsupported file type
+  ✗ CHANGELOG.md: Unsupported file type
+  ✗ README.md: Unsupported file type
+  ✗ docs/README.md: Unsupported file type
+  ✗ examples/README.md: Unsupported file type
+  ✗ project/compact_flow.mmd: Unsupported file type
+  ✗ project/calls.mmd: Unsupported file type
+  ✗ project/index.html: Unsupported file type
+  ✗ project/context.md: Unsupported file type
+  ✗ project/validation.toon.yaml: Validation fail
+  ✗ project/map.toon.yaml: Validation fail
+  ✗ project/flow.mmd: Unsupported file type
+  ✗ project/evolution.toon.yaml: Validation fail
+  ✗ project/README.md: Unsupported file type
+  ✗ project/analysis.toon.yaml: Validation fail
+  ✗ llx/config.py: Validation fail
+  ✗ examples/proxy/README.md: Unsupported file type
+  ✗ examples/multi-provider/README.md: Unsupported file type
+  ✗ examples/local/README.md: Unsupported file type
+  ✗ examples/basic/README.md: Unsupported file type

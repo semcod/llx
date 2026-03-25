@@ -1,0 +1,106 @@
+# llx | 15f 1877L | python:14,shell:1 | 2026-03-25
+# stats: 56 func | 0 cls | 15 mod | CC̄=5.1 | critical:5 | cycles:0
+# alerts[5]: CC print_models_table=32; CC print_info_tables=26; CC _apply_map_text=20; CC _compute_tier=20; fan-out print_models_table=18
+# hotspots[5]: print_models_table fan=18; _apply_map_text fan=14; chat fan=14; _apply_evolution_yaml fan=13; analyze fan=13
+# evolution: CC̄ 4.3→5.1 (regressed +0.8)
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[15]:
+  llx/__init__.py,29
+  llx/__main__.py,4
+  llx/analysis/__init__.py,1
+  llx/analysis/collector.py,411
+  llx/analysis/runner.py,80
+  llx/cli/__init__.py,5
+  llx/cli/app.py,247
+  llx/cli/formatters.py,279
+  llx/config.py,210
+  llx/integrations/__init__.py,1
+  llx/integrations/proxy.py,131
+  llx/routing/__init__.py,1
+  llx/routing/client.py,198
+  llx/routing/selector.py,259
+  project.sh,21
+D:
+  llx/cli/formatters.py:
+    e: output_rich,output_json,print_models_table,print_info_tables
+    output_rich(metrics;result;verbose)
+    output_json(metrics;result)
+    print_models_table(config;tag;provider;tier)
+    print_info_tables(config)
+  llx/analysis/collector.py:
+    e: ProjectMetrics,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope
+    ProjectMetrics:  # Aggregated project metrics that drive model selection.
+
+Ever...
+    analyze_project(project_path)
+    _collect_filesystem_metrics(root;m)
+    _collect_code2llm_metrics(search_dir;m)
+    _apply_analysis_yaml(data;m)
+    _apply_evolution_yaml(data;m)
+    _apply_evolution_text(text;m)
+    _apply_map_yaml(data;m)
+    _apply_map_text(text;m)
+    _collect_redup_metrics(search_dir;m)
+    _collect_vallm_metrics(search_dir;m)
+    _load_file(directory;candidates)
+    _extract_cc_value(msg)
+    _estimate_context_tokens(m)
+    _classify_scope(m)
+  llx/routing/selector.py:
+    e: ModelTier,SelectionResult,select_model,_compute_tier,_compute_alternative,check_context_fit,select_with_context_check
+    ModelTier(str,Enum):  # LLM model tiers ranked by capability and cost...
+    SelectionResult: explain(0)  # Result of model selection with explanation...
+    select_model(metrics;config)
+    _compute_tier(m;t;reasons;task_hint)
+    _compute_alternative(tier;order)
+    check_context_fit(metrics;model)
+    select_with_context_check(metrics;config)
+  llx/config.py:
+    e: ModelConfig,TierThresholds,ProxyConfig,LlxConfig,_apply_toml,_apply_env
+    ModelConfig:  # Configuration for a single model tier...
+    TierThresholds:  # Thresholds that determine which model tier to use.
+
+Based on...
+    ProxyConfig:  # LiteLLM proxy settings...
+    LlxConfig: load(1)  # Root configuration for llx...
+    _apply_toml(config;data)
+    _apply_env(config)
+  llx/integrations/proxy.py:
+    e: generate_proxy_config,start_proxy,check_proxy
+    generate_proxy_config(config;output_path)
+    start_proxy(config)
+    check_proxy(base_url)
+  llx/analysis/runner.py:
+    e: ToolResult,check_tool,_run_tool,run_code2llm,run_redup,run_vallm,run_all_tools
+    ToolResult:
+    check_tool(name)
+    _run_tool(tool;cmd;output_dir;timeout)
+    run_code2llm(project_path;output_dir;fmt)
+    run_redup(project_path;output_dir;fmt)
+    run_vallm(project_path;output_dir)
+    run_all_tools(project_path;output_dir;on_progress)
+  llx/routing/client.py:
+    e: ChatMessage,ChatResponse,LlxClient
+    ChatMessage:  # A single chat message...
+    ChatResponse:  # Response from LLM completion...
+    LlxClient: __init__(1),chat(2),chat_with_context(3),_build_payload(5),_parse_response(2),_fallback_direct(2),close(0),__enter__(0),__exit__(0)  # LLM client that routes through LiteLLM proxy or calls direct...
+  llx/cli/app.py:
+    e: analyze,select,chat,proxy_start,proxy_config,proxy_status,models,info,init,_run_analysis_tools,main
+    analyze(path;toon_dir;task;local;max_tier;run_tools;verbose;json_output)
+    select(path;toon_dir;task;local)
+    chat(path;prompt;toon_dir;task;model_override;local)
+    proxy_start(config_path;port;background)
+    proxy_config(output)
+    proxy_status()
+    models(tag;provider;tier)
+    info()
+    init(path)
+    _run_analysis_tools(project_path;config)
+    main()
+  llx/__main__.py:
+  llx/analysis/__init__.py:
+  llx/__init__.py:
+  llx/cli/__init__.py:
+  llx/integrations/__init__.py:
+  llx/routing/__init__.py:
+  project.sh:

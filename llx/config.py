@@ -26,6 +26,10 @@ else:
     except ImportError:
         import tomli as tomllib  # type: ignore[import,no-redef]
 
+import yaml
+
+from .litellm_config import LiteLLMConfig
+
 
 @dataclass
 class ModelConfig:
@@ -37,6 +41,7 @@ class ModelConfig:
     max_context: int = 200_000
     cost_per_1k_input: float = 0.0
     cost_per_1k_output: float = 0.0
+    tags: list[str] = field(default_factory=list)  # Model capabilities: FREE, FAST, PROGRAMMING, etc.
 
 
 @dataclass
@@ -80,31 +85,37 @@ DEFAULT_MODELS: dict[str, ModelConfig] = {
         name="premium", provider="anthropic",
         model_id="claude-opus-4-20250514",
         max_context=200_000, cost_per_1k_input=0.015, cost_per_1k_output=0.075,
+        tags=["EXPENSIVE", "HIGH_QUALITY", "REFACTORING", "ARCHITECTURE", "COMPLEX_REASONING", "SLOW"]
     ),
     "balanced": ModelConfig(
         name="balanced", provider="anthropic",
         model_id="claude-sonnet-4-20250514",
         max_context=200_000, cost_per_1k_input=0.003, cost_per_1k_output=0.015,
+        tags=["PROGRAMMING", "GENERATING", "ANALYSIS", "DEBUGGING", "FAST", "RELIABLE"]
     ),
     "cheap": ModelConfig(
         name="cheap", provider="anthropic",
         model_id="claude-haiku-4-5-20251001",
         max_context=200_000, cost_per_1k_input=0.0008, cost_per_1k_output=0.004,
+        tags=["FAST", "CHEAP", "PROGRAMMING", "QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION"]
     ),
     "free": ModelConfig(
         name="free", provider="google",
         model_id="gemini/gemini-2.5-pro",
         max_context=1_000_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
+        tags=["FREE", "LARGE_CONTEXT", "GENERAL_PURPOSE", "FAST", "COST_EFFECTIVE"]
     ),
     "local": ModelConfig(
         name="local", provider="ollama",
         model_id="ollama/qwen2.5-coder:7b",
         max_context=32_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
+        tags=["FREE", "OFFLINE", "PRIVATE", "PROGRAMMING", "CODE_SPECIALIZED", "FAST"]
     ),
     "openrouter": ModelConfig(
         name="openrouter", provider="openrouter",
         model_id="openrouter/deepseek/deepseek-chat-v3-0324",
         max_context=128_000, cost_per_1k_input=0.0005, cost_per_1k_output=0.002,
+        tags=["CHEAP", "FAST", "PROGRAMMING", "REASONING", "COST_EFFECTIVE", "BACKUP_OPTION"]
     ),
 }
 
@@ -133,14 +144,31 @@ class LlxConfig:
     enable_redup: bool = True
     enable_vallm: bool = True
     verbose: bool = False
+    litellm_config: LiteLLMConfig = field(default_factory=LiteLLMConfig._default_config)
 
     @classmethod
     def load(cls, project_path: str | Path = ".") -> LlxConfig:
-        """Load configuration from llx.toml or pyproject.toml."""
+        """Load configuration from llx.yaml, llx.toml, or pyproject.toml."""
         root = Path(project_path).resolve()
         config = cls()
 
-        # Try llx.toml first
+        # Load LiteLLM configuration
+        config.litellm_config = LiteLLMConfig.load(project_path)
+
+        # Try llx.yaml first (new standard)
+        yaml_path = root / "llx.yaml"
+        if yaml_path.exists():
+            with open(yaml_path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+            if data:
+                config = _apply_yaml(config, data)
+                # Update models from LiteLLM config if available
+                if config.litellm_config.model_list:
+                    litellm_models = config.litellm_config.to_llx_models()
+                    config.models.update(litellm_models)
+                return _apply_env(config)
+
+        # Try llx.toml (legacy)
         for name in ("llx.toml", ".llx.toml"):
             toml_path = root / name
             if toml_path.exists():
@@ -187,6 +215,75 @@ def _apply_toml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
         if key in proxy:
             setattr(config.proxy, key, proxy[key])
 
+    return config
+
+
+def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
+    """Apply YAML data to config."""
+    # Apply basic settings
+    if "selection" in data:
+        selection = data["selection"]
+        if "default_tier" in selection:
+            config.default_tier = selection["default_tier"]
+        if "context" in selection:
+            context = selection["context"]
+            config.litellm_base_url = context.get("max_tokens", config.litellm_base_url)
+    
+    # Apply proxy settings
+    if "proxy" in data:
+        proxy = data["proxy"]
+        if "server" in proxy:
+            server = proxy["server"]
+            config.proxy.host = server.get("host", config.proxy.host)
+            config.proxy.port = server.get("port", config.proxy.port)
+        if "auth" in proxy:
+            auth = proxy["auth"]
+            # Note: master_key should come from environment variables for security
+        if "cache" in proxy:
+            cache = proxy["cache"]
+            config.proxy.redis_url = cache.get("redis_url", config.proxy.redis_url)
+    
+    # Apply analysis settings
+    if "analysis" in data:
+        analysis = data["analysis"]
+        if "thresholds" in analysis:
+            thresholds = analysis["thresholds"]
+            # Apply threshold mappings
+            if "files" in thresholds:
+                files = thresholds["files"]
+                config.thresholds.files_premium = files.get("premium", config.thresholds.files_premium)
+                config.thresholds.files_balanced = files.get("balanced", config.thresholds.files_balanced)
+                config.thresholds.files_cheap = files.get("cheap", config.thresholds.files_cheap)
+            if "lines" in thresholds:
+                lines = thresholds["lines"]
+                config.thresholds.lines_premium = lines.get("premium", config.thresholds.lines_premium)
+                config.thresholds.lines_balanced = lines.get("balanced", config.thresholds.lines_balanced)
+                config.thresholds.lines_cheap = lines.get("cheap", config.thresholds.lines_cheap)
+            if "complexity" in thresholds:
+                complexity = thresholds["complexity"]
+                config.thresholds.cc_premium = complexity.get("premium", config.thresholds.cc_premium)
+                config.thresholds.cc_balanced = complexity.get("balanced", config.thresholds.cc_balanced)
+                config.thresholds.cc_cheap = complexity.get("cheap", config.thresholds.cc_cheap)
+    
+    # Apply budget settings
+    if "budget" in data:
+        budget = data["budget"]
+        if "limits" in budget:
+            limits = budget["limits"]
+            config.proxy.budget_limit = limits.get("monthly", config.proxy.budget_limit)
+    
+    # Apply logging settings
+    if "logging" in data:
+        logging = data["logging"]
+        if "level" in logging:
+            config.verbose = logging["level"].upper() == "DEBUG"
+    
+    # Apply development settings
+    if "development" in data:
+        dev = data["development"]
+        if "debug" in dev:
+            config.verbose = dev["debug"]
+    
     return config
 
 

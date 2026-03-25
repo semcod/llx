@@ -1,0 +1,123 @@
+flowchart LR
+    subgraph examples_basic
+        examples__basic__main__main["main"]
+    end
+    subgraph examples_local
+        examples__local__main__demonstrate_local_model_selection["demonstrate_local_model_select"]
+        examples__local__main__main["main"]
+        examples__local__main__estimate_resource_requirements["estimate_resource_requirements"]
+        examples__local__main__list_recommended_local_models["list_recommended_local_models"]
+        examples__local__main__check_ollama_service["check_ollama_service"]
+        examples__local__main__check_ollama_installation["check_ollama_installation"]
+    end
+    subgraph examples_multi_provider
+        examples__multi-provider__main__demonstrate_fallback_strateg["demonstrate_fallback_strategy"]
+        examples__multi_provider__main__main["main"]
+        examples__multi_provider__main__check_provider_keys["check_provider_keys"]
+        examples__multi-provider__main__simulate_multi_provider_sele["simulate_multi_provider_select"]
+        examples__multi_provider__main__compare_provider_costs["compare_provider_costs"]
+    end
+    subgraph llx_analysis
+        llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
+        llx__analysis__collector___load_file["_load_file"]
+        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
+        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
+        llx__analysis__runner__run_code2llm["run_code2llm"]
+        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
+        llx__analysis__runner__run_vallm["run_vallm"]
+        llx__analysis__runner__run_redup["run_redup"]
+        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__runner__check_tool["check_tool"]
+        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
+        llx__analysis__collector___classify_scope["_classify_scope"]
+        llx__analysis__runner___run_tool["_run_tool"]
+        llx__analysis__runner__run_all_tools["run_all_tools"]
+        llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
+        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
+    end
+    subgraph llx_cli
+        llx__cli__app__proxy_config["proxy_config"]
+        llx__cli__formatters__print_models_table["print_models_table"]
+        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
+        llx__cli__app__chat["chat"]
+        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__app__models["models"]
+        llx__cli__app__select["select"]
+        llx__cli__app__info["info"]
+        llx__cli__app__proxy_start["proxy_start"]
+    end
+    subgraph llx_config
+        llx__config___apply_toml["_apply_toml"]
+        llx__config___apply_env["_apply_env"]
+        llx__config__LlxConfig__load["load"]
+    end
+    subgraph llx_integrations
+        llx__integrations__proxy__start_proxy["start_proxy"]
+        llx__integrations__proxy__check_proxy["check_proxy"]
+        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
+    end
+    subgraph llx_routing
+        llx__routing__selector__select_model["select_model"]
+        llx__routing__selector__select_with_context_check["select_with_context_check"]
+        llx__routing__selector___compute_tier["_compute_tier"]
+        llx__routing__selector__check_context_fit["check_context_fit"]
+        llx__routing__selector___compute_alternative["_compute_alternative"]
+    end
+    llx__config__LlxConfig__load --> llx__config___apply_env
+    llx__config__LlxConfig__load --> llx__config___apply_toml
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_filesystem_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___estimate_context_tokens
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___classify_scope
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_code2llm_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_redup_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_vallm_metrics
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___load_file
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_analysis_yaml
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_evolution_yaml
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_map_yaml
+    llx__analysis__collector___collect_redup_metrics --> llx__analysis__collector___load_file
+    llx__analysis__collector___collect_vallm_metrics --> llx__analysis__collector___load_file
+    llx__integrations__proxy__start_proxy --> llx__integrations__proxy__generate_proxy_config
+    examples__multi_provider__main__compare_provider_costs --> examples__multi_provider__main__check_provider_keys
+    examples__multi-provider__main__demonstrate_fallback_strateg --> examples__multi_provider__main__check_provider_keys
+    examples__multi-provider__main__simulate_multi_provider_sele --> examples__multi_provider__main__check_provider_keys
+    examples__multi-provider__main__simulate_multi_provider_sele --> llx__config__LlxConfig__load
+    examples__multi-provider__main__simulate_multi_provider_sele --> llx__routing__selector__select_model
+    examples__multi_provider__main__main --> examples__multi_provider__main__check_provider_keys
+    examples__multi_provider__main__main --> examples__multi_provider__main__compare_provider_costs
+    examples__multi_provider__main__main --> examples__multi-provider__main__demonstrate_fallback_strateg
+    examples__multi_provider__main__main --> examples__multi-provider__main__simulate_multi_provider_sele
+    llx__cli__app__select --> llx__config__LlxConfig__load
+    llx__cli__app__select --> llx__analysis__collector__analyze_project
+    llx__cli__app__select --> llx__routing__selector__select_model
+    llx__cli__app__chat --> llx__config__LlxConfig__load
+    llx__cli__app__chat --> llx__analysis__collector__analyze_project
+    llx__cli__app__proxy_start --> llx__config__LlxConfig__load
+    llx__cli__app__proxy_start --> llx__integrations__proxy__start_proxy
+    llx__cli__app__proxy_config --> llx__config__LlxConfig__load
+    llx__cli__app__proxy_config --> llx__integrations__proxy__generate_proxy_config
+    llx__cli__app__proxy_status --> llx__config__LlxConfig__load
+    llx__cli__app__proxy_status --> llx__integrations__proxy__check_proxy
+    llx__cli__app__models --> llx__config__LlxConfig__load
+    llx__cli__app__models --> llx__cli__formatters__print_models_table
+    llx__cli__app__info --> llx__cli__formatters__print_info_tables
+    llx__cli__app__info --> llx__config__LlxConfig__load
+    llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
+    examples__local__main__demonstrate_local_model_selection --> llx__config__LlxConfig__load
+    examples__local__main__demonstrate_local_model_selection --> examples__local__main__check_ollama_service
+    examples__local__main__demonstrate_local_model_selection --> llx__analysis__collector__analyze_project
+    examples__local__main__main --> examples__local__main__check_ollama_installation
+    examples__local__main__main --> examples__local__main__check_ollama_service
+    examples__local__main__main --> examples__local__main__list_recommended_local_models
+    examples__local__main__main --> examples__local__main__estimate_resource_requirements
+    examples__basic__main__main --> llx__config__LlxConfig__load
+    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
+    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
+    llx__routing__selector__select_model --> llx__routing__selector___compute_tier
+    llx__routing__selector__select_model --> llx__routing__selector___compute_alternative
+    llx__routing__selector__select_with_context_check --> llx__routing__selector__select_model
+    llx__routing__selector__select_with_context_check --> llx__routing__selector__check_context_fit

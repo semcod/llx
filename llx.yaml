@@ -1,0 +1,317 @@
+# llx Configuration File
+# Core llx settings and metadata
+
+# Project Information
+project:
+  name: "llx"
+  version: "0.1.1"
+  description: "Intelligent LLM model router driven by real code metrics"
+  author: "Tom Sapletta"
+  license: "Apache-2.0"
+  repository: "https://github.com/wronai/llx"
+  homepage: "https://github.com/wronai/llx"
+
+# Analysis Configuration
+analysis:
+  # Code analysis tools
+  tools:
+    code2llm:
+      enabled: true
+      version: ">=0.5.0"
+      output_dir: "./project"
+      formats: ["toon", "yaml", "json"]
+    
+    redup:
+      enabled: true
+      version: ">=0.4.0"
+      min_similarity: 0.85
+      output_dir: "./project"
+    
+    vallm:
+      enabled: true
+      version: ">=0.1.0"
+      output_dir: "./project"
+
+  # Analysis thresholds
+  thresholds:
+    # File count thresholds for tier selection
+    files:
+      premium: 50
+      balanced: 10
+      cheap: 3
+    
+    # Line count thresholds
+    lines:
+      premium: 20000
+      balanced: 5000
+      cheap: 500
+    
+    # Cyclomatic complexity thresholds
+    complexity:
+      premium: 6.0
+      balanced: 4.0
+      cheap: 2.0
+    
+    # Coupling thresholds
+    coupling:
+      premium: 30
+      balanced: 10
+    
+    # Duplication thresholds
+    duplication:
+      premium: 15
+      balanced: 5
+
+# Model Selection Configuration
+selection:
+  # Default model tier
+  default_tier: "balanced"
+  
+  # Task-specific model preferences
+  task_mapping:
+    refactoring: "premium"
+    architecture: "premium"
+    debugging: "balanced"
+    documentation: "cheap"
+    quick_fix: "cheap"
+    analysis: "balanced"
+    explanation: "balanced"
+    code_review: "balanced"
+    testing: "cheap"
+  
+  # Context window management
+  context:
+    max_tokens: 120000
+    delta_threshold: 0.15
+    watch_dir: "./project"
+  
+  # Model constraints
+  constraints:
+    max_model_cost: 2.0  # USD per request
+    min_context_window: 4000
+    preferred_providers: ["anthropic", "openrouter", "openai"]
+
+# Proxy Configuration
+proxy:
+  # Server settings
+  server:
+    host: "0.0.0.0"
+    port: 4000
+    workers: 4
+    timeout: 30
+  
+  # Authentication
+  auth:
+    master_key: "sk-proxy-local-dev"
+    require_auth: true
+  
+  # Caching
+  cache:
+    enabled: true
+    type: "memory"  # memory, redis
+    redis_url: "redis://localhost:6379/0"
+    ttl: 3600  # seconds
+  
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+    burst_size: 20
+
+# Integration Settings
+integrations:
+  # IDE integrations
+  ide:
+    vscode:
+      port: 4000
+      model_mappings:
+        code: "balanced"
+        architect: "free"
+        debug: "cheap"
+        ask: "free"
+        opus: "premium"
+    
+    cursor:
+      endpoint: "http://localhost:4000"
+      model: "balanced"
+    
+    windsurf:
+      endpoint: "http://localhost:4000"
+      model: "balanced"
+  
+  # Terminal tools
+  terminal:
+    aider:
+      env_var: "OPENAI_API_BASE"
+      endpoint: "http://localhost:4000"
+    
+    claude_code:
+      env_var: "ANTHROPIC_BASE_URL"
+      endpoint: "http://localhost:4000"
+
+# Local Models Configuration
+local_models:
+  # Ollama settings
+  ollama:
+    base_url: "http://localhost:11434"
+    secondary_url: ""
+    timeout: 60
+    pull_timeout: 300
+  
+  # Preferred local models
+  preferred_models:
+    - "qwen2.5-coder:7b"
+    - "llama3.1:8b"
+    - "mistral:7b"
+    - "codellama:7b"
+  
+  # Resource limits
+  resource_limits:
+    max_memory_gb: 32
+    max_vram_gb: 24
+    max_disk_gb: 100
+
+# Budget and Cost Management
+budget:
+  # Budget limits
+  limits:
+    monthly: 60.0  # USD
+    daily: 5.0     # USD
+    per_request: 2.0  # USD
+  
+  # Cost tracking
+  tracking:
+    enabled: true
+    log_level: "info"
+    export_format: "json"
+  
+  # Alerts
+  alerts:
+    daily_threshold: 0.8  # 80% of daily budget
+    monthly_threshold: 0.9  # 90% of monthly budget
+    webhook_url: ""
+
+# Logging and Monitoring
+logging:
+  level: "INFO"
+  format: "rich"  # rich, json, plain
+  
+  # Log files
+  files:
+    main: "./logs/llx.log"
+    access: "./logs/access.log"
+    error: "./logs/error.log"
+    audit: "./logs/audit.log"
+  
+  # Rotation
+  rotation:
+    max_size: "10MB"
+    backup_count: 5
+    compression: true
+
+# Monitoring and Health Checks
+monitoring:
+  # Health checks
+  health:
+    enabled: true
+    endpoint: "/health"
+    interval: 30  # seconds
+  
+  # Metrics
+  metrics:
+    enabled: true
+    endpoint: "/metrics"
+    format: "prometheus"
+  
+  # Performance tracking
+  performance:
+    track_response_times: true
+    track_token_usage: true
+    track_costs: true
+
+# Security Settings
+security:
+  # API key management
+  api_keys:
+    encrypt_at_rest: false
+    rotation_days: 90
+    audit_log: true
+  
+  # Network security
+  network:
+    allowed_hosts: ["localhost", "127.0.0.1"]
+    cors_origins: ["http://localhost:3000", "http://localhost:8080"]
+    rate_limit_by_ip: true
+  
+  # Content filtering
+  content_filtering:
+    enabled: false
+    max_response_length: 100000  # characters
+
+# Development Settings
+development:
+  # Debug mode
+  debug: false
+  verbose: false
+  
+  # Hot reload
+  hot_reload: false
+  
+  # Test settings
+  testing:
+    mock_apis: false
+    test_models: ["gpt-4o-mini", "claude-haiku-4-5-20251001"]
+    timeout_multiplier: 2.0
+
+# Feature Flags
+features:
+  # Experimental features
+  experimental:
+    semantic_cache: false
+    model_routing_v2: false
+    auto_optimization: false
+  
+  # Beta features
+  beta:
+    multi_provider_fallback: true
+    cost_optimization: true
+    context_compression: false
+
+# Plugin System
+plugins:
+  enabled: true
+  directories:
+    - "./plugins"
+    - "~/.llx/plugins"
+  
+  # Available plugins
+  available:
+    - name: "github-integration"
+      enabled: false
+      config: {}
+    
+    - name: "jira-integration"
+      enabled: false
+      config: {}
+    
+    - name: "slack-notifications"
+      enabled: false
+      config: {}
+
+# Metadata
+metadata:
+  created_at: "2025-01-15T00:00:00Z"
+  updated_at: "2025-01-15T00:00:00Z"
+  environment: "development"
+  deployment: "local"
+  
+  # Version compatibility
+  compatibility:
+    min_python: "3.10"
+    max_python: "3.13"
+    required_packages:
+      - "typer>=0.12"
+      - "rich>=13.0"
+      - "pydantic>=2.0"
+      - "httpx>=0.27"
+      - "pyyaml>=6.0"

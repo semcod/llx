@@ -1,0 +1,21 @@
+flowchart TD
+    examples_basic["examples.basic<br/>1 funcs"]
+    examples_local["examples.local<br/>7 funcs"]
+    examples_multi_provider["examples.multi-provider<br/>5 funcs"]
+    llx_analysis["llx.analysis<br/>20 funcs"]
+    llx_cli["llx.cli<br/>15 funcs"]
+    llx_config["llx.config<br/>3 funcs"]
+    llx_integrations["llx.integrations<br/>3 funcs"]
+    llx_routing["llx.routing<br/>15 funcs"]
+    llx_cli ==>|8| llx_config
+    llx_cli ==>|5| llx_analysis
+    llx_cli -->|3| llx_routing
+    llx_cli -->|3| llx_integrations
+    examples_multi_provider -->|1| llx_config
+    examples_multi_provider -->|1| llx_routing
+    examples_local -->|1| llx_config
+    examples_local -->|1| llx_analysis
+    examples_local -->|1| llx_routing
+    examples_basic -->|1| llx_config
+    examples_basic -->|1| llx_analysis
+    examples_basic -->|1| llx_routing

@@ -154,6 +154,18 @@ def proxy_status() -> None:
 
 
 @app.command()
+def models(
+    tag: Optional[str] = typer.Argument(None, help="Filter models by tag (e.g., FAST, FREE, PROGRAMMING)"),
+    provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider"),
+    tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Filter by tier"),
+) -> None:
+    """Show available models with optional filtering by tags, provider, or tier."""
+    from llx.cli.formatters import print_models_table
+    config = LlxConfig.load(".")
+    print_models_table(config, tag=tag, provider=provider, tier=tier)
+
+
+@app.command()
 def info() -> None:
     """Show available tools, models, and configuration."""
     from llx.cli.formatters import print_info_tables

@@ -1,0 +1,61 @@
+# code2llm | 15f 1877L | python:14,shell:1 | 2026-03-25
+# CC̄=5.1 | critical:5/77 | dups:0 | cycles:0
+
+HEALTH[5]:
+  🟡 CC    _apply_evolution_yaml CC=16 (limit:15)
+  🟡 CC    _apply_map_text CC=20 (limit:15)
+  🟡 CC    print_models_table CC=32 (limit:15)
+  🟡 CC    print_info_tables CC=26 (limit:15)
+  🟡 CC    _compute_tier CC=20 (limit:15)
+
+REFACTOR[1]:
+  1. split 5 high-CC methods  (CC>15)
+
+PIPELINES[34]:
+  [1] Src [load]: load → _apply_env
+      PURITY: 100% pure
+  [2] Src [__init__]: __init__
+      PURITY: 100% pure
+  [3] Src [chat]: chat
+      PURITY: 100% pure
+  [4] Src [chat_with_context]: chat_with_context
+      PURITY: 100% pure
+  [5] Src [_build_payload]: _build_payload
+      PURITY: 100% pure
+
+LAYERS:
+  llx/                            CC̄=5.1    ←in:8  →out:0
+  │ !! collector                  411L  1C   14m  CC=20     ←3
+  │ !! formatters                 279L  0C    4m  CC=32     ←1
+  │ !! selector                   259L  2C    6m  CC=20     ←4
+  │ app                        247L  0C   11m  CC=5      ←0
+  │ config                     210L  4C    3m  CC=9      ←4
+  │ client                     198L  3C    9m  CC=5      ←0
+  │ proxy                      131L  0C    3m  CC=7      ←1
+  │ runner                      80L  1C    6m  CC=6      ←2
+  │ __init__                    29L  0C    0m  CC=0.0    ←0
+  │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ __main__                     4L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ project.sh                  21L  0C    0m  CC=0.0    ←0
+  │
+
+COUPLING:
+                             llx.cli               llx      llx.analysis  llx.integrations       llx.routing
+           llx.cli                ──                 8                 5                 3                 3  !! fan-out
+               llx                ←8                ──                                                        hub
+      llx.analysis                ←5                                  ──                                      hub
+  llx.integrations                ←3                                                    ──                  
+       llx.routing                ←3                                                                      ──
+  CYCLES: none
+  HUB: llx.analysis/ (fan-in=5)
+  HUB: llx/ (fan-in=8)
+  SMELL: llx.cli/ fan-out=19 → split needed
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon

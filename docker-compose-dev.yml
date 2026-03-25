@@ -1,0 +1,83 @@
+# Development Docker Compose configuration
+# Uses local Ollama instead of containerized version
+
+version: '3.8'
+
+services:
+  # Core llx API
+  llx-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder  # Use development stage
+    container_name: llx-api-dev
+    ports:
+      - "4000:4000"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - HOT_RELOAD=true
+      - LITELLM_PROXY_HOST=0.0.0.0
+      - LITELLM_PROXY_PORT=4000
+      - LITELLM_PROXY_MASTER_KEY=sk-proxy-local-dev
+      # Use local Ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    env_file:
+      - .env
+    volumes:
+      - ./:/app  # Mount entire project for development
+      - /app/.venv  # Exclude virtual environment
+      - ./logs:/app/logs
+      - llx_cache:/app/cache
+      # Mount local Ollama models directory if needed
+      - ~/.ollama:/root/.ollama:ro
+    networks:
+      - llx-network
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: python -m llx proxy start --reload
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: llx-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+  # VS Code for development
+  vscode:
+    image: linuxserver/vscode-server:latest
+    container_name: llx-vscode-dev
+    ports:
+      - "8080:8443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Warsaw
+      - PASSWORD=llx-dev
+      - SUDO_PASSWORD=llx-dev
+    volumes:
+      - vscode_data:/config
+      - ./:/config/workspace
+      - vscode_extensions:/config/extensions
+    networks:
+      - llx-network
+    restart: unless-stopped
+
+networks:
+  llx-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  vscode_data:
+  vscode_extensions:
+  llx_cache:

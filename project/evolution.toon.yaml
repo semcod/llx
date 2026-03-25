@@ -1,0 +1,59 @@
+# code2llm/evolution | 56 func | 8f | 2026-03-25
+
+NEXT[5] (ranked by impact):
+  [1] !! SPLIT-FUNC      print_models_table  CC=32  fan=18
+      WHY: CC=32 exceeds 15
+      EFFORT: ~1h  IMPACT: 576
+
+  [2] !! SPLIT-FUNC      print_info_tables  CC=26  fan=12
+      WHY: CC=26 exceeds 15
+      EFFORT: ~1h  IMPACT: 312
+
+  [3] !  SPLIT-FUNC      _apply_map_text  CC=20  fan=14
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 280
+
+  [4] !  SPLIT-FUNC      _apply_evolution_yaml  CC=16  fan=13
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 208
+
+  [5] !  SPLIT-FUNC      _compute_tier  CC=20  fan=2
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 40
+
+
+RISKS[0]: none
+
+METRICS-TARGET:
+  CC̄:          5.1 → ≤3.6
+  max-CC:      32 → ≤16
+  god-modules: 0 → 0
+  high-CC(≥15): 5 → ≤2
+  hub-types:   0 → ≤0
+
+PATTERNS (language parser shared logic):
+  _extract_declarations() in base.py — unified extraction for:
+    - TypeScript: interfaces, types, classes, functions, arrow funcs
+    - PHP: namespaces, traits, classes, functions, includes
+    - Ruby: modules, classes, methods, requires
+    - C++: classes, structs, functions, #includes
+    - C#: classes, interfaces, methods, usings
+    - Java: classes, interfaces, methods, imports
+    - Go: packages, functions, structs
+    - Rust: modules, functions, traits, use statements
+
+  Shared regex patterns per language:
+    - import: language-specific import/require/using patterns
+    - class: class/struct/trait declarations with inheritance
+    - function: function/method signatures with visibility
+    - brace_tracking: for C-family languages ({ })
+    - end_keyword_tracking: for Ruby (module/class/def...end)
+
+  Benefits:
+    - Consistent extraction logic across all languages
+    - Reduced code duplication (~70% reduction in parser LOC)
+    - Easier maintenance: fix once, apply everywhere
+    - Standardized FunctionInfo/ClassInfo models
+
+HISTORY:
+  prev CC̄=4.3 → now CC̄=5.1

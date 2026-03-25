@@ -1,0 +1,43 @@
+flowchart TD
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph CLI
+        llx__cli__formatters__output_rich["output_rich"]
+        llx__cli__formatters__output_json["output_json"]
+        llx__cli__formatters__print_models_table["print_models_table"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__app__analyze["analyze"]
+        llx__cli__app__select["select"]
+        llx__cli__app__chat["chat"]
+        llx__cli__app__proxy_start["proxy_start"]
+        llx__cli__app__proxy_config["proxy_config"]
+        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__app__models["models"]
+        llx__cli__app__info["info"]
+        llx__cli__app__init["init"]
+        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
+        llx__cli__app__main["main"]
+    end
+
+    subgraph Core
+        llx__config__LlxConfig__load["load"]
+        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
+        llx__analysis__collector___apply_evolution_yaml{{_apply_evolution_yaml CC=16}}
+        llx__analysis__collector___apply_map_text{{_apply_map_text CC=20}}
+        llx__analysis__collector___extract_cc_value["_extract_cc_value"]
+        llx__routing__client__LlxClient__chat["chat"]
+        llx__routing__client__LlxClient__chat_with_context["chat_with_context"]
+        llx__routing__client__LlxClient___build_payload["_build_payload"]
+        llx__routing__client__LlxClient___parse_response["_parse_response"]
+        llx__routing__client__LlxClient___fallback_direct["_fallback_direct"]
+        llx__routing__client__LlxClient__close["close"]
+        llx__routing__client__LlxClient____enter__["__enter__"]
+        llx__routing__client__LlxClient____exit__["__exit__"]
+        ...["+5 more"]
+    end
+
+    class llx__config__LlxConfig__load,llx__cli__formatters__output_rich,llx__cli__formatters__output_json,llx__cli__formatters__print_models_table,llx__cli__formatters__print_info_tables,llx__routing__client__LlxClient__chat,llx__routing__client__LlxClient__chat_with_context,llx__routing__client__LlxClient___build_payload,llx__routing__client__LlxClient___parse_response,llx__routing__client__LlxClient___fallback_direct entry

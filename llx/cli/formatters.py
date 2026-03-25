@@ -77,6 +77,96 @@ def output_json(metrics: ProjectMetrics, result: SelectionResult) -> None:
     console.print(json.dumps(output, indent=2))
 
 
+def print_models_table(config, tag: str = None, provider: str = None, tier: str = None) -> None:
+    """Print models table with optional filtering."""
+    from rich.table import Table
+    
+    # Filter models
+    filtered_models = {}
+    for tier_name, model in config.models.items():
+        # Apply filters
+        if tier and tier_name != tier:
+            continue
+        if provider and model.provider != provider:
+            continue
+        if tag and tag.upper() not in [t.upper() for t in model.tags]:
+            continue
+        
+        filtered_models[tier_name] = model
+    
+    if not filtered_models:
+        filter_desc = []
+        if tag: filter_desc.append(f"tag='{tag}'")
+        if provider: filter_desc.append(f"provider='{provider}'")
+        if tier: filter_desc.append(f"tier='{tier}'")
+        
+        console.print(f"[red]No models found for filter: {', '.join(filter_desc)}[/red]")
+        return
+    
+    # Build title
+    title_parts = ["Available Models"]
+    if tag: title_parts.append(f"Tag: {tag.upper()}")
+    if provider: title_parts.append(f"Provider: {provider}")
+    if tier: title_parts.append(f"Tier: {tier}")
+    
+    model_table = Table(title=" | ".join(title_parts), show_header=True)
+    model_table.add_column("Tier", style="bold", width=10)
+    model_table.add_column("Model", width=20)
+    model_table.add_column("Provider", width=12)
+    model_table.add_column("Context", justify="right", width=8)
+    model_table.add_column("Cost (1K in/out)", width=14)
+    model_table.add_column("Tags", width=30)
+
+    for tier_name, model in filtered_models.items():
+        # Shorten model names for display
+        display_name = model.model_id
+        if len(display_name) > 18:
+            # Split on first slash or dash to get shorter name
+            if '/' in display_name:
+                parts = display_name.split('/')
+                if len(parts) > 1:
+                    display_name = parts[-1]  # Take last part
+            if '-' in display_name and len(display_name) > 18:
+                display_name = display_name.split('-')[0]
+            if len(display_name) > 18:
+                display_name = display_name[:15] + "..."
+        
+        # Color code tags for better readability
+        colored_tags = []
+        for tag_item in model.tags:
+            if tag_item in ["FREE", "FAST"]:
+                colored_tags.append(f"[green]{tag_item}[/green]")
+            elif tag_item in ["EXPENSIVE", "SLOW"]:
+                colored_tags.append(f"[red]{tag_item}[/red]")
+            elif tag_item in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING"]:
+                colored_tags.append(f"[blue]{tag_item}[/blue]")
+            elif tag_item in ["HIGH_QUALITY", "COMPLEX_REASONING"]:
+                colored_tags.append(f"[magenta]{tag_item}[/magenta]")
+            elif tag_item in ["OFFLINE", "PRIVATE"]:
+                colored_tags.append(f"[cyan]{tag_item}[/cyan]")
+            else:
+                colored_tags.append(f"[yellow]{tag_item}[/yellow]")
+        
+        tags_colored = " ".join(colored_tags) if colored_tags else "—"
+        
+        model_table.add_row(
+            tier_name, display_name, model.provider,
+            f"{model.max_context:,}",
+            f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
+            tags_colored,
+        )
+    console.print(model_table)
+
+    # Show available tags
+    all_tags = set()
+    for model in config.models.values():
+        all_tags.update(model.tags)
+    
+    if all_tags:
+        console.print(f"\n[dim]Available tags for filtering: {', '.join(sorted(all_tags))}[/dim]")
+        console.print("[dim]Usage: llx models <tag>  or  llx models --provider <provider>  or  llx models --tier <tier>[/dim]")
+
+
 def print_info_tables(config) -> None:
     """Print tools and models info tables."""
     from llx.analysis.runner import check_tool
@@ -98,19 +188,82 @@ def print_info_tables(config) -> None:
     console.print(tools_table)
 
     model_table = Table(title="Model Tiers", show_header=True)
-    model_table.add_column("Tier", style="bold")
-    model_table.add_column("Model")
-    model_table.add_column("Provider")
-    model_table.add_column("Context")
-    model_table.add_column("Cost (1K in/out)")
+    model_table.add_column("Tier", style="bold", width=10)
+    model_table.add_column("Model", width=20)
+    model_table.add_column("Provider", width=12)
+    model_table.add_column("Context", justify="right", width=8)
+    model_table.add_column("Cost (1K in/out)", width=14)
+    model_table.add_column("Tags", width=30)
 
     for tier_name, model in config.models.items():
+        # Shorten model names for display
+        display_name = model.model_id
+        if len(display_name) > 18:
+            # Split on first slash or dash to get shorter name
+            if '/' in display_name:
+                parts = display_name.split('/')
+                if len(parts) > 1:
+                    display_name = parts[-1]  # Take last part
+            if '-' in display_name and len(display_name) > 18:
+                display_name = display_name.split('-')[0]
+            if len(display_name) > 18:
+                display_name = display_name[:15] + "..."
+        
+        tags_str = ", ".join(model.tags) if model.tags else "—"
+        # Color code tags for better readability
+        colored_tags = []
+        for tag in model.tags:
+            if tag in ["FREE", "FAST"]:
+                colored_tags.append(f"[green]{tag}[/green]")
+            elif tag in ["EXPENSIVE", "SLOW"]:
+                colored_tags.append(f"[red]{tag}[/red]")
+            elif tag in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING"]:
+                colored_tags.append(f"[blue]{tag}[/blue]")
+            elif tag in ["HIGH_QUALITY", "COMPLEX_REASONING"]:
+                colored_tags.append(f"[magenta]{tag}[/magenta]")
+            elif tag in ["OFFLINE", "PRIVATE"]:
+                colored_tags.append(f"[cyan]{tag}[/cyan]")
+            else:
+                colored_tags.append(f"[yellow]{tag}[/yellow]")
+        
+        tags_colored = " ".join(colored_tags) if colored_tags else "—"
+        
         model_table.add_row(
-            tier_name, model.model_id, model.provider,
+            tier_name, display_name, model.provider,
             f"{model.max_context:,}",
             f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
+            tags_colored,
         )
     console.print(model_table)
+
+    # Tags legend
+    console.print("\n[bold]Tags Legend:[/bold]")
+    tag_groups = [
+        ("Cost & Speed", ["FREE", "FAST", "CHEAP", "EXPENSIVE", "SLOW"]),
+        ("Capabilities", ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING", "GENERATING", "ANALYSIS", "DEBUGGING"]),
+        ("Quality", ["HIGH_QUALITY", "COMPLEX_REASONING", "RELIABLE"]),
+        ("Environment", ["OFFLINE", "PRIVATE", "LARGE_CONTEXT"]),
+        ("Use Case", ["QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION", "ARCHITECTURE", "GENERAL_PURPOSE"]),
+        ("Other", ["COST_EFFECTIVE", "BACKUP_OPTION"]),
+    ]
+    
+    for group_name, tags in tag_groups:
+        colored_tags = []
+        for tag in tags:
+            if tag in ["FREE", "FAST", "CHEAP"]:
+                colored_tags.append(f"[green]{tag}[/green]")
+            elif tag in ["EXPENSIVE", "SLOW"]:
+                colored_tags.append(f"[red]{tag}[/red]")
+            elif tag in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING", "GENERATING", "ANALYSIS", "DEBUGGING"]:
+                colored_tags.append(f"[blue]{tag}[/blue]")
+            elif tag in ["HIGH_QUALITY", "COMPLEX_REASONING", "RELIABLE"]:
+                colored_tags.append(f"[magenta]{tag}[/magenta]")
+            elif tag in ["OFFLINE", "PRIVATE", "LARGE_CONTEXT"]:
+                colored_tags.append(f"[cyan]{tag}[/cyan]")
+            else:
+                colored_tags.append(f"[yellow]{tag}[/yellow]")
+        
+        console.print(f"  [dim]{group_name}:[/dim] {' '.join(colored_tags)}")
 
     console.print("\n[bold]Compatible IDE/Agent Tools:[/bold]")
     for name, kind, hint in [
