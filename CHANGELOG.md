@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-03-25
+
+### Docs
+- Update docs/README.md
+- Update docs/orchestration.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_mcp.py
+
+### Other
+- Update llx-orchestrator
+- Update llx/cli/app.py
+- Update llx/config.py
+- Update llx/litellm_config.py
+- Update llx/orchestration/orchestrator_cli.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- ... and 7 more files
+
 ## [0.1.6] - 2026-03-25
 
 ### Other

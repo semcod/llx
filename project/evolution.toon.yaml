@@ -1,57 +1,57 @@
-# code2llm/evolution | 230 func | 20f | 2026-03-25
+# code2llm/evolution | 410 func | 27f | 2026-03-25
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           llx/tools/health_checker.py
-      WHY: 774L, 1 classes, max CC=16
-      EFFORT: ~4h  IMPACT: 12384
+  [1] !! SPLIT           llx/orchestration/vscode_orchestrator.py
+      WHY: 944L, 6 classes, max CC=35
+      EFFORT: ~4h  IMPACT: 33040
 
-  [2] !! SPLIT           llx/tools/cli.py
-      WHY: 783L, 1 classes, max CC=14
-      EFFORT: ~4h  IMPACT: 10962
+  [2] !! SPLIT           llx/orchestration/llm_orchestrator.py
+      WHY: 1082L, 7 classes, max CC=24
+      EFFORT: ~4h  IMPACT: 25968
 
-  [3] !! SPLIT-FUNC      main  CC=35  fan=27
+  [3] !! SPLIT           llx/orchestration/routing_engine.py
+      WHY: 940L, 6 classes, max CC=11
+      EFFORT: ~4h  IMPACT: 10340
+
+  [4] !! SPLIT-FUNC      main  CC=35  fan=27
       WHY: CC=35 exceeds 15
       EFFORT: ~1h  IMPACT: 945
 
-  [4] !! SPLIT-FUNC      main  CC=30  fan=25
+  [5] !! SPLIT-FUNC      main  CC=35  fan=22
+      WHY: CC=35 exceeds 15
+      EFFORT: ~1h  IMPACT: 770
+
+  [6] !! SPLIT-FUNC      main  CC=30  fan=25
       WHY: CC=30 exceeds 15
       EFFORT: ~1h  IMPACT: 750
 
-  [5] !! SPLIT-FUNC      print_models_table  CC=32  fan=18
-      WHY: CC=32 exceeds 15
-      EFFORT: ~1h  IMPACT: 576
+  [7] !! SPLIT-FUNC      main  CC=29  fan=19
+      WHY: CC=29 exceeds 15
+      EFFORT: ~1h  IMPACT: 551
 
-  [6] !  SPLIT-FUNC      main  CC=22  fan=25
+  [8] !  SPLIT-FUNC      main  CC=22  fan=25
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 550
 
-  [7] !  SPLIT-FUNC      main  CC=20  fan=22
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 440
+  [9] !  SPLIT-FUNC      main  CC=24  fan=22
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 528
 
-  [8] !  SPLIT-FUNC      main  CC=20  fan=18
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 360
-
-  [9] !! SPLIT-FUNC      print_info_tables  CC=26  fan=12
-      WHY: CC=26 exceeds 15
-      EFFORT: ~1h  IMPACT: 312
-
-  [10] !  SPLIT-FUNC      _apply_map_text  CC=20  fan=14
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 280
+  [10] !! SPLIT-FUNC      main  CC=27  fan=19
+      WHY: CC=27 exceeds 15
+      EFFORT: ~1h  IMPACT: 513
 
 
 RISKS[3]:
-  ⚠ Splitting llx/orchestration/instance_manager.py may break 0 import paths
-  ⚠ Splitting llx/tools/cli.py may break 15 import paths
-  ⚠ Splitting llx/tools/health_checker.py may break 13 import paths
+  ⚠ Splitting llx/orchestration/llm_orchestrator.py may break 33 import paths
+  ⚠ Splitting llx/orchestration/vscode_orchestrator.py may break 32 import paths
+  ⚠ Splitting llx/orchestration/routing_engine.py may break 39 import paths
 
 METRICS-TARGET:
-  CC̄:          5.0 → ≤3.5
+  CC̄:          4.6 → ≤3.2
   max-CC:      35 → ≤17
-  god-modules: 10 → 0
-  high-CC(≥15): 15 → ≤7
+  god-modules: 14 → 0
+  high-CC(≥15): 16 → ≤8
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -79,4 +79,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.6 → now CC̄=5.0
+  prev CC̄=5.0 → now CC̄=4.6

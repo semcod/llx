@@ -1,24 +1,42 @@
-# redup/duplication | 1 groups | 25f 9841L | 2026-03-25
+# redup/duplication | 4 groups | 32f 15280L | 2026-03-25
 
 SUMMARY:
-  files_scanned: 25
-  total_lines:   9841
-  dup_groups:    1
-  dup_fragments: 3
-  saved_lines:   54
-  scan_ms:       1945
+  files_scanned: 32
+  total_lines:   15280
+  dup_groups:    4
+  dup_fragments: 9
+  saved_lines:   82
+  scan_ms:       2133
 
-DUPLICATES[1] (ranked by impact):
+DUPLICATES[4] (ranked by impact):
   [dc09cc756f598570] ! STRU  demonstrate_aider  L=27 N=3 saved=54 sim=1.00
       examples/ai-tools/main.py:73-99  (demonstrate_aider)
       examples/ai-tools/main.py:101-127  (demonstrate_claude_code)
       examples/ai-tools/main.py:129-156  (demonstrate_cursor)
+  [c99b7d0d1cd4cc48]   STRU  main  L=12 N=2 saved=12 sim=1.00
+      llx/tools/cli.py:768-779  (main)
+      llx/orchestration/orchestrator_cli.py:1248-1259  (main)
+  [e26e831161f2f1d2]   EXAC  _config_save_worker  L=8 N=2 saved=8 sim=1.00
+      llx/orchestration/llm_orchestrator.py:922-929  (_config_save_worker)
+      llx/orchestration/vscode_orchestrator.py:724-731  (_config_save_worker)
+  [0bca74b973934669]   STRU  _handle_code2llm_analyze  L=8 N=2 saved=8 sim=1.00
+      llx/mcp/tools.py:154-161  (_handle_code2llm_analyze)
+      llx/mcp/tools.py:182-189  (_handle_redup_scan)
 
-REFACTOR[1] (ranked by priority):
+REFACTOR[4] (ranked by priority):
   [1] ○ extract_function   → examples/ai-tools/utils/demonstrate_aider.py
       WHY: 3 occurrences of 27-line block across 1 files — saves 54 lines
       FILES: examples/ai-tools/main.py
+  [2] ○ extract_function   → llx/utils/main.py
+      WHY: 2 occurrences of 12-line block across 2 files — saves 12 lines
+      FILES: llx/orchestration/orchestrator_cli.py, llx/tools/cli.py
+  [3] ○ extract_function   → llx/orchestration/utils/_config_save_worker.py
+      WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
+      FILES: llx/orchestration/llm_orchestrator.py, llx/orchestration/vscode_orchestrator.py
+  [4] ○ extract_function   → llx/mcp/utils/_handle_code2llm_analyze.py
+      WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
+      FILES: llx/mcp/tools.py
 
 METRICS-TARGET:
-  dup_groups:  1 → 0
-  saved_lines: 54 lines recoverable
+  dup_groups:  4 → 0
+  saved_lines: 82 lines recoverable

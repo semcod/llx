@@ -112,7 +112,7 @@ class LiteLLMConfig:
     def to_llx_models(self) -> Dict[str, Any]:
         """Convert LiteLLM models to llx ModelConfig format."""
         # Import here to avoid circular import
-        from .config import ModelConfig
+        from llx.config import ModelConfig
         
         models = {}
         

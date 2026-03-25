@@ -276,6 +276,24 @@ def mcp_config() -> None:
     console.print(json.dumps(snippet, indent=2))
     console.print("\n[dim]Add to claude_desktop_config.json[/dim]")
 
+@mcp_app.command("tools")
+def mcp_tools() -> None:
+    """List available MCP tools."""
+    from llx.mcp.tools import (
+        tool_llx_analyze, tool_llx_select, tool_llx_chat,
+        tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
+        tool_llx_proxy_status,
+    )
+    from rich.table import Table
+    table = Table(title="MCP Tools", show_header=True)
+    table.add_column("Tool", style="bold")
+    table.add_column("Description")
+    for t in [tool_llx_analyze, tool_llx_select, tool_llx_chat,
+              tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
+              tool_llx_proxy_status]:
+        table.add_row(t.definition.name, t.definition.description[:80])
+    console.print(table)
+
 
 def main() -> None:
     app()

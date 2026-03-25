@@ -4,14 +4,29 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 31, shell: 12
+- **Languages**: python: 40, shell: 12
 - **Analysis Mode**: static
-- **Total Functions**: 280
-- **Total Classes**: 26
-- **Modules**: 43
-- **Entry Points**: 224
+- **Total Functions**: 460
+- **Total Classes**: 56
+- **Modules**: 52
+- **Entry Points**: 380
 
 ## Architecture by Module
+
+### llx.orchestration.routing_engine
+- **Functions**: 39
+- **Classes**: 6
+- **File**: `routing_engine.py`
+
+### llx.orchestration.llm_orchestrator
+- **Functions**: 33
+- **Classes**: 7
+- **File**: `llm_orchestrator.py`
+
+### llx.orchestration.vscode_orchestrator
+- **Functions**: 32
+- **Classes**: 6
+- **File**: `vscode_orchestrator.py`
 
 ### llx.tools.config_manager
 - **Functions**: 25
@@ -22,6 +37,16 @@
 - **Functions**: 23
 - **Classes**: 1
 - **File**: `vscode_manager.py`
+
+### llx.orchestration.queue_manager
+- **Functions**: 23
+- **Classes**: 6
+- **File**: `queue_manager.py`
+
+### llx.analysis.collector
+- **Functions**: 21
+- **Classes**: 1
+- **File**: `collector.py`
 
 ### llx.orchestration.session_manager
 - **Functions**: 21
@@ -38,6 +63,11 @@
 - **Classes**: 1
 - **File**: `model_manager.py`
 
+### llx.orchestration.rate_limiter
+- **Functions**: 18
+- **Classes**: 4
+- **File**: `rate_limiter.py`
+
 ### llx.tools.cli
 - **Functions**: 15
 - **Classes**: 1
@@ -47,24 +77,23 @@
 - **Functions**: 15
 - **File**: `ai-tools-manage.sh`
 
-### llx.analysis.collector
+### llx.cli.app
 - **Functions**: 14
-- **Classes**: 1
-- **File**: `collector.py`
+- **File**: `app.py`
 
 ### llx.tools.health_checker
 - **Functions**: 13
 - **Classes**: 1
 - **File**: `health_checker.py`
 
+### llx.cli.formatters
+- **Functions**: 12
+- **File**: `formatters.py`
+
 ### examples.vscode-roocode.demo
 - **Functions**: 11
 - **Classes**: 1
 - **File**: `demo.py`
-
-### llx.cli.app
-- **Functions**: 11
-- **File**: `app.py`
 
 ### llx.litellm_config
 - **Functions**: 10
@@ -79,33 +108,6 @@
 ### examples.docker.main
 - **Functions**: 9
 - **File**: `main.py`
-
-### examples.ai-tools.main
-- **Functions**: 9
-- **File**: `main.py`
-
-### examples.proxy.main
-- **Functions**: 8
-- **Classes**: 1
-- **File**: `main.py`
-
-### examples.local.main
-- **Functions**: 7
-- **File**: `main.py`
-
-### docker-manage
-- **Functions**: 7
-- **File**: `docker-manage.sh`
-
-### llx.analysis.runner
-- **Functions**: 6
-- **Classes**: 1
-- **File**: `runner.py`
-
-### llx.routing.selector
-- **Functions**: 6
-- **Classes**: 2
-- **File**: `selector.py`
 
 ## Key Entry Points
 
@@ -124,6 +126,22 @@ Main execution flows into the system:
 
 ### llx.tools.model_manager.main
 > CLI interface for model manager.
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.orchestration.vscode_orchestrator.main
+> CLI interface for VS Code orchestrator.
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.orchestration.queue_manager.main
+> CLI interface for queue manager.
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.orchestration.llm_orchestrator.main
+> CLI interface for LLM orchestrator.
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.orchestration.rate_limiter.main
+> CLI interface for rate limiter.
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ### examples.basic.main.main
@@ -158,13 +176,37 @@ Main execution flows into the system:
 > Print comprehensive model summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.check_ollama_running, self.check_llx_running, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.get_system_resources, docker.ai-tools.entrypoint.print
 
+### llx.orchestration.rate_limiter.RateLimiter.load_limits
+> Load rate limits from configuration file.
+- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
+
+### llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.load_config
+> Load VS Code orchestration configuration.
+- **Calls**: self.config_file.exists, self.config.update, data.get, data.get, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config
+
+### llx.orchestration.queue_manager.QueueManager.load_queues
+> Load queues from configuration file.
+- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, QueueConfig
+
 ### llx.orchestration.session_manager.SessionManager.load_sessions
 > Load sessions from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, SessionConfig
 
+### llx.orchestration.llm_orchestrator.LLMOrchestrator.load_config
+> Load LLM orchestration configuration.
+- **Calls**: self.config_file.exists, self.config.update, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config, docker.ai-tools.entrypoint.print, open
+
 ### llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples
 > Print usage examples.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
+### llx.orchestration.routing_engine.main
+> CLI interface for routing engine.
+- **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.orchestration.queue_manager.QueueManager.print_status_summary
+> Print comprehensive status summary.
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, sum, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
 ### llx.tools.vscode_manager.main
 > CLI interface for VS Code manager.
@@ -178,57 +220,17 @@ Main execution flows into the system:
 > Monitor services over time.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, time.time, docker.ai-tools.entrypoint.print, self._analyze_monitoring_data, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
+### llx.orchestration.rate_limiter.RateLimiter.print_status_summary
+> Print comprehensive status summary.
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
 ### llx.orchestration.session_manager.SessionManager.print_status_summary
 > Print comprehensive status summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, self.session_states.values, self.sessions.values, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
-### examples.docker.main.main
-> Main Docker integration example
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.docker.main.demonstrate_docker_integration, examples.docker.main.demonstrate_container_metrics, examples.docker.main.demonstrate_service_discovery, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
-### llx.tools.vscode_manager.VSCodeManager.install_extensions
-> Install VS Code extensions.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.is_vscode_running, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
-### examples.multi-provider.main.main
-> Main multi-provider example execution
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.multi-provider.main.check_provider_keys, docker.ai-tools.entrypoint.print, providers.items, examples.multi-provider.main.compare_provider_costs, examples.multi-provider.main.demonstrate_fallback_strategy
-
-### llx.config.LlxConfig.load
-> Load configuration from llx.yaml, llx.toml, or pyproject.toml.
-- **Calls**: None.resolve, cls, LiteLLMConfig.load, yaml_path.exists, pyproject.exists, llx.config._apply_env, toml_path.exists, None.get
-
-### llx.tools.cli.LLXToolsCLI._handle_config
-> Handle config command.
-- **Calls**: self.config_manager.print_config_summary, self.config_manager.create_default_env, getattr, self.config_manager.update_env_var, self.config_manager.get_env_var, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.config_manager.validate_env_config
-
-### llx.tools.config_manager.ConfigManager.restore_configs
-> Restore configuration files from backup.
-- **Calls**: Path, docker.ai-tools.entrypoint.print, self.config_files.items, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, backup_path.exists, docker.ai-tools.entrypoint.print
-
-### llx.tools.health_checker.HealthChecker._print_health_summary
-> Print health check summary.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, health_report.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
-### llx.tools.health_checker.HealthChecker._generate_recommendations
-> Generate health improvement recommendations.
-- **Calls**: health_report.get, health_report.get, None.get, recommendations.append, None.get, recommendations.append, None.get, recommendations.append
-
-### examples.proxy.main.ProxyExample.test_proxy
-> Test the proxy with a simple request
-- **Calls**: docker.ai-tools.entrypoint.print, time.sleep, requests.get, requests.post, os.getenv, os.getenv, response.json, docker.ai-tools.entrypoint.print
-
-### llx.tools.ai_tools_manager.AIToolsManager.access_shell
-> Access AI tools shell.
-- **Calls**: self.is_container_running, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.tools.items, docker.ai-tools.entrypoint.print
-
-### llx.tools.ai_tools_manager.AIToolsManager.print_status_summary
+### llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.print_status_summary
 > Print comprehensive status summary.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.get_status, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, None.items, docker.ai-tools.entrypoint.print
-
-### llx.tools.config_manager.ConfigManager.backup_configs
-> Backup all configuration files.
-- **Calls**: Path, backup_path.mkdir, docker.ai-tools.entrypoint.print, self.config_files.items, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, source_file.exists
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, len, len, len, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
 ## Process Flows
 
@@ -272,35 +274,48 @@ print_model_summary [llx.tools.model_manager.ModelManager]
   └─ →> print
 ```
 
-### Flow 7: load_sessions
+### Flow 7: load_limits
+```
+load_limits [llx.orchestration.rate_limiter.RateLimiter]
+  └─ →> print
+  └─ →> print
+```
+
+### Flow 8: load_config
+```
+load_config [llx.orchestration.vscode_orchestrator.VSCodeOrchestrator]
+```
+
+### Flow 9: load_queues
+```
+load_queues [llx.orchestration.queue_manager.QueueManager]
+  └─ →> print
+  └─ →> print
+```
+
+### Flow 10: load_sessions
 ```
 load_sessions [llx.orchestration.session_manager.SessionManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 8: print_usage_examples
-```
-print_usage_examples [llx.tools.ai_tools_manager.AIToolsManager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 9: print_config_summary
-```
-print_config_summary [llx.tools.config_manager.ConfigManager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 10: monitor_services
-```
-monitor_services [llx.tools.health_checker.HealthChecker]
-  └─ →> print
-  └─ →> print
-```
-
 ## Key Classes
+
+### llx.orchestration.routing_engine.RoutingEngine
+> Intelligent routing engine for LLM and VS Code requests.
+- **Methods**: 38
+- **Key Methods**: llx.orchestration.routing_engine.RoutingEngine.__init__, llx.orchestration.routing_engine.RoutingEngine.load_config, llx.orchestration.routing_engine.RoutingEngine.save_config, llx.orchestration.routing_engine.RoutingEngine.route_request, llx.orchestration.routing_engine.RoutingEngine._get_candidates, llx.orchestration.routing_engine.RoutingEngine._get_llm_candidates, llx.orchestration.routing_engine.RoutingEngine._get_vscode_candidates, llx.orchestration.routing_engine.RoutingEngine._get_ai_tools_candidates, llx.orchestration.routing_engine.RoutingEngine._filter_candidates, llx.orchestration.routing_engine.RoutingEngine._filter_by_rate_limits
+
+### llx.orchestration.llm_orchestrator.LLMOrchestrator
+> Orchestrates multiple LLM providers and models with intelligent routing.
+- **Methods**: 32
+- **Key Methods**: llx.orchestration.llm_orchestrator.LLMOrchestrator.__init__, llx.orchestration.llm_orchestrator.LLMOrchestrator.load_config, llx.orchestration.llm_orchestrator.LLMOrchestrator.save_config, llx.orchestration.llm_orchestrator.LLMOrchestrator._create_default_config, llx.orchestration.llm_orchestrator.LLMOrchestrator.start, llx.orchestration.llm_orchestrator.LLMOrchestrator.stop, llx.orchestration.llm_orchestrator.LLMOrchestrator.add_provider, llx.orchestration.llm_orchestrator.LLMOrchestrator.remove_provider, llx.orchestration.llm_orchestrator.LLMOrchestrator.add_model, llx.orchestration.llm_orchestrator.LLMOrchestrator.complete_request
+
+### llx.orchestration.vscode_orchestrator.VSCodeOrchestrator
+> Orchestrates multiple VS Code instances with intelligent management.
+- **Methods**: 27
+- **Key Methods**: llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.__init__, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.load_config, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.save_config, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator._create_default_config, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.start, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.stop, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.add_account, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.remove_account, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.create_instance, llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.remove_instance
 
 ### llx.tools.config_manager.ConfigManager
 > Manages llx configuration files and settings.
@@ -311,6 +326,11 @@ monitor_services [llx.tools.health_checker.HealthChecker]
 > Manages VS Code server with AI extensions.
 - **Methods**: 22
 - **Key Methods**: llx.tools.vscode_manager.VSCodeManager.__init__, llx.tools.vscode_manager.VSCodeManager.is_vscode_running, llx.tools.vscode_manager.VSCodeManager.start_vscode, llx.tools.vscode_manager.VSCodeManager.stop_vscode, llx.tools.vscode_manager.VSCodeManager.restart_vscode, llx.tools.vscode_manager.VSCodeManager.wait_for_vscode_ready, llx.tools.vscode_manager.VSCodeManager.check_vscode_health, llx.tools.vscode_manager.VSCodeManager.get_vscode_url, llx.tools.vscode_manager.VSCodeManager.get_vscode_password, llx.tools.vscode_manager.VSCodeManager.install_extensions
+
+### llx.orchestration.queue_manager.QueueManager
+> Manages multiple request queues with intelligent prioritization.
+- **Methods**: 21
+- **Key Methods**: llx.orchestration.queue_manager.QueueManager.__init__, llx.orchestration.queue_manager.QueueManager.load_queues, llx.orchestration.queue_manager.QueueManager.save_queues, llx.orchestration.queue_manager.QueueManager.start, llx.orchestration.queue_manager.QueueManager.stop, llx.orchestration.queue_manager.QueueManager.add_queue, llx.orchestration.queue_manager.QueueManager.remove_queue, llx.orchestration.queue_manager.QueueManager.enqueue_request, llx.orchestration.queue_manager.QueueManager.dequeue_request, llx.orchestration.queue_manager.QueueManager.complete_request
 
 ### llx.orchestration.session_manager.SessionManager
 > Manages multiple LLM and VS Code sessions with intelligent routing.
@@ -327,6 +347,11 @@ monitor_services [llx.tools.health_checker.HealthChecker]
 - **Methods**: 19
 - **Key Methods**: llx.tools.model_manager.ModelManager.__init__, llx.tools.model_manager.ModelManager.check_ollama_running, llx.tools.model_manager.ModelManager.check_llx_running, llx.tools.model_manager.ModelManager.get_ollama_models, llx.tools.model_manager.ModelManager.get_llx_models, llx.tools.model_manager.ModelManager.pull_model, llx.tools.model_manager.ModelManager.remove_model, llx.tools.model_manager.ModelManager.test_model, llx.tools.model_manager.ModelManager.test_llx_model, llx.tools.model_manager.ModelManager.get_model_info
 
+### llx.orchestration.rate_limiter.RateLimiter
+> Manages rate limiting for multiple providers and accounts.
+- **Methods**: 17
+- **Key Methods**: llx.orchestration.rate_limiter.RateLimiter.__init__, llx.orchestration.rate_limiter.RateLimiter.load_limits, llx.orchestration.rate_limiter.RateLimiter.save_limits, llx.orchestration.rate_limiter.RateLimiter._create_default_limits, llx.orchestration.rate_limiter.RateLimiter.add_limit, llx.orchestration.rate_limiter.RateLimiter.remove_limit, llx.orchestration.rate_limiter.RateLimiter.check_rate_limit, llx.orchestration.rate_limiter.RateLimiter.record_request, llx.orchestration.rate_limiter.RateLimiter.release_request, llx.orchestration.rate_limiter.RateLimiter.get_status
+
 ### llx.tools.cli.LLXToolsCLI
 > Unified CLI for llx ecosystem management.
 - **Methods**: 14
@@ -342,6 +367,11 @@ monitor_services [llx.tools.health_checker.HealthChecker]
 - **Methods**: 10
 - **Key Methods**: examples.vscode-roocode.demo.RooCodeDemo.__init__, examples.vscode-roocode.demo.RooCodeDemo.check_services, examples.vscode-roocode.demo.RooCodeDemo.get_available_models, examples.vscode-roocode.demo.RooCodeDemo.test_chat_completion, examples.vscode-roocode.demo.RooCodeDemo.demonstrate_code_generation, examples.vscode-roocode.demo.RooCodeDemo.demonstrate_code_explanation, examples.vscode-roocode.demo.RooCodeDemo.demonstrate_refactoring, examples.vscode-roocode.demo.RooCodeDemo.demonstrate_test_generation, examples.vscode-roocode.demo.RooCodeDemo.demonstrate_documentation, examples.vscode-roocode.demo.RooCodeDemo.run_demo
 
+### llx.litellm_config.LiteLLMConfig
+> Complete LiteLLM configuration.
+- **Methods**: 9
+- **Key Methods**: llx.litellm_config.LiteLLMConfig.load, llx.litellm_config.LiteLLMConfig._default_config, llx.litellm_config.LiteLLMConfig.get_model_config, llx.litellm_config.LiteLLMConfig.get_models_by_tag, llx.litellm_config.LiteLLMConfig.get_models_by_provider, llx.litellm_config.LiteLLMConfig.get_models_by_tier, llx.litellm_config.LiteLLMConfig.resolve_alias, llx.litellm_config.LiteLLMConfig.to_llx_models, llx.litellm_config.LiteLLMConfig.get_proxy_config
+
 ### llx.routing.client.LlxClient
 > LLM client that routes through LiteLLM proxy or calls directly.
 
@@ -350,14 +380,14 @@ Usage:
 - **Methods**: 9
 - **Key Methods**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response, llx.routing.client.LlxClient._fallback_direct, llx.routing.client.LlxClient.close, llx.routing.client.LlxClient.__enter__, llx.routing.client.LlxClient.__exit__
 
-### llx.litellm_config.LiteLLMConfig
-> Complete LiteLLM configuration.
-- **Methods**: 9
-- **Key Methods**: llx.litellm_config.LiteLLMConfig.load, llx.litellm_config.LiteLLMConfig._default_config, llx.litellm_config.LiteLLMConfig.get_model_config, llx.litellm_config.LiteLLMConfig.get_models_by_tag, llx.litellm_config.LiteLLMConfig.get_models_by_provider, llx.litellm_config.LiteLLMConfig.get_models_by_tier, llx.litellm_config.LiteLLMConfig.resolve_alias, llx.litellm_config.LiteLLMConfig.to_llx_models, llx.litellm_config.LiteLLMConfig.get_proxy_config
-
 ### examples.proxy.main.ProxyExample
 - **Methods**: 6
 - **Key Methods**: examples.proxy.main.ProxyExample.__init__, examples.proxy.main.ProxyExample.setup_server, examples.proxy.main.ProxyExample.start_server, examples.proxy.main.ProxyExample.test_proxy, examples.proxy.main.ProxyExample.show_ide_integration, examples.proxy.main.ProxyExample.cleanup
+
+### llx.orchestration.vscode_orchestrator.VSCodePortAllocator
+> Manages port allocation for VS Code instances.
+- **Methods**: 4
+- **Key Methods**: llx.orchestration.vscode_orchestrator.VSCodePortAllocator.__init__, llx.orchestration.vscode_orchestrator.VSCodePortAllocator.allocate_port, llx.orchestration.vscode_orchestrator.VSCodePortAllocator.release_port, llx.orchestration.vscode_orchestrator.VSCodePortAllocator._is_port_available
 
 ### llx.analysis.collector.ProjectMetrics
 > Aggregated project metrics that drive model selection.
@@ -376,35 +406,21 @@ Every field maps to a real, measurable prope
 - **Methods**: 2
 - **Key Methods**: llx.routing.selector.SelectionResult.model_id, llx.routing.selector.SelectionResult.explain
 
-### llx.config.LlxConfig
-> Root configuration for llx.
-- **Methods**: 1
-- **Key Methods**: llx.config.LlxConfig.load
-
-### llx.config.ModelConfig
-> Configuration for a single model tier.
-- **Methods**: 0
-
-### llx.config.TierThresholds
-> Thresholds that determine which model tier to use.
-
-Based on real project metrics from code2llm anal
-- **Methods**: 0
-
-### llx.config.ProxyConfig
-> LiteLLM proxy settings.
-- **Methods**: 0
-
-### llx.analysis.runner.ToolResult
-- **Methods**: 0
-
-### llx.routing.client.ChatMessage
-> A single chat message.
-- **Methods**: 0
-
 ## Data Transformation Functions
 
 Key functions that process and transform data:
+
+### llx.analysis.collector._parse_map_stats_line
+> Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
+- **Output to**: line.split, part.strip, re.search, re.search, re.search
+
+### llx.analysis.collector._parse_map_alerts_line
+> Parse: # alerts[5]: CC _extract=65; fan-out _extract=45
+- **Output to**: re.finditer, re.finditer, max, max, int
+
+### llx.analysis.collector._parse_map_hotspots_line
+> Parse: # hotspots[5]: _extract fan=45; ...
+- **Output to**: re.search, re.finditer, max, max, int
 
 ### llx.tools.cli.LLXToolsCLI.create_parser
 > Create argument parser for CLI.
@@ -417,6 +433,18 @@ Key functions that process and transform data:
 ### llx.tools.config_manager.ConfigManager.validate_docker_configs
 > Validate Docker configuration files.
 - **Output to**: self.load_config, file_path.exists, None.append, config.get, None.append
+
+### llx.mcp.tools._handle_vallm_validate
+> Run vallm validation on code or project.
+- **Output to**: Path, Path, llx.analysis.runner.run_vallm, Proposal, validate
+
+### llx.orchestration.routing_engine.RoutingEngine._validate_decision
+> Validate routing decision.
+- **Output to**: self.session_manager.get_session_status, self.rate_limiter.check_rate_limit, self.instance_manager.get_instance_status
+
+### llx.orchestration.queue_manager.QueueManager._process_request
+> Process a single request.
+- **Output to**: time.sleep, time.time, request.created_at.timestamp
 
 ### llx.routing.client.LlxClient._parse_response
 - **Output to**: data.get, data.get, ChatResponse, data.get, usage.get
@@ -436,9 +464,11 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.config_manager.main` - 60 calls
 - `examples.ai-tools.main.main` - 58 calls
 - `llx.tools.model_manager.main` - 56 calls
-- `llx.cli.formatters.print_models_table` - 43 calls
+- `llx.orchestration.vscode_orchestrator.main` - 56 calls
+- `llx.orchestration.queue_manager.main` - 54 calls
+- `llx.orchestration.llm_orchestrator.main` - 47 calls
+- `llx.orchestration.rate_limiter.main` - 46 calls
 - `examples.basic.main.main` - 43 calls
-- `llx.cli.formatters.print_info_tables` - 42 calls
 - `examples.vscode-roocode.demo.RooCodeDemo.run_demo` - 42 calls
 - `llx.orchestration.session_manager.main` - 41 calls
 - `llx.tools.health_checker.HealthChecker.run_comprehensive_health_check` - 39 calls
@@ -446,32 +476,30 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.ai_tools_manager.main` - 37 calls
 - `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
 - `llx.tools.model_manager.ModelManager.print_model_summary` - 36 calls
+- `llx.orchestration.rate_limiter.RateLimiter.load_limits` - 36 calls
+- `llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.load_config` - 36 calls
+- `llx.orchestration.queue_manager.QueueManager.load_queues` - 34 calls
 - `llx.orchestration.session_manager.SessionManager.load_sessions` - 34 calls
+- `llx.orchestration.llm_orchestrator.LLMOrchestrator.load_config` - 32 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
+- `llx.orchestration.routing_engine.main` - 31 calls
+- `llx.orchestration.queue_manager.QueueManager.print_status_summary` - 30 calls
 - `llx.tools.vscode_manager.main` - 29 calls
 - `llx.tools.config_manager.ConfigManager.print_config_summary` - 29 calls
 - `llx.tools.health_checker.HealthChecker.monitor_services` - 29 calls
 - `examples.ai-tools.main.show_usage_examples` - 29 calls
+- `llx.orchestration.rate_limiter.RateLimiter.print_status_summary` - 28 calls
 - `llx.orchestration.session_manager.SessionManager.print_status_summary` - 26 calls
+- `llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 - `examples.docker.main.main` - 25 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
 - `examples.multi-provider.main.main` - 24 calls
 - `llx.config.LlxConfig.load` - 23 calls
 - `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
+- `llx.orchestration.vscode_orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
 - `examples.local.main.demonstrate_local_model_selection` - 23 calls
+- `llx.orchestration.llm_orchestrator.LLMOrchestrator.print_status_summary` - 22 calls
 - `examples.proxy.main.ProxyExample.test_proxy` - 22 calls
-- `llx.tools.ai_tools_manager.AIToolsManager.access_shell` - 21 calls
-- `llx.tools.ai_tools_manager.AIToolsManager.print_status_summary` - 21 calls
-- `llx.tools.config_manager.ConfigManager.backup_configs` - 21 calls
-- `llx.litellm_config.LiteLLMConfig.load` - 21 calls
-- `examples.proxy.main.ProxyExample.show_ide_integration` - 21 calls
-- `llx.tools.vscode_manager.VSCodeManager.restore_settings` - 20 calls
-- `examples.docker.main.demonstrate_container_metrics` - 20 calls
-- `examples.local.main.main` - 20 calls
-- `llx.cli.app.chat` - 20 calls
-- `llx.tools.config_manager.ConfigManager.get_config_summary` - 19 calls
-- `examples.local.main.show_ollama_setup_instructions` - 19 calls
-- `llx.cli.app.analyze` - 19 calls
 
 ## System Interactions
 
@@ -492,13 +520,6 @@ graph TD
     run_comprehensive_he --> print
     run_comprehensive_he --> keys
     print_quick_start --> print
-    print_model_summary --> print
-    print_model_summary --> check_ollama_running
-    print_model_summary --> check_llx_running
-    load_sessions --> exists
-    load_sessions --> get
-    load_sessions --> print
-    print_usage_examples --> print
 ```
 
 ## Reverse Engineering Guidelines

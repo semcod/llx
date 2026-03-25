@@ -1,10 +1,10 @@
-# vallm batch | 93f | 41✓ 52✗
+# vallm batch | 104f | 47✓ 57✗
 
 SUMMARY:
-  total: 93
-  passed: 41
-  failed: 52
-  success: 44.1%
+  total: 104
+  passed: 47
+  failed: 57
+  success: 45.2%
 
 FILES:
   [yaml]
@@ -28,7 +28,7 @@ FILES:
       verdict: fail
       score: 0.00
       issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 5 parse error(s) in yaml
+        [error] syntax.tree_sitter: tree-sitter found 13 parse error(s) in yaml
     ✗ project/evolution.toon.yaml
       verdict: fail
       score: 0.00
@@ -83,23 +83,24 @@ FILES:
       issues: 2
         [warning] complexity.cyclomatic: main has cyclomatic complexity 19 (max: 15)@99
         [warning] complexity.lizard_cc: main: CC=17 exceeds limit 15@99
+    ✓ tests/test_mcp.py
+      verdict: pass
+      score: 1.00
     ✓ tests/test_core.py
       verdict: pass
       score: 1.00
     ✓ tests/__init__.py
       verdict: pass
       score: 1.00
-    ✗ llx/litellm_config.py
-      verdict: fail
-      score: 0.93
-      issues: 1
-        [error] python.import.resolvable: Module 'config' not found@115
+    ✓ llx/litellm_config.py
+      verdict: pass
+      score: 1.00
     ✗ llx/config.py
       verdict: fail
       score: 0.92
       issues: 2
-        [error] python.import.resolvable: Module 'litellm_config' not found@31
-        [error] python.import.resolvable: Module 'tomli' not found@27
+        [error] python.import.resolvable: Module 'litellm_config' not found@32
+        [error] python.import.resolvable: Module 'tomli' not found@28
     ✓ llx/__init__.py
       verdict: pass
       score: 1.00
@@ -114,12 +115,7 @@ FILES:
       score: 1.00
     ✓ llx/analysis/collector.py
       verdict: pass
-      score: 0.93
-      issues: 4
-        [warning] complexity.cyclomatic: _apply_evolution_yaml has cyclomatic complexity 16 (max: 15)@199
-        [warning] complexity.cyclomatic: _apply_map_text has cyclomatic complexity 20 (max: 15)@324
-        [warning] complexity.lizard_cc: _apply_evolution_yaml: CC=16 exceeds limit 15@199
-        [warning] complexity.lizard_cc: _apply_map_text: CC=20 exceeds limit 15@324
+      score: 1.00
     ✗ llx/tools/ai_tools_manager.py
       verdict: fail
       score: 0.96
@@ -182,6 +178,21 @@ FILES:
     ✓ llx/cli/formatters.py
       verdict: pass
       score: 1.00
+    ✗ llx/orchestration/llm_orchestrator.py
+      verdict: fail
+      score: 0.92
+      issues: 3
+        [error] python.import.resolvable: Module 'session_manager' not found@20
+        [error] python.import.resolvable: Module 'rate_limiter' not found@21
+        [error] python.import.resolvable: Module 'routing_engine' not found@22
+    ✗ llx/orchestration/routing_engine.py
+      verdict: fail
+      score: 0.90
+      issues: 4
+        [error] python.import.resolvable: Module 'session_manager' not found@19
+        [error] python.import.resolvable: Module 'instance_manager' not found@20
+        [error] python.import.resolvable: Module 'rate_limiter' not found@21
+        [error] python.import.resolvable: Module 'queue_manager' not found@22
     ✗ llx/orchestration/instance_manager.py
       verdict: fail
       score: 0.00
@@ -206,12 +217,68 @@ FILES:
         [warning] complexity.cyclomatic: main has cyclomatic complexity 29 (max: 15)@561
         [warning] complexity.maintainability: Low maintainability index: 16.5 (threshold: 20)
         [warning] complexity.lizard_cc: main: CC=29 exceeds limit 15@561
+    ✗ llx/orchestration/orchestrator_cli.py
+      verdict: fail
+      score: 0.72
+      issues: 19
+        [error] python.import.resolvable: Module 'session_manager' not found@15
+        [error] python.import.resolvable: Module 'instance_manager' not found@16
+        [error] python.import.resolvable: Module 'rate_limiter' not found@17
+        [error] python.import.resolvable: Module 'queue_manager' not found@18
+        [error] python.import.resolvable: Module 'routing_engine' not found@19
+        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@20
+        [error] python.import.resolvable: Module 'llm_orchestrator' not found@21
+        [error] python.import.resolvable: Module 'routing_engine' not found@904
+        [error] python.import.resolvable: Module 'routing_engine' not found@1171
+        [error] python.import.resolvable: Module 'rate_limiter' not found@1199
+        [error] python.import.resolvable: Module 'queue_manager' not found@1220
+        [error] python.import.resolvable: Module 'session_manager' not found@994
+        [error] python.import.resolvable: Module 'instance_manager' not found@1032
+        [error] python.import.resolvable: Module 'llm_orchestrator' not found@843
+        [error] python.import.resolvable: Module 'rate_limiter' not found@976
+        [error] python.import.resolvable: Module 'session_manager' not found@1005
+        [error] python.import.resolvable: Module 'instance_manager' not found@1043
+        [error] python.import.resolvable: Module 'llm_orchestrator' not found@867
+        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@809
+    ✗ llx/orchestration/vscode_orchestrator.py
+      verdict: fail
+      score: 0.90
+      issues: 5
+        [error] python.import.resolvable: Module 'instance_manager' not found@21
+        [error] python.import.resolvable: Module 'session_manager' not found@22
+        [error] python.import.resolvable: Module 'rate_limiter' not found@23
+        [error] python.import.resolvable: Module 'routing_engine' not found@24
+        [error] python.import.resolvable: Module 'instance_manager' not found@415
     ✓ llx/orchestration/session_manager.py
       verdict: pass
       score: 0.97
       issues: 2
         [warning] complexity.cyclomatic: main has cyclomatic complexity 20 (max: 15)@518
         [warning] complexity.lizard_cc: main: CC=20 exceeds limit 15@518
+    ✓ llx/orchestration/queue_manager.py
+      verdict: pass
+      score: 0.97
+      issues: 2
+        [warning] complexity.cyclomatic: main has cyclomatic complexity 27 (max: 15)@616
+        [warning] complexity.lizard_cc: main: CC=28 exceeds limit 15@616
+    ✗ llx/mcp/tools.py
+      verdict: fail
+      score: 0.98
+      issues: 1
+        [error] python.import.resolvable: Module 'mcp.types' not found@11
+    ✗ llx/mcp/server.py
+      verdict: fail
+      score: 0.82
+      issues: 3
+        [error] python.import.resolvable: Module 'mcp.server' not found@22
+        [error] python.import.resolvable: Module 'mcp.types' not found@23
+        [error] python.import.resolvable: Module 'mcp.server.stdio' not found@60
+    ✓ llx/mcp/__init__.py
+      verdict: pass
+      score: 1.00
+    ✓ llx/mcp/__main__.py
+      verdict: pass
+      score: 1.00
     ✓ llx/integrations/proxy.py
       verdict: pass
       score: 1.00
@@ -229,10 +296,7 @@ FILES:
       score: 1.00
     ✓ llx/routing/selector.py
       verdict: pass
-      score: 0.97
-      issues: 2
-        [warning] complexity.cyclomatic: _compute_tier has cyclomatic complexity 20 (max: 15)@126
-        [warning] complexity.lizard_cc: _compute_tier: CC=20 exceeds limit 15@126
+      score: 1.00
     ✓ examples/proxy/main.py
       verdict: pass
       score: 1.00
@@ -255,11 +319,9 @@ FILES:
       verdict: pass
       score: 1.00
   [toml]
-    ✗ pyproject.toml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in toml
+    ✓ pyproject.toml
+      verdict: pass
+      score: 1.00
   [sql]
     ✗ docker/postgres/init.sql
       verdict: fail
@@ -277,11 +339,11 @@ FAILED:
   ✗ .env.new: Unsupported file type
   ✗ Makefile: Unsupported file type
   ✗ docker-compose.yml: Unsupported file type
+  ✗ llx-orchestrator: Unsupported file type
   ✗ VERSION: Unsupported file type
   ✗ requirements.txt: Unsupported file type
   ✗ LICENSE: Unsupported file type
   ✗ llx-tools: Unsupported file type
-  ✗ pyproject.toml: Validation fail
   ✗ docker-compose-prod.yml: Unsupported file type
   ✗ CHANGELOG.md: Unsupported file type
   ✗ Dockerfile: Unsupported file type
@@ -301,7 +363,6 @@ FAILED:
   ✗ project/evolution.toon.yaml: Validation fail
   ✗ project/README.md: Unsupported file type
   ✗ project/analysis.toon.yaml: Validation fail
-  ✗ llx/litellm_config.py: Validation fail
   ✗ llx/config.py: Validation fail
   ✗ llx/tools/ai_tools_manager.py: Validation fail
   ✗ llx/tools/docker_manager.py: Validation fail
@@ -311,8 +372,14 @@ FAILED:
   ✗ llx/tools/__init__.py: Validation fail
   ✗ llx/tools/health_checker.py: Validation fail
   ✗ llx/tools/model_manager.py: Validation fail
+  ✗ llx/orchestration/llm_orchestrator.py: Validation fail
+  ✗ llx/orchestration/routing_engine.py: Validation fail
   ✗ llx/orchestration/instance_manager.py: Validation fail
   ✗ llx/orchestration/__init__.py: Validation fail
+  ✗ llx/orchestration/orchestrator_cli.py: Validation fail
+  ✗ llx/orchestration/vscode_orchestrator.py: Validation fail
+  ✗ llx/mcp/tools.py: Validation fail
+  ✗ llx/mcp/server.py: Validation fail
   ✗ docker/nginx/nginx.conf: Unsupported file type
   ✗ docker/postgres/init.sql: Validation fail
   ✗ docker/redis/redis.conf: Unsupported file type

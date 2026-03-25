@@ -7,15 +7,17 @@ flowchart TD
     examples_multi_provider["examples.multi-provider<br/>5 funcs"]
     examples_proxy["examples.proxy<br/>8 funcs"]
     examples_vscode_roocode["examples.vscode-roocode<br/>11 funcs"]
-    llx_analysis["llx.analysis<br/>20 funcs"]
-    llx_cli["llx.cli<br/>15 funcs"]
-    llx_config["llx.config<br/>4 funcs"]
+    llx_analysis["llx.analysis<br/>27 funcs"]
+    llx_cli["llx.cli<br/>26 funcs"]
+    llx_config["llx.config<br/>7 funcs"]
     llx_integrations["llx.integrations<br/>3 funcs"]
     llx_litellm_config["llx.litellm_config<br/>10 funcs"]
-    llx_orchestration["llx.orchestration<br/>21 funcs"]
-    llx_routing["llx.routing<br/>15 funcs"]
+    llx_mcp["llx.mcp<br/>11 funcs"]
+    llx_orchestration["llx.orchestration<br/>166 funcs"]
+    llx_routing["llx.routing<br/>18 funcs"]
     llx_tools["llx.tools<br/>116 funcs"]
     llx_tools ==>|478| docker_ai_tools
+    llx_orchestration ==>|243| docker_ai_tools
     examples_ai_tools ==>|93| docker_ai_tools
     examples_local ==>|80| docker_ai_tools
     examples_vscode_roocode ==>|71| docker_ai_tools
@@ -23,12 +25,15 @@ flowchart TD
     examples_proxy ==>|44| docker_ai_tools
     examples_multi_provider ==>|44| docker_ai_tools
     examples_basic ==>|36| docker_ai_tools
-    llx_orchestration ==>|34| docker_ai_tools
     llx_cli ==>|8| llx_config
+    llx_mcp ==>|6| llx_analysis
     llx_cli ==>|5| llx_analysis
+    llx_mcp ==>|4| llx_config
     llx_cli -->|3| llx_routing
     llx_cli -->|3| llx_integrations
+    llx_mcp -->|3| llx_routing
     llx_config -->|1| llx_litellm_config
+    llx_mcp -->|1| llx_integrations
     examples_docker -->|1| llx_analysis
     examples_docker -->|1| llx_config
     examples_multi_provider -->|1| llx_config

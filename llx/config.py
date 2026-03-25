@@ -24,6 +24,7 @@ else:
     try:
         import tomllib  # type: ignore[import]
     except ImportError:
+        # pip install tomli for Python < 3.11
         import tomli as tomllib  # type: ignore[import,no-redef]
 
 import yaml

@@ -1,7 +1,7 @@
 <!-- code2docs:start --># llx
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-130-green)
-> **130** functions | **14** classes | **32** files | CC̄ = 4.7
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-482-green)
+> **482** functions | **57** classes | **55** files | CC̄ = 4.9
 
 > Auto-generated project documentation from source code analysis.
 
@@ -28,6 +28,7 @@ pip install -e .
 ### Optional Extras
 
 ```bash
+pip install llx[mcp]    # mcp features
 pip install llx[litellm]    # litellm features
 pip install llx[code2llm]    # code2llm features
 pip install llx[redup]    # redup features
@@ -152,7 +153,7 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 llx/
-├── llx/    ├── __main__    ├── analysis/    ├── config        ├── collector    ├── cli/        ├── runner        ├── proxy    ├── integrations/    ├── routing/        ├── formatters        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main        ├── main├── ai-tools-manage├── docker-manage├── project        ├── entrypoint        ├── entrypoint        ├── install-tools        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
+├── llx/    ├── __main__    ├── analysis/    ├── config        ├── collector        ├── runner        ├── ai_tools_manager        ├── cli    ├── tools/        ├── vscode_manager        ├── config_manager        ├── health_checker    ├── cli/        ├── model_manager        ├── formatters    ├── litellm_config    ├── orchestration/        ├── rate_limiter        ├── app        ├── orchestrator_cli        ├── llm_orchestrator        ├── routing_engine        ├── tools        ├── server    ├── mcp/        ├── __main__        ├── proxy    ├── integrations/    ├── routing/        ├── client        ├── session_manager        ├── main        ├── selector        ├── main        ├── main        ├── queue_manager        ├── main        ├── main├── ai-tools-manage        ├── demo├── docker-manage        ├── entrypoint├── project        ├── install-extensions        ├── entrypoint        ├── install-tools        ├── run        ├── run        ├── run        ├── run        ├── run        ├── main        ├── vscode_orchestrator```
 
 ## API Overview
 
@@ -164,14 +165,57 @@ llx/
 - **`LlxConfig`** — Root configuration for llx.
 - **`ProjectMetrics`** — Aggregated project metrics that drive model selection.
 - **`ToolResult`** — —
+- **`AIToolsManager`** — Manages AI tools container and operations.
+- **`LLXToolsCLI`** — Unified CLI for llx ecosystem management.
+- **`VSCodeManager`** — Manages VS Code server with AI extensions.
+- **`ConfigManager`** — Manages llx configuration files and settings.
+- **`HealthChecker`** — Comprehensive health monitoring for llx ecosystem.
+- **`ModelManager`** — Manages local Ollama models and llx configurations.
+- **`LiteLLMModelConfig`** — Configuration for a single LiteLLM model.
+- **`LiteLLMConfig`** — Complete LiteLLM configuration.
+- **`LimitType`** — Types of rate limits.
+- **`RateLimitConfig`** — Configuration for rate limiting.
+- **`RateLimitState`** — Current state of rate limiting.
+- **`RateLimiter`** — Manages rate limiting for multiple providers and accounts.
+- **`OrchestratorCLI`** — Unified CLI for llx orchestration system.
+- **`LLMProviderType`** — Types of LLM providers.
+- **`ModelCapability`** — Model capabilities.
+- **`LLMModel`** — LLM model configuration.
+- **`LLMProvider`** — LLM provider configuration.
+- **`LLMRequest`** — LLM request.
+- **`LLMResponse`** — LLM response.
+- **`LLMOrchestrator`** — Orchestrates multiple LLM providers and models with intelligent routing.
+- **`RoutingStrategy`** — Routing strategies.
+- **`ResourceType`** — Types of resources to route to.
+- **`RoutingRequest`** — A request to be routed.
+- **`RoutingDecision`** — A routing decision.
+- **`RoutingMetrics`** — Metrics for routing performance.
+- **`RoutingEngine`** — Intelligent routing engine for LLM and VS Code requests.
+- **`McpTool`** — —
 - **`ChatMessage`** — A single chat message.
 - **`ChatResponse`** — Response from LLM completion.
 - **`LlxClient`** — LLM client that routes through LiteLLM proxy or calls directly.
+- **`SessionType`** — Types of sessions.
+- **`SessionStatus`** — Session status.
+- **`SessionConfig`** — Configuration for a session.
+- **`SessionState`** — Current state of a session.
+- **`SessionManager`** — Manages multiple LLM and VS Code sessions with intelligent routing.
 - **`ProxyExample`** — —
-- **`LiteLLMModelConfig`** — Configuration for a single LiteLLM model.
-- **`LiteLLMConfig`** — Complete LiteLLM configuration.
 - **`ModelTier`** — LLM model tiers ranked by capability and cost.
 - **`SelectionResult`** — Result of model selection with explanation.
+- **`QueueStatus`** — Queue status.
+- **`RequestPriority`** — Request priority levels.
+- **`QueueRequest`** — A request in the queue.
+- **`QueueConfig`** — Configuration for a queue.
+- **`QueueState`** — Current state of a queue.
+- **`QueueManager`** — Manages multiple request queues with intelligent prioritization.
+- **`RooCodeDemo`** — Demo class for RooCode AI assistant capabilities.
+- **`VSCodeAccountType`** — Types of VS Code accounts.
+- **`VSCodeAccount`** — VS Code account configuration.
+- **`VSCodeInstanceConfig`** — Configuration for a VS Code instance.
+- **`VSCodeSession`** — Active VS Code session.
+- **`VSCodeOrchestrator`** — Orchestrates multiple VS Code instances with intelligent management.
+- **`VSCodePortAllocator`** — Manages port allocation for VS Code instances.
 
 ### Functions
 
@@ -181,15 +225,47 @@ llx/
 - `run_redup(project_path, output_dir, fmt)` — —
 - `run_vallm(project_path, output_dir)` — —
 - `run_all_tools(project_path, output_dir, on_progress)` — —
-- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
-- `start_proxy(config)` — Start LiteLLM proxy server.
-- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
+- `main()` — CLI interface for AI tools manager.
+- `main()` — Main CLI entry point.
+- `main()` — CLI interface for VS Code manager.
+- `main()` — CLI interface for config manager.
+- `main()` — CLI interface for health checker.
+- `main()` — CLI interface for model manager.
 - `output_rich(metrics, result, verbose)` — Rich terminal output for analysis results.
 - `output_json(metrics, result)` — JSON output for machine consumption.
 - `print_models_table(config, tag, provider, tier)` — Print models table with optional filtering.
 - `print_info_tables(config)` — Print tools and models info tables.
+- `load_litellm_config(project_path)` — Convenience function to load LiteLLM configuration.
+- `main()` — CLI interface for rate limiter.
+- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
+- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
+- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
+- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
+- `proxy_config(output)` — Generate LiteLLM proxy config.
+- `proxy_status()` — Check if proxy is running.
+- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
+- `info()` — Show available tools, models, and configuration.
+- `init(path)` — Initialize llx.toml configuration file.
+- `mcp_start(mode, port)` — Start the llx MCP server.
+- `mcp_config()` — Print Claude Desktop config snippet.
+- `mcp_tools()` — List available MCP tools.
+- `main()` — —
+- `main()` — Main CLI entry point.
+- `main()` — CLI interface for LLM orchestrator.
+- `main()` — CLI interface for routing engine.
+- `list_tools()` — —
+- `call_tool(name, arguments)` — —
+- `main()` — —
+- `main_sync()` — Synchronous entry point for CLI.
+- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
+- `start_proxy(config)` — Start LiteLLM proxy server.
+- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
+- `main()` — CLI interface for session manager.
 - `signal_handler(signum, frame)` — Handle shutdown signals
 - `main()` — Main proxy example execution
+- `select_model(metrics, config)` — Select the best model tier based on project metrics.
+- `check_context_fit(metrics, model)` — Check if the project context fits within the model's context window.
+- `select_with_context_check(metrics, config)` — Select model and verify context window fit.
 - `check_service_health(service_name, url, timeout)` — Check if a service is healthy
 - `check_redis_connection()` — Check Redis connection
 - `check_ollama_connection()` — Check Ollama connection
@@ -204,6 +280,7 @@ llx/
 - `demonstrate_fallback_strategy()` — Demonstrate provider fallback strategy
 - `simulate_multi_provider_selection()` — Simulate model selection across different providers
 - `main()` — Main multi-provider example execution
+- `main()` — CLI interface for queue manager.
 - `check_ollama_installation()` — Check if Ollama is installed and running
 - `check_ollama_service()` — Check if Ollama service is running
 - `list_recommended_local_models()` — List recommended local models for different use cases
@@ -211,15 +288,6 @@ llx/
 - `show_ollama_setup_instructions()` — Show instructions for setting up Ollama
 - `estimate_resource_requirements()` — Estimate resource requirements for local models
 - `main()` — Main local models example execution
-- `check_docker_services()` — Check if Docker services are running
-- `get_available_models()` — Get available models from Ollama
-- `test_ai_tools_container()` — Test AI tools container functionality
-- `demonstrate_aider()` — Demonstrate Aider usage
-- `demonstrate_claude_code()` — Demonstrate Claude Code usage
-- `demonstrate_cursor()` — Demonstrate Cursor usage
-- `test_chat_completion()` — Test chat completion through AI tools
-- `show_usage_examples()` — Show usage examples for AI tools
-- `main()` — —
 - `main()` — Main example execution
 - `print_header()` — —
 - `print_status()` — —
@@ -236,6 +304,7 @@ llx/
 - `restart()` — —
 - `quick_chat()` — —
 - `help()` — —
+- `main()` — Main demonstration function.
 - `print_header()` — —
 - `print_status()` — —
 - `print_warning()` — —
@@ -243,22 +312,20 @@ llx/
 - `check_docker()` — —
 - `check_compose()` — —
 - `get_compose_cmd()` — —
+- `is_extension_installed()` — —
+- `install_extension()` — —
 - `hello_world()` — —
 - `print()` — —
-- `load_litellm_config(project_path)` — Convenience function to load LiteLLM configuration.
-- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
-- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
-- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
-- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
-- `proxy_config(output)` — Generate LiteLLM proxy config.
-- `proxy_status()` — Check if proxy is running.
-- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
-- `info()` — Show available tools, models, and configuration.
-- `init(path)` — Initialize llx.toml configuration file.
+- `check_docker_services()` — Check if Docker services are running
+- `get_available_models()` — Get available models from Ollama
+- `test_ai_tools_container()` — Test AI tools container functionality
+- `demonstrate_aider()` — Demonstrate Aider usage
+- `demonstrate_claude_code()` — Demonstrate Claude Code usage
+- `demonstrate_cursor()` — Demonstrate Cursor usage
+- `test_chat_completion()` — Test chat completion through AI tools
+- `show_usage_examples()` — Show usage examples for AI tools
 - `main()` — —
-- `select_model(metrics, config)` — Select the best model tier based on project metrics.
-- `check_context_fit(metrics, model)` — Check if the project context fits within the model's context window.
-- `select_with_context_check(metrics, config)` — Select model and verify context window fit.
+- `main()` — CLI interface for VS Code orchestrator.
 
 
 ## Project Structure
@@ -268,6 +335,7 @@ llx/
 📄 `docker.ai-tools.entrypoint` (3 functions)
 📄 `docker.ai-tools.install-tools`
 📄 `docker.ollama.entrypoint`
+📄 `docker.vscode.install-extensions` (2 functions)
 📄 `examples.ai-tools.main` (9 functions)
 📄 `examples.basic.main` (1 functions)
 📄 `examples.basic.run`
@@ -279,27 +347,47 @@ llx/
 📄 `examples.multi-provider.run`
 📄 `examples.proxy.main` (8 functions, 1 classes)
 📄 `examples.proxy.run`
+📄 `examples.vscode-roocode.demo` (11 functions, 1 classes)
 📦 `llx`
 📄 `llx.__main__`
 📦 `llx.analysis`
-📄 `llx.analysis.collector` (14 functions, 1 classes)
+📄 `llx.analysis.collector` (21 functions, 1 classes)
 📄 `llx.analysis.runner` (6 functions, 1 classes)
 📦 `llx.cli`
-📄 `llx.cli.app` (11 functions)
-📄 `llx.cli.formatters` (4 functions)
-📄 `llx.config` (4 functions, 4 classes)
+📄 `llx.cli.app` (14 functions)
+📄 `llx.cli.formatters` (12 functions)
+📄 `llx.config` (7 functions, 4 classes)
 📦 `llx.integrations`
 📄 `llx.integrations.proxy` (3 functions)
 📄 `llx.litellm_config` (10 functions, 2 classes)
+📦 `llx.mcp`
+📄 `llx.mcp.__main__`
+📄 `llx.mcp.server` (4 functions)
+📄 `llx.mcp.tools` (7 functions, 1 classes)
+📦 `llx.orchestration`
+📄 `llx.orchestration.llm_orchestrator` (33 functions, 7 classes)
+📄 `llx.orchestration.orchestrator_cli` (22 functions, 1 classes)
+📄 `llx.orchestration.queue_manager` (23 functions, 6 classes)
+📄 `llx.orchestration.rate_limiter` (18 functions, 4 classes)
+📄 `llx.orchestration.routing_engine` (39 functions, 6 classes)
+📄 `llx.orchestration.session_manager` (21 functions, 5 classes)
+📄 `llx.orchestration.vscode_orchestrator` (32 functions, 6 classes)
 📦 `llx.routing`
 📄 `llx.routing.client` (9 functions, 3 classes)
-📄 `llx.routing.selector` (6 functions, 2 classes)
+📄 `llx.routing.selector` (9 functions, 2 classes)
+📦 `llx.tools`
+📄 `llx.tools.ai_tools_manager` (20 functions, 1 classes)
+📄 `llx.tools.cli` (15 functions, 1 classes)
+📄 `llx.tools.config_manager` (25 functions, 1 classes)
+📄 `llx.tools.health_checker` (13 functions, 1 classes)
+📄 `llx.tools.model_manager` (20 functions, 1 classes)
+📄 `llx.tools.vscode_manager` (23 functions, 1 classes)
 📄 `project`
 
 ## Requirements
 
 - Python >= >=3.10
-- typer >=0.12- rich >=13.0- pydantic >=2.0- pydantic-settings >=2.0- tomli >=2.0; python_version<'3.11'- httpx >=0.27- pyyaml >=6.0
+- typer >=0.12- rich >=13.0- pydantic >=2.0- pydantic-settings >=2.0- tomli >=2.0; python_version<'3.11'- httpx >=0.27- pyyaml >=6.0- requests >=2.31- docker >=6.0- psutil >=5.9
 
 ## Contributing
 

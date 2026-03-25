@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.6"
+version = "0.1.7"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 license = "Apache-2.0"
@@ -36,6 +36,7 @@ dependencies = [
 [project.scripts]
 llx = "llx.cli.app:main"
 llx-tools = "llx.tools.cli:main"
+llx-orchestrator = "llx.orchestration.orchestrator_cli:main"
 llx-mcp = "llx.mcp.server:main_sync"
 
 [project.optional-dependencies]

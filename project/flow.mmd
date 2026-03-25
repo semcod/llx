@@ -6,30 +6,25 @@ flowchart TD
     subgraph CLI
         llx__cli__formatters__output_rich["output_rich"]
         llx__cli__formatters__output_json["output_json"]
+        llx__cli__formatters___filter_models["_filter_models"]
+        llx__cli__formatters___build_model_row["_build_model_row"]
+        llx__cli__formatters___render_models_table["_render_models_table"]
+        llx__cli__formatters___build_title["_build_title"]
         llx__cli__formatters__print_models_table["print_models_table"]
+        llx__cli__formatters___render_tools_table["_render_tools_table"]
+        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
+        llx__cli__formatters___render_agents_table["_render_agents_table"]
+        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
         llx__cli__formatters__print_info_tables["print_info_tables"]
         llx__cli__app__analyze["analyze"]
         llx__cli__app__select["select"]
         llx__cli__app__chat["chat"]
-        llx__cli__app__proxy_start["proxy_start"]
-        llx__cli__app__proxy_config["proxy_config"]
-        llx__cli__app__proxy_status["proxy_status"]
-        llx__cli__app__models["models"]
-        llx__cli__app__info["info"]
-        llx__cli__app__init["init"]
-        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
-        llx__cli__app__main["main"]
+        ...["+11 more"]
     end
 
     subgraph Core
-        llx__analysis__collector__analyze_project["analyze_project"]
-        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
-        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
-        llx__analysis__collector___apply_evolution_yaml{{_apply_evolution_yaml CC=16}}
-        llx__analysis__collector___apply_map_text{{_apply_map_text CC=20}}
-        llx__analysis__collector___extract_cc_value["_extract_cc_value"]
         llx__config__LlxConfig__load["load"]
-        llx__config___apply_yaml{{_apply_yaml CC=19}}
+        llx__config___apply_yaml_models["_apply_yaml_models"]
         llx__AIToolsManager__is_container_running["is_container_running"]
         llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
         llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
@@ -37,7 +32,13 @@ flowchart TD
         llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
         llx__AIToolsManager__execute_command["execute_command"]
         llx__tools__ai_tools_manager__AIToolsManager__get_status["get_status"]
-        ...["+171 more"]
+        llx__AIToolsManager__test_connectivity["test_connectivity"]
+        llx__tools__ai_tools_manager__AIToolsManager__run_chat_test["run_chat_test"]
+        llx__AIToolsManager__get_available_models["get_available_models"]
+        llx__tools__ai_tools_manager__AIToolsManager__install_tool["install_tool"]
+        llx__tools__ai_tools_manager__AIToolsManager__update_tools["update_tools"]
+        llx__tools__ai_tools_manager__AIToolsManager__get_logs["get_logs"]
+        ...["+315 more"]
     end
 
-    class llx__config__LlxConfig__load,llx__AIToolsManager__is_container_running,llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools,llx__AIToolsManager__restart_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__access_shell,llx__AIToolsManager__execute_command,llx__tools__ai_tools_manager__AIToolsManager__get_status,llx__AIToolsManager__test_connectivity,llx__tools__ai_tools_manager__AIToolsManager__run_chat_test entry
+    class llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__AIToolsManager__is_container_running,llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools,llx__AIToolsManager__restart_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__access_shell,llx__AIToolsManager__execute_command,llx__tools__ai_tools_manager__AIToolsManager__get_status,llx__AIToolsManager__test_connectivity entry

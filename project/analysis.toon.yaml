@@ -1,63 +1,81 @@
-# code2llm | 31f 8890L | python:24,shell:7 | 2026-03-25
-# CC̄=5.0 | critical:15/280 | dups:0 | cycles:0
+# code2llm | 40f 13772L | python:33,shell:7 | 2026-03-25
+# CC̄=4.6 | critical:16/460 | dups:0 | cycles:0
 
-HEALTH[16]:
+HEALTH[20]:
+  🔴 GOD   llx/orchestration/rate_limiter.py = 659L, 4 classes, 18m, max CC=29
+  🔴 GOD   llx/orchestration/vscode_orchestrator.py = 944L, 6 classes, 32m, max CC=35
+  🔴 GOD   llx/orchestration/llm_orchestrator.py = 1082L, 7 classes, 33m, max CC=24
+  🔴 GOD   llx/orchestration/routing_engine.py = 940L, 6 classes, 39m, max CC=11
+  🔴 GOD   llx/orchestration/queue_manager.py = 734L, 6 classes, 23m, max CC=27
   🔴 GOD   llx/orchestration/session_manager.py = 602L, 5 classes, 21m, max CC=20
-  🟡 CC    _apply_evolution_yaml CC=16 (limit:15)
-  🟡 CC    _apply_map_text CC=20 (limit:15)
-  🟡 CC    _apply_yaml CC=19 (limit:15)
   🟡 CC    main CC=22 (limit:15)
   🟡 CC    main CC=20 (limit:15)
   🟡 CC    print_config_summary CC=17 (limit:15)
   🟡 CC    main CC=35 (limit:15)
-  🟡 CC    check_service_health CC=16 (limit:15)
-  🟡 CC    run_comprehensive_health_check CC=16 (limit:15)
   🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    main CC=30 (limit:15)
-  🟡 CC    print_models_table CC=32 (limit:15)
-  🟡 CC    print_info_tables CC=26 (limit:15)
-  🟡 CC    _compute_tier CC=20 (limit:15)
-  🟡 CC    main CC=20 (limit:15)
+  🟡 CC    check_service_health CC=16 (limit:15)
+  🟡 CC    run_comprehensive_health_check CC=16 (limit:15)
+  🟡 CC    _render_tiers_table CC=15 (limit:15)
+  🟡 CC    get_status CC=15 (limit:15)
+  🟡 CC    print_status_summary CC=15 (limit:15)
+  🟡 CC    main CC=29 (limit:15)
+  🟡 CC    main CC=35 (limit:15)
+  🟡 CC    main CC=24 (limit:15)
 
-REFACTOR[2]:
-  1. split llx/orchestration/session_manager.py  (god module)
-  2. split 15 high-CC methods  (CC>15)
+REFACTOR[7]:
+  1. split llx/orchestration/rate_limiter.py  (god module)
+  2. split llx/orchestration/vscode_orchestrator.py  (god module)
+  3. split llx/orchestration/llm_orchestrator.py  (god module)
+  4. split llx/orchestration/routing_engine.py  (god module)
+  5. split llx/orchestration/queue_manager.py  (god module)
+  6. split llx/orchestration/session_manager.py  (god module)
+  7. split 14 high-CC methods  (CC>15)
 
-PIPELINES[190]:
+PIPELINES[339]:
   [1] Src [load]: load → _apply_env
       PURITY: 100% pure
-  [2] Src [__init__]: __init__
+  [2] Src [_apply_yaml_models]: _apply_yaml_models
       PURITY: 100% pure
-  [3] Src [is_container_running]: is_container_running
+  [3] Src [__init__]: __init__
       PURITY: 100% pure
-  [4] Src [start_ai_tools]: start_ai_tools → print
+  [4] Src [is_container_running]: is_container_running
       PURITY: 100% pure
-  [5] Src [stop_ai_tools]: stop_ai_tools → print
+  [5] Src [start_ai_tools]: start_ai_tools → print
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=5.6    ←in:8  →out:0
+  llx/                            CC̄=4.9    ←in:12  →out:0
+  │ !! llm_orchestrator          1082L  7C   33m  CC=24     ←0
+  │ !! vscode_orchestrator        944L  6C   32m  CC=35     ←0
+  │ !! routing_engine             940L  6C   39m  CC=11     ←0
   │ !! cli                        783L  1C   15m  CC=14     ←0
   │ !! health_checker             774L  1C   13m  CC=16     ←0
   │ !! vscode_manager             761L  1C   23m  CC=20     ←0
   │ !! config_manager             746L  1C   25m  CC=35     ←0
+  │ !! queue_manager              734L  6C   23m  CC=27     ←0
   │ !! model_manager              710L  1C   20m  CC=30     ←0
+  │ !! rate_limiter               659L  4C   18m  CC=29     ←0
   │ !! ai_tools_manager           607L  1C   20m  CC=22     ←0
   │ !! session_manager            602L  5C   21m  CC=20     ←0
-  │ !! collector                  411L  1C   14m  CC=20     ←4
-  │ !! config                     300L  4C    4m  CC=19     ←5
-  │ !! formatters                 279L  0C    4m  CC=32     ←1
-  │ !! selector                   259L  2C    6m  CC=20     ←4
-  │ app                        247L  0C   11m  CC=5      ←0
+  │ collector                  441L  1C   21m  CC=10     ←5
+  │ !! formatters                 338L  0C   12m  CC=15     ←1
+  │ config                     318L  4C    7m  CC=13     ←6
+  │ app                        299L  0C   14m  CC=5      ←0
+  │ tools                      275L  1C    7m  CC=4      ←0
+  │ selector                   274L  2C    9m  CC=8      ←5
   │ client                     198L  3C    9m  CC=5      ←0
   │ litellm_config             151L  2C   10m  CC=4      ←1
-  │ proxy                      131L  0C    3m  CC=7      ←1
-  │ runner                      80L  1C    6m  CC=6      ←2
+  │ proxy                      131L  0C    3m  CC=7      ←2
+  │ runner                      80L  1C    6m  CC=6      ←3
+  │ server                      69L  0C    4m  CC=3      ←0
   │ __init__                    29L  0C    0m  CC=0.0    ←0
   │ __init__                    26L  0C    0m  CC=0.0    ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
   │ __main__                     4L  0C    0m  CC=0.0    ←0
+  │ __main__                     4L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
@@ -70,27 +88,30 @@ LAYERS:
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
   │ install-tools.sh           369L  0C    0m  CC=0.0    ←0
-  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←14
+  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←19
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING:
-                       docker.ai-tools          llx.tools  llx.orchestration            llx.cli                llx       llx.analysis   llx.integrations        llx.routing
-    docker.ai-tools                 ──               ←478                ←34                                                                                                 hub
-          llx.tools                478                 ──                                                                                                                    !! fan-out
-  llx.orchestration                 34                                    ──                                                                                                 !! fan-out
-            llx.cli                                                                          ──                  8                  5                  3                  3  !! fan-out
-                llx                                                                          ←8                 ──                                                           hub
-       llx.analysis                                                                          ←5                                    ──                                        hub
-   llx.integrations                                                                          ←3                                                       ──                   
-        llx.routing                                                                          ←3                                                                          ──
+                       docker.ai-tools          llx.tools  llx.orchestration            llx.cli            llx.mcp                llx       llx.analysis        llx.routing   llx.integrations
+    docker.ai-tools                 ──               ←478               ←243                                                                                                                    hub
+          llx.tools                478                 ──                                                                                                                                       !! fan-out
+  llx.orchestration                243                                    ──                                                                                                                    !! fan-out
+            llx.cli                                                                          ──                                     8                  5                  3                  3  !! fan-out
+            llx.mcp                                                                                             ──                  4                  6                  3                  1  !! fan-out
+                llx                                                                          ←8                 ←4                 ──                                                           hub
+       llx.analysis                                                                          ←5                 ←6                                    ──                                        hub
+        llx.routing                                                                          ←3                 ←3                                                       ──                     hub
+   llx.integrations                                                                          ←3                 ←1                                                                          ──
   CYCLES: none
-  HUB: llx.analysis/ (fan-in=5)
-  HUB: llx/ (fan-in=8)
-  HUB: docker.ai-tools/ (fan-in=512)
-  SMELL: llx.tools/ fan-out=478 → split needed
+  HUB: docker.ai-tools/ (fan-in=721)
+  HUB: llx/ (fan-in=12)
+  HUB: llx.analysis/ (fan-in=11)
+  HUB: llx.routing/ (fan-in=6)
+  SMELL: llx.orchestration/ fan-out=243 → split needed
+  SMELL: llx.mcp/ fan-out=14 → split needed
   SMELL: llx.cli/ fan-out=19 → split needed
-  SMELL: llx.orchestration/ fan-out=34 → split needed
+  SMELL: llx.tools/ fan-out=478 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
