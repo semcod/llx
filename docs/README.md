@@ -1,7 +1,7 @@
 <!-- code2docs:start --># llx
 
-![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-77-green)
-> **77** functions | **12** classes | **23** files | CC̄ = 4.9
+![version](https://img.shields.io/badge/version-0.1.0-blue) ![python](https://img.shields.io/badge/python-%3E%3D3.10-blue) ![coverage](https://img.shields.io/badge/coverage-unknown-lightgrey) ![functions](https://img.shields.io/badge/functions-104-green)
+> **104** functions | **14** classes | **28** files | CC̄ = 4.7
 
 > Auto-generated project documentation from source code analysis.
 
@@ -152,47 +152,53 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 llx/
-├── llx/    ├── analysis/    ├── __main__        ├── collector    ├── cli/    ├── config        ├── proxy    ├── integrations/    ├── routing/        ├── formatters        ├── app        ├── client        ├── main        ├── main        ├── main├── project        ├── run        ├── run        ├── run        ├── run        ├── main        ├── runner        ├── selector```
+├── llx/    ├── config    ├── analysis/    ├── __main__        ├── collector    ├── cli/        ├── runner        ├── formatters    ├── integrations/    ├── routing/        ├── proxy        ├── client        ├── main        ├── main        ├── main        ├── main        ├── main├── docker-manage├── project        ├── entrypoint        ├── run        ├── run        ├── run        ├── run        ├── run    ├── litellm_config        ├── app        ├── selector```
 
 ## API Overview
 
 ### Classes
 
-- **`ProjectMetrics`** — Aggregated project metrics that drive model selection.
 - **`ModelConfig`** — Configuration for a single model tier.
 - **`TierThresholds`** — Thresholds that determine which model tier to use.
 - **`ProxyConfig`** — LiteLLM proxy settings.
 - **`LlxConfig`** — Root configuration for llx.
+- **`ProjectMetrics`** — Aggregated project metrics that drive model selection.
+- **`ToolResult`** — —
 - **`ChatMessage`** — A single chat message.
 - **`ChatResponse`** — Response from LLM completion.
 - **`LlxClient`** — LLM client that routes through LiteLLM proxy or calls directly.
 - **`ProxyExample`** — —
-- **`ToolResult`** — —
+- **`LiteLLMModelConfig`** — Configuration for a single LiteLLM model.
+- **`LiteLLMConfig`** — Complete LiteLLM configuration.
 - **`ModelTier`** — LLM model tiers ranked by capability and cost.
 - **`SelectionResult`** — Result of model selection with explanation.
 
 ### Functions
 
 - `analyze_project(project_path)` — Collect all available metrics for a project.
-- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
-- `start_proxy(config)` — Start LiteLLM proxy server.
-- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
+- `check_tool(name)` — Check if a CLI tool is available on PATH.
+- `run_code2llm(project_path, output_dir, fmt)` — —
+- `run_redup(project_path, output_dir, fmt)` — —
+- `run_vallm(project_path, output_dir)` — —
+- `run_all_tools(project_path, output_dir, on_progress)` — —
 - `output_rich(metrics, result, verbose)` — Rich terminal output for analysis results.
 - `output_json(metrics, result)` — JSON output for machine consumption.
 - `print_models_table(config, tag, provider, tier)` — Print models table with optional filtering.
 - `print_info_tables(config)` — Print tools and models info tables.
-- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
-- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
-- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
-- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
-- `proxy_config(output)` — Generate LiteLLM proxy config.
-- `proxy_status()` — Check if proxy is running.
-- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
-- `info()` — Show available tools, models, and configuration.
-- `init(path)` — Initialize llx.toml configuration file.
-- `main()` — —
+- `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
+- `start_proxy(config)` — Start LiteLLM proxy server.
+- `check_proxy(base_url)` — Check if LiteLLM proxy is running.
 - `signal_handler(signum, frame)` — Handle shutdown signals
 - `main()` — Main proxy example execution
+- `check_service_health(service_name, url, timeout)` — Check if a service is healthy
+- `check_redis_connection()` — Check Redis connection
+- `check_ollama_connection()` — Check Ollama connection
+- `demonstrate_docker_integration()` — Demonstrate llx integration with Docker services
+- `demonstrate_redis_usage(redis_client)` — Demonstrate Redis caching with llx
+- `demonstrate_ollama_integration(ollama_models)` — Demonstrate Ollama integration with llx
+- `demonstrate_container_metrics()` — Demonstrate collecting container metrics
+- `demonstrate_service_discovery()` — Demonstrate service discovery in Docker network
+- `main()` — Main Docker integration example
 - `check_provider_keys()` — Check which provider API keys are available
 - `compare_provider_costs()` — Compare costs across available providers
 - `demonstrate_fallback_strategy()` — Demonstrate provider fallback strategy
@@ -206,11 +212,24 @@ llx/
 - `estimate_resource_requirements()` — Estimate resource requirements for local models
 - `main()` — Main local models example execution
 - `main()` — Main example execution
-- `check_tool(name)` — Check if a CLI tool is available on PATH.
-- `run_code2llm(project_path, output_dir, fmt)` — —
-- `run_redup(project_path, output_dir, fmt)` — —
-- `run_vallm(project_path, output_dir)` — —
-- `run_all_tools(project_path, output_dir, on_progress)` — —
+- `print_header()` — —
+- `print_status()` — —
+- `print_warning()` — —
+- `print_error()` — —
+- `check_docker()` — —
+- `check_compose()` — —
+- `get_compose_cmd()` — —
+- `load_litellm_config(project_path)` — Convenience function to load LiteLLM configuration.
+- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
+- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
+- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
+- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
+- `proxy_config(output)` — Generate LiteLLM proxy config.
+- `proxy_status()` — Check if proxy is running.
+- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
+- `info()` — Show available tools, models, and configuration.
+- `init(path)` — Initialize llx.toml configuration file.
+- `main()` — —
 - `select_model(metrics, config)` — Select the best model tier based on project metrics.
 - `check_context_fit(metrics, model)` — Check if the project context fits within the model's context window.
 - `select_with_context_check(metrics, config)` — Select model and verify context window fit.
@@ -218,8 +237,12 @@ llx/
 
 ## Project Structure
 
+📄 `docker-manage` (7 functions)
+📄 `docker.ollama.entrypoint`
 📄 `examples.basic.main` (1 functions)
 📄 `examples.basic.run`
+📄 `examples.docker.main` (9 functions)
+📄 `examples.docker.run`
 📄 `examples.local.main` (7 functions)
 📄 `examples.local.run`
 📄 `examples.multi-provider.main` (5 functions)
@@ -234,9 +257,10 @@ llx/
 📦 `llx.cli`
 📄 `llx.cli.app` (11 functions)
 📄 `llx.cli.formatters` (4 functions)
-📄 `llx.config` (3 functions, 4 classes)
+📄 `llx.config` (4 functions, 4 classes)
 📦 `llx.integrations`
 📄 `llx.integrations.proxy` (3 functions)
+📄 `llx.litellm_config` (10 functions, 2 classes)
 📦 `llx.routing`
 📄 `llx.routing.client` (9 functions, 3 classes)
 📄 `llx.routing.selector` (6 functions, 2 classes)
@@ -250,8 +274,8 @@ llx/
 ## Contributing
 
 **Contributors:**
-- Tom Sapletta <tom-sapletta-com@users.noreply.github.com>
 - Tom Softreck <tom@sapletta.com>
+- Tom Sapletta <tom-sapletta-com@users.noreply.github.com>
 
 We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 

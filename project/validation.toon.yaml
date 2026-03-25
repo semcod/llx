@@ -1,16 +1,13 @@
-# vallm batch | 51f | 30✓ 21✗
+# vallm batch | 67f | 32✓ 35✗
 
 SUMMARY:
-  total: 51
-  passed: 30
-  failed: 21
-  success: 58.8%
+  total: 67
+  passed: 32
+  failed: 35
+  success: 47.8%
 
 FILES:
   [yaml]
-    ✓ litellm-config.yaml
-      verdict: pass
-      score: 1.00
     ✓ goal.yaml
       verdict: pass
       score: 1.00
@@ -40,15 +37,20 @@ FILES:
       score: 0.00
       issues: 1
         [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
-  [toml]
-    ✓ pyproject.toml
+  [bash]
+    ✓ docker-manage.sh
       verdict: pass
       score: 1.00
-  [bash]
     ✓ project.sh
       verdict: pass
       score: 1.00
+    ✓ docker/ollama/entrypoint.sh
+      verdict: pass
+      score: 1.00
     ✓ examples/proxy/run.sh
+      verdict: pass
+      score: 1.00
+    ✓ examples/docker/run.sh
       verdict: pass
       score: 1.00
     ✓ examples/multi-provider/run.sh
@@ -60,6 +62,10 @@ FILES:
     ✓ examples/basic/run.sh
       verdict: pass
       score: 1.00
+  [toml]
+    ✓ pyproject.toml
+      verdict: pass
+      score: 1.00
   [python]
     ✓ tests/test_core.py
       verdict: pass
@@ -67,10 +73,16 @@ FILES:
     ✓ tests/__init__.py
       verdict: pass
       score: 1.00
+    ✗ llx/litellm_config.py
+      verdict: fail
+      score: 0.93
+      issues: 1
+        [error] python.import.resolvable: Module 'config' not found@115
     ✗ llx/config.py
       verdict: fail
-      score: 0.96
-      issues: 1
+      score: 0.92
+      issues: 2
+        [error] python.import.resolvable: Module 'litellm_config' not found@31
         [error] python.import.resolvable: Module 'tomli' not found@27
     ✓ llx/__init__.py
       verdict: pass
@@ -130,6 +142,11 @@ FILES:
     ✓ examples/proxy/main.py
       verdict: pass
       score: 1.00
+    ✗ examples/docker/main.py
+      verdict: fail
+      score: 0.95
+      issues: 1
+        [error] python.import.resolvable: Module 'redis' not found@16
     ✓ examples/multi-provider/main.py
       verdict: pass
       score: 1.00
@@ -139,11 +156,24 @@ FILES:
     ✓ examples/basic/main.py
       verdict: pass
       score: 1.00
+  [sql]
+    ✗ docker/postgres/init.sql
+      verdict: fail
+      score: 0.00
+      issues: 1
+        [error] syntax.tree_sitter: tree-sitter found 7 parse error(s) in sql
 
 FAILED:
+  ✗ .env.backup: Unsupported file type
+  ✗ .env.new: Unsupported file type
+  ✗ Makefile: Unsupported file type
+  ✗ docker-compose.yml: Unsupported file type
   ✗ VERSION: Unsupported file type
   ✗ LICENSE: Unsupported file type
+  ✗ docker-compose-prod.yml: Unsupported file type
   ✗ CHANGELOG.md: Unsupported file type
+  ✗ Dockerfile: Unsupported file type
+  ✗ docker-compose-dev.yml: Unsupported file type
   ✗ README.md: Unsupported file type
   ✗ docs/README.md: Unsupported file type
   ✗ examples/README.md: Unsupported file type
@@ -157,8 +187,15 @@ FAILED:
   ✗ project/evolution.toon.yaml: Validation fail
   ✗ project/README.md: Unsupported file type
   ✗ project/analysis.toon.yaml: Validation fail
+  ✗ llx/litellm_config.py: Validation fail
   ✗ llx/config.py: Validation fail
+  ✗ docker/nginx/nginx.conf: Unsupported file type
+  ✗ docker/postgres/init.sql: Validation fail
+  ✗ docker/redis/redis.conf: Unsupported file type
+  ✗ docker/nginx/conf.d/llx.conf: Unsupported file type
   ✗ examples/proxy/README.md: Unsupported file type
+  ✗ examples/docker/main.py: Validation fail
+  ✗ examples/docker/README.md: Unsupported file type
   ✗ examples/multi-provider/README.md: Unsupported file type
   ✗ examples/local/README.md: Unsupported file type
   ✗ examples/basic/README.md: Unsupported file type

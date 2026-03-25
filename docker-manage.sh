@@ -151,6 +151,9 @@ case "${1:-help}" in
         $COMPOSE_CMD -f $DEV_COMPOSE_FILE -p ${PROJECT_NAME}-dev down
         
         print_status "Development environment stopped!"
+        echo ""
+        echo "💡 Local Ollama continues running independently"
+        echo "   Stop with: ollama stop"
         ;;
 
     "stop-prod")
@@ -161,6 +164,9 @@ case "${1:-help}" in
         $COMPOSE_CMD -f $PROD_COMPOSE_FILE -p ${PROJECT_NAME}-prod down
         
         print_status "Production environment stopped!"
+        echo ""
+        echo "💡 Local Ollama continues running independently"
+        echo "   Stop with: ollama stop"
         ;;
 
     "status"|"ps")
@@ -169,6 +175,16 @@ case "${1:-help}" in
         echo ""
         
         COMPOSE_CMD=$(get_compose_cmd)
+        
+        # Check local Ollama status
+        echo "🤖 Local Ollama:"
+        if ollama list > /dev/null 2>&1; then
+            MODEL_COUNT=$(ollama list 2>/dev/null | wc -l)
+            echo "   ✓ Running with $MODEL_COUNT models"
+        else
+            echo "   ❌ Not running"
+        fi
+        echo ""
         
         # Show status for all environments
         echo "🔵 Development:"
@@ -296,10 +312,10 @@ case "${1:-help}" in
             print_status "Redis backed up!"
         fi
         
-        # Backup Ollama models
-        if docker ps | grep -q "llx-ollama"; then
-            echo "📦 Backing up Ollama models..."
-            docker cp llx-ollama-prod:/root/.ollama $BACKUP_DIR/ollama
+        # Backup local Ollama models
+        if ollama list > /dev/null 2>&1; then
+            echo "📦 Backing up local Ollama models..."
+            cp -r ~/.ollama $BACKUP_DIR/ollama 2>/dev/null || true
             print_status "Ollama models backed up!"
         fi
         

@@ -22,22 +22,22 @@ flowchart TD
     end
 
     subgraph Core
-        llx__config__LlxConfig__load["load"]
         llx__analysis__collector__analyze_project["analyze_project"]
         llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
         llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
         llx__analysis__collector___apply_evolution_yaml{{_apply_evolution_yaml CC=16}}
         llx__analysis__collector___apply_map_text{{_apply_map_text CC=20}}
         llx__analysis__collector___extract_cc_value["_extract_cc_value"]
+        llx__config__LlxConfig__load["load"]
+        llx__config___apply_yaml{{_apply_yaml CC=19}}
+        llx__analysis__runner__run_code2llm["run_code2llm"]
+        llx__analysis__runner__run_redup["run_redup"]
+        llx__analysis__runner__run_vallm["run_vallm"]
         llx__routing__client__LlxClient__chat["chat"]
         llx__routing__client__LlxClient__chat_with_context["chat_with_context"]
         llx__routing__client__LlxClient___build_payload["_build_payload"]
         llx__routing__client__LlxClient___parse_response["_parse_response"]
-        llx__routing__client__LlxClient___fallback_direct["_fallback_direct"]
-        llx__routing__client__LlxClient__close["close"]
-        llx__routing__client__LlxClient____enter__["__enter__"]
-        llx__routing__client__LlxClient____exit__["__exit__"]
-        ...["+5 more"]
+        ...["+23 more"]
     end
 
-    class llx__config__LlxConfig__load,llx__cli__formatters__output_rich,llx__cli__formatters__output_json,llx__cli__formatters__print_models_table,llx__cli__formatters__print_info_tables,llx__routing__client__LlxClient__chat,llx__routing__client__LlxClient__chat_with_context,llx__routing__client__LlxClient___build_payload,llx__routing__client__LlxClient___parse_response,llx__routing__client__LlxClient___fallback_direct entry
+    class llx__config__LlxConfig__load,llx__cli__formatters__output_rich,llx__cli__formatters__output_json,llx__cli__formatters__print_models_table,llx__cli__formatters__print_info_tables,llx__analysis__runner__run_code2llm,llx__analysis__runner__run_redup,llx__analysis__runner__run_vallm,llx__routing__client__LlxClient__chat,llx__routing__client__LlxClient__chat_with_context entry

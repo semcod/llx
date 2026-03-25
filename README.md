@@ -28,13 +28,13 @@ preLLM proved the concept but had architectural issues that llx resolves:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    IDE / Agent Layer                         │
+│                    IDE / Agent Layer                        │
 │  Roo Code │ Cline │ Continue.dev │ Aider │ Claude Code      │
-│  (point at localhost:4000 as OpenAI-compatible API)          │
+│  (point at localhost:4000 as OpenAI-compatible API)         │
 └─────────────────┬───────────────────────────────────────────┘
                   │
 ┌─────────────────▼───────────────────────────────────────────┐
-│              LiteLLM Proxy (localhost:4000)                  │
+│              LiteLLM Proxy (localhost:4000)                 │
 │  ┌──────────┐  ┌──────────────┐  ┌────────────────────┐     │
 │  │ Router   │  │ Semantic     │  │ Cost Tracking      │     │
 │  │ (metrics)│  │ Cache (Redis)│  │ + Budget Limits    │     │
@@ -53,8 +53,8 @@ preLLM proved the concept but had architectural issues that llx resolves:
         │
 ┌───────▼─────────────────────────────────────────────────────┐
 │            Code Analysis Pipeline                           │
-│  code2llm → redup → vallm → llx                            │
-│  (metrics → duplication → validation → model selection)      │
+│  code2llm → redup → vallm → llx                             │
+│  (metrics → duplication → validation → model selection)     │
 └─────────────────────────────────────────────────────────────┘
 ```
 

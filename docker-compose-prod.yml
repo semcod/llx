@@ -20,6 +20,8 @@ services:
       - LITELLM_PROXY_HOST=0.0.0.0
       - LITELLM_PROXY_PORT=4000
       - LITELLM_PROXY_MASTER_KEY=${LLX_PROXY_MASTER_KEY}
+      # Use local Ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
     env_file:
       - .env.prod
     volumes:
@@ -27,9 +29,13 @@ services:
       - ./litellm-config.yaml:/app/litellm-config.yaml:ro
       - ./logs:/app/logs
       - llx_cache:/app/cache
+      # Mount local Ollama models directory for access
+      - ~/.ollama:/root/.ollama:ro
     networks:
       - llx-network
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
@@ -99,38 +105,9 @@ services:
       timeout: 10s
       retries: 3
 
-  # Ollama for local models
-  ollama:
-    image: ollama/ollama:latest
-    container_name: llx-ollama-prod
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-      - ./docker/ollama/entrypoint.sh:/entrypoint.sh:ro
-      - ./backups/ollama:/backups
-    environment:
-      - OLLAMA_HOST=0.0.0.0
-      - OLLAMA_PORT=11434
-      - OLLAMA_MAX_QUEUE=512
-      - OLLAMA_MAX_LOADED_MODELS=3
-    networks:
-      - llx-network
-    restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 8G
-          cpus: '2.0'
-        reservations:
-          memory: 4G
-          cpus: '1.0'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+  # Ollama for local models (running on host)
+  # Note: Ollama runs on host machine, not in container
+  # llx-api connects to host.docker.internal:11434
 
   # WebUI
   webui:
@@ -139,7 +116,7 @@ services:
     ports:
       - "3000:8080"
     environment:
-      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
       - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
       - WEBUI_NAME=llx WebUI
       - WEBUI_DESCRIPTION=Intelligent LLM model router
@@ -149,9 +126,8 @@ services:
     networks:
       - llx-network
     restart: always
-    depends_on:
-      ollama:
-        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
@@ -272,8 +248,6 @@ volumes:
   redis_data:
     driver: local
   postgres_data:
-    driver: local
-  ollama_data:
     driver: local
   webui_data:
     driver: local

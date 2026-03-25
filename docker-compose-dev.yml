@@ -54,20 +54,16 @@ services:
 
   # VS Code for development
   vscode:
-    image: linuxserver/vscode-server:latest
+    image: codercom/code-server:latest
     container_name: llx-vscode-dev
     ports:
-      - "8080:8443"
+      - "8080:8080"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Warsaw
       - PASSWORD=llx-dev
-      - SUDO_PASSWORD=llx-dev
+      - DEFAULT_WORKSPACE=/home/coder/project
     volumes:
-      - vscode_data:/config
-      - ./:/config/workspace
-      - vscode_extensions:/config/extensions
+      - vscode_data:/home/coder
+      - ./:/home/coder/project
     networks:
       - llx-network
     restart: unless-stopped
@@ -79,5 +75,4 @@ networks:
 volumes:
   redis_data:
   vscode_data:
-  vscode_extensions:
   llx_cache:

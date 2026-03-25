@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 18, shell: 5
+- **Languages**: python: 20, shell: 8
 - **Analysis Mode**: static
-- **Total Functions**: 77
-- **Total Classes**: 12
-- **Modules**: 23
-- **Entry Points**: 35
+- **Total Functions**: 104
+- **Total Classes**: 14
+- **Modules**: 28
+- **Entry Points**: 53
 
 ## Architecture by Module
 
@@ -22,10 +22,19 @@
 - **Functions**: 11
 - **File**: `app.py`
 
+### llx.litellm_config
+- **Functions**: 10
+- **Classes**: 2
+- **File**: `litellm_config.py`
+
 ### llx.routing.client
 - **Functions**: 9
 - **Classes**: 3
 - **File**: `client.py`
+
+### examples.docker.main
+- **Functions**: 9
+- **File**: `main.py`
 
 ### examples.proxy.main
 - **Functions**: 8
@@ -35,6 +44,10 @@
 ### examples.local.main
 - **Functions**: 7
 - **File**: `main.py`
+
+### docker-manage
+- **Functions**: 7
+- **File**: `docker-manage.sh`
 
 ### llx.analysis.runner
 - **Functions**: 6
@@ -50,14 +63,14 @@
 - **Functions**: 5
 - **File**: `main.py`
 
+### llx.config
+- **Functions**: 4
+- **Classes**: 4
+- **File**: `config.py`
+
 ### llx.cli.formatters
 - **Functions**: 4
 - **File**: `formatters.py`
-
-### llx.config
-- **Functions**: 3
-- **Classes**: 4
-- **File**: `config.py`
 
 ### llx.integrations.proxy
 - **Functions**: 3
@@ -75,9 +88,17 @@ Main execution flows into the system:
 > Main example execution
 - **Calls**: print, print, print, LlxConfig.load, print, print, print, print
 
+### examples.docker.main.main
+> Main Docker integration example
+- **Calls**: print, print, examples.docker.main.demonstrate_docker_integration, examples.docker.main.demonstrate_container_metrics, examples.docker.main.demonstrate_service_discovery, print, print, print
+
 ### examples.multi-provider.main.main
 > Main multi-provider example execution
 - **Calls**: print, print, print, examples.multi-provider.main.check_provider_keys, print, providers.items, examples.multi-provider.main.compare_provider_costs, examples.multi-provider.main.demonstrate_fallback_strategy
+
+### llx.config.LlxConfig.load
+> Load configuration from llx.yaml, llx.toml, or pyproject.toml.
+- **Calls**: None.resolve, cls, LiteLLMConfig.load, yaml_path.exists, pyproject.exists, llx.config._apply_env, toml_path.exists, None.get
 
 ### examples.proxy.main.ProxyExample.test_proxy
 > Test the proxy with a simple request
@@ -87,13 +108,17 @@ Main execution flows into the system:
 > Show IDE integration instructions
 - **Calls**: print, print, print, print, print, print, print, print
 
-### llx.cli.app.chat
-> Analyze project, select model, and send a prompt.
-- **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, None.resolve
+### llx.litellm_config.LiteLLMConfig.load
+> Load LiteLLM configuration from litellm-config.yaml.
+- **Calls**: None.resolve, data.get, cls, config_path.exists, cls._default_config, open, yaml.safe_load, cls._default_config
 
 ### examples.local.main.main
 > Main local models example execution
 - **Calls**: print, print, examples.local.main.check_ollama_installation, examples.local.main.check_ollama_service, examples.local.main.list_recommended_local_models, examples.local.main.estimate_resource_requirements, print, print
+
+### llx.cli.app.chat
+> Analyze project, select model, and send a prompt.
+- **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, None.resolve
 
 ### llx.cli.app.analyze
 > Analyze a project and recommend the optimal LLM model.
@@ -102,10 +127,6 @@ Main execution flows into the system:
 ### examples.proxy.main.ProxyExample.setup_server
 > Initialize the proxy server
 - **Calls**: print, ProxyRouter, aliases.items, ProxyServer, print, os.getenv, os.getenv, os.getenv
-
-### llx.config.LlxConfig.load
-> Load configuration from llx.toml or pyproject.toml.
-- **Calls**: None.resolve, cls, pyproject.exists, llx.config._apply_env, toml_path.exists, None.get, Path, llx.config._apply_toml
 
 ### examples.proxy.main.main
 > Main proxy example execution
@@ -159,37 +180,27 @@ Args:
 > Check if proxy is running.
 - **Calls**: proxy_app.command, LlxConfig.load, llx.integrations.proxy.check_proxy, console.print
 
-### llx.routing.client.LlxClient._fallback_direct
-> Fallback to direct litellm call when proxy is not running.
-- **Calls**: litellm.completion, ChatResponse, RuntimeError
-
-### llx.cli.app.info
-> Show available tools, models, and configuration.
-- **Calls**: app.command, llx.cli.formatters.print_info_tables, LlxConfig.load
-
 ### llx.analysis.runner.run_code2llm
 - **Calls**: llx.analysis.runner._run_tool, str, str
 
 ### llx.analysis.runner.run_redup
 - **Calls**: llx.analysis.runner._run_tool, str, str
 
+### llx.routing.client.LlxClient._fallback_direct
+> Fallback to direct litellm call when proxy is not running.
+- **Calls**: litellm.completion, ChatResponse, RuntimeError
+
+### llx.litellm_config.LiteLLMConfig.to_llx_models
+> Convert LiteLLM models to llx ModelConfig format.
+- **Calls**: ModelConfig, model.pricing.get, model.pricing.get
+
 ### llx.routing.selector.SelectionResult.explain
 > Human-readable explanation of why this model was selected.
 - **Calls**: None.join, lines.append, lines.append
 
-### llx.routing.client.LlxClient.__init__
-- **Calls**: httpx.Client, LlxConfig
-
-### llx.routing.client.LlxClient.chat_with_context
-> Convenience method: send prompt with code context.
-
-Args:
-    prompt: The user's question or instruction.
-    context: Code analysis context (from cod
-- **Calls**: self.chat, ChatMessage
-
-### llx.routing.client.LlxClient._build_payload
-- **Calls**: msg_list.extend, msg_list.append
+### llx.cli.app.info
+> Show available tools, models, and configuration.
+- **Calls**: app.command, llx.cli.formatters.print_info_tables, LlxConfig.load
 
 ### llx.analysis.runner.run_vallm
 - **Calls**: llx.analysis.runner._run_tool, str
@@ -203,35 +214,34 @@ Key execution flows identified:
 main [examples.basic.main]
 ```
 
-### Flow 2: test_proxy
+### Flow 2: load
+```
+load [llx.config.LlxConfig]
+```
+
+### Flow 3: test_proxy
 ```
 test_proxy [examples.proxy.main.ProxyExample]
 ```
 
-### Flow 3: show_ide_integration
+### Flow 4: show_ide_integration
 ```
 show_ide_integration [examples.proxy.main.ProxyExample]
 ```
 
-### Flow 4: chat
+### Flow 5: chat
 ```
 chat [llx.cli.app]
 ```
 
-### Flow 5: analyze
+### Flow 6: analyze
 ```
 analyze [llx.cli.app]
 ```
 
-### Flow 6: setup_server
+### Flow 7: setup_server
 ```
 setup_server [examples.proxy.main.ProxyExample]
-```
-
-### Flow 7: load
-```
-load [llx.config.LlxConfig]
-  └─ →> _apply_env
 ```
 
 ### Flow 8: select
@@ -258,6 +268,11 @@ Usage:
     client = LlxClient(confi
 - **Methods**: 9
 - **Key Methods**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response, llx.routing.client.LlxClient._fallback_direct, llx.routing.client.LlxClient.close, llx.routing.client.LlxClient.__enter__, llx.routing.client.LlxClient.__exit__
+
+### llx.litellm_config.LiteLLMConfig
+> Complete LiteLLM configuration.
+- **Methods**: 9
+- **Key Methods**: llx.litellm_config.LiteLLMConfig.load, llx.litellm_config.LiteLLMConfig._default_config, llx.litellm_config.LiteLLMConfig.get_model_config, llx.litellm_config.LiteLLMConfig.get_models_by_tag, llx.litellm_config.LiteLLMConfig.get_models_by_provider, llx.litellm_config.LiteLLMConfig.get_models_by_tier, llx.litellm_config.LiteLLMConfig.resolve_alias, llx.litellm_config.LiteLLMConfig.to_llx_models, llx.litellm_config.LiteLLMConfig.get_proxy_config
 
 ### examples.proxy.main.ProxyExample
 - **Methods**: 6
@@ -299,11 +314,15 @@ Based on real project metrics from code2llm anal
 > LiteLLM proxy settings.
 - **Methods**: 0
 
+### llx.analysis.runner.ToolResult
+- **Methods**: 0
+
 ### llx.routing.client.ChatMessage
 > A single chat message.
 - **Methods**: 0
 
-### llx.analysis.runner.ToolResult
+### llx.litellm_config.LiteLLMModelConfig
+> Configuration for a single LiteLLM model.
 - **Methods**: 0
 
 ### llx.routing.selector.ModelTier
@@ -332,43 +351,43 @@ Functions exposed as public API (no underscore prefix):
 - `llx.cli.formatters.print_models_table` - 43 calls
 - `examples.basic.main.main` - 43 calls
 - `llx.cli.formatters.print_info_tables` - 42 calls
+- `examples.docker.main.main` - 25 calls
 - `examples.multi-provider.main.main` - 24 calls
+- `llx.config.LlxConfig.load` - 23 calls
 - `examples.local.main.demonstrate_local_model_selection` - 23 calls
 - `examples.proxy.main.ProxyExample.test_proxy` - 22 calls
 - `examples.proxy.main.ProxyExample.show_ide_integration` - 21 calls
-- `llx.cli.app.chat` - 20 calls
+- `llx.litellm_config.LiteLLMConfig.load` - 21 calls
+- `examples.docker.main.demonstrate_container_metrics` - 20 calls
 - `examples.local.main.main` - 20 calls
-- `llx.cli.app.analyze` - 19 calls
+- `llx.cli.app.chat` - 20 calls
 - `examples.local.main.show_ollama_setup_instructions` - 19 calls
+- `llx.cli.app.analyze` - 19 calls
+- `examples.docker.main.demonstrate_ollama_integration` - 18 calls
+- `examples.docker.main.demonstrate_redis_usage` - 17 calls
 - `examples.multi-provider.main.demonstrate_fallback_strategy` - 17 calls
 - `examples.multi-provider.main.simulate_multi_provider_selection` - 17 calls
 - `examples.proxy.main.ProxyExample.setup_server` - 16 calls
-- `llx.config.LlxConfig.load` - 15 calls
 - `examples.proxy.main.main` - 14 calls
 - `examples.local.main.estimate_resource_requirements` - 14 calls
 - `llx.routing.selector.select_model` - 14 calls
 - `examples.multi-provider.main.compare_provider_costs` - 12 calls
 - `llx.cli.app.select` - 12 calls
 - `llx.integrations.proxy.start_proxy` - 11 calls
-- `llx.cli.app.proxy_start` - 11 calls
+- `examples.docker.main.demonstrate_docker_integration` - 11 calls
 - `examples.local.main.check_ollama_service` - 11 calls
 - `examples.local.main.list_recommended_local_models` - 11 calls
+- `llx.cli.app.proxy_start` - 11 calls
 - `llx.analysis.collector.analyze_project` - 10 calls
+- `examples.docker.main.demonstrate_service_discovery` - 10 calls
 - `examples.proxy.main.ProxyExample.start_server` - 9 calls
-- `llx.cli.app.init` - 9 calls
 - `llx.routing.selector.select_with_context_check` - 9 calls
+- `llx.cli.app.init` - 9 calls
 - `llx.routing.client.LlxClient.chat` - 8 calls
 - `llx.cli.formatters.output_rich` - 7 calls
-- `llx.cli.app.proxy_config` - 6 calls
-- `llx.cli.app.models` - 6 calls
+- `examples.docker.main.check_ollama_connection` - 7 calls
 - `examples.local.main.check_ollama_installation` - 6 calls
-- `llx.integrations.proxy.generate_proxy_config` - 5 calls
-- `examples.multi-provider.main.check_provider_keys` - 5 calls
-- `examples.proxy.main.ProxyExample.cleanup` - 4 calls
-- `examples.proxy.main.signal_handler` - 4 calls
-- `llx.cli.app.proxy_status` - 4 calls
-- `llx.cli.app.info` - 3 calls
-- `llx.analysis.runner.run_code2llm` - 3 calls
+- `llx.cli.app.proxy_config` - 6 calls
 
 ## System Interactions
 
@@ -378,34 +397,34 @@ How components interact:
 graph TD
     main --> print
     main --> load
+    main --> demonstrate_docker_i
+    main --> demonstrate_containe
+    main --> demonstrate_service_
     main --> check_provider_keys
+    load --> resolve
+    load --> cls
+    load --> load
+    load --> exists
     test_proxy --> print
     test_proxy --> sleep
     test_proxy --> get
     test_proxy --> post
     test_proxy --> getenv
     show_ide_integration --> print
-    chat --> command
-    chat --> Argument
-    chat --> Option
+    load --> get
+    load --> _default_config
     main --> check_ollama_install
     main --> check_ollama_service
     main --> list_recommended_loc
+    chat --> command
+    chat --> Argument
+    chat --> Option
     analyze --> command
     analyze --> Argument
     analyze --> Option
     setup_server --> print
     setup_server --> ProxyRouter
     setup_server --> items
-    setup_server --> ProxyServer
-    load --> resolve
-    load --> cls
-    load --> exists
-    load --> _apply_env
-    main --> signal
-    main --> ProxyExample
-    select --> command
-    select --> Argument
 ```
 
 ## Reverse Engineering Guidelines

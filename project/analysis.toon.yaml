@@ -1,36 +1,38 @@
-# code2llm | 15f 1877L | python:14,shell:1 | 2026-03-25
-# CC̄=5.1 | critical:5/77 | dups:0 | cycles:0
+# code2llm | 18f 2539L | python:15,shell:3 | 2026-03-25
+# CC̄=4.5 | critical:6/104 | dups:0 | cycles:0
 
-HEALTH[5]:
+HEALTH[6]:
   🟡 CC    _apply_evolution_yaml CC=16 (limit:15)
   🟡 CC    _apply_map_text CC=20 (limit:15)
+  🟡 CC    _apply_yaml CC=19 (limit:15)
   🟡 CC    print_models_table CC=32 (limit:15)
   🟡 CC    print_info_tables CC=26 (limit:15)
   🟡 CC    _compute_tier CC=20 (limit:15)
 
 REFACTOR[1]:
-  1. split 5 high-CC methods  (CC>15)
+  1. split 6 high-CC methods  (CC>15)
 
-PIPELINES[34]:
+PIPELINES[40]:
   [1] Src [load]: load → _apply_env
       PURITY: 100% pure
-  [2] Src [__init__]: __init__
+  [2] Src [run_code2llm]: run_code2llm → _run_tool → check_tool
       PURITY: 100% pure
-  [3] Src [chat]: chat
+  [3] Src [run_redup]: run_redup → _run_tool → check_tool
       PURITY: 100% pure
-  [4] Src [chat_with_context]: chat_with_context
+  [4] Src [run_vallm]: run_vallm → _run_tool → check_tool
       PURITY: 100% pure
-  [5] Src [_build_payload]: _build_payload
+  [5] Src [__init__]: __init__
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=5.1    ←in:8  →out:0
-  │ !! collector                  411L  1C   14m  CC=20     ←3
+  llx/                            CC̄=4.9    ←in:8  →out:0
+  │ !! collector                  411L  1C   14m  CC=20     ←4
+  │ !! config                     300L  4C    4m  CC=19     ←5
   │ !! formatters                 279L  0C    4m  CC=32     ←1
   │ !! selector                   259L  2C    6m  CC=20     ←4
   │ app                        247L  0C   11m  CC=5      ←0
-  │ config                     210L  4C    3m  CC=9      ←4
   │ client                     198L  3C    9m  CC=5      ←0
+  │ litellm_config             151L  2C   10m  CC=4      ←1
   │ proxy                      131L  0C    3m  CC=7      ←1
   │ runner                      80L  1C    6m  CC=6      ←2
   │ __init__                    29L  0C    0m  CC=0.0    ←0
@@ -41,7 +43,11 @@ LAYERS:
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
+  │ docker-manage.sh           390L  0C    7m  CC=0.0    ←0
   │ project.sh                  21L  0C    0m  CC=0.0    ←0
+  │
+  docker/                         CC̄=0.0    ←in:0  →out:0
+  │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING:
@@ -52,8 +58,8 @@ COUPLING:
   llx.integrations                ←3                                                    ──                  
        llx.routing                ←3                                                                      ──
   CYCLES: none
-  HUB: llx.analysis/ (fan-in=5)
   HUB: llx/ (fan-in=8)
+  HUB: llx.analysis/ (fan-in=5)
   SMELL: llx.cli/ fan-out=19 → split needed
 
 EXTERNAL:
