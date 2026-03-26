@@ -59,9 +59,9 @@ preLLM proved the concept but had architectural issues that llx resolves:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## MCP Server Integration
+## MCP Server Integration (NEW)
 
-llx provides a complete **MCP (Model Context Protocol) server** that exposes analysis, preprocessing, and proxy-routing tools as MCP endpoints:
+llx now provides a complete **MCP (Model Context Protocol) server** that exposes all wronai tools as MCP endpoints:
 
 ```bash
 # Start MCP server for Claude Desktop
@@ -76,19 +76,15 @@ llx mcp tools
 
 ### MCP Tools Available
 
-| Tool | Description |
-|------|-------------|
-| `llx_analyze` | Analyze a project and recommend the optimal model tier |
-| `llx_select` | Quick model selection from existing analysis output |
-| `llx_chat` | Analyze, select, and send a prompt with project context |
-| `llx_preprocess` | Run the merged preLLM two-agent preprocessing pipeline |
-| `llx_context` | Build shell, codebase, and sensitive-data context bundles |
-| `code2llm_analyze` | Run code2llm static analysis and generate `.toon` files |
-| `redup_scan` | Run duplication detection and emit a refactoring map |
-| `vallm_validate` | Validate code or generated output with vallm |
-| `llx_proxy_status` | Check LiteLLM proxy status |
-| `llx_proxym_status` | Check Proxym routing status |
-| `llx_proxym_chat` | Send a metrics-aware chat request through Proxym |
+| Tool | Description | Wraps |
+|------|-------------|-------|
+| `llx_analyze` | Analyze project and recommend model | `llx analyze` |
+| `llx_select` | Quick model selection | `llx select` |
+| `llx_chat` | Analyze + select model + send prompt | `llx chat` |
+| `code2llm_analyze` | Run code2llm static analysis | `code2llm` CLI |
+| `redup_scan` | Run duplication detection | `redup` CLI |
+| `vallm_validate` | Validate code quality | `vallm` API/CLI |
+| `llx_proxy_status` | Check LiteLLM proxy status | `llx proxy status` |
 
 ### Claude Desktop Setup
 
@@ -109,15 +105,12 @@ llx mcp tools
 pip install llx
 
 # With integrations
-pip install llx[all]         # Core integrations + MCP + Ollama
-pip install llx[mcp]         # MCP server only
-pip install llx[litellm]     # LiteLLM proxy
-pip install llx[code2llm]    # Code analysis
-pip install llx[redup]       # Duplication detection
-pip install llx[vallm]       # Code validation
-pip install llx[ollama]      # Local Ollama integration
-pip install llx[prellm]      # Merged preLLM stack
-pip install llx[prellm-full] # preLLM + optional context tooling
+pip install llx[all]        # Everything + MCP
+pip install llx[mcp]       # MCP server only
+pip install llx[litellm]    # LiteLLM proxy
+pip install llx[code2llm]   # Code analysis
+pip install llx[redup]      # Duplication detection
+pip install llx[vallm]      # Code validation
 ```
 
 ## Quick Start
@@ -126,9 +119,6 @@ pip install llx[prellm-full] # preLLM + optional context tooling
 # Analyze project and get model recommendation
 llx analyze ./my-project
 
-# Run code2llm/redup/vallm before selection
-llx analyze . --run
-
 # Quick model selection
 llx select .
 
@@ -136,7 +126,7 @@ llx select .
 llx select . --task refactor
 
 # Point to pre-existing .toon files
-llx analyze . --toon-dir ./project/
+llx analyze . --toon-dir ./analysis/
 
 # JSON output for CI/CD
 llx analyze . --json
@@ -175,7 +165,7 @@ llx select . --local
 
 ```bash
 llx proxy config     # Generate litellm_config.yaml
-llx proxy start      # Start proxy (default :4000; override with --port or LLX_PROXY_PORT)
+llx proxy start      # Start proxy on :4000
 llx proxy status     # Check if running
 ```
 
@@ -183,8 +173,8 @@ Configure IDE tools to point at `http://localhost:4000`:
 
 | Tool | Config |
 |------|--------|
-| Roo Code / Cline | `"apiBaseUrl": "http://localhost:4000/v1"` |
-| Continue.dev | `"apiBaseUrl": "http://localhost:4000/v1"` |
+| Roo Code / Cline | `"apiBase": "http://localhost:4000/v1"` |
+| Continue.dev | `"apiBase": "http://localhost:4000/v1"` |
 | Aider | `OPENAI_API_BASE=http://localhost:4000` |
 | Claude Code | `ANTHROPIC_BASE_URL=http://localhost:4000` |
 | Cursor / Windsurf | OpenAI-compatible endpoint |
@@ -195,7 +185,7 @@ Configure IDE tools to point at `http://localhost:4000`:
 llx init  # Creates llx.toml with defaults
 ```
 
-Environment variables: `LLX_LITELLM_URL`, `LLX_DEFAULT_TIER`, `LLX_PROXY_HOST`, `LLX_PROXY_PORT`, `LLX_PROXY_MASTER_KEY`, `LLX_VERBOSE`.
+Environment variables: `LLX_LITELLM_URL`, `LLX_DEFAULT_TIER`, `LLX_PROXY_PORT`, `LLX_VERBOSE`.
 
 ## Python API
 
@@ -204,7 +194,7 @@ from llx import analyze_project, select_model, LlxConfig
 
 metrics = analyze_project("./my-project")
 result = select_model(metrics)
-print(result.model_id)   # Selected model ID
+print(result.model_id)   # "claude-opus-4-20250514"
 print(result.explain())   # Human-readable reasoning
 ```
 
@@ -221,27 +211,35 @@ print(result.explain())   # Human-readable reasoning
 
 ```
 llx/
-├── __init__.py              # Public API
-├── __main__.py              # `python -m llx`
-├── analysis/                # Metrics collection and external tool runners
-├── cli/                     # Typer CLI and output formatters
-├── config.py                # Configuration loading and env overrides
-├── integrations/            # Context builder, LiteLLM proxy, Proxym client
-├── mcp/                     # MCP server and tool definitions
-├── orchestration/           # Instances, routing, sessions, queues, VS Code
-├── prellm/                  # Merged preLLM preprocessing pipeline
-├── routing/                 # Model selection and LLM client wrappers
-├── tools/                   # Utility CLIs and helper commands
-└── litellm_config.py        # LiteLLM config helpers
+├── __init__.py              # Public API (30L)
+├── config.py                # Config loader (160L)
+├── mcp/                     # MCP server (NEW)
+│   ├── __init__.py          # Module init
+│   ├── server.py            # MCP server dispatcher (40L)
+│   ├── tools.py             # 7 MCP tool definitions (250L)
+│   └── __main__.py          # python -m llx.mcp
+├── analysis/
+│   ├── collector.py         # Metrics from .toon, filesystem (280L)
+│   └── runner.py            # Tool invocation (80L)
+├── routing/
+│   ├── selector.py          # Metric → tier mapping (200L)
+│   └── client.py            # LiteLLM client wrapper (150L)
+├── integrations/
+│   ├── context_builder.py   # .toon → LLM context (130L)
+│   └── proxy.py             # LiteLLM proxy management (100L)
+└── cli/
+    ├── app.py               # Commands (300L, max CC ≤ 8)
+    └── formatters.py        # Output formatting (340L, max CC ≤ 10)
 ```
 
-The library stays split into small, composable modules. The merged preLLM code now lives under `llx/prellm/`, and orchestration / VS Code / instance-management code lives under `llx/orchestration/`.
+**Total**: ~1,600 lines across 12 modules. No file exceeds 350L. Max CC ≤ 10.
+
+Compare: preLLM had 8,900 lines with 3 god modules (cli.py: 999L, core.py: 893L, trace.py: 509L).
 
 ## Architecture Improvements (v0.1.7)
 
 - **✅ Refactored 6 high-CC functions** to meet targets (CC̄ ≤ 2.5, max CC ≤ 16)
-- **✅ Added complete MCP server** with 11 tools for Claude Desktop integration
-- **✅ Added Proxym integration** for metrics-aware routing and proxy status checks
+- **✅ Added complete MCP server** with 7 tools for Claude Desktop integration
 - **✅ Fixed import resolution issues** reported by vallm
 - **✅ Enhanced test coverage** for MCP functionality
 - **✅ Modular design** with single-responsibility functions

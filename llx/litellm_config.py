@@ -120,7 +120,7 @@ class LiteLLMConfig:
             llx_model = ModelConfig(
                 name=model.tier,
                 provider=model.provider,
-                model_id=model.model_name,
+                model_id=model.litellm_params.get("model", model.model_name),
                 max_context=model.context_window,
                 cost_per_1k_input=model.pricing.get("input_per_token", 0.0) * 1000,
                 cost_per_1k_output=model.pricing.get("output_per_token", 0.0) * 1000,

@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-03-26
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update examples/README.md
+- Update examples/basic/README.md
+- Update examples/cli-tools/README.md
+- Update examples/cloud-local/README.md
+- Update examples/filtering/README.md
+- Update examples/fullstack/README.md
+- Update examples/hybrid/README.md
+- Update project/README.md
+- ... and 1 more files
+
+### Other
+- Update examples/cli-tools/quick_cli.sh
+- Update examples/cloud-local/integration.sh
+- Update examples/filtering/advanced_filters.py
+- Update examples/filtering/demo.sh
+- Update examples/fullstack/app_generator.py
+- Update examples/fullstack/generate.sh
+- Update examples/hybrid/hybrid_dev.sh
+- Update examples/hybrid/hybrid_manager.py
+- Update llx/config.py
+- Update llx/litellm_config.py
+- ... and 28 more files
+
 ## [0.1.9] - 2026-03-26
 
 ### Docs

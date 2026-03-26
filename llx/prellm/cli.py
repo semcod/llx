@@ -1,5 +1,7 @@
 """preLLM CLI — small LLM preprocessing before large LLM execution.
 
+v0.5 refactor: commands split into cli_query, cli_context, cli_config, cli_commands modules.
+
 Usage:
     prellm "Deploy app to prod" --small ollama/qwen2.5:3b --large gpt-4o-mini
     prellm "Refaktoryzuj kod" --strategy structure --json
@@ -7,13 +9,27 @@ Usage:
 
 from __future__ import annotations
 
-import asyncio
-import json
-import sys
 from pathlib import Path
 from typing import Optional
 
 import typer
+
+# Import command handlers from split modules
+from llx.prellm.cli_query import (
+    query as _query_cmd,
+    _init_logging,
+)
+from llx.prellm.cli_context import context_app
+from llx.prellm.cli_config import config_app
+from llx.prellm.cli_commands import (
+    process as _process_cmd,
+    decompose as _decompose_cmd,
+    init as _init_cmd,
+    serve as _serve_cmd,
+    doctor as _doctor_cmd,
+    budget as _budget_cmd,
+    models as _models_cmd,
+)
 
 app = typer.Typer(
     name="prellm",
@@ -21,17 +37,10 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 
+# Register sub-apps
+app.add_typer(config_app, name="config")
+app.add_typer(context_app, name="context")
 
-def _init_logging() -> None:
-    """Initialize nfo logging from .env config (called once per CLI invocation)."""
-    from llx.prellm.env_config import get_env_config
-    from llx.prellm.logging_setup import setup_logging
-
-    env = get_env_config()
-    setup_logging(level=env.log_level)
-
-
-def _handle_query_options(
     prompt: str,
     small: Optional[str],
     large: Optional[str], 
@@ -84,7 +93,6 @@ def _handle_query_options(
     }
 
 
-def _show_debug_info(options: dict) -> None:
     """Show schema and blocked sensitive fields if requested."""
     collect_env = options["collect_env"]
     compress_folder = options["compress_folder_path"]
@@ -122,7 +130,6 @@ def _show_debug_info(options: dict) -> None:
         typer.echo("")
 
 
-def _initialize_execution(options: dict) -> Optional["TraceRecorder"]:
     """Initialize budget tracker and trace recorder."""
     from llx.prellm.trace import TraceRecorder
     from llx.prellm.budget import get_budget_tracker
@@ -149,7 +156,6 @@ def _initialize_execution(options: dict) -> Optional["TraceRecorder"]:
     return recorder
 
 
-def _execute_and_format_result(options: dict, recorder: Optional["TraceRecorder"]) -> None:
     """Execute the query and format output."""
     from llx.prellm.core import preprocess_and_execute
     
@@ -218,18 +224,25 @@ def query(
 ):
     """Preprocess a query with small LLM, then execute with large LLM."""
     _init_logging()
-    
-    options = _handle_query_options(
-        prompt, small, large, strategy, context, config, memory, codebase,
-        collect_env, compress_folder, no_sanitize, show_schema, show_blocked,
-        json_output, trace, trace_dir, env_file
+    _query_cmd(
+        prompt=prompt,
+        small=small,
+        large=large,
+        strategy=strategy,
+        context=context,
+        config=config,
+        memory=memory,
+        codebase=codebase,
+        collect_env=collect_env,
+        compress_folder=compress_folder,
+        no_sanitize=no_sanitize,
+        show_schema=show_schema,
+        show_blocked=show_blocked,
+        json_output=json_output,
+        trace=trace,
+        trace_dir=trace_dir,
+        env_file=env_file,
     )
-    
-    _show_debug_info(options)
-    
-    recorder = _initialize_execution(options)
-    
-    _execute_and_format_result(options, recorder)
 
 
 @app.command()
@@ -240,61 +253,8 @@ def context(
     folder: Optional[Path] = typer.Option(None, "--folder", "-f", help="Folder to compress for context"),
 ):
     """Show collected environment context, schema, and blocked sensitive data."""
-    from llx.prellm.context.shell_collector import ShellContextCollector
-    from llx.prellm.context.schema_generator import ContextSchemaGenerator
-    from llx.prellm.context.sensitive_filter import SensitiveDataFilter
-
-    collector = ShellContextCollector()
-    shell_ctx = collector.collect_all()
-
-    if json_output and not schema and not blocked:
-        typer.echo(shell_ctx.model_dump_json(indent=2))
-        return
-
-    if schema:
-        compressed = None
-        if folder:
-            from llx.prellm.context.folder_compressor import FolderCompressor
-            compressed = FolderCompressor().compress(folder)
-        gen = ContextSchemaGenerator()
-        ctx_schema = gen.generate(shell_context=shell_ctx, folder_compressed=compressed)
-        if json_output:
-            typer.echo(ctx_schema.model_dump_json(indent=2))
-        else:
-            typer.echo(f"\n📋 Context Schema:")
-            typer.echo(gen.to_prompt_section(ctx_schema))
-            typer.echo(f"\n   Token cost: ~{ctx_schema.schema_token_cost}")
-        return
-
-    if blocked:
-        all_vars = collector.collect_env_vars(safe_only=False)
-        filt = SensitiveDataFilter()
-        filt.filter_dict(all_vars)
-        report = filt.get_filter_report()
-        if json_output:
-            typer.echo(report.model_dump_json(indent=2))
-        else:
-            typer.echo(f"\n🔒 Sensitive Filter Report:")
-            typer.echo(f"   Blocked ({len(report.blocked_keys)}): {', '.join(report.blocked_keys[:15])}")
-            typer.echo(f"   Masked  ({len(report.masked_keys)}): {', '.join(report.masked_keys[:15])}")
-            typer.echo(f"   Safe    ({len(report.safe_keys)}): {len(report.safe_keys)} keys")
-        return
-
-    # Default: show shell context summary
-    typer.echo(f"\n🧠 preLLM Environment Context")
-    typer.echo(f"{'='*60}")
-    typer.echo(f"   PID:      {shell_ctx.process.pid}")
-    typer.echo(f"   CWD:      {shell_ctx.process.cwd}")
-    typer.echo(f"   User:     {shell_ctx.process.user}")
-    typer.echo(f"   Shell:    {shell_ctx.shell.shell}")
-    typer.echo(f"   Term:     {shell_ctx.shell.term}")
-    typer.echo(f"   Locale:   {shell_ctx.locale.lang}")
-    typer.echo(f"   Timezone: {shell_ctx.locale.timezone}")
-    typer.echo(f"   Hostname: {shell_ctx.network.hostname}")
-    typer.echo(f"   Local IP: {shell_ctx.network.local_ip}")
-    typer.echo(f"   Env vars: {len(shell_ctx.env_vars)} (safe only)")
-    typer.echo(f"   Collected in: {shell_ctx.collection_duration_ms:.1f}ms")
-    typer.echo(f"{'='*60}")
+    from llx.prellm.cli_context import context as _context_cmd
+    _context_cmd(json_output=json_output, schema=schema, blocked=blocked, folder=folder)
 
 
 @app.command()
@@ -306,75 +266,20 @@ def process(
     env: Optional[str] = typer.Option(None, "--env", "-e", help="Environment override (e.g., production)"),
 ):
     """Execute a DevOps process chain."""
-    from llx.prellm.chains.process_chain import ProcessChain
-
-    chain = ProcessChain(config_path=config, guard_config_path=guard_config)
-
-    extra = {}
-    if env:
-        extra["env"] = env
-
-    result = asyncio.run(chain.execute(extra_context=extra, dry_run=dry_run))
-
-    if json_output:
-        typer.echo(result.model_dump_json(indent=2))
-    else:
-        typer.echo(f"\n{'='*60}")
-        typer.echo(f"🔗 Process: {result.process_name}")
-        typer.echo(f"   Status: {'✅ Completed' if result.completed else '⏸️  Incomplete'}")
-        typer.echo(f"   Duration: {result.total_duration_seconds:.2f}s")
-        typer.echo(f"{'='*60}")
-        for step in result.steps:
-            icon = {
-                "completed": "✅",
-                "failed": "❌",
-                "awaiting_approval": "⏳",
-                "rolled_back": "↩️",
-            }.get(step.status.value, "🔄")
-            typer.echo(f"   {icon} {step.step_name}: {step.status.value} ({step.duration_seconds:.2f}s)")
-            if step.error:
-                typer.echo(f"      Error: {step.error}")
-        typer.echo(f"{'='*60}")
+    from llx.prellm.cli_commands import process as _process_cmd
+    _process_cmd(config=config, guard_config=guard_config, dry_run=dry_run, json_output=json_output, env=env)
 
 
 @app.command()
 def decompose(
     query: str = typer.Argument(..., help="The prompt/query to decompose"),
     config: Path = typer.Option("configs/prellm_config.yaml", "--config", "-c", help="Path to preLLM v0.2 YAML config"),
-    strategy: str = typer.Option("classify", "--strategy", "-s", help="Decomposition strategy: classify|structure|split|enrich|passthrough"),
+    strategy: str = typer.Option("classify", "--strategy", "-s", help="Decomposition strategy"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
 ):
     """[v0.2] Decompose a query using small LLM without calling the large model."""
-    from llx.prellm.core import PreLLM
-    from llx.prellm.models import DecompositionStrategy
-
-    engine = PreLLM(config_path=config)
-    strat = DecompositionStrategy(strategy)
-
-    result = asyncio.run(engine.decompose_only(query, strategy=strat))
-
-    if json_output:
-        typer.echo(json.dumps(result, indent=2, default=str))
-    else:
-        typer.echo(f"\n{'='*60}")
-        typer.echo(f"\U0001f9e0 preLLM Decomposition [{strategy}]")
-        typer.echo(f"{'='*60}")
-        typer.echo(f"   Original: {result['original_query']}")
-        if result.get('classification'):
-            c = result['classification']
-            typer.echo(f"   Intent: {c['intent']} (confidence: {c['confidence']:.2f})")
-            typer.echo(f"   Domain: {c['domain']}")
-        if result.get('structure'):
-            s = result['structure']
-            typer.echo(f"   Action: {s['action']}, Target: {s['target']}")
-        if result.get('sub_queries'):
-            typer.echo(f"   Sub-queries: {result['sub_queries']}")
-        if result.get('missing_fields'):
-            typer.echo(f"   \u26a0\ufe0f  Missing: {', '.join(result['missing_fields'])}")
-        if result.get('matched_rule'):
-            typer.echo(f"   Matched rule: {result['matched_rule']}")
-        typer.echo(f"   Composed: {result.get('composed_prompt', '')[:200]}")
-        typer.echo(f"{'='*60}")
+    from llx.prellm.cli_commands import decompose as _decompose_cmd
+    _decompose_cmd(query=query, config=config, strategy=strategy, json_output=json_output)
 
 
 @app.command()
@@ -383,32 +288,8 @@ def init(
     devops: bool = typer.Option(False, "--devops", help="Include DevOps-specific domain rules and context sources"),
 ):
     """Generate a starter preLLM config file."""
-    import yaml
-
-    config = {
-        "small_model": {"model": "phi3:mini", "fallback": ["qwen2:1.5b"], "max_tokens": 512, "temperature": 0.0},
-        "large_model": {"model": "gpt-4o-mini", "fallback": ["llama3"], "max_tokens": 2048},
-        "default_strategy": "classify",
-        "policy": "devops" if devops else "strict",
-        "domain_rules": [
-            {"name": "production_deploy", "keywords": ["deploy", "push", "release"],
-             "intent": "deploy", "required_fields": ["environment_details", "version"],
-             "severity": "critical", "strategy": "structure"},
-            {"name": "database_operation", "keywords": ["delete", "drop", "migrate"],
-             "intent": "database", "required_fields": ["target_database", "backup_confirmed"],
-             "severity": "critical", "strategy": "structure"},
-        ] if devops else [],
-        "context_sources": [
-            {"env": ["CLUSTER", "NAMESPACE", "GIT_SHA", "ENV"]},
-            {"git": ["branch", "short_sha", "last_commit_msg"]},
-            {"system": ["hostname", "os"]},
-        ] if devops else [],
-    }
-
-    with open(output, "w") as f:
-        yaml.dump(config, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
-
-    typer.echo(f"\u2705 Config written to {output}")
+    from llx.prellm.cli_commands import init as _init_cmd
+    _init_cmd(output=output, devops=devops)
 
 
 @app.command()
@@ -422,111 +303,9 @@ def serve(
     env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file (default: .env)"),
     reload: bool = typer.Option(False, "--reload", help="Auto-reload on code changes (dev mode)"),
 ):
-    """Start the OpenAI-compatible API server.
-
-    Reads config from .env file (LiteLLM-compatible). CLI args override .env values.
-
-    Example:
-        prellm serve
-        prellm serve --small ollama/qwen2.5:3b --large gpt-4o-mini --port 8080
-    """
-    import uvicorn
-    from llx.prellm.env_config import get_env_config
-    from llx.prellm.server import create_app
-
-    env = get_env_config(str(env_file) if env_file else None)
-    _init_logging()
-
-    effective_small = small or env.small_model
-    effective_large = large or env.large_model
-    effective_strategy = strategy or env.strategy
-    effective_host = host
-    effective_port = port
-
-    create_app(
-        small_model=effective_small,
-        large_model=effective_large,
-        strategy=effective_strategy,
-        config_path=str(config) if config else env.config_path,
-        dotenv_path=str(env_file) if env_file else None,
-    )
-
-    auth_status = "ON (LITELLM_MASTER_KEY)" if env.master_key else "OFF (no key set)"
-
-    typer.echo(f"\n\U0001f9e0 preLLM API Server")
-    typer.echo(f"   http://{effective_host}:{effective_port}")
-    typer.echo(f"   Small: {effective_small} | Large: {effective_large}")
-    typer.echo(f"   Strategy: {effective_strategy} | Auth: {auth_status}")
-    typer.echo(f"   Endpoints: /v1/chat/completions, /v1/batch, /v1/models, /health")
-    typer.echo(f"{'='*60}\n")
-
-    uvicorn.run(
-        "llx.prellm.server:app",
-        host=effective_host,
-        port=effective_port,
-        reload=reload,
-        log_level=env.log_level,
-    )
-
-
-def _doctor_check_config(env) -> list[str]:
-    """Format configuration summary lines."""
-    lines = [
-        f"   Small LLM:  {env.small_model}",
-        f"   Large LLM:  {env.large_model}",
-        f"   Strategy:   {env.strategy}",
-        f"   Server:     {env.host}:{env.port}",
-        f"   Auth:       {'ON' if env.master_key else 'OFF (no LITELLM_MASTER_KEY)'}",
-    ]
-    if env.config_path:
-        lines.append(f"   Config:     {env.config_path}")
-    if env.fallbacks:
-        lines.append(f"   Fallbacks:  {', '.join(env.fallbacks)}")
-    if env.monthly_budget:
-        lines.append(f"   Budget:     ${env.monthly_budget:.2f}/month")
-    return lines
-
-
-def _doctor_check_providers(env, live: bool = False) -> list[str]:
-    """Check providers and return formatted lines."""
-    from llx.prellm.env_config import check_providers
-
-    if live:
-        import asyncio
-        from llx.prellm.env_config import check_providers_live
-        results = asyncio.run(check_providers_live(env))
-    else:
-        results = check_providers(env)
-
-    lines = []
-    for name, info in results.items():
-        status = info["status"]
-        icon = "\u2713" if status in ("ok", "configured") else ("\u2717" if status == "no_key" else "!")
-        lines.append(f"   {icon} {name.upper():12s} {info['detail']}")
-        if "models" in info:
-            lines.append(f"     Models: {', '.join(info['models'][:5])}")
-    return lines
-
-
-def _doctor_check_files(env_file: Path | None) -> list[str]:
-    """Check config files and return formatted lines."""
-    lines = []
-    env_path = Path(str(env_file)) if env_file else Path(".env")
-    if env_path.is_file():
-        lines.append(f"   \u2713 {env_path} (loaded)")
-    else:
-        lines.append(f"   \u2717 {env_path} (not found \u2014 run: cp .env.example .env)")
-
-    example_path = Path(".env.example")
-    if example_path.is_file():
-        lines.append(f"   \u2713 .env.example (available)")
-    else:
-        lines.append(f"   \u2717 .env.example (not found)")
-
-    config_yaml = Path("configs/prellm_config.yaml")
-    if config_yaml.is_file():
-        lines.append(f"   \u2713 {config_yaml}")
-    return lines
+    """Start the OpenAI-compatible API server."""
+    from llx.prellm.cli_commands import serve as _serve_cmd
+    _serve_cmd(host=host, port=port, small=small, large=large, strategy=strategy, config=config, env_file=env_file, reload=reload)
 
 
 @app.command()
@@ -534,35 +313,9 @@ def doctor(
     env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file"),
     live: bool = typer.Option(False, "--live", help="Test live connectivity to providers"),
 ):
-    """Check configuration and provider connectivity.
-
-    Validates .env config, API keys, and optionally tests live connections.
-
-    Example:
-        prellm doctor
-        prellm doctor --live
-    """
-    from llx.prellm.env_config import get_env_config
-
-    env = get_env_config(str(env_file) if env_file else None)
-
-    typer.echo(f"\n\U0001f9e0 preLLM Doctor")
-    typer.echo(f"{'='*60}")
-
-    typer.echo(f"\n\U0001f4cb Configuration:")
-    for line in _doctor_check_config(env):
-        typer.echo(line)
-
-    typer.echo(f"\n\U0001f50c Providers:")
-    for line in _doctor_check_providers(env, live=live):
-        typer.echo(line)
-
-    typer.echo(f"\n\U0001f4c4 Files:")
-    for line in _doctor_check_files(env_file):
-        typer.echo(line)
-
-    typer.echo(f"\n{'='*60}")
-    typer.echo(f"\u2705 Doctor complete. Use --live to test connectivity.\n")
+    """Check configuration and provider connectivity."""
+    from llx.prellm.cli_commands import doctor as _doctor_cmd
+    _doctor_cmd(env_file=env_file, live=live)
 
 
 # ============================================================
@@ -800,52 +553,9 @@ def budget(
     reset: bool = typer.Option(False, "--reset", help="Reset current month's budget"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
 ):
-    """Show LLM API spend tracking and budget status.
-
-    Example:
-        prellm budget
-        prellm budget --json
-        prellm budget --reset
-    """
-    from llx.prellm.budget import get_budget_tracker
-    from llx.prellm.env_config import get_env_config
-
-    env = get_env_config()
-    tracker = get_budget_tracker(monthly_limit=env.monthly_budget)
-
-    if reset:
-        tracker.reset()
-        typer.echo("✅ Budget reset for current month.")
-        return
-
-    summary = tracker.summary()
-
-    if json_output:
-        typer.echo(json.dumps(summary, indent=2, default=str))
-        return
-
-    typer.echo(f"\n💰 preLLM Budget")
-    typer.echo(f"{'='*60}")
-    typer.echo(f"   Month:      {summary['month']}")
-    typer.echo(f"   Spent:      ${summary['total_cost']:.4f}")
-    if summary['monthly_limit'] is not None:
-        typer.echo(f"   Limit:      ${summary['monthly_limit']:.2f}")
-        typer.echo(f"   Remaining:  ${summary['remaining']:.4f}")
-        pct = (summary['total_cost'] / summary['monthly_limit'] * 100) if summary['monthly_limit'] > 0 else 0
-        bar_len = 30
-        filled = int(bar_len * min(pct, 100) / 100)
-        bar = "█" * filled + "░" * (bar_len - filled)
-        typer.echo(f"   Usage:      [{bar}] {pct:.1f}%")
-    else:
-        typer.echo(f"   Limit:      not set (PRELLM_MONTHLY_BUDGET)")
-    typer.echo(f"   Requests:   {summary['requests']}")
-
-    if summary['by_model']:
-        typer.echo(f"\n   By model:")
-        for model, cost in sorted(summary['by_model'].items(), key=lambda x: -x[1]):
-            typer.echo(f"     {model}: ${cost:.4f}")
-
-    typer.echo(f"\n{'='*60}")
+    """Show LLM API spend tracking and budget status."""
+    from llx.prellm.cli_commands import budget as _budget_cmd
+    _budget_cmd(reset=reset, json_output=json_output)
 
 
 # ============================================================
@@ -854,41 +564,12 @@ def budget(
 
 @app.command()
 def models(
-    provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider (e.g. openrouter, ollama, openai)"),
+    provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider"),
     search: Optional[str] = typer.Option(None, "--search", "-s", help="Search model name"),
 ):
-    """List popular model pairs and provider examples.
-
-    Examples:
-        prellm models
-        prellm models --provider openrouter
-        prellm models --search kimi
-    """
-    from llx.prellm.model_catalog import list_model_pairs, list_openrouter_models
-
-    pairs = list_model_pairs(provider=provider, search=search)
-    or_models = list_openrouter_models(provider=provider, search=search)
-
-    typer.echo(f"\n\U0001f916 preLLM Model Pairs")
-    typer.echo(f"{'='*60}")
-
-    if pairs:
-        typer.echo(f"\n{'Name':<25s} {'Small LLM':<30s} {'Large LLM':<45s} {'Cost':>6s}")
-        typer.echo(f"{'-'*25} {'-'*30} {'-'*45} {'-'*6}")
-        for m in pairs:
-            typer.echo(f"{m['name']:<25s} {m['small']:<30s} {m['large']:<45s} {m['cost']:>6s}")
-
-    if or_models:
-        typer.echo(f"\n\U0001f310 OpenRouter Models (use with --large):")
-        for m in or_models:
-            typer.echo(f"   {m['model_id']}")
-            typer.echo(f"      {m['description']}")
-
-    typer.echo(f"\n\U0001f4a1 Usage:")
-    typer.echo(f'   prellm "Deploy app" --large openrouter/moonshotai/kimi-k2.5')
-    typer.echo(f"   prellm config set model openrouter/moonshotai/kimi-k2.5")
-    typer.echo(f"   prellm config set openrouter-key sk-or-v1-abc123")
-    typer.echo(f"\n{'='*60}")
+    """List popular model pairs and provider examples."""
+    from llx.prellm.cli_commands import models as _models_cmd
+    _models_cmd(provider=provider, search=search)
 
 
 # ============================================================

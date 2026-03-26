@@ -139,7 +139,7 @@ Enable verbose output for debugging:
 
 Override the automatic selection:
 ```bash
-../../.venv/bin/python -m llx analyze . --max-tier cheap
+../../.venv/bin/python -m llx analyze . --model cheap
 ../../.venv/bin/python -m llx analyze . --local  # Force local models
 ```
 

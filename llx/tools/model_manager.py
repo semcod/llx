@@ -591,15 +591,129 @@ class ModelManager:
         print()
 
 
-# CLI interface
+# CLI interface - Command handlers registry to reduce CC from 29
 
-def _build_parser() -> "argparse.ArgumentParser":
-    import argparse
+import argparse
+from typing import Callable, Dict
+
+CmdHandler = Callable[[argparse.Namespace, "ModelManager"], bool]
+
+
+def _cmd_list(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    models = manager.get_ollama_models()
+    print(f"📦 Available Models ({len(models)}):")
+    for model in models:
+        size_gb = model.get("size", 0) / (1024**3)
+        print(f"  • {model['name']} ({size_gb:.1f}GB)")
+    return True
+
+
+def _cmd_pull(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for pull")
+        return False
+    return manager.pull_model(args.model, args.timeout)
+
+
+def _cmd_remove(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for remove")
+        return False
+    return manager.remove_model(args.model)
+
+
+def _cmd_test(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for test")
+        return False
+    return manager.test_model(args.model, args.prompt)
+
+
+def _cmd_info(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for info")
+        return False
+    info = manager.get_model_info(args.model)
+    print(f"📊 Model Information: {args.model}")
+    print(f"  Available in Ollama: {'✅' if info['available_ollama'] else '❌'}")
+    print(f"  Available in llx: {'✅' if info['available_llx'] else '❌'}")
+    if info.get("size"):
+        size_gb = info["size"] / (1024**3)
+        print(f"  Size: {size_gb:.1f}GB")
+    if info.get("modified"):
+        print(f"  Modified: {info['modified']}")
+    print(f"  Recommended: {'✅' if info['recommended'] else '❌'}")
+    return True
+
+
+def _cmd_recommend(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    recommendations = manager.list_recommended_models(args.category)
+    print(f"🎯 Recommended Models ({args.category or 'all'}):")
+    for category, models in recommendations.items():
+        print(f"\n{category.title()}:")
+        for model, info in models.items():
+            recommended = " ⭐" if info.get("recommended") else ""
+            print(f"  • {model} ({info['size']}){recommended} - {info['description']}")
+    return True
+
+
+def _cmd_profile(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for profile")
+        return False
+    return manager.create_model_profile(args.model)
+
+
+def _cmd_benchmark(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for benchmark")
+        return False
+    results = manager.benchmark_model(args.model)
+    return all(results.values())
+
+
+def _cmd_cleanup(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    return manager.cleanup_unused_models(args.keep_recommended)
+
+
+def _cmd_summary(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    manager.print_model_summary()
+    return True
+
+
+def _cmd_requirements(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    if not args.model:
+        print("❌ --model required for requirements")
+        return False
+    requirements = manager.estimate_model_requirements(args.model)
+    print(f"📊 Resource Requirements: {args.model}")
+    print(f"  Min RAM: {requirements['ram_min']}")
+    print(f"  Recommended RAM: {requirements['ram_recommended']}")
+    print(f"  Disk Space: {requirements['disk_space']}")
+    print(f"  GPU: {requirements['gpu_recommended']}")
+    print(f"  Performance: {requirements['performance']}")
+    return True
+
+
+# Command registry
+_COMMAND_HANDLERS: Dict[str, CmdHandler] = {
+    "list": _cmd_list,
+    "pull": _cmd_pull,
+    "remove": _cmd_remove,
+    "test": _cmd_test,
+    "info": _cmd_info,
+    "recommend": _cmd_recommend,
+    "profile": _cmd_profile,
+    "benchmark": _cmd_benchmark,
+    "cleanup": _cmd_cleanup,
+    "summary": _cmd_summary,
+    "requirements": _cmd_requirements,
+}
+
+
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="llx Model Manager")
-    parser.add_argument("command", choices=[
-        "list", "pull", "remove", "test", "info", "recommend",
-        "profile", "benchmark", "cleanup", "summary", "requirements"
-    ])
+    parser.add_argument("command", choices=list(_COMMAND_HANDLERS.keys()))
     parser.add_argument("--model", help="Model name")
     parser.add_argument("--prompt", default="Hello! Write a simple Python function.", help="Test prompt")
     parser.add_argument("--category", help="Model category (coding, general, lightweight)")
@@ -609,81 +723,11 @@ def _build_parser() -> "argparse.ArgumentParser":
     return parser
 
 
-def _dispatch(args, manager: "ModelManager") -> bool:
-    if args.command == "list":
-        models = manager.get_ollama_models()
-        print(f"📦 Available Models ({len(models)}):")
-        for model in models:
-            size_gb = model.get("size", 0) / (1024**3)
-            print(f"  • {model['name']} ({size_gb:.1f}GB)")
-        return True
-    elif args.command == "pull":
-        if not args.model:
-            print("❌ --model required for pull")
-            return False
-        return manager.pull_model(args.model, args.timeout)
-    elif args.command == "remove":
-        if not args.model:
-            print("❌ --model required for remove")
-            return False
-        return manager.remove_model(args.model)
-    elif args.command == "test":
-        if not args.model:
-            print("❌ --model required for test")
-            return False
-        return manager.test_model(args.model, args.prompt)
-    elif args.command == "info":
-        if not args.model:
-            print("❌ --model required for info")
-            return False
-        info = manager.get_model_info(args.model)
-        print(f"📊 Model Information: {args.model}")
-        print(f"  Available in Ollama: {'✅' if info['available_ollama'] else '❌'}")
-        print(f"  Available in llx: {'✅' if info['available_llx'] else '❌'}")
-        if info.get("size"):
-            size_gb = info["size"] / (1024**3)
-            print(f"  Size: {size_gb:.1f}GB")
-        if info.get("modified"):
-            print(f"  Modified: {info['modified']}")
-        print(f"  Recommended: {'✅' if info['recommended'] else '❌'}")
-        return True
-    elif args.command == "recommend":
-        recommendations = manager.list_recommended_models(args.category)
-        print(f"🎯 Recommended Models ({args.category or 'all'}):")
-        for category, models in recommendations.items():
-            print(f"\n{category.title()}:")
-            for model, info in models.items():
-                recommended = " ⭐" if info.get("recommended") else ""
-                print(f"  • {model} ({info['size']}){recommended} - {info['description']}")
-        return True
-    elif args.command == "profile":
-        if not args.model:
-            print("❌ --model required for profile")
-            return False
-        return manager.create_model_profile(args.model)
-    elif args.command == "benchmark":
-        if not args.model:
-            print("❌ --model required for benchmark")
-            return False
-        results = manager.benchmark_model(args.model)
-        return all(results.values())
-    elif args.command == "cleanup":
-        return manager.cleanup_unused_models(args.keep_recommended)
-    elif args.command == "summary":
-        manager.print_model_summary()
-        return True
-    elif args.command == "requirements":
-        if not args.model:
-            print("❌ --model required for requirements")
-            return False
-        requirements = manager.estimate_model_requirements(args.model)
-        print(f"📊 Resource Requirements: {args.model}")
-        print(f"  Min RAM: {requirements['ram_min']}")
-        print(f"  Recommended RAM: {requirements['ram_recommended']}")
-        print(f"  Disk Space: {requirements['disk_space']}")
-        print(f"  GPU: {requirements['gpu_recommended']}")
-        print(f"  Performance: {requirements['performance']}")
-        return True
+def _dispatch(args: argparse.Namespace, manager: "ModelManager") -> bool:
+    """Dispatch command to handler using registry pattern. CC reduced from 29 to ~3."""
+    handler = _COMMAND_HANDLERS.get(args.command)
+    if handler:
+        return handler(args, manager)
     return False
 
 

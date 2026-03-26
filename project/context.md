@@ -4,24 +4,29 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 103, shell: 12
+- **Languages**: python: 110, shell: 16
 - **Analysis Mode**: static
-- **Total Functions**: 899
-- **Total Classes**: 147
-- **Modules**: 115
-- **Entry Points**: 717
+- **Total Functions**: 978
+- **Total Classes**: 151
+- **Modules**: 126
+- **Entry Points**: 799
 
 ## Architecture by Module
+
+### llx.tools.config_manager
+- **Functions**: 43
+- **Classes**: 1
+- **File**: `config_manager.py`
 
 ### llx.orchestration.routing.engine
 - **Functions**: 38
 - **Classes**: 1
 - **File**: `engine.py`
 
-### llx.prellm.core
-- **Functions**: 32
+### llx.tools.model_manager
+- **Functions**: 33
 - **Classes**: 1
-- **File**: `core.py`
+- **File**: `model_manager.py`
 
 ### llx.prellm.trace
 - **Functions**: 29
@@ -31,11 +36,6 @@
 ### llx.prellm.cli
 - **Functions**: 28
 - **File**: `cli.py`
-
-### llx.tools.config_manager
-- **Functions**: 27
-- **Classes**: 1
-- **File**: `config_manager.py`
 
 ### llx.orchestration.vscode.orchestrator
 - **Functions**: 27
@@ -57,20 +57,15 @@
 - **Classes**: 1
 - **File**: `ai_tools_manager.py`
 
-### llx.tools.model_manager
-- **Functions**: 22
+### llx.analysis.collector
+- **Functions**: 21
 - **Classes**: 1
-- **File**: `model_manager.py`
+- **File**: `collector.py`
 
 ### llx.tools.docker_manager
 - **Functions**: 21
 - **Classes**: 1
 - **File**: `docker_manager.py`
-
-### llx.analysis.collector
-- **Functions**: 21
-- **Classes**: 1
-- **File**: `collector.py`
 
 ### llx.orchestration.queue.manager
 - **Functions**: 21
@@ -102,15 +97,19 @@
 - **Classes**: 1
 - **File**: `limiter.py`
 
-### llx.tools.health_checker
-- **Functions**: 15
-- **Classes**: 1
-- **File**: `health_checker.py`
+### examples.fullstack.app_generator
+- **Functions**: 16
+- **Classes**: 2
+- **File**: `app_generator.py`
 
 ### llx.prellm.context.user_memory
 - **Functions**: 15
 - **Classes**: 1
 - **File**: `user_memory.py`
+
+### ai-tools-manage
+- **Functions**: 15
+- **File**: `ai-tools-manage.sh`
 
 ## Key Entry Points
 
@@ -122,9 +121,6 @@ Main execution flows into the system:
 ### llx.prellm.cli.context
 > Show collected environment context, schema, and blocked sensitive data.
 - **Calls**: app.command, typer.Option, typer.Option, typer.Option, typer.Option, ShellContextCollector, collector.collect_all, typer.echo
-
-### llx.tools.model_manager._dispatch
-- **Calls**: manager.get_ollama_models, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, manager.pull_model, model.get, docker.ai-tools.entrypoint.print, manager.remove_model, len
 
 ### llx.prellm.cli.context_show_cmd
 > Show collected runtime context.
@@ -142,9 +138,12 @@ Main execution flows into the system:
 > Run complete RooCode demonstration.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.check_services, docker.ai-tools.entrypoint.print, services.items, self.get_available_models
 
-### llx.tools.health_checker.HealthChecker.run_comprehensive_health_check
+### llx.tools.health_runner.HealthCheckRunner.run_comprehensive
 > Run comprehensive health check of entire llx ecosystem.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.endpoints.keys, docker.ai-tools.entrypoint.print, self.docker_manager.get_service_status, self.expected_services.items, docker.ai-tools.entrypoint.print
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.checker.endpoints.keys, docker.ai-tools.entrypoint.print, self.checker.docker_manager.get_service_status, self.checker.expected_services.items, docker.ai-tools.entrypoint.print
+
+### examples.fullstack.app_generator.main
+- **Calls**: argparse.ArgumentParser, parser.add_subparsers, subparsers.add_parser, gen_parser.add_argument, gen_parser.add_argument, gen_parser.add_argument, gen_parser.add_argument, gen_parser.add_argument
 
 ### llx.tools.vscode_manager.VSCodeManager.print_quick_start
 > Print quick start guide.
@@ -162,6 +161,10 @@ Main execution flows into the system:
 > Load rate limits from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
 
+### examples.filtering.advanced_filters.demonstrate_filtering
+> Demonstrate various filtering scenarios.
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, SmartLLXClient, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, client.chat_with_constraints, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
 ### llx.orchestration.session.manager.SessionManager.load_sessions
 > Load sessions from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, SessionConfig
@@ -178,6 +181,10 @@ Main execution flows into the system:
 > [v0.2] Decompose a query using small LLM without calling the large model.
 - **Calls**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option, PreLLM, DecompositionStrategy, asyncio.run
 
+### llx.tools.health_checker.HealthChecker.monitor_services
+> Monitor services over time.
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, time.time, docker.ai-tools.entrypoint.print, None.analyze_monitoring_data, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
 ### llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config
 > Load LLM orchestration configuration.
 - **Calls**: llx.orchestration._utils.load_json, self.config.update, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config, docker.ai-tools.entrypoint.print, data.get
@@ -190,10 +197,6 @@ Main execution flows into the system:
 > Print comprehensive configuration summary.
 - **Calls**: self.get_config_summary, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, None.items, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
-### llx.tools.health_checker.HealthChecker.monitor_services
-> Monitor services over time.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, time.time, docker.ai-tools.entrypoint.print, self._analyze_monitoring_data, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
 ### llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary
 > Print comprehensive status summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
@@ -201,9 +204,19 @@ Main execution flows into the system:
 ### llx.tools.health_checker._dispatch
 - **Calls**: checker.run_comprehensive_health_check, checker.run_quick_health_check, open, json.dump, checker.monitor_services, checker.check_service_health, docker.ai-tools.entrypoint.print, open
 
+### llx.prellm.pipeline_ops.execute_v3_pipeline
+> Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
+
+v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
+- **Calls**: kwargs.pop, kwargs.pop, LLMProviderConfig, LLMProviderConfig, LLMProvider, LLMProvider, PromptRegistry, PromptPipeline.from_yaml
+
 ### llx.tools.docker_manager.DockerManager.print_status_summary
 > Print comprehensive status summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self.get_service_status, docker.ai-tools.entrypoint.print, status.items, docker.ai-tools.entrypoint.print, self.services.keys, self.get_resource_usage
+
+### examples.filtering.advanced_filters.interactive_filtering
+> Interactive filtering demo.
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, SmartLLXClient, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
 ### llx.prellm.cli.budget
 > Show LLM API spend tracking and budget status.
@@ -228,18 +241,6 @@ Example:
     prellm config show
 - **Calls**: config_app.command, llx.prellm.env_config.get_env_config, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo
 
-### llx.prellm.core.PreLLM._load_config
-> Load preLLM v0.2 config from YAML file.
-- **Calls**: raw.get, raw.get, raw.get, raw.get, raw.get, DecompositionStrategy, PreLLMConfig, open
-
-### llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary
-> Print comprehensive status summary.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, len, len, len, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
-### llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_with_regex
-> Fallback: extract symbols using regex patterns.
-- **Calls**: content.splitlines, enumerate, re.match, re.match, enumerate, len, symbols.append, symbols.append
-
 ## Process Flows
 
 Key execution flows identified:
@@ -256,14 +257,7 @@ main [examples.ai-tools.main]
 context [llx.prellm.cli]
 ```
 
-### Flow 3: _dispatch
-```
-_dispatch [llx.tools.model_manager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 4: context_show_cmd
+### Flow 3: context_show_cmd
 ```
 context_show_cmd [llx.prellm.cli]
   └─> _init_logging
@@ -272,44 +266,51 @@ context_show_cmd [llx.prellm.cli]
       └─ →> setup_logging
 ```
 
-### Flow 5: load_instances
+### Flow 4: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 6: run_demo
+### Flow 5: run_demo
 ```
 run_demo [examples.vscode-roocode.demo.RooCodeDemo]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 7: run_comprehensive_health_check
+### Flow 6: run_comprehensive
 ```
-run_comprehensive_health_check [llx.tools.health_checker.HealthChecker]
+run_comprehensive [llx.tools.health_runner.HealthCheckRunner]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 8: print_quick_start
+### Flow 7: print_quick_start
 ```
 print_quick_start [llx.tools.vscode_manager.VSCodeManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 9: print_model_summary
+### Flow 8: print_model_summary
 ```
 print_model_summary [llx.tools.model_manager.ModelManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 10: load_config
+### Flow 9: load_config
 ```
 load_config [llx.orchestration.vscode.orchestrator.VSCodeOrchestrator]
+```
+
+### Flow 10: load_limits
+```
+load_limits [llx.orchestration.ratelimit.limiter.RateLimiter]
+  └─ →> print
+  └─ →> print
 ```
 
 ## Key Classes
@@ -418,7 +419,7 @@ Used by both core Prellm
 
 ### llx.tools.health_checker.HealthChecker
 > Comprehensive health monitoring for llx ecosystem.
-- **Methods**: 12
+- **Methods**: 11
 - **Key Methods**: llx.tools.health_checker.HealthChecker.__init__, llx.tools.health_checker.HealthChecker.check_service_health, llx.tools.health_checker.HealthChecker.check_container_health, llx.tools.health_checker.HealthChecker.check_system_resources, llx.tools.health_checker.HealthChecker.check_filesystem_health, llx.tools.health_checker.HealthChecker.check_network_connectivity, llx.tools.health_checker.HealthChecker.run_comprehensive_health_check, llx.tools.health_checker.HealthChecker._generate_recommendations, llx.tools.health_checker.HealthChecker._print_health_summary, llx.tools.health_checker.HealthChecker.run_quick_health_check
 
 ### llx.prellm.query_decomposer.QueryDecomposer
@@ -455,6 +456,10 @@ Key functions that process and transform data:
 
 ### llx.prellm._get_process_chain
 
+### llx.prellm.pipeline_ops.run_preprocessing
+> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
+- **Output to**: time.time, preprocessor.preprocess, time.time
+
 ### llx.prellm.prompt_registry.PromptRegistry.validate
 > Validate that all prompts have non-empty templates. Returns list of error messages.
 - **Output to**: self._ensure_loaded, set, self._entries.items, self._entries.keys, errors.append
@@ -476,7 +481,7 @@ Args:
 
 ### llx.prellm.core.preprocess_and_execute
 > One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
-- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, llx.prellm.core._execute_v3_pipeline
+- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
 
 ### llx.prellm.core.preprocess_and_execute_sync
 > Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
@@ -485,29 +490,25 @@ Usage:
 
 - **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
 
-### llx.prellm.core._run_preprocessing
-> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
-- **Output to**: time.time, preprocessor.preprocess, time.time
-
-### llx.prellm.core._format_classification_context
-> Extract and format classification context from preprocessing result.
-- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
-
-### llx.prellm.core._format_context_schema
-> Extract and format context schema information.
-- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
-
-### llx.prellm.core._format_runtime_context
-> Extract and format runtime context information.
-- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
-
-### llx.prellm.core._format_user_context
-> Extract and format user context information.
-- **Output to**: extra_context.get, parts.append
-
 ### llx.prellm.llm_provider.LLMProvider._parse_json
 > Best-effort JSON extraction from LLM output.
 - **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
+
+### llx.prellm.extractors.format_classification_context
+> Extract and format classification context from preprocessing result.
+- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
+
+### llx.prellm.extractors.format_context_schema
+> Extract and format context schema information.
+- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
+
+### llx.prellm.extractors.format_runtime_context
+> Extract and format runtime context information.
+- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
+
+### llx.prellm.extractors.format_user_context
+> Extract and format user context information.
+- **Output to**: extra_context.get, parts.append
 
 ### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
 > Format pipeline state into structured executor input.
@@ -523,21 +524,23 @@ Special cases
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
-### llx.tools.ai_tools_manager._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+### llx.analysis.collector._parse_map_stats_line
+> Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
+- **Output to**: line.split, part.strip, re.search, re.search, re.search
 
-### llx.tools.docker_manager._build_parser
+### llx.analysis.collector._parse_map_alerts_line
+> Parse: # alerts[5]: CC _extract=65; fan-out _extract=45
+- **Output to**: re.finditer, re.finditer, max, max, int
+
+### llx.analysis.collector._parse_map_hotspots_line
+> Parse: # hotspots[5]: _extract fan=45; ...
+- **Output to**: re.search, re.finditer, max, max, int
+
+### llx.tools.ai_tools_manager._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ### llx.tools.cli._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, start_p.add_argument, start_p.add_argument
-
-### llx.tools.vscode_manager._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
-### llx.analysis.collector._parse_map_stats_line
-> Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
-- **Output to**: line.split, part.strip, re.search, re.search, re.search
 
 ## Behavioral Patterns
 
@@ -546,15 +549,15 @@ Special cases
 - **Confidence**: 0.90
 - **Functions**: llx.prellm.trace._sanitize
 
-### state_machine_ProxymClient
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
-
 ### state_machine_LlxClient
 - **Type**: state_machine
 - **Confidence**: 0.70
 - **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response
+
+### state_machine_ProxymClient
+- **Type**: state_machine
+- **Confidence**: 0.70
+- **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
 
 ## Public API Surface
 
@@ -566,23 +569,27 @@ Functions exposed as public API (no underscore prefix):
 - `examples.basic.main.main` - 44 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
 - `examples.vscode-roocode.demo.RooCodeDemo.run_demo` - 42 calls
-- `llx.tools.health_checker.HealthChecker.run_comprehensive_health_check` - 39 calls
+- `llx.tools.health_runner.HealthCheckRunner.run_comprehensive` - 39 calls
+- `examples.fullstack.app_generator.main` - 37 calls
 - `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
 - `llx.tools.model_manager.ModelManager.print_model_summary` - 36 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
+- `examples.filtering.advanced_filters.demonstrate_filtering` - 35 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
 - `llx.prellm.cli.decompose` - 30 calls
+- `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
 - `llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config` - 30 calls
 - `llx.orchestration.queue.manager.QueueManager.print_status_summary` - 30 calls
 - `llx.tools.config_manager.ConfigManager.print_config_summary` - 29 calls
-- `llx.tools.health_checker.HealthChecker.monitor_services` - 29 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary` - 29 calls
 - `examples.ai-tools.main.show_usage_examples` - 29 calls
 - `llx.prellm.env_config.get_env_config` - 27 calls
+- `llx.prellm.pipeline_ops.execute_v3_pipeline` - 27 calls
 - `llx.tools.docker_manager.DockerManager.print_status_summary` - 27 calls
+- `examples.filtering.advanced_filters.interactive_filtering` - 27 calls
 - `llx.prellm.cli.budget` - 26 calls
 - `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
 - `llx.prellm.cli.config_show_cmd` - 25 calls
@@ -596,10 +603,6 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
 - `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
-- `llx.prellm.cli.serve` - 22 calls
-- `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
-- `llx.prellm.server.chat_completions` - 22 calls
-- `llx.orchestration.llm.orchestrator.LLMOrchestrator.print_status_summary` - 22 calls
 
 ## System Interactions
 
@@ -610,10 +613,6 @@ graph TD
     main --> print
     context --> command
     context --> Option
-    _dispatch --> get_ollama_models
-    _dispatch --> print
-    _dispatch --> pull_model
-    _dispatch --> get
     context_show_cmd --> command
     context_show_cmd --> Option
     context_show_cmd --> _init_logging
@@ -623,8 +622,12 @@ graph TD
     load_instances --> print
     run_demo --> print
     run_demo --> check_services
-    run_comprehensive_he --> print
-    run_comprehensive_he --> keys
+    run_comprehensive --> print
+    run_comprehensive --> keys
+    main --> ArgumentParser
+    main --> add_subparsers
+    main --> add_parser
+    main --> add_argument
     print_quick_start --> print
     print_model_summary --> print
     print_model_summary --> check_ollama_running
@@ -636,7 +639,7 @@ graph TD
     load_limits --> get
     load_limits --> print
     load_limits --> _create_default_limi
-    load_sessions --> exists
+    demonstrate_filterin --> print
 ```
 
 ## Reverse Engineering Guidelines

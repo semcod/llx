@@ -3,6 +3,8 @@ flowchart TD
     examples__ai_tools["examples.ai-tools<br/>9 funcs"]
     examples__basic["examples.basic<br/>1 funcs"]
     examples__docker["examples.docker<br/>9 funcs"]
+    examples__filtering["examples.filtering<br/>10 funcs"]
+    examples__fullstack["examples.fullstack<br/>22 funcs"]
     examples__local["examples.local<br/>7 funcs"]
     examples__multi_provider["examples.multi-provider<br/>6 funcs"]
     examples__proxy["examples.proxy<br/>9 funcs"]
@@ -16,7 +18,7 @@ flowchart TD
     llx__orchestration["llx.orchestration<br/>271 funcs"]
     llx__prellm["llx.prellm<br/>292 funcs"]
     llx__routing["llx.routing<br/>19 funcs"]
-    llx__tools["llx.tools<br/>139 funcs"]
+    llx__tools["llx.tools<br/>170 funcs"]
     llx__tools ==>|493| docker__ai_tools
     llx__orchestration ==>|309| docker__ai_tools
     examples__ai_tools ==>|93| docker__ai_tools
@@ -25,6 +27,8 @@ flowchart TD
     examples__docker ==>|63| docker__ai_tools
     examples__proxy ==>|49| docker__ai_tools
     examples__multi_provider ==>|44| docker__ai_tools
+    examples__filtering ==>|40| docker__ai_tools
+    examples__fullstack ==>|38| docker__ai_tools
     examples__basic ==>|36| docker__ai_tools
     llx__cli ==>|8| llx__config
     llx__orchestration ==>|7| llx__tools
@@ -42,18 +46,22 @@ flowchart TD
     llx__tools -->|1| examples__proxy
     llx__orchestration -->|1| llx__prellm
     llx__orchestration -->|1| examples__proxy
+    llx__routing -->|1| llx__integrations
     llx__integrations -->|1| llx__config
     llx__integrations -->|1| llx__analysis
-    llx__routing -->|1| llx__integrations
     llx__mcp -->|1| llx__integrations
     examples__proxy -->|1| llx__config
     examples__docker -->|1| llx__analysis
     examples__docker -->|1| llx__config
+    examples__fullstack -->|1| llx__config
     examples__local -->|1| llx__config
     examples__local -->|1| llx__analysis
     examples__local -->|1| llx__routing
+    examples__multi_provider -->|1| llx__config
+    examples__multi_provider -->|1| llx__routing
     examples__basic -->|1| llx__config
     examples__basic -->|1| llx__analysis
     examples__basic -->|1| llx__routing
-    examples__multi_provider -->|1| llx__config
-    examples__multi_provider -->|1| llx__routing
+    examples__filtering -->|1| llx__config
+    examples__filtering -->|1| llx__analysis
+    examples__filtering -->|1| llx__routing

@@ -1,57 +1,57 @@
-# code2llm/evolution | 847 func | 72f | 2026-03-26
+# code2llm/evolution | 878 func | 76f | 2026-03-26
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           llx/prellm/core.py
-      WHY: 1032L, 1 classes, max CC=15
-      EFFORT: ~4h  IMPACT: 15480
+  [1] !! SPLIT           llx/tools/vscode_manager.py
+      WHY: 748L, 1 classes, max CC=19
+      EFFORT: ~4h  IMPACT: 14212
 
   [2] !! SPLIT           llx/prellm/cli.py
       WHY: 1076L, 0 classes, max CC=13
       EFFORT: ~4h  IMPACT: 13988
 
-  [3] !! SPLIT           llx/tools/health_checker.py
-      WHY: 765L, 1 classes, max CC=16
-      EFFORT: ~4h  IMPACT: 12240
+  [3] !! SPLIT           llx/tools/config_manager.py
+      WHY: 779L, 1 classes, max CC=17
+      EFFORT: ~4h  IMPACT: 13243
 
-  [4] !! SPLIT-FUNC      _dispatch  CC=36  fan=25
-      WHY: CC=36 exceeds 15
-      EFFORT: ~1h  IMPACT: 900
-
-  [5] !! SPLIT-FUNC      _dispatch  CC=29  fan=20
-      WHY: CC=29 exceeds 15
-      EFFORT: ~1h  IMPACT: 580
-
-  [6] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
+  [4] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 420
 
-  [7] !  SPLIT-FUNC      _dispatch  CC=19  fan=17
+  [5] !  SPLIT-FUNC      _dispatch  CC=19  fan=17
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 323
 
-  [8] !  SPLIT-FUNC      HealthChecker.run_comprehensive_health_check  CC=16  fan=17
+  [6] !  SPLIT-FUNC      HealthCheckRunner.run_comprehensive  CC=16  fan=17
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 272
 
-  [9] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
+  [7] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 247
 
-  [10] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
+  [8] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 180
+
+  [9] !  SPLIT-FUNC      preprocess_and_execute  CC=15  fan=11
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 165
+
+  [10] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 165
 
 
 RISKS[3]:
   ⚠ Splitting llx/prellm/cli.py may break 28 import paths
-  ⚠ Splitting llx/prellm/core.py may break 32 import paths
-  ⚠ Splitting llx/tools/health_checker.py may break 15 import paths
+  ⚠ Splitting llx/tools/config_manager.py may break 43 import paths
+  ⚠ Splitting llx/tools/vscode_manager.py may break 25 import paths
 
 METRICS-TARGET:
-  CC̄:          4.1 → ≤2.9
-  max-CC:      36 → ≤18
-  god-modules: 15 → 0
-  high-CC(≥15): 12 → ≤6
+  CC̄:          4.0 → ≤2.8
+  max-CC:      21 → ≤10
+  god-modules: 14 → 0
+  high-CC(≥15): 10 → ≤5
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -79,4 +79,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.6 → now CC̄=4.1
+  prev CC̄=4.1 → now CC̄=4.0

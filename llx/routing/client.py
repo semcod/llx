@@ -62,10 +62,15 @@ class LlxClient:
 
     def __init__(self, config: LlxConfig | None = None):
         self.config = config or LlxConfig()
+        headers = {"Content-Type": "application/json"}
+        # Add auth header for proxy
+        if self.config.proxy.master_key:
+            headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
+        
         self._http = httpx.Client(
             base_url=self.config.litellm_base_url,
             timeout=120.0,
-            headers={"Content-Type": "application/json"},
+            headers=headers,
         )
 
     def chat(

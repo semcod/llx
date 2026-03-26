@@ -37,6 +37,33 @@ This directory contains practical examples of using llx with different LLM provi
 - **demo.py**: RooCode demo and workflow walkthrough
 - **README.md**: VS Code / RooCode integration guide
 
+### 8. **Filtering Examples** (`filtering/`)
+- **README.md**: Comprehensive filtering documentation
+- **demo.sh**: Interactive filtering demo
+- **advanced_filters.py**: Programmatic filter examples
+- Demonstrates tier-based, provider-based, and task-specific filtering
+
+### 9. **Full-Stack Generation** (`fullstack/`)
+- **README.md**: Full-stack app generation guide
+- **generate.sh**: One-liner app generator
+- **app_generator.py**: Python generator with templates
+- Generate React, Next.js, FastAPI, MERN apps
+
+### 10. **CLI Tools** (`cli-tools/`)
+- **README.md**: CLI tool generation documentation
+- **quick_cli.sh**: Quick CLI generator
+- System, data, network, security tools
+
+### 11. **Hybrid Development** (`hybrid/`)
+- **README.md**: Cloud-local hybrid approach
+- **hybrid_dev.sh**: Intelligent tool selection
+- **hybrid_manager.py**: Task classification and cost optimization
+
+### 12. **Cloud-Local Integration** (`cloud-local/`)
+- **README.md**: Tool integration guide
+- **integration.sh**: Multi-tool orchestration
+- Aider, Claude Code, VS Code + RooCode integration
+
 ## Environment Setup
 
 1. Copy the main `.env` file to the example directory you want to run:

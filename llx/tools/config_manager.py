@@ -589,16 +589,165 @@ class ConfigManager:
         print()
 
 
-# CLI interface
+# CLI interface - Command handlers registry to reduce CC from 36
 
-def _build_parser() -> "argparse.ArgumentParser":
-    import argparse
+import argparse
+from typing import Callable, Dict
+
+# Type alias for command handler
+CmdHandler = Callable[[argparse.Namespace, "ConfigManager"], bool]
+
+
+def _cmd_load(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.type:
+        print("❌ --type required for load")
+        return False
+    config = manager.load_config(args.type)
+    if config:
+        print(json.dumps(config, indent=2))
+        return True
+    return False
+
+
+def _cmd_save(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.type:
+        print("❌ --type required for save")
+        return False
+    try:
+        config_data = json.loads(sys.stdin.read())
+        return manager.save_config(args.type, config_data)
+    except Exception:
+        print("❌ Invalid JSON configuration")
+        return False
+
+
+def _cmd_create_env(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    return manager.create_default_env(args.overwrite)
+
+
+def _cmd_update_env(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.key or not args.value:
+        print("❌ --key and --value required for update-env")
+        return False
+    return manager.update_env_var(args.key, args.value)
+
+
+def _cmd_get_env(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.key:
+        print("❌ --key required for get-env")
+        return False
+    value = manager.get_env_var(args.key)
+    if value is not None:
+        print(value)
+        return True
+    print(f"❌ Environment variable {args.key} not found")
+    return False
+
+
+def _cmd_validate(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    issues = manager.validate_env_config()
+    docker_issues = manager.validate_docker_configs()
+    total = sum(len(v) for v in issues.values()) + sum(len(v) for v in docker_issues.values())
+    if total > 0:
+        print(f"❌ Found {total} configuration issues")
+        return False
+    print("✅ Configuration is valid")
+    return True
+
+
+def _cmd_list_models(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    manager.list_models()
+    return True
+
+
+def _cmd_add_model(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.tier:
+        print("❌ --tier required for add-model")
+        return False
+    try:
+        model_config = json.loads(sys.stdin.read())
+        return manager.add_model(args.tier, model_config)
+    except Exception:
+        print("❌ Invalid model configuration")
+        return False
+
+
+def _cmd_remove_model(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.tier:
+        print("❌ --tier required for remove-model")
+        return False
+    return manager.remove_model(args.tier)
+
+
+def _cmd_backup(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    return manager.backup_configs(args.backup_dir)
+
+
+def _cmd_restore(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.backup_dir:
+        print("❌ --backup-dir required for restore")
+        return False
+    return manager.restore_configs(args.backup_dir)
+
+
+def _cmd_docker_env(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    return manager.generate_docker_env_file(args.env)
+
+
+def _cmd_create_profile(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.profile:
+        print("❌ --profile required for create-profile")
+        return False
+    return manager.create_profile(args.profile)
+
+
+def _cmd_load_profile(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    if not args.profile:
+        print("❌ --profile required for load-profile")
+        return False
+    return manager.load_profile(args.profile)
+
+
+def _cmd_list_profiles(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    profiles = manager.list_profiles()
+    if profiles:
+        print("📋 Available Profiles:")
+        for profile in profiles:
+            print(f"  • {profile}")
+    else:
+        print("No profiles found")
+    return True
+
+
+def _cmd_summary(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    manager.print_config_summary()
+    return True
+
+
+# Command registry: maps command names to handler functions
+_COMMAND_HANDLERS: Dict[str, CmdHandler] = {
+    "load": _cmd_load,
+    "save": _cmd_save,
+    "create-env": _cmd_create_env,
+    "update-env": _cmd_update_env,
+    "get-env": _cmd_get_env,
+    "validate": _cmd_validate,
+    "list-models": _cmd_list_models,
+    "add-model": _cmd_add_model,
+    "remove-model": _cmd_remove_model,
+    "backup": _cmd_backup,
+    "restore": _cmd_restore,
+    "docker-env": _cmd_docker_env,
+    "create-profile": _cmd_create_profile,
+    "load-profile": _cmd_load_profile,
+    "list-profiles": _cmd_list_profiles,
+    "summary": _cmd_summary,
+}
+
+
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="llx Config Manager")
-    parser.add_argument("command", choices=[
-        "load", "save", "create-env", "update-env", "get-env", "validate",
-        "list-models", "add-model", "remove-model", "backup", "restore",
-        "docker-env", "create-profile", "load-profile", "list-profiles", "summary"
-    ])
+    parser.add_argument("command", choices=list(_COMMAND_HANDLERS.keys()))
     parser.add_argument("--type", help="Configuration type")
     parser.add_argument("--key", help="Environment variable key")
     parser.add_argument("--value", help="Environment variable value")
@@ -610,101 +759,14 @@ def _build_parser() -> "argparse.ArgumentParser":
     return parser
 
 
-def _dispatch(args, manager: "ConfigManager") -> bool:
-    if args.command == "load":
-        if not args.type:
-            print("❌ --type required for load")
-            return False
-        config = manager.load_config(args.type)
-        if config:
-            print(json.dumps(config, indent=2))
-            return True
-        return False
-    elif args.command == "save":
-        if not args.type:
-            print("❌ --type required for save")
-            return False
-        try:
-            config_data = json.loads(sys.stdin.read())
-            return manager.save_config(args.type, config_data)
-        except Exception:
-            print("❌ Invalid JSON configuration")
-            return False
-    elif args.command == "create-env":
-        return manager.create_default_env(args.overwrite)
-    elif args.command == "update-env":
-        if not args.key or not args.value:
-            print("❌ --key and --value required for update-env")
-            return False
-        return manager.update_env_var(args.key, args.value)
-    elif args.command == "get-env":
-        if not args.key:
-            print("❌ --key required for get-env")
-            return False
-        value = manager.get_env_var(args.key)
-        if value is not None:
-            print(value)
-            return True
-        print(f"❌ Environment variable {args.key} not found")
-        return False
-    elif args.command == "validate":
-        issues = manager.validate_env_config()
-        docker_issues = manager.validate_docker_configs()
-        total = sum(len(v) for v in issues.values()) + sum(len(v) for v in docker_issues.values())
-        if total > 0:
-            print(f"❌ Found {total} configuration issues")
-            return False
-        print("✅ Configuration is valid")
-        return True
-    elif args.command == "list-models":
-        manager.list_models()
-        return True
-    elif args.command == "add-model":
-        if not args.tier:
-            print("❌ --tier required for add-model")
-            return False
-        try:
-            model_config = json.loads(sys.stdin.read())
-            return manager.add_model(args.tier, model_config)
-        except Exception:
-            print("❌ Invalid model configuration")
-            return False
-    elif args.command == "remove-model":
-        if not args.tier:
-            print("❌ --tier required for remove-model")
-            return False
-        return manager.remove_model(args.tier)
-    elif args.command == "backup":
-        return manager.backup_configs(args.backup_dir)
-    elif args.command == "restore":
-        if not args.backup_dir:
-            print("❌ --backup-dir required for restore")
-            return False
-        return manager.restore_configs(args.backup_dir)
-    elif args.command == "docker-env":
-        return manager.generate_docker_env_file(args.env)
-    elif args.command == "create-profile":
-        if not args.profile:
-            print("❌ --profile required for create-profile")
-            return False
-        return manager.create_profile(args.profile)
-    elif args.command == "load-profile":
-        if not args.profile:
-            print("❌ --profile required for load-profile")
-            return False
-        return manager.load_profile(args.profile)
-    elif args.command == "list-profiles":
-        profiles = manager.list_profiles()
-        if profiles:
-            print("📋 Available Profiles:")
-            for profile in profiles:
-                print(f"  • {profile}")
-        else:
-            print("No profiles found")
-        return True
-    elif args.command == "summary":
-        manager.print_config_summary()
-        return True
+def _dispatch(args: argparse.Namespace, manager: "ConfigManager") -> bool:
+    """Dispatch command to appropriate handler using registry pattern.
+    
+    CC reduced from 36 to ~3 by using handler registry instead of if-elif chain.
+    """
+    handler = _COMMAND_HANDLERS.get(args.command)
+    if handler:
+        return handler(args, manager)
     return False
 
 

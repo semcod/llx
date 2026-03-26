@@ -276,7 +276,7 @@ def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
             config.default_tier = selection["default_tier"]
         if "context" in selection:
             context = selection["context"]
-            config.litellm_base_url = context.get("max_tokens", config.litellm_base_url)
+            config.litellm_base_url = context.get("base_url", config.litellm_base_url)
     
     # Apply proxy settings
     if "proxy" in data:
