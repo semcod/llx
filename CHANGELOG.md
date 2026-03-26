@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-03-26
+
+### Other
+- Update examples/planfile/calculator.py
+- Update examples/planfile/duplicate_test.py
+- Update examples/planfile/simple_test.py
+- Update project/validation.toon.yaml
+
 ## [0.1.13] - 2026-03-26
 
 ### Docs

@@ -1,9 +1,13 @@
-# vallm batch | 223f | 129✓ 6⚠ 49✗ | 2026-03-26
+# vallm batch | 229f | 133✓ 7⚠ 50✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 223  passed: 129 (57.8%)  warnings: 6  errors: 49  unsupported: 45
+  scanned: 229  passed: 133 (58.1%)  warnings: 7  errors: 50  unsupported: 46
 
-WARNINGS[6]{path,score}:
+WARNINGS[7]{path,score}:
+  examples/planfile/async_refactor_demo.py,0.93
+    issues[2]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_callback_hell_example: 209 lines exceeds limit 100,18
+      complexity.lizard_length,warning,create_async_refactored_version: 223 lines exceeds limit 100,234
   examples/cli-tools/quick_cli.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,generate_tool: 120 lines exceeds limit 100,74
@@ -25,13 +29,16 @@ WARNINGS[6]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[49]{path,score}:
+ERRORS[50]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
   examples/hybrid/hybrid_manager.py,0.00
     issues[1]{rule,severity,message,line}:
       syntax.parse,error,SyntaxError: Missing parentheses in call to 'print'. Did you mean print(...)?,328
+  examples/planfile/microservice_refactor.py,0.00
+    issues[1]{rule,severity,message,line}:
+      syntax.parse,error,SyntaxError: '(' was never closed,290
   llx/orchestration/instances/__init__.py,0.57
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,3
@@ -264,7 +271,7 @@ ERRORS[49]{path,score}:
       python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,24
+  *.md,25
   Dockerfile*,1
   *.txt,3
   *.yml,3
