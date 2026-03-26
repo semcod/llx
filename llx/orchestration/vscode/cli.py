@@ -4,6 +4,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_wrapper
 
 from .models import VSCodeAccountType, VSCodeAccount, VSCodeInstanceConfig
 from .orchestrator import VSCodeOrchestrator
@@ -74,13 +75,13 @@ def _cmd_add_account(args, orch: VSCodeOrchestrator) -> bool:
 
 
 def _cmd_remove_account(args, orch: VSCodeOrchestrator) -> bool:
-    if not args.account_id:
-        print("❌ --account-id required for remove-account")
-        return False
-    success = orch.remove_account(args.account_id)
-    if success:
-        orch.save_config()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr="account_id",
+        id_label="Account",
+        remove_func=orch.remove_account,
+        save_func=orch.save_config,
+    )
 
 
 def _cmd_list_accounts(args, orch: VSCodeOrchestrator) -> bool:
@@ -109,13 +110,13 @@ def _cmd_create(args, orch: VSCodeOrchestrator) -> bool:
 
 
 def _cmd_remove(args, orch: VSCodeOrchestrator) -> bool:
-    if not args.instance_id:
-        print("❌ --instance-id required for remove")
-        return False
-    success = orch.remove_instance(args.instance_id)
-    if success:
-        orch.save_config()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr="instance_id",
+        id_label="Instance",
+        remove_func=orch.remove_instance,
+        save_func=orch.save_config,
+    )
 
 
 def _cmd_start(args, orch: VSCodeOrchestrator) -> bool:

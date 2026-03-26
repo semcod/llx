@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.23] - 2026-03-26
+
+### Docs
+- Update examples/REFACTORING_SUMMARY.md
+
+### Other
+- Update examples/filtering/filtering.sh
+- Update examples/fullstack/generate_simple.sh
+- Update examples/hybrid/hybrid.sh
+- Update examples/planfile/async_refactor_demo.py
+- Update examples/planfile/planfile.sh
+- Update llx/examples/utils.py
+- Update llx/orchestration/cli_utils.py
+- Update llx/orchestration/instances/cli.py
+- Update llx/orchestration/llm/cli.py
+- Update llx/orchestration/queue/cli.py
+- ... and 3 more files
+
 ## [0.1.22] - 2026-03-26
 
 ### Docs

@@ -43,7 +43,7 @@ def create_async_refactored_version():
     return async_path
 
 
-class DataProcessor:
+class AsyncDataProcessor:
     """Another class with callback-based processing"""
     
     def __init__(self):
@@ -88,8 +88,8 @@ class DataProcessor:
         callback(transformed)
 
 
-def create_async_refactored_version():
-    """Show how the code should look after refactoring."""
+async def demonstrate_async_refactoring():
+    """Demonstrate async refactoring using planfile."""
     
     async_code = '''
 """

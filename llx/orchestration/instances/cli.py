@@ -4,6 +4,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_wrapper
 
 from .models import InstanceType, InstanceConfig
 from .manager import InstanceManager
@@ -87,13 +88,13 @@ def _cmd_stop(args, mgr: InstanceManager) -> bool:
 
 
 def _cmd_remove(args, mgr: InstanceManager) -> bool:
-    if not args.instance_id:
-        print("❌ --instance-id required for remove")
-        return False
-    success = mgr.remove_instance(args.instance_id)
-    if success:
-        mgr.save_instances()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr="instance_id",
+        id_label="Instance",
+        remove_func=mgr.remove_instance,
+        save_func=mgr.save_instances,
+    )
 
 
 def _cmd_list(args, mgr: InstanceManager) -> bool:

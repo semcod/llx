@@ -1,18 +1,19 @@
-# vallm batch | 276f | 168✓ 11⚠ 51✗ | 2026-03-26
+# vallm batch | 284f | 174✓ 11⚠ 52✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 276  passed: 168 (60.9%)  warnings: 11  errors: 51  unsupported: 57
+  scanned: 284  passed: 174 (61.3%)  warnings: 11  errors: 52  unsupported: 58
 
 WARNINGS[11]{path,score}:
-  examples/planfile/async_refactor_demo.py,0.93
-    issues[2]{rule,severity,message,line}:
-      complexity.lizard_length,warning,create_callback_hell_example: 209 lines exceeds limit 100,18
-      complexity.lizard_length,warning,create_async_refactored_version: 223 lines exceeds limit 100,234
+  examples/aider/test_integration.py,0.93
+    issues[3]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,test_aider_integration has cyclomatic complexity 24 (max: 15),16
+      complexity.lizard_cc,warning,test_aider_integration: CC=22 exceeds limit 15,16
+      complexity.lizard_length,warning,test_aider_integration: 119 lines exceeds limit 100,16
   examples/planfile/generate_strategy.py,0.93
     issues[3]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 43 (max: 15),18
-      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=42 exceeds limit 15,18
-      complexity.lizard_length,warning,generate_strategy_with_fix: 150 lines exceeds limit 100,18
+      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 44 (max: 15),18
+      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=43 exceeds limit 15,18
+      complexity.lizard_length,warning,generate_strategy_with_fix: 152 lines exceeds limit 100,18
   examples/cli-tools/quick_cli.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,generate_tool: 120 lines exceeds limit 100,74
@@ -43,7 +44,7 @@ WARNINGS[11]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[51]{path,score}:
+ERRORS[52]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
@@ -103,6 +104,12 @@ ERRORS[51]{path,score}:
       python.import.resolvable,error,Module 'routing' not found,21
       python.import.resolvable,error,Module 'vscode' not found,22
       python.import.resolvable,error,Module 'llm' not found,23
+  llx/orchestration/session/cli.py,0.71
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'cli_utils' not found,7
+      python.import.resolvable,error,Module 'models' not found,9
+      python.import.resolvable,error,Module 'manager' not found,10
   llx/orchestration/instances/cli.py,0.74
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module '_utils' not found,6
@@ -123,11 +130,6 @@ ERRORS[51]{path,score}:
       python.import.resolvable,error,Module '_utils' not found,6
       python.import.resolvable,error,Module 'models' not found,8
       python.import.resolvable,error,Module 'engine' not found,9
-  llx/orchestration/session/cli.py,0.74
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'models' not found,8
-      python.import.resolvable,error,Module 'manager' not found,9
   llx/orchestration/vscode/cli.py,0.74
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module '_utils' not found,6
@@ -212,7 +214,7 @@ ERRORS[51]{path,score}:
       python.import.resolvable,error,Module 'models' not found,304
   examples/planfile/callback_hell.py,0.89
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'bs4' not found,8
+      python.import.resolvable,error,Module 'bs4' not found,7
   llx/cli/strategy_commands.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'planfile' not found,8
@@ -263,6 +265,9 @@ ERRORS[51]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
+  examples/planfile/async_refactor_demo.py,0.94
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'utils' not found,15
   examples/planfile/async_refactored.py,0.94
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'bs4' not found,9
@@ -280,15 +285,15 @@ ERRORS[51]{path,score}:
       python.import.resolvable,error,Module 'git' not found,182
   llx/mcp/tools.py,0.98
     issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'planfile.llm.generator' not found,569
-      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
+      python.import.resolvable,error,Module 'planfile.llm.generator' not found,633
+      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,634
   llx/cli/app.py,0.99
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'generate_strategy' not found,432
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,34
+  *.md,36
   Dockerfile*,1
   *.txt,4
   *.yml,3
-  other,15
+  other,14

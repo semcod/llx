@@ -40,6 +40,48 @@ def cmd_remove_wrapper(
     return success
 
 
+def cmd_remove_pair_wrapper(
+    args: Any,
+    first_attr: str,
+    second_attr: str,
+    first_label: str,
+    second_label: str,
+    remove_func: Callable[[str, str], bool],
+    save_func: Optional[Callable[[], None]] = None
+) -> bool:
+    """Generic wrapper for remove commands keyed by two arguments.
+    
+    Args:
+        args: CLI arguments
+        first_attr: First attribute name (e.g., 'provider')
+        second_attr: Second attribute name (e.g., 'account')
+        first_label: Human-readable label for first arg
+        second_label: Human-readable label for second arg
+        remove_func: Function to call to remove the item
+        save_func: Optional function to save state after removal
+        
+    Returns:
+        True if successful, False otherwise
+    """
+    first_value = getattr(args, first_attr, None)
+    second_value = getattr(args, second_attr, None)
+
+    if not first_value or not second_value:
+        print(f"❌ --{first_attr.replace('_', '-')} and --{second_attr.replace('_', '-')} required for remove")
+        return False
+
+    success = remove_func(first_value, second_value)
+
+    if success:
+        print(f"✅ {first_label} '{first_value}' / {second_label} '{second_value}' removed successfully")
+        if save_func:
+            save_func()
+    else:
+        print(f"❌ Failed to remove {first_label.lower()} '{first_value}' / {second_label.lower()} '{second_value}'")
+
+    return success
+
+
 def cmd_status_wrapper(
     args: Any,
     id_attr: str,

@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_wrapper
 
 from .models import RequestPriority, QueueRequest, QueueConfig
 from .manager import QueueManager
@@ -69,13 +70,13 @@ def _cmd_add(args, mgr: QueueManager) -> bool:
 
 
 def _cmd_remove(args, mgr: QueueManager) -> bool:
-    if not args.queue_id:
-        print("❌ --queue-id required for remove")
-        return False
-    success = mgr.remove_queue(args.queue_id)
-    if success:
-        mgr.save_queues()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr="queue_id",
+        id_label="Queue",
+        remove_func=mgr.remove_queue,
+        save_func=mgr.save_queues,
+    )
 
 
 def _cmd_enqueue(args, mgr: QueueManager) -> bool:

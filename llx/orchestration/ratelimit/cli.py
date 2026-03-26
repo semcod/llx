@@ -4,6 +4,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_pair_wrapper
 
 from .models import LimitType, RateLimitConfig
 from .limiter import RateLimiter
@@ -66,13 +67,15 @@ def _cmd_add(args, limiter: RateLimiter) -> bool:
 
 
 def _cmd_remove(args, limiter: RateLimiter) -> bool:
-    if not args.provider or not args.account:
-        print("❌ --provider and --account required for remove")
-        return False
-    success = limiter.remove_limit(args.provider, args.account)
-    if success:
-        limiter.save_limits()
-    return success
+    return cmd_remove_pair_wrapper(
+        args,
+        first_attr="provider",
+        second_attr="account",
+        first_label="Provider",
+        second_label="Account",
+        remove_func=limiter.remove_limit,
+        save_func=limiter.save_limits,
+    )
 
 
 def _cmd_check(args, limiter: RateLimiter) -> bool:

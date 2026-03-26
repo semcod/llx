@@ -7,6 +7,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_wrapper
 
 from .models import LLMProviderType, ModelCapability, LLMProvider
 from .orchestrator import LLMOrchestrator
@@ -82,13 +83,13 @@ def _cmd_add_provider(args, orch: LLMOrchestrator) -> bool:
 
 
 def _cmd_remove_provider(args, orch: LLMOrchestrator) -> bool:
-    if not args.provider_id:
-        print("❌ --provider-id required for remove-provider")
-        return False
-    success = orch.remove_provider(args.provider_id)
-    if success:
-        orch.save_config()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr="provider_id",
+        id_label="Provider",
+        remove_func=orch.remove_provider,
+        save_func=orch.save_config,
+    )
 
 
 def _cmd_list_providers(args, orch: LLMOrchestrator) -> bool:
