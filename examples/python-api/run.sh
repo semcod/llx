@@ -26,7 +26,11 @@ echo "──────────────────────"
 
 # 1. Generate planfile
 echo "1. Generating planfile..."
-llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY"
+if [ -n "$DESCRIPTION" ]; then
+    llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY" --description "$DESCRIPTION"
+else
+    llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY"
+fi
 
 # 2. Generate code
 echo -e "\n2. Generating Python code..."

@@ -1,0 +1,111 @@
+# LLX Planfile Configuration
+# This file defines templates and settings for strategy and code generation
+
+# Strategy generation templates
+strategy:
+  prompts:
+    api: |
+      Generate a refactoring strategy for this project.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+
+      Generate a comprehensive strategy with at least 8 sprints covering:
+      1. Project setup and core models
+      2. API implementation and CRUD operations
+      3. Testing and quality assurance
+      4. Containerization and deployment
+      5. CI/CD pipeline setup
+      6. Monitoring and observability
+      7. Documentation and API spec
+      8. Performance optimization and final review
+
+      YAML Structure Required:
+      project_name: "Name based on description"
+      project_type: "Type based on description"
+      domain: "software"
+      goal:
+        title: "Short title"
+        description: "{description}"
+      goals:
+        - "Goal 1 derived from description"
+      sprints:
+        - number: 1
+          name: "Sprint 1"
+          objectives:
+            - "Objective 1"
+          tasks:
+            - name: "Task 1"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+      task_patterns:
+        - pattern: "Pattern 1"
+          description: "Description"
+      quality_gates:
+        - gate: "Gate 1"
+          condition: "Condition"
+          criteria:
+            - "Criteria 1"
+          required: true
+
+      IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
+
+    complexity: |
+      Generate a refactoring strategy focused on reducing complexity.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+
+      ... (rest of template)
+
+# Code generation templates
+code:
+  sprint_files:
+    1:
+      file: "main.py"
+      prompt: "Generate a complete FastAPI main.py for '{project_name}' based on: {description}. Include CRUD endpoints, in-memory storage, /health endpoint, proper error handling. Return only Python code."
+    2:
+      file: "models.py"
+      prompt: "Generate Pydantic models for '{project_name}' based on: {description}. Include request/response models, validation, and database schemas. Return only Python code."
+    3:
+      file: "test_api.py"
+      prompt: "Generate comprehensive pytest tests for '{project_name}' API based on: {description} using TestClient. Include unit tests, integration tests, and test coverage. Return only Python code."
+    4:
+      file: "Dockerfile"
+      prompt: "Generate a multi-stage Dockerfile for '{project_name}' FastAPI app. Use python:3.11-slim base, include health checks, non-root user, optimization for production. Return only Dockerfile."
+    5:
+      file: "docker-compose.yml"
+      prompt: "Generate docker-compose.yml for '{project_name}' with app, database (PostgreSQL), Redis for caching, and monitoring stack (Prometheus, Grafana). Include environment variables and volumes. Return only YAML."
+    6:
+      file: ".github/workflows/ci-cd.yml"
+      prompt: "Generate GitHub Actions CI/CD workflow for '{project_name}'. Include test automation, Docker build, security scanning, and deployment to staging/production. Return only YAML."
+    7:
+      file: "monitoring.py"
+      prompt: "Generate monitoring setup for '{project_name}' using Prometheus metrics, structured logging, and health checks. Include custom metrics and alerting rules. Return only Python code."
+    8:
+      file: "docs/api.md"
+      prompt: "Generate comprehensive API documentation for '{project_name}' based on: {description}. Include endpoint descriptions, request/response examples, authentication, and deployment guide. Return only Markdown."
+
+# Default settings
+defaults:
+  sprints: 8
+  focus: "api"
+  profile: "free"
+  output: "strategy.yaml"

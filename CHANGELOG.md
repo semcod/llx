@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.31] - 2026-03-26
+
+### Docs
+- Update examples/README.md
+- Update examples/python-api/my-api-final/README.md
+- Update examples/python-api/my-api-restaurant/README.md
+- Update examples/python-api/my-api/README.md
+
+### Test
+- Update test-api-qwen/Dockerfile
+- Update test-api-qwen/README.md
+- Update test-api-qwen/main.py
+- Update test-api-qwen/models.py
+- Update test-api-qwen/requirements.txt
+- Update test-api-qwen/test_api.py
+- Update test-api-qwen/tests/test_test_api_qwen.py
+
+### Other
+- Update examples/basic/run.sh
+- Update examples/planfile/run.sh
+- Update examples/python-api/my-api-complete/main.py
+- Update examples/python-api/my-api-complete/models.py
+- Update examples/python-api/my-api-final/Dockerfile
+- Update examples/python-api/my-api-final/main.py
+- Update examples/python-api/my-api-final/models.py
+- Update examples/python-api/my-api-final/requirements.txt
+- Update examples/python-api/my-api-final/test_api.py
+- Update examples/python-api/my-api-restaurant/Dockerfile
+- ... and 14 more files
+
 ## [0.1.30] - 2026-03-26
 
 ### Docs

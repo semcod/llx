@@ -22,18 +22,31 @@ console = Console()
 
 def _normalize_strategy_data(data):
     """Normalize strategy data so it matches the expected YAML shape."""
-    data['sprints'] = _normalize_sprints(data)
-    data['quality_gates'] = _normalize_quality_gates(data)
-    data['goal'] = _normalize_goal(data)
-    data['metadata'] = _normalize_metadata(data)
-    return data
+    normalized = {}
+    
+    # Preserve name and type
+    normalized['project_name'] = data.get('project_name', data.get('name', 'My Project'))
+    normalized['project_type'] = data.get('project_type', data.get('type', 'Web Service'))
+    
+    # Normalize complex structures
+    normalized['goal'] = _normalize_goal(data)
+    normalized['goals'] = data.get('goals', [])
+    normalized['sprints'] = _normalize_sprints(data)
+    normalized['quality_gates'] = _normalize_quality_gates(data)
+    normalized['metadata'] = _normalize_metadata(data)
+    
+    return normalized
 
 
 def _normalize_sprints(data):
     """Normalize sprints data."""
-    sprints = data.get('sprints') if isinstance(data.get('sprints'), list) else []
+    sprints = data.get('sprints')
+    if not isinstance(sprints, list):
+        # Maybe it's under a different key or just missing
+        sprints = data.get('phases', [])
+        
     normalized_sprints = []
-    task_patterns = data.get('task_patterns') if isinstance(data.get('task_patterns'), list) else []
+    task_patterns = data.get('task_patterns', [])
     
     for i, sprint in enumerate(sprints):
         sprint = _normalize_single_sprint(sprint, i, task_patterns)
@@ -45,18 +58,23 @@ def _normalize_sprints(data):
 def _normalize_single_sprint(sprint, index, task_patterns):
     """Normalize a single sprint."""
     if not isinstance(sprint, dict):
-        sprint = {'id': index + 1, 'name': str(sprint), 'objectives': [], 'tasks': []}
+        sprint = {'number': index + 1, 'objectives': [str(sprint)], 'tasks': []}
     else:
         sprint = dict(sprint)
     
-    sprint['id'] = _extract_sprint_id(sprint.get('id', index + 1), index)
-    sprint.setdefault('name', f"Sprint {sprint['id']}")
+    sprint.setdefault('number', index + 1)
+    sprint.setdefault('name', f"Sprint {sprint['number']}")
     
-    objectives = sprint.get('objectives')
-    sprint['objectives'] = objectives if isinstance(objectives, list) else ([objectives] if objectives else [])
-    
-    tasks = sprint.get('tasks')
-    sprint['tasks'] = tasks if isinstance(tasks, list) else ([tasks] if tasks else [])
+    objectives = sprint.get('objectives', [])
+    if isinstance(objectives, str):
+        sprint['objectives'] = [objectives]
+    else:
+        sprint['objectives'] = list(objectives) if objectives else []
+        
+    tasks = sprint.get('tasks', [])
+    if not isinstance(tasks, list):
+        tasks = [tasks] if tasks else []
+    sprint['tasks'] = tasks
     
     if not sprint['tasks'] and task_patterns:
         sprint['tasks'] = _generate_tasks_from_patterns(task_patterns)
@@ -92,32 +110,26 @@ def _generate_tasks_from_patterns(task_patterns):
 
 
 def _normalize_quality_gates(data):
-    """Normalize quality gates data."""
-    quality_gates = data.get('quality_gates') if isinstance(data.get('quality_gates'), list) else []
-    normalized_gates = []
-    
-    for i, gate in enumerate(quality_gates):
-        gate = _normalize_single_gate(gate, i)
-        normalized_gates.append(gate)
-    
-    return normalized_gates
+    """Normalize quality gates."""
+    gates = data.get('quality_gates', [])
+    if not isinstance(gates, list):
+        gates = [gates] if gates else []
+        
+    return [_normalize_single_gate(gate, i) for i, gate in enumerate(gates)]
 
 
 def _normalize_single_gate(gate, index):
     """Normalize a single quality gate."""
     if not isinstance(gate, dict):
         text = str(gate)
-        gate = {'name': text, 'description': text, 'criteria': [text], 'required': True}
+        gate = {'gate': text, 'condition': text, 'required': True}
     else:
         gate = dict(gate)
-        criteria = gate.get('criteria')
-        if isinstance(criteria, str):
-            gate['criteria'] = [criteria]
-        elif not isinstance(criteria, list):
-            gate['criteria'] = [gate.get('description') or gate.get('name') or f'Quality gate {index + 1}']
-        gate.setdefault('name', gate.get('description') or f'Quality gate {index + 1}')
-        gate.setdefault('description', gate['name'])
-        gate.setdefault('required', True)
+        
+    gate.setdefault('gate', gate.get('name', f'Quality gate {index + 1}'))
+    gate.setdefault('condition', gate.get('criteria', gate['gate']))
+    gate.setdefault('required', True)
+    
     return gate
 
 
@@ -125,7 +137,8 @@ def _normalize_goal(data):
     """Normalize goal data."""
     goal = data.get('goal')
     if not goal:
-        goal = {'title': data.get('title', 'Project Refactoring'), 'description': data.get('description', 'Improve code quality')}
+        goal = {'title': data.get('project_name', 'Project Refactoring'), 
+                'description': data.get('goals', ['Improve code quality'])[0]}
     elif isinstance(goal, str):
         goal = {'title': goal, 'description': goal}
     else:
@@ -137,25 +150,21 @@ def _normalize_goal(data):
 
 def _normalize_metadata(data):
     """Normalize metadata."""
-    metadata = data.get('metadata', {})
-    if not metadata:
-        metadata = {'created_at': datetime.now().isoformat(), 'version': '1.0'}
-    else:
-        metadata = dict(metadata)
-        metadata.setdefault('created_at', datetime.now().isoformat())
-        metadata.setdefault('version', '1.0')
+    metadata = dict(data.get('metadata', {}))
+    metadata.setdefault('created_at', datetime.now().isoformat())
+    metadata.setdefault('version', '1.0')
     return metadata
 
 
-def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
+def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity", description=None):
     """Generate strategy using llx.planfile."""
-    _print_generation_info(project_path, model, sprints, focus)
+    _print_generation_info(project_path, model, sprints, focus, description)
     
     # 1. Collect metrics using llx
     metrics = analyze_project(project_path)
     
     # 2. Build prompt
-    prompt = _build_strategy_prompt(metrics, sprints, focus)
+    prompt = _build_strategy_prompt(metrics, sprints, focus, description)
     
     # 3. Call LLM
     response = _call_llm_for_strategy(prompt, model)
@@ -169,19 +178,48 @@ def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3
     return yaml_data
 
 
-def _print_generation_info(project_path, model, sprints, focus):
+def _print_generation_info(project_path, model, sprints, focus, description=None):
     """Print strategy generation information."""
     console.print(f"[blue]Generating strategy for {project_path}...[/blue]")
     console.print(f"  Model: {model}")
     console.print(f"  Sprints: {sprints}")
     console.print(f"  Focus: {focus}")
+    if description:
+        console.print(f"  Description: {description}")
     console.print(f"  Using OpenRouter free models")
 
 
-def _build_strategy_prompt(metrics, sprints, focus):
+def _build_strategy_prompt(metrics, sprints, focus, description=None):
     """Build the prompt for strategy generation."""
-    return f"""
-Generate a refactoring strategy for this project:
+    # Load prompt template from config
+    import os
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'configs', 'planfile_config.yaml')
+    
+    try:
+        with open(config_path, 'r') as f:
+            config = yaml.safe_load(f)
+        
+        # Get the appropriate template based on focus
+        template = config['strategy']['prompts'].get(focus, config['strategy']['prompts']['api'])
+        
+        # Format the template
+        prompt = template.format(
+            files=metrics.total_files,
+            lines=metrics.total_lines,
+            complexity=metrics.complexity_score,
+            scale=metrics.scale_score,
+            focus=focus,
+            sprints=sprints,
+            description=description or "Generate a refactoring strategy for this project"
+        )
+        
+        return prompt
+    except Exception as e:
+        # Fallback to hardcoded template if config fails
+        console.print(f"[yellow]Warning: Could not load config, using default template[/yellow]")
+        return f"""
+Generate a refactoring strategy for this project.
+YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
 
 Project Metrics:
 - Files: {metrics.total_files}
@@ -191,15 +229,27 @@ Project Metrics:
 
 Focus: {focus}
 Number of sprints: {sprints}
+Description: {description or "Generate a refactoring strategy for this project"}
 
-Please generate a YAML strategy with:
-1. Project name and type
-2. Clear goals
-3. {sprints} sprints with specific objectives
-4. Task patterns for common work
-5. Quality gates
+YAML Structure Required:
+project_name: "Name"
+project_type: "Type"
+goals:
+  - "Goal 1"
+sprints:
+  - number: 1
+    objectives:
+      - "Objective 1"
+    tasks:
+      - name: "Task 1"
+        description: "Desc"
+        type: "feature"
+        model_hints: "balanced"
+quality_gates:
+  - gate: "Gate 1"
+    condition: "Condition"
 
-Return only valid YAML without code blocks.
+IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
 """
 
 
@@ -244,17 +294,26 @@ def _call_llm_for_strategy(prompt, model):
 
 def _parse_and_fix_yaml(content):
     """Parse and fix YAML formatting issues."""
-    # Extract YAML from response
-    yaml_text = content
-    if "```yaml" in content:
-        yaml_text = content.split("```yaml")[1].split("```")[0]
-    elif "```" in content:
-        yaml_text = content.split("```")[1].split("```")[0]
+    # Extract YAML from response (more robust)
+    yaml_text = content.strip()
     
+    # Try reaching for code blocks first
+    code_match = re.search(r'```(?:yaml)?\s*(.*?)```', content, re.DOTALL)
+    if code_match:
+        yaml_text = code_match.group(1).strip()
+    else:
+        # No code blocks, try to find the first line starting with a known key
+        key_match = re.search(r'^([a-zA-Z0-9_-]+:)', content, re.MULTILINE)
+        if key_match:
+            yaml_text = content[key_match.start():].strip()
+
     # Save extracted YAML
-    with open("/tmp/extracted_yaml.txt", "w") as f:
-        f.write(yaml_text)
-    console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
+    try:
+        with open("/tmp/extracted_yaml.txt", "w") as f:
+            f.write(yaml_text)
+        console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
+    except Exception:
+        pass
     
     # Fix common YAML formatting issues
     yaml_text = _fix_yaml_formatting(yaml_text)
@@ -273,26 +332,18 @@ def _parse_and_fix_yaml(content):
 
 def _fix_yaml_formatting(yaml_text):
     """Fix common YAML formatting issues."""
-    # Fix common issues
-    replacements = [
-        ("-id:", "- id:"),
-        ("-name:", "- name:"),
-        ("-task_type:", "- task_type:"),
-        ("-description:", "- description:"),
-        ("-priority:", "- priority:"),
-        ("-model_hints:", "- model_hints:"),
-        ("-planning:", "- planning:"),
-        ("-implementation:", "- implementation:"),
-        ("-review:", "- review:")
-    ]
+    # Ensure space after colon (safe for URLs like https:// as they have / after colon)
+    yaml_text = re.sub(r'([a-zA-Z0-9_-]+):([^\s\n/])', r'\1: \2', yaml_text)
     
-    for old, new in replacements:
-        yaml_text = yaml_text.replace(old, new)
+    # Fix multiple list items on same line (e.g. "- item1 - item2")
+    # This is a bit tricky, we look for a dash inside a line that isn't at the start
+    yaml_text = re.sub(r'(\s+-\s+.+?)\s+-\s+', r'\1\n      - ', yaml_text)
+    
+    # Fix missing newline before block mapping key if it's on the same line as value
+    # e.g. "goal: title: My Project" -> "goal:\n  title: My Project"
+    yaml_text = re.sub(r'^(\s*[a-zA-Z0-9_-]+:)\s+([a-zA-Z0-9_-]+:)', r'\1\n  \2', yaml_text, flags=re.MULTILINE)
 
-    # NEW: Ensure space after colon for block mappings
-    yaml_text = re.sub(r'^([a-zA-Z0-9_-]+):([^\s\n/])', r'\1: \2', yaml_text, flags=re.MULTILINE)
-
-    # Fix line continuation issues
+    # Fix line continuation issues for sprints
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)(objectives:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     
@@ -303,10 +354,13 @@ def _fix_yaml_formatting(yaml_text):
     yaml_text = _fix_indentation(yaml_text)
     
     # Save fixed YAML for debugging
-    with open("/tmp/fixed_yaml.txt", "w") as f:
-        f.write(yaml_text)
-    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
-    
+    try:
+        with open("/tmp/fixed_yaml.txt", "w") as f:
+            f.write(yaml_text)
+        console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
+    except Exception:
+        pass
+        
     return yaml_text
 
 

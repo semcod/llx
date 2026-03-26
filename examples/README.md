@@ -1,109 +1,51 @@
-# llx Examples
+# LLX Examples
 
-This directory contains practical examples of using llx with different LLM providers, proxy setups, Docker integrations, and local coding workflows.
+Simplified workflow for project analysis, strategy generation, and code implementation.
+
+## Main Workflow
+
+The recommended way to use LLX is the 4-step strategy-driven workflow:
+
+1. **Generate Strategy**: Create a `strategy.yaml` based on a prompt or project analysis.
+2. **Generate Code**: Implement the strategy sprint-by-sprint.
+3. **Run App**: Launch the generated application with automatic dependency check.
+4. **Monitor**: Check health and quality gates.
+
+### 4-Step One-Liners
+
+```bash
+# 1. Generate (uses free NVIDIA models by default)
+llx plan generate . --profile free --focus api -o strategy.yaml
+
+# 2. Code
+llx plan code strategy.yaml ./my-project --profile free
+
+# 3. Run
+llx plan run ./my-project
+
+# 4. Monitor
+llx plan monitor strategy.yaml --url http://localhost:8000
+```
 
 ## Available Examples
 
-### 1. Basic Usage (`basic/`)
-- **main.py**: Simple project analysis and model selection
-- **run.sh**: Execution script with environment setup
-- **README.md**: Detailed explanation and usage instructions
+| Example | Description | Run Command |
+|---------|-------------|-------------|
+| **[python-api](./python-api)** | **Recommended.** Full prompt-to-API workflow. | `bash run.sh` |
+| **[planfile](./planfile)** | Focus on strategy generation and dry-runs. | `bash run.sh` |
+| **[basic](./basic)** | Basic `analyze` and `select` commands. | `bash run.sh` |
 
-### 2. Proxy Integration (`proxy/`)
-- **main.py**: LiteLLM proxy server setup
-- **run.sh**: Proxy server startup script
-- **README.md**: Proxy configuration and IDE integration
+## Master Launcher
 
-### 3. Multi-Provider (`multi-provider/`)
-- **main.py**: Using multiple LLM providers with fallback
-- **run.sh**: Multi-provider testing script
-- **README.md**: Provider configuration and cost optimization
+You can run any example from this directory using the master launcher:
 
-### 4. Local Models (`local/`)
-- **main.py**: Local model integration with Ollama
-- **run.sh**: Local model setup and testing
-- **README.md**: Local model configuration and usage
-
-### 5. Docker Integration (`docker/`)
-- **main.py**: Docker service orchestration and monitoring
-- **run.sh**: Docker environment runner
-- **README.md**: Docker configuration and workflows
-
-### 6. AI Tools Integration (`ai-tools/`)
-- **main.py**: Shell-based AI tools integration through llx
-- **README.md**: Aider, Claude Code, and Cursor setup
-
-### 7. VS Code + RooCode (`vscode-roocode/`)
-- **demo.py**: RooCode demo and workflow walkthrough
-- **README.md**: VS Code / RooCode integration guide
-
-### 8. **Filtering Examples** (`filtering/`)
-- **README.md**: Comprehensive filtering documentation
-- **demo.sh**: Interactive filtering demo
-- **advanced_filters.py**: Programmatic filter examples
-- Demonstrates tier-based, provider-based, and task-specific filtering
-
-### 9. **Full-Stack Generation** (`fullstack/`)
-- **README.md**: Full-stack app generation guide
-- **generate.sh**: One-liner app generator
-- **app_generator.py**: Python generator with templates
-- Generate React, Next.js, FastAPI, MERN apps
-
-### 10. **CLI Tools** (`cli-tools/`)
-- **README.md**: CLI tool generation documentation
-- **quick_cli.sh**: Quick CLI generator
-- System, data, network, security tools
-
-### 11. **Hybrid Development** (`hybrid/`)
-- **README.md**: Cloud-local hybrid approach
-- **hybrid_dev.sh**: Intelligent tool selection
-- **hybrid_manager.py**: Task classification and cost optimization
-
-### 12. **Cloud-Local Integration** (`cloud-local/`)
-- **README.md**: Tool integration guide
-- **integration.sh**: Multi-tool orchestration
-- Aider, Claude Code, VS Code + RooCode integration
-
-## Environment Setup
-
-1. Copy the main `.env` file to the example directory you want to run:
-   ```bash
-   cp ../.env basic/.env   # replace `basic` with the example you want
-   ```
-
-2. Ensure your API keys are properly configured in `.env`:
-   - `ANTHROPIC_API_KEY` for Claude models
-   - `OPENROUTER_API_KEY` for OpenRouter models
-   - `OPENAI_API_KEY` for OpenAI models
-   - `GEMINI_API_KEY` for Gemini models
-
-   For proxy-based examples, also ensure these are available:
-   - `LLX_PROXY_HOST` for the proxy listen address
-   - `LLX_PROXY_PORT` for the proxy port
-   - `LLX_PROXY_MASTER_KEY` for OpenAI-compatible clients
-
-3. Install dependencies:
-   ```bash
-   cd /home/tom/github/semcod/llx
-   .venv/bin/pip install -e .
-   ```
-
-## Running Examples
-
-Each example can be run independently from the repository root:
 ```bash
-cd examples/basic
-./run.sh
+bash run.sh python-api
+bash run.sh planfile
+bash run.sh basic
 ```
 
-Or using Python directly:
-```bash
-cd examples/basic
-../../.venv/bin/python main.py
-```
+## Requirements
 
-## Security Notes
-
-- Keep your API keys secure and never commit them to version control
-- Use environment variables for sensitive configuration
-- Consider using a secrets management system for production deployments
+- `OPENROUTER_API_KEY` in your `.env` or environment.
+- Python 3.10+

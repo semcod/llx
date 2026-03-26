@@ -1,6 +1,6 @@
 # My Project
 
-Improve code quality
+My Project
 
 ## Run
 ```bash

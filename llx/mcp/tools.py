@@ -630,7 +630,8 @@ tool_aider = McpTool(
 async def _handle_planfile_generate(args: dict) -> dict:
     """Generate a strategy.yaml refactoring plan using LLM + project metrics."""
     try:
-        from llx.planfile.generate_strategy import generate_strategy, save_fixed_strategy as save_strategy_yaml
+        from planfile.llm.generator import generate_strategy
+        from planfile.loaders.yaml_loader import save_strategy_yaml
         
         project_path = args.get("project_path", ".")
         model = args.get("model")

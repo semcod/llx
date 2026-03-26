@@ -150,23 +150,22 @@ run_example() {
     fi
 }
 
-# Check dependencies
+# Check dependencies and setup llx alias
 check_dependencies() {
-    local missing=()
-    
-    # Check in current PATH and virtual environment
-    if ! command -v llx &> /dev/null && ! python -c "import llx" 2>/dev/null; then
-        missing+=("llx")
-    fi
-    
-    if [ ${#missing[@]} -gt 0 ]; then
-        echo -e "${RED}Error: Missing dependencies:${NC}"
-        for dep in "${missing[@]}"; do
-            echo "  - $dep"
-        done
-        echo
-        echo -e "${CYAN}Install LLX with: pip install llx${NC}"
-        exit 1
+    if ! command -v llx &> /dev/null; then
+        LLX_REPO_VENV="$SCRIPT_DIR/../.venv/bin/llx"
+        if [ -x "$LLX_REPO_VENV" ]; then
+            shopt -s expand_aliases
+            alias llx="$LLX_REPO_VENV"
+            export LLX_CMD="$LLX_REPO_VENV"
+            echo -e "${BLUE}Found llx in repo venv: $LLX_REPO_VENV${NC}"
+        else
+            echo -e "${RED}Error: llx command not found and no local venv found.${NC}"
+            echo -e "${CYAN}Please install with: pip install -e .${NC}"
+            exit 1
+        fi
+    else
+        export LLX_CMD="llx"
     fi
 }
 

@@ -414,6 +414,7 @@ def plan_generate(
     model: Optional[str] = typer.Option(None, "--model", "-m"),
     sprints: int = typer.Option(3, "--sprints"),
     focus: Optional[str] = typer.Option(None, "--focus"),
+    description: Optional[str] = typer.Option(None, "--description", "-d", help="Project description for better strategy generation"),
     profile: Optional[str] = typer.Option(None, "--profile", "-p", 
         help="Model profile: free, local, cloud-free, openrouter-free, cheap, balanced"),
     provider: Optional[str] = typer.Option(None, "--provider", 
@@ -442,7 +443,8 @@ def plan_generate(
             path, 
             model=selected_model, 
             sprints=sprints, 
-            focus=focus
+            focus=focus,
+            description=description
         )
         
         # Save strategy
@@ -564,8 +566,8 @@ def plan_code(
     with open(strategy, encoding="utf-8") as f:
         strat = _yaml.safe_load(f)
 
-    project_name = strat.get("name", "My Project")
-    description = strat.get("description") or strat.get("goal", {}).get("short", project_name)
+    project_name = strat.get("project_name") or strat.get("name", "My Project")
+    description = strat.get("description") or strat.get("goal", {}).get("description", "") or strat.get("goal", {}).get("short", project_name)
     if isinstance(description, dict):
         description = description.get("short", project_name)
     sprints = strat.get("sprints", [])
@@ -606,25 +608,35 @@ def plan_code(
     except ImportError:
         pass
 
-    # Sprint → file mapping
-    SPRINT_FILES = {
-        1: ("main.py",      "Generate a complete FastAPI main.py for '{name}' ({desc}). "
-                             "Include CRUD endpoints, in-memory storage, /health endpoint. Return only Python code."),
-        2: ("models.py",    "Generate Pydantic models (ItemBase, ItemCreate, Item) for '{name}' ({desc}). Return only Python code."),
-        3: ("test_api.py",  "Generate pytest tests for a FastAPI '{name}' API ({desc}) using TestClient. Return only Python code."),
-        4: ("Dockerfile",   "Generate a Dockerfile for '{name}' FastAPI app. Use python:3.11-slim, install fastapi uvicorn, expose 8000. Return only Dockerfile."),
-    }
+    # Load sprint file mapping from config
+    import os
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'configs', 'planfile_config.yaml')
+    try:
+        with open(config_path, 'r') as f:
+            plan_config = _yaml.safe_load(f)
+        SPRINT_FILES = {}
+        for sprint_num, file_info in plan_config['code']['sprint_files'].items():
+            SPRINT_FILES[int(sprint_num)] = (file_info['file'], file_info['prompt'])
+    except Exception:
+        # Fallback to hardcoded mapping
+        SPRINT_FILES = {
+            1: ("main.py",      "Generate a complete FastAPI main.py for '{name}' ({desc}). "
+                                 "Include CRUD endpoints, in-memory storage, /health endpoint. Return only Python code."),
+            2: ("models.py",    "Generate Pydantic models (ItemBase, ItemCreate, Item) for '{name}' ({desc}). Return only Python code."),
+            3: ("test_api.py",  "Generate pytest tests for a FastAPI '{name}' API ({desc}) using TestClient. Return only Python code."),
+            4: ("Dockerfile",   "Generate a Dockerfile for '{name}' FastAPI app. Use python:3.11-slim, install fastapi uvicorn, expose 8000. Return only Dockerfile."),
+        }
 
     generated = {}
     with LlxClient(config) as client:
         for sprint in sprints:
-            sid = sprint.get("id", 0)
+            sid = sprint.get("id") or sprint.get("number", 0)
             sname = sprint.get("name", f"Sprint {sid}")
             file_info = SPRINT_FILES.get(sid)
             if not file_info:
                 continue
             filename, prompt_tmpl = file_info
-            prompt = prompt_tmpl.format(name=project_name, desc=description)
+            prompt = prompt_tmpl.format(project_name=project_name, description=description)
 
             with console.status(f"[cyan]{sname} → {filename}[/cyan]"):
                 try:

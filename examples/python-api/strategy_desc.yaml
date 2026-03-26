@@ -1,0 +1,63 @@
+domain: software
+goal:
+  description: "Zbuduj REST API do zarz\u0105dzania zam\xF3wieniami restauracji"
+  title: Build Restaurant Order Management API
+goals:
+- Develop a scalable REST API for managing restaurant orders
+metadata:
+  created_at: '2026-03-26T18:47:19.240414'
+  version: '1.0'
+project_name: RestaurantOrderAPI
+project_type: REST API
+quality_gates:
+- condition: All pull requests must be reviewed
+  criteria:
+  - At least one team member approves the changes
+  description: Quality gate 1
+  gate: Code Review Completion
+  name: Quality gate 1
+  required: true
+sprints:
+- id: 1
+  name: Sprint 1
+  number: 1
+  objectives:
+  - Design API endpoints and data models
+  tasks:
+  - description: Create data structures for orders and menu items
+    model_hints: balanced
+    name: Define order and menu item models
+    type: feature
+- id: 2
+  name: Sprint 2
+  number: 2
+  objectives:
+  - Implement core CRUD operations
+  tasks:
+  - description: Enable creation and retrieval of orders via API
+    model_hints: balanced
+    name: Implement create and read operations for orders
+    type: feature
+- id: 3
+  name: Sprint 3
+  number: 3
+  objectives:
+  - Add update and delete functionality
+  tasks:
+  - description: Allow modification and removal of existing orders
+    model_hints: balanced
+    name: Implement update and delete endpoints for orders
+    type: feature
+- id: 4
+  name: Sprint 4
+  number: 4
+  objectives:
+  - Finalize API and conduct testing
+  tasks:
+  - description: Ensure API reliability through automated testing
+    model_hints: balanced
+    name: Write unit and integration tests
+    type: feature
+task_patterns:
+- description: Standard pattern for implementing create, read, update, delete operations
+  pattern: CRUD Feature Development

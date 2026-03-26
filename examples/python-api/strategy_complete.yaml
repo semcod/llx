@@ -1,0 +1,164 @@
+goal:
+  description: "Zbuduj REST API do zarz\u0105dzania zam\xF3wieniami restauracji"
+  title: Build Restaurant Order Management API
+goals:
+- Develop a scalable REST API for managing restaurant orders
+metadata:
+  created_at: '2026-03-26T18:52:10.307013'
+  version: '1.0'
+project_name: RestaurantOrderAPI
+project_type: REST API
+quality_gates:
+- condition: Minimum 80% line coverage
+  criteria:
+  - All critical paths must be tested
+  - New code must be covered by tests
+  gate: Code Coverage
+  required: true
+- condition: No high-severity issues
+  criteria:
+  - Pass linting rules
+  - No security vulnerabilities detected
+  gate: Static Code Analysis
+  required: true
+- condition: API conforms to OpenAPI spec
+  criteria:
+  - All endpoints documented
+  - Responses match defined schemas
+  gate: API Contract Validation
+  required: true
+- condition: 95% of requests under 500ms
+  criteria:
+  - Load test with 100 concurrent users
+  - No memory leaks observed
+  gate: Performance Benchmark
+  required: true
+- condition: No known vulnerabilities in dependencies
+  criteria:
+  - Pass SCA and SAST tools
+  - Authentication enforced on sensitive endpoints
+  gate: Security Scan
+  required: true
+- condition: Successful deployment to staging
+  criteria:
+  - App starts without errors
+  - Health check passes
+  gate: Deployment Readiness
+  required: true
+- condition: API docs are up to date
+  criteria:
+  - All endpoints documented
+  - Examples provided
+  gate: Documentation Completeness
+  required: true
+- condition: At least two team members approve
+  criteria:
+  - Code follows style guide
+  - No logical flaws detected
+  gate: Peer Review Approval
+  required: true
+sprints:
+- name: Project setup and core models
+  number: 1
+  objectives:
+  - Initialize project structure and define core data models
+  tasks:
+  - description: Initialize project with required dependencies and framework
+    model_hints: balanced
+    name: Set up project environment
+    type: feature
+  - description: Create models for Order, MenuItem, Customer, and Restaurant
+    model_hints: balanced
+    name: Define core models
+    type: feature
+- name: API implementation and CRUD operations
+  number: 2
+  objectives:
+  - Implement REST endpoints for managing orders and menu items
+  tasks:
+  - description: Implement GET, POST, PUT, DELETE for Order resource
+    model_hints: balanced
+    name: Create CRUD endpoints for Order
+    type: feature
+  - description: Implement GET, POST, PUT, DELETE for MenuItem resource
+    model_hints: balanced
+    name: Create CRUD endpoints for MenuItem
+    type: feature
+- name: Testing and quality assurance
+  number: 3
+  objectives:
+  - Write unit and integration tests for all API endpoints
+  tasks:
+  - description: Test validation and business logic in core models
+    model_hints: balanced
+    name: Write unit tests for models
+    type: test
+  - description: Test HTTP responses and data flow across endpoints
+    model_hints: balanced
+    name: Write integration tests for API endpoints
+    type: test
+- name: Containerization and deployment
+  number: 4
+  objectives:
+  - Package application using Docker and deploy to staging environment
+  tasks:
+  - description: Define container image with application and dependencies
+    model_hints: balanced
+    name: Create Dockerfile
+    type: infrastructure
+  - description: Run containerized app on staging server
+    model_hints: balanced
+    name: Deploy to staging environment
+    type: deployment
+- name: CI/CD pipeline setup
+  number: 5
+  objectives:
+  - Automate testing and deployment using CI/CD tools
+  tasks:
+  - description: Set up automated build and test on code push
+    model_hints: balanced
+    name: Configure CI pipeline
+    type: infrastructure
+  - description: Automate deployment to staging and production
+    model_hints: balanced
+    name: Configure CD pipeline
+    type: infrastructure
+- name: Monitoring and observability
+  number: 6
+  objectives:
+  - Integrate logging, metrics, and health checks
+  tasks:
+  - description: Implement structured logging for requests and errors
+    model_hints: balanced
+    name: Add application logging
+    type: feature
+  - description: Expose /health endpoint for monitoring tools
+    model_hints: balanced
+    name: Add health check endpoint
+    type: feature
+- name: Documentation and API spec
+  number: 7
+  objectives:
+  - Generate comprehensive API documentation
+  tasks:
+  - description: Define API contract using OpenAPI 3.0
+    model_hints: balanced
+    name: Write OpenAPI specification
+    type: documentation
+  - description: Use Swagger UI to serve API documentation
+    model_hints: balanced
+    name: Generate interactive API docs
+    type: documentation
+- name: Performance optimization and final review
+  number: 8
+  objectives:
+  - Optimize response times and conduct final code review
+  tasks:
+  - description: Identify bottlenecks in request handling
+    model_hints: balanced
+    name: Profile API performance
+    type: optimization
+  - description: Review all code for quality, security, and consistency
+    model_hints: balanced
+    name: Conduct final code review
+    type: review
