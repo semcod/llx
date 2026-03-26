@@ -182,8 +182,23 @@ class ModelSelector:
             }
         }
         
+        # Add known cheap models
+        cheap_models = {
+            "openrouter/qwen/qwen3-235b-a22b-2507": {
+                "tier": "cheap",
+                "provider": "openrouter",
+                "cost_per_input": 0.0001,
+                "cost_per_output": 0.0002,
+            }
+        }
+        
         # Only add models not already in registry
         for model_id, info in free_models.items():
+            if model_id not in registry:
+                registry[model_id] = info
+        
+        # Add cheap models
+        for model_id, info in cheap_models.items():
             if model_id not in registry:
                 registry[model_id] = info
         
@@ -211,6 +226,12 @@ class ModelSelector:
         # Prefer cloud models for free tier
         if filter.tier == ModelTier.FREE and cloud_models:
             return cloud_models[0]
+        
+        # For cheap tier, prefer OpenRouter models if API key available
+        if filter.tier == ModelTier.CHEAP and cloud_models:
+            openrouter_models = [m for m in cloud_models if m.startswith("openrouter/")]
+            if openrouter_models and self._check_api_key(openrouter_models[0]):
+                return openrouter_models[0]
         
         # Return first match (cloud first, then local)
         if cloud_models:

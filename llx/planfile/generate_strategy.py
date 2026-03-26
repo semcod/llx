@@ -7,10 +7,15 @@ import sys
 import os
 sys.path.insert(0, '/home/tom/github/semcod/llx')
 
+import yaml
+import re
+from datetime import datetime
 from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
-import yaml
+from llx.analysis.collector import analyze_project
+from llx.config import LlxConfig
+from llx.routing.client import LlxClient
 
 console = Console()
 
@@ -202,6 +207,17 @@ def _call_llm_for_strategy(prompt, model):
     """Call LLM to generate strategy."""
     console.print(f"\n[yellow]Sending prompt to LLM...[/yellow]")
     
+    # Suppress LiteLLM Provider List messages
+    import logging
+    logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+    logging.getLogger("litellm").setLevel(logging.WARNING)
+    try:
+        import litellm
+        litellm.suppress_debug_info = True
+        litellm.set_verbose = False
+    except ImportError:
+        pass
+    
     # Load environment
     import os
     from dotenv import load_dotenv
@@ -272,9 +288,11 @@ def _fix_yaml_formatting(yaml_text):
     
     for old, new in replacements:
         yaml_text = yaml_text.replace(old, new)
-    
+
+    # NEW: Ensure space after colon for block mappings
+    yaml_text = re.sub(r'^([a-zA-Z0-9_-]+):([^\s\n/])', r'\1: \2', yaml_text, flags=re.MULTILINE)
+
     # Fix line continuation issues
-    import re
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)(objectives:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     

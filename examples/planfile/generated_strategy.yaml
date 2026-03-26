@@ -1,136 +1,84 @@
-domain: software
 goal:
-  delivery:
-  - Complete in sprints
-  - Review changes
-  metrics:
-  - Complexity reduction
-  - Test coverage
-  quality:
-  - Reduce complexity
-  - Improve maintainability
-  short: Improve complexity
+  description: Improve code quality
+  title: Project Refactoring
 goals:
-- Reduce overall cyclomatic complexity to improve readability and maintainability  -
-  Increase automated test coverage to safeguard refactoring changes
-- Establish consistent coding standards across the 30 files
-name: Refactoring Strategy
-project:
-  name: CodeBase Refactor
-  type: Backend Service
-project_type: python
+- Reduce cyclomatic complexity to below 0.5 per module
+- Improve code readability and maintainability
+- "Establish automated test coverage \u2265 80%"
+- Document refactored components for future developers
+metadata:
+  created_at: '2026-03-26T18:36:22.642371'
+  version: '1.0'
+project_name: ExampleApp
+project_type: Web Application
 quality_gates:
-- description: Quality gate
-  metric: Cyclomatic Complexity per Function
-  threshold: <= 5
-- description: Quality gate
-  metric: Average Cyclomatic Complexity per Class
-  threshold: <= 10
-- description: Quality gate
-  metric: Test Coverage (Overall)
-  threshold: '>= 80%'
-- description: Quality gate
-  metric: Duplicated Lines
-  threshold: <= 5% of total lines
-- description: Quality gate
-  metric: Technical Debt Ratio
-  threshold: <= 10%
+- criteria:
+  - Quality gate 1
+  description: Quality gate 1
+  gate: Maximum Cyclomatic Complexity
+  metric: average per module
+  name: Quality gate 1
+  required: true
+  threshold: 0.5
+- criteria:
+  - Quality gate 2
+  description: Quality gate 2
+  gate: Unit Test Coverage
+  metric: line coverage
+  name: Quality gate 2
+  required: true
+  threshold: 80%
+- criteria:
+  - Quality gate 3
+  description: Quality gate 3
+  gate: Linting Errors
+  metric: ESLint/Prettier issues
+  name: Quality gate 3
+  required: true
+  threshold: 0
+- criteria:
+  - Quality gate 4
+  description: Quality gate 4
+  gate: Documentation Completeness
+  metric: public API members with JSDoc
+  name: Quality gate 4
+  required: true
+  threshold: 100%
 sprints:
-- number: 1
+- id: 1
+  name: Sprint 1
+  number: 1
   objectives:
-  - "Identify and prioritize high\u2011complexity functions/modules"
-  - "Refactor the top 20% of complex units (\u22486 functions) using extract\u2011\
-    method and extract\u2011class patterns"
-  - "Add unit tests for refactored units aiming for \u226580% coverage on those units"
+  - Perform initial complexity analysis and identify hotspots
+  - Extract duplicated logic into reusable functions
+  - Introduce unit tests for refactored modules
   tasks:
-  - description: "Execute {'pattern': 'extract method', 'description': 'break down\
-      \ a large method into smaller, well\u2011named methods.'}"
-    model_hints: cheap
-    name: "{'pattern': 'Extract Method', 'description': 'Break down a large method\
-      \ into smaller, well\u2011named methods.'}"
-    type: tech_debt
-  - description: 'Execute {''steps'': [''identify code fragment with a single responsibility      -
-      extract fragment into a new method with clear intent-revealing name'', ''replace
-      original fragment with a call to the new method'', ''update tests to cover the
-      new method'']}'
-    model_hints: cheap
-    name: '{''steps'': [''Identify code fragment with a single responsibility      -
-      Extract fragment into a new method with clear intent-revealing name'', ''Replace
-      original fragment with a call to the new method'', ''Update tests to cover the
-      new method'']}'
-    type: tech_debt
-  - description: 'Execute {''pattern'': ''extract class'', ''description'': ''separate
-      concerns when a class has too many responsibilities.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Extract Class'', ''description'': ''Separate concerns when
-      a class has too many responsibilities.''}'
-    type: tech_debt
-  - description: 'Execute {''steps'': [''list responsibilities of the class      -
-      group related fields and methods into a candidate new class'', ''create the
-      new class, move selected fields/methods'', ''adjust original class to delegate
-      to the new class via composition'', ''update tests for both classes'']}'
-    model_hints: cheap
-    name: '{''steps'': [''List responsibilities of the class      - Group related
-      fields and methods into a candidate new class'', ''Create the new class, move
-      selected fields/methods'', ''Adjust original class to delegate to the new class
-      via composition'', ''Update tests for both classes'']}'
-    type: feature
-  - description: 'Execute {''pattern'': ''create utility function'', ''description'':
-      ''eliminate duplicated code by centralizing common logic.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Create Utility Function'', ''description'': ''Eliminate
-      duplicated code by centralizing common logic.''}'
-    type: feature
-  - description: 'Execute {''steps'': [''locate duplicated code blocks across files'',
-      ''design a generic utility function signature'', ''place function in an appropriate
-      shared module'', ''replace each duplicate block with a call to the utility'',
-      ''add unit tests for the utility function'']}'
-    model_hints: cheap
-    name: '{''steps'': [''Locate duplicated code blocks across files'', ''Design a
-      generic utility function signature'', ''Place function in an appropriate shared
-      module'', ''Replace each duplicate block with a call to the utility'', ''Add
-      unit tests for the utility function'']}'
-    type: feature
-- tasks:
-  - Run static analysis to generate complexity report      - Review report with team
-    and select refactoring candidates
-  - "Apply extract\u2011method to functions >30 lines or CC >10"
-  - "Apply extract\u2011class to classes with >200 lines or multiple responsibilities"
-  - Write/update unit tests for each refactored unit
-  - Conduct peer review of changes
-- number: 2
+  - "Analyze complexity metrics using static analysis tool      - Refactor high\u2011\
+    complexity functions (\u2265 1.0) into smaller units"
+  - Replace repeated code blocks with shared utilities
+  - Write unit tests covering new and modified code
+  - "Review changes in pair\u2011programming sessions"
+- id: 2
+  name: Sprint 2
+  number: 2
   objectives:
-  - "Address remaining medium\u2011complexity units"
-  - Introduce shared utilities to eliminate duplication
-  - Enforce quality gates across the entire codebase
+  - Further simplify remaining complex sections
+  - Enforce coding standards and documentation
+  - Validate quality gates and prepare for release
   tasks:
-  - "Re\u2011run complexity analysis to verify progress"
-  - "Refactor remaining functions with CC between 5\u201110 using similar patterns"
-  - Identify duplicated code blocks (>10 lines) and create shared utility functions/modules
-  - Update documentation to reflect new structure
-  - "Run full test suite and ensure \u226580% overall coverage"
-  - Validate quality gates before marking sprint complete
+  - "Re\u2011run complexity analysis to verify targets met"
+  - Apply consistent naming and formatting rules (e.g., ESLint/Prettier)
+  - Add inline documentation for public APIs
+  - "Increase test coverage to \u2265 80% via additional tests"
+  - "Conduct final code review and sign\u2011off"
 task_patterns:
-- description: "Break down a large method into smaller, well\u2011named methods."
-  pattern: Extract Method
-- steps:
-  - Identify code fragment with a single responsibility      - Extract fragment into
-    a new method with clear intent-revealing name
-  - Replace original fragment with a call to the new method
-  - Update tests to cover the new method
-- description: Separate concerns when a class has too many responsibilities.
-  pattern: Extract Class
-- steps:
-  - List responsibilities of the class      - Group related fields and methods into
-    a candidate new class
-  - Create the new class, move selected fields/methods
-  - Adjust original class to delegate to the new class via composition
-  - Update tests for both classes
-- description: Eliminate duplicated code by centralizing common logic.
-  pattern: Create Utility Function
-- steps:
-  - Locate duplicated code blocks across files
-  - Design a generic utility function signature
-  - Place function in an appropriate shared module
-  - Replace each duplicate block with a call to the utility
-  - Add unit tests for the utility function
+- description: Identify a code block with a single responsibility and move it to a
+    newly named function.
+  pattern: Extract Function
+- description: Find identical or similar code segments and replace with a call to
+    a shared utility.
+  pattern: Replace Duplicate Code
+- description: For each refactored unit, write a test covering typical and edge cases.
+  pattern: Introduce Unit Test
+- description: Run linter/formatter and fix all reported issues.
+  pattern: Apply Coding Standard

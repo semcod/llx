@@ -1,7 +1,7 @@
-# vallm batch | 284f | 168✓ 2⚠ 49✗ | 2026-03-26
+# vallm batch | 280f | 164✓ 2⚠ 49✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 284  passed: 168 (59.2%)  warnings: 2  errors: 49  unsupported: 67
+  scanned: 280  passed: 164 (58.6%)  warnings: 2  errors: 49  unsupported: 67
 
 WARNINGS[2]{path,score}:
   test-local-chat.py,0.97

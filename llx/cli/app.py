@@ -24,6 +24,10 @@ from typing import Optional
 import typer
 from rich.console import Console
 from rich.panel import Panel
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 from llx.analysis.collector import analyze_project
 from llx.config import LlxConfig
@@ -590,6 +594,17 @@ def plan_code(
 
     config = LlxConfig.load(".")
     from llx.routing.client import LlxClient, ChatMessage
+    
+    # Suppress LiteLLM Provider List messages
+    import logging
+    logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+    logging.getLogger("litellm").setLevel(logging.WARNING)
+    try:
+        import litellm
+        litellm.suppress_debug_info = True
+        litellm.set_verbose = False
+    except ImportError:
+        pass
 
     # Sprint → file mapping
     SPRINT_FILES = {

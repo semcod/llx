@@ -1,60 +1,43 @@
 #!/usr/bin/env bash
-# examples/python-api-full/run.sh
-#
-# Kompletny workflow: prompt → planfile → kod → uruchomienie → monitoring
-# Użycie: bash run.sh ["Opis projektu"]
-#
+# examples/python-api/run.sh
+# One-liner workflow: prompt → planfile → code → run → monitor
+
 set -e
 
+# Support description as argument
 DESCRIPTION="${1:-Zbuduj REST API do zarządzania listą zadań Todo z FastAPI}"
 STRATEGY="strategy.yaml"
 PROJECT="./my-api"
-PORT=8000
 
-# Locate llx in repo venv
-LLX_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-LLX="${LLX_ROOT}/.venv/bin/llx"
-PLANFILE="${LLX_ROOT}/../planfile/.venv/bin/planfile"
-
-echo "═══════════════════════════════════════════"
-echo "  Python API — planfile + llx workflow"
-echo "═══════════════════════════════════════════"
-echo "  Opis : $DESCRIPTION"
-echo ""
-
-# ── KROK 1: Generuj planfile ─────────────────────────────────
-echo "▶ KROK 1: Generowanie planfile (LLM free tier)"
-"$LLX" plan generate . \
-    --profile free \
-    --sprints 4 \
-    --focus api \
-    --output "$STRATEGY"
-
-# Walidacja planfile (jeśli planfile jest dostępny)
-if [ -x "$PLANFILE" ]; then
-    echo ""
-    "$PLANFILE" validate "$STRATEGY"
-    "$PLANFILE" stats "$STRATEGY"
+# ── Setup llx alias ──────────────────────────────────────────
+if ! command -v llx &>/dev/null; then
+    LLX_VENV="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/.venv/bin/llx"
+    if [ -x "$LLX_VENV" ]; then
+        alias llx="$LLX_VENV"
+    else
+        echo "Error: llx not found. Please install it first."
+        exit 1
+    fi
 fi
+shopt -s expand_aliases
 
-echo ""
+echo "🚀 Python API Workflow"
+echo "──────────────────────"
 
-# ── KROK 2: Generuj kod ──────────────────────────────────────
-echo "▶ KROK 2: Generowanie kodu Python API (LLM free tier)"
-"$LLX" plan code "$STRATEGY" "$PROJECT" --profile free
+# 1. Generate planfile
+echo "1. Generating planfile..."
+llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY"
 
-echo ""
+# 2. Generate code
+echo -e "\n2. Generating Python code..."
+llx plan code "$STRATEGY" "$PROJECT" --profile free
 
-# ── KROK 3: Uruchom aplikację ────────────────────────────────
-echo "▶ KROK 3: Uruchamianie API"
-echo "  (w osobnym terminalu: llx plan run $PROJECT)"
+# 3. Next steps
+echo -e "\n✅ Done! Project in: $PROJECT"
+echo "----------------------------------------"
+echo "To run the app:"
+echo "  llx plan run $PROJECT"
 echo ""
-echo "  Aby uruchomić teraz:"
-echo "    $LLX plan run $PROJECT"
-echo ""
-echo "  Aby monitorować (po uruchomieniu):"
-echo "    $LLX plan monitor $STRATEGY --url http://localhost:$PORT"
-echo ""
-echo "═══════════════════════════════════════════"
-echo "  ✅ Gotowe! Projekt w: $PROJECT"
-echo "═══════════════════════════════════════════"
+echo "To monitor (in another terminal):"
+echo "  llx plan monitor $STRATEGY"
+echo "----------------------------------------"

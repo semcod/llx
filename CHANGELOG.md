@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.30] - 2026-03-26
+
+### Docs
+- Update docs/README.md
+- Update examples/python-api/my-api/README.md
+- Update project/README.md
+
+### Other
+- Update examples/planfile/generated_strategy.yaml
+- Update examples/python-api/my-api/Dockerfile
+- Update examples/python-api/my-api/main.py
+- Update examples/python-api/my-api/models.py
+- Update examples/python-api/my-api/requirements.txt
+- Update examples/python-api/my-api/test_api.py
+- Update examples/python-api/run.sh
+- Update examples/python-api/strategy.yaml
+- Update llx/cli/app.py
+- Update llx/planfile/generate_strategy.py
+- ... and 9 more files
+
 ## [0.1.29] - 2026-03-26
 
 ### Docs
