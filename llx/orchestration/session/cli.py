@@ -4,7 +4,9 @@ import json
 import argparse
 
 from .._utils import cli_main
-from ..cli_utils import cmd_remove_wrapper, cmd_list_wrapper, cmd_cleanup_wrapper
+from ..cli_utils import cmd_list_wrapper, cmd_cleanup_wrapper
+from ..utils._cmd_remove import create_remove_handler
+from ..utils._cmd_status import create_status_handler
 
 from .models import SessionType, SessionConfig
 from .manager import SessionManager
@@ -64,14 +66,13 @@ def _cmd_create(args, mgr: SessionManager) -> bool:
     return success
 
 
-def _cmd_remove(args, mgr: SessionManager) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr='session_id',
-        id_label='Session',
-        remove_func=mgr.remove_session,
-        save_func=mgr.save_sessions
-    )
+# Create remove handler
+_cmd_remove = create_remove_handler(
+    id_attr='session_id',
+    id_label='Session',
+    remove_func=lambda mgr, id: mgr.remove_session(id),
+    save_func=lambda mgr: mgr.save_sessions()
+)
 
 
 def _cmd_list(args, mgr: SessionManager) -> bool:
@@ -83,16 +84,13 @@ def _cmd_list(args, mgr: SessionManager) -> bool:
     return True
 
 
-def _cmd_status(args, mgr: SessionManager) -> bool:
-    if args.session_id:
-        status = mgr.get_session_status(args.session_id)
-        if status:
-            print(json.dumps(status, indent=2))
-            return True
-        print(f"❌ Session {args.session_id} not found")
-        return False
-    mgr.print_status_summary()
-    return True
+# Create status handler
+_cmd_status = create_status_handler(
+    id_attr='session_id',
+    entity_label='Session',
+    get_status_func=lambda mgr, id: mgr.get_session_status(id),
+    print_summary_func=lambda mgr: mgr.print_status_summary()
+)
 
 
 def _cmd_queue(args, mgr: SessionManager) -> bool:

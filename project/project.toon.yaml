@@ -1,25 +1,26 @@
-# llx | 989 func | 89f | 28473L | python | 2026-03-26
+# llx | 996 func | 96f | 29413L | python | 2026-03-26
 
 HEALTH:
-  CC̄=3.8  critical=54 (limit:10)  dup=5  cycles=0
+  CC̄=3.8  critical=56 (limit:10)  dup=5  cycles=0
 
 ALERTS[20]:
+  !!! high_fan_out     plan_code = 31 (limit:10)
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
-  !!! high_fan_out     plan_generate = 23 (limit:10)
   !!! high_fan_out     _dispatch = 20 (limit:10)
   !!  cc_exceeded      _dispatch = 21 (limit:15)
-  !!  cc_exceeded      plan_generate = 20 (limit:15)
   !!  high_fan_out     _write_env_file = 18 (limit:10)
   !!  high_fan_out     context = 18 (limit:10)
   !!  high_fan_out     LlxConfig.load = 17 (limit:10)
   !!  high_fan_out     chat_completions = 16 (limit:10)
   !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
+  !!  high_fan_out     plan_models = 16 (limit:10)
 
-MODULES[122] (top by size):
-  M[llx/tools/config_manager.py] 790L C:1 F:49 CC↑12 D:0 (python)
-  M[llx/tools/vscode_manager.py] 789L C:1 F:40 CC↑10 D:0 (python)
-  M[llx/mcp/tools.py] 748L C:1 F:14 CC↑13 D:1 (python)
-  M[llx/tools/model_manager.py] 740L C:1 F:33 CC↑15 D:0 (python)
+MODULES[131] (top by size):
+  M[llx/tools/config_manager.py] 795L C:1 F:45 CC↑12 D:0 (python)
+  M[llx/tools/vscode_manager.py] 792L C:1 F:38 CC↑10 D:0 (python)
+  M[llx/mcp/tools.py] 747L C:1 F:14 CC↑13 D:0 (python)
+  M[llx/tools/model_manager.py] 743L C:1 F:31 CC↑15 D:0 (python)
+  M[llx/cli/app.py] 736L C:0 F:22 CC↑11 D:0 (python)
   M[llx/prellm/trace.py] 649L C:2 F:29 CC↑13 D:2 (python)
   M[llx/orchestration/routing/engine.py] 640L C:1 F:38 CC↑11 D:0 (python)
   M[llx/orchestration/llm/orchestrator.py] 633L C:1 F:25 CC↑10 D:0 (python)
@@ -27,17 +28,18 @@ MODULES[122] (top by size):
   M[llx/tools/ai_tools_manager.py] 590L C:1 F:25 CC↑21 D:0 (python)
   M[llx/tools/health_checker.py] 590L C:1 F:27 CC↑10 D:0 (python)
   M[llx/orchestration/instances/manager.py] 556L C:1 F:18 CC↑12 D:0 (python)
-  M[llx/cli/app.py] 548L C:0 F:18 CC↑20 D:0 (python)
   M[llx/tools/docker_manager.py] 548L C:1 F:21 CC↑19 D:0 (python)
   M[llx/prellm/env_config.py] 528L C:1 F:17 CC↑14 D:4 (python)
   M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
-  LANGS: python:115/shell:7
+  LANGS: python:123/shell:8
 
 HOTSPOTS[10]:
+  ★ plan_code fan=31  // Generate project code from strategy using LLM (free tier by default).
+
+This comm
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
 
 
-  ★ plan_generate fan=23  // Generate strategy.yaml using built-in generator.
   ★ _dispatch fan=20  // 20-way dispatch
   ★ _write_env_file fan=18  // Write entries to .env file, preserving existing comments.
 
@@ -46,10 +48,10 @@ Delegates to getv.Env
 
 REFACTOR[15]:
   [1] H/H Split god module llx/tools/ai_tools_manager.py (590L, 1 classes)
-  [2] H/H Split god module llx/cli/app.py (548L, 0 classes)
-  [3] H/H Split god module llx/tools/docker_manager.py (548L, 1 classes)
-  [4] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
-  [5] H/H Split god module llx/tools/model_manager.py (740L, 1 classes)
+  [2] H/H Split god module llx/tools/docker_manager.py (548L, 1 classes)
+  [3] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
+  [4] H/H Split god module llx/tools/model_manager.py (743L, 1 classes)
+  [5] H/H Split god module llx/prellm/env_config.py (528L, 1 classes)
 
 EVOLUTION:
-  2026-03-26 CC̄=3.8 crit=54 28473L // Automated analysis
+  2026-03-26 CC̄=3.8 crit=56 29413L // Automated analysis

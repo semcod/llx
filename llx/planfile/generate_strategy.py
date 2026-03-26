@@ -17,89 +17,165 @@ console = Console()
 
 def _normalize_strategy_data(data):
     """Normalize strategy data so it matches the expected YAML shape."""
+    data['sprints'] = _normalize_sprints(data)
+    data['quality_gates'] = _normalize_quality_gates(data)
+    data['goal'] = _normalize_goal(data)
+    data['metadata'] = _normalize_metadata(data)
+    return data
+
+
+def _normalize_sprints(data):
+    """Normalize sprints data."""
     sprints = data.get('sprints') if isinstance(data.get('sprints'), list) else []
     normalized_sprints = []
+    task_patterns = data.get('task_patterns') if isinstance(data.get('task_patterns'), list) else []
+    
     for i, sprint in enumerate(sprints):
-        if not isinstance(sprint, dict):
-            sprint = {'id': i + 1, 'name': str(sprint), 'objectives': [], 'tasks': []}
-        else:
-            sprint = dict(sprint)
-
-        sprint_id = sprint.get('id', i + 1)
-        if isinstance(sprint_id, str):
-            digits = ''.join(ch for ch in sprint_id if ch.isdigit())
-            sprint_id = int(digits) if digits else i + 1
-        sprint['id'] = sprint_id if isinstance(sprint_id, int) else i + 1
-        sprint.setdefault('name', f"Sprint {sprint['id']}")
-
-        objectives = sprint.get('objectives')
-        sprint['objectives'] = objectives if isinstance(objectives, list) else ([objectives] if objectives else [])
-
-        tasks = sprint.get('tasks')
-        sprint['tasks'] = tasks if isinstance(tasks, list) else ([tasks] if tasks else [])
-
-        if not sprint['tasks']:
-            source_patterns = sprint.get('task_patterns')
-            if not isinstance(source_patterns, list):
-                source_patterns = data.get('task_patterns') if isinstance(data.get('task_patterns'), list) else []
-
-            if source_patterns:
-                sprint['tasks'] = []
-                for task_name in source_patterns:
-                    task_str = task_name.get('name', str(task_name)) if isinstance(task_name, dict) else str(task_name)
-                    sprint['tasks'].append({
-                        'name': task_str,
-                        'description': f"Execute {task_str.lower()}",
-                        'type': 'tech_debt' if 'refactor' in task_str.lower() or 'extract' in task_str.lower() else 'feature',
-                        'model_hints': 'balanced' if 'complex' in task_str.lower() else 'cheap'
-                    })
-
+        sprint = _normalize_single_sprint(sprint, i, task_patterns)
         normalized_sprints.append(sprint)
+    
+    return normalized_sprints
 
-    data['sprints'] = normalized_sprints
 
+def _normalize_single_sprint(sprint, index, task_patterns):
+    """Normalize a single sprint."""
+    if not isinstance(sprint, dict):
+        sprint = {'id': index + 1, 'name': str(sprint), 'objectives': [], 'tasks': []}
+    else:
+        sprint = dict(sprint)
+    
+    sprint['id'] = _extract_sprint_id(sprint.get('id', index + 1), index)
+    sprint.setdefault('name', f"Sprint {sprint['id']}")
+    
+    objectives = sprint.get('objectives')
+    sprint['objectives'] = objectives if isinstance(objectives, list) else ([objectives] if objectives else [])
+    
+    tasks = sprint.get('tasks')
+    sprint['tasks'] = tasks if isinstance(tasks, list) else ([tasks] if tasks else [])
+    
+    if not sprint['tasks'] and task_patterns:
+        sprint['tasks'] = _generate_tasks_from_patterns(task_patterns)
+    
+    return sprint
+
+
+def _extract_sprint_id(sprint_id, index):
+    """Extract numeric sprint ID."""
+    if isinstance(sprint_id, int):
+        return sprint_id
+    if isinstance(sprint_id, str):
+        digits = ''.join(ch for ch in sprint_id if ch.isdigit())
+        return int(digits) if digits else index + 1
+    return index + 1
+
+
+def _generate_tasks_from_patterns(task_patterns):
+    """Generate tasks from pattern definitions."""
+    tasks = []
+    for task_name in task_patterns:
+        task_str = task_name.get('name', str(task_name)) if isinstance(task_name, dict) else str(task_name)
+        task_type = 'tech_debt' if 'refactor' in task_str.lower() or 'extract' in task_str.lower() else 'feature'
+        model_hints = 'balanced' if 'complex' in task_str.lower() else 'cheap'
+        
+        tasks.append({
+            'name': task_str,
+            'description': f"Execute {task_str.lower()}",
+            'type': task_type,
+            'model_hints': model_hints
+        })
+    return tasks
+
+
+def _normalize_quality_gates(data):
+    """Normalize quality gates data."""
     quality_gates = data.get('quality_gates') if isinstance(data.get('quality_gates'), list) else []
     normalized_gates = []
+    
     for i, gate in enumerate(quality_gates):
-        if not isinstance(gate, dict):
-            text = str(gate)
-            gate = {'name': text, 'description': text, 'criteria': [text], 'required': True}
-        else:
-            gate = dict(gate)
-            criteria = gate.get('criteria')
-            if isinstance(criteria, str):
-                gate['criteria'] = [criteria]
-            elif not isinstance(criteria, list):
-                gate['criteria'] = [gate.get('description') or gate.get('name') or f'Quality gate {i + 1}']
-            gate.setdefault('name', gate.get('description') or f'Quality gate {i + 1}')
-            gate.setdefault('description', gate['name'])
-            gate.setdefault('required', True)
+        gate = _normalize_single_gate(gate, i)
         normalized_gates.append(gate)
+    
+    return normalized_gates
 
-    data['quality_gates'] = normalized_gates
-    return data
+
+def _normalize_single_gate(gate, index):
+    """Normalize a single quality gate."""
+    if not isinstance(gate, dict):
+        text = str(gate)
+        gate = {'name': text, 'description': text, 'criteria': [text], 'required': True}
+    else:
+        gate = dict(gate)
+        criteria = gate.get('criteria')
+        if isinstance(criteria, str):
+            gate['criteria'] = [criteria]
+        elif not isinstance(criteria, list):
+            gate['criteria'] = [gate.get('description') or gate.get('name') or f'Quality gate {index + 1}']
+        gate.setdefault('name', gate.get('description') or f'Quality gate {index + 1}')
+        gate.setdefault('description', gate['name'])
+        gate.setdefault('required', True)
+    return gate
+
+
+def _normalize_goal(data):
+    """Normalize goal data."""
+    goal = data.get('goal')
+    if not goal:
+        goal = {'title': data.get('title', 'Project Refactoring'), 'description': data.get('description', 'Improve code quality')}
+    elif isinstance(goal, str):
+        goal = {'title': goal, 'description': goal}
+    else:
+        goal = dict(goal)
+        goal.setdefault('title', goal.get('name', 'Project Refactoring'))
+        goal.setdefault('description', goal.get('description', 'Improve code quality'))
+    return goal
+
+
+def _normalize_metadata(data):
+    """Normalize metadata."""
+    metadata = data.get('metadata', {})
+    if not metadata:
+        metadata = {'created_at': datetime.now().isoformat(), 'version': '1.0'}
+    else:
+        metadata = dict(metadata)
+        metadata.setdefault('created_at', datetime.now().isoformat())
+        metadata.setdefault('version', '1.0')
+    return metadata
 
 
 def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
     """Generate strategy using llx.planfile."""
+    _print_generation_info(project_path, model, sprints, focus)
     
-    # Import llx.planfile modules
-    from llx.planfile import Strategy, Goal, Sprint, TaskPattern, TaskType, ModelHints
-    from llx.routing.client import LlxClient
-    from llx.config import LlxConfig
-    from llx import analyze_project
+    # 1. Collect metrics using llx
+    metrics = analyze_project(project_path)
     
+    # 2. Build prompt
+    prompt = _build_strategy_prompt(metrics, sprints, focus)
+    
+    # 3. Call LLM
+    response = _call_llm_for_strategy(prompt, model)
+    
+    # 4. Parse and fix YAML
+    yaml_data = _parse_and_fix_yaml(response.content)
+    
+    # 5. Normalize data
+    yaml_data = _normalize_strategy_data(yaml_data)
+    
+    return yaml_data
+
+
+def _print_generation_info(project_path, model, sprints, focus):
+    """Print strategy generation information."""
     console.print(f"[blue]Generating strategy for {project_path}...[/blue]")
     console.print(f"  Model: {model}")
     console.print(f"  Sprints: {sprints}")
     console.print(f"  Focus: {focus}")
     console.print(f"  Using OpenRouter free models")
-    
-    # 1. Collect metrics using llx
-    metrics = analyze_project(project_path)
-    
-    # 2. Build prompt manually for now
-    prompt = f"""
+
+
+def _build_strategy_prompt(metrics, sprints, focus):
+    """Build the prompt for strategy generation."""
+    return f"""
 Generate a refactoring strategy for this project:
 
 Project Metrics:
@@ -120,10 +196,13 @@ Please generate a YAML strategy with:
 
 Return only valid YAML without code blocks.
 """
-    
+
+
+def _call_llm_for_strategy(prompt, model):
+    """Call LLM to generate strategy."""
     console.print(f"\n[yellow]Sending prompt to LLM...[/yellow]")
     
-    # 3. Call LLM using llx client
+    # Load environment
     import os
     from dotenv import load_dotenv
     load_dotenv('/home/tom/github/semcod/llx/.env')
@@ -144,12 +223,17 @@ Return only valid YAML without code blocks.
         f.write(response.content)
     console.print(f"[dim]Full response saved to /tmp/llm_response.txt[/dim]")
     
-    # 4. Parse with fixes
-    yaml_text = response.content
-    if "```yaml" in response.content:
-        yaml_text = response.content.split("```yaml")[1].split("```")[0]
-    elif "```" in response.content:
-        yaml_text = response.content.split("```")[1].split("```")[0]
+    return response
+
+
+def _parse_and_fix_yaml(content):
+    """Parse and fix YAML formatting issues."""
+    # Extract YAML from response
+    yaml_text = content
+    if "```yaml" in content:
+        yaml_text = content.split("```yaml")[1].split("```")[0]
+    elif "```" in content:
+        yaml_text = content.split("```")[1].split("```")[0]
     
     # Save extracted YAML
     with open("/tmp/extracted_yaml.txt", "w") as f:
@@ -157,26 +241,62 @@ Return only valid YAML without code blocks.
     console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
     
     # Fix common YAML formatting issues
-    yaml_text = yaml_text.replace("-id:", "- id:")
-    yaml_text = yaml_text.replace("-name:", "- name:")
-    yaml_text = yaml_text.replace("-task_type:", "- task_type:")
-    yaml_text = yaml_text.replace("-description:", "- description:")
-    yaml_text = yaml_text.replace("-priority:", "- priority:")
-    yaml_text = yaml_text.replace("-model_hints:", "- model_hints:")
-    yaml_text = yaml_text.replace("-planning:", "- planning:")
-    yaml_text = yaml_text.replace("-implementation:", "- implementation:")
-    yaml_text = yaml_text.replace("-review:", "- review:")
+    yaml_text = _fix_yaml_formatting(yaml_text)
     
-    # Fix line continuation issues - targeted fixes only
+    # Parse YAML
+    try:
+        data = yaml.safe_load(yaml_text)
+        if not isinstance(data, dict):
+            data = {}
+    except yaml.YAMLError as e:
+        console.print(f"[red]YAML parsing error: {e}[/red]")
+        data = {}
+    
+    return data
+
+
+def _fix_yaml_formatting(yaml_text):
+    """Fix common YAML formatting issues."""
+    # Fix common issues
+    replacements = [
+        ("-id:", "- id:"),
+        ("-name:", "- name:"),
+        ("-task_type:", "- task_type:"),
+        ("-description:", "- description:"),
+        ("-priority:", "- priority:"),
+        ("-model_hints:", "- model_hints:"),
+        ("-planning:", "- planning:"),
+        ("-implementation:", "- implementation:"),
+        ("-review:", "- review:")
+    ]
+    
+    for old, new in replacements:
+        yaml_text = yaml_text.replace(old, new)
+    
+    # Fix line continuation issues
     import re
-    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:" (only for objectives)
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)(objectives:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
-    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:" (for other fields)
     yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     
     # Ensure proper list formatting
+    yaml_text = _fix_list_formatting(yaml_text)
+    
+    # Fix indentation problems
+    yaml_text = _fix_indentation(yaml_text)
+    
+    # Save fixed YAML for debugging
+    with open("/tmp/fixed_yaml.txt", "w") as f:
+        f.write(yaml_text)
+    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
+    
+    return yaml_text
+
+
+def _fix_list_formatting(yaml_text):
+    """Fix list formatting issues."""
     lines = yaml_text.split('\n')
     fixed_lines = []
+    
     for i, line in enumerate(lines):
         fixed_lines.append(line)
         # If line ends with a list item without proper dash, add newline
@@ -187,13 +307,14 @@ Return only valid YAML without code blocks.
                 if any(word in next_line.lower() for word in ['add', 'run', 'enforce', 'introduce', 'apply']):
                     fixed_lines.append('')
     
-    # Save fixed YAML
-    yaml_text = '\n'.join(fixed_lines)
-    
-    # Additional fixes for common YAML issues
-    # Fix indentation problems
+    return '\n'.join(fixed_lines)
+
+
+def _fix_indentation(yaml_text):
+    """Fix indentation problems."""
     lines = yaml_text.split('\n')
     corrected_lines = []
+    
     for line in lines:
         # Fix common indentation issues
         if line.startswith('name:') and not line.startswith('  name:'):
@@ -206,91 +327,7 @@ Return only valid YAML without code blocks.
         else:
             corrected_lines.append(line)
     
-    yaml_text = '\n'.join(corrected_lines)
-    
-    with open("/tmp/fixed_yaml.txt", "w") as f:
-        f.write(yaml_text)
-    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
-    
-    console.print(f"\n[yellow]Parsing YAML response...[/yellow]")
-    
-    # Parse YAML with fallback
-    try:
-        data = yaml.safe_load(yaml_text)
-        if not isinstance(data, dict):
-            raise yaml.YAMLError("YAML root must be a mapping")
-    except yaml.YAMLError as e:
-        console.print(f"[red]✗ YAML parsing failed: {e}[/red]")
-        console.print("[yellow]Creating fallback strategy...[/yellow]")
-        # Create a simple fallback strategy
-        data = {
-            'name': 'Refactoring Strategy',
-            'project_type': 'python',
-            'domain': 'software',
-            'goal': {
-                'short': f"Improve {focus or 'codebase'}",
-                'quality': ['Reduce complexity', 'Improve maintainability'],
-                'delivery': ['Complete in sprints', 'Review changes'],
-                'metrics': ['Complexity reduction', 'Test coverage']
-            },
-            'sprints': [
-                {
-                    'id': 1,
-                    'name': 'Sprint 1',
-                    'objectives': ['Reduce complexity', 'Add tests'],
-                    'tasks': [
-                        {
-                            'name': 'Analyze Complexity',
-                            'description': 'Analyze code complexity',
-                            'type': 'feature',
-                            'model_hints': 'balanced'
-                        },
-                        {
-                            'name': 'Add Tests',
-                            'description': 'Add unit tests',
-                            'type': 'test',
-                            'model_hints': 'cheap'
-                        }
-                    ]
-                }
-            ],
-            'quality_gates': [
-                'Average CC < 5',
-                'Test coverage >= 80%'
-            ]
-        }
-    
-    # Fix the data to match expected schema
-    data = _normalize_strategy_data(data)
-    
-    # Ensure required fields
-    if 'name' not in data:
-        data['name'] = f"Refactoring Strategy"
-    if 'project_type' not in data:
-        data['project_type'] = 'python'
-    if 'domain' not in data:
-        data['domain'] = 'software'
-    
-    # Fix goal to be a proper Goal object
-    if 'goal' not in data or isinstance(data.get('goal'), str):
-        goal_str = data.get('goal', focus or 'improvement')
-        data['goal'] = {
-            'short': f"Improve {goal_str}" if goal_str else "Improve codebase",
-            'quality': ['Reduce complexity', 'Improve maintainability'],
-            'delivery': ['Complete in sprints', 'Review changes'],
-            'metrics': ['Complexity reduction', 'Test coverage']
-        }
-    elif isinstance(data.get('goal'), dict):
-        # Ensure all required fields exist
-        goal = data['goal']
-        goal.setdefault('short', f"Improve {focus or 'codebase'}")
-        goal.setdefault('quality', ['Reduce complexity', 'Improve maintainability'])
-        goal.setdefault('delivery', ['Complete in sprints', 'Review changes'])
-        goal.setdefault('metrics', ['Complexity reduction', 'Test coverage'])
-    
-    console.print(f"[green]✓ Strategy parsed and fixed[/green]")
-    
-    return data
+    return '\n'.join(corrected_lines)
 
 
 def save_fixed_strategy(data, output_path):

@@ -5,6 +5,9 @@ import argparse
 
 from .._utils import cli_main
 from ..cli_utils import cmd_remove_wrapper
+from ..utils._cmd_remove import create_remove_handler
+from ..utils._cmd_status import create_status_handler
+from ..utils._cmd_cleanup import create_cleanup_handler
 
 from .models import InstanceType, InstanceConfig
 from .manager import InstanceManager
@@ -87,14 +90,13 @@ def _cmd_stop(args, mgr: InstanceManager) -> bool:
     return success
 
 
-def _cmd_remove(args, mgr: InstanceManager) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr="instance_id",
-        id_label="Instance",
-        remove_func=mgr.remove_instance,
-        save_func=mgr.save_instances,
-    )
+# Create remove handler
+_cmd_remove = create_remove_handler(
+    id_attr="instance_id",
+    id_label="Instance",
+    remove_func=lambda mgr, id: mgr.remove_instance(id),
+    save_func=lambda mgr: mgr.save_instances()
+)
 
 
 def _cmd_list(args, mgr: InstanceManager) -> bool:
@@ -106,16 +108,13 @@ def _cmd_list(args, mgr: InstanceManager) -> bool:
     return True
 
 
-def _cmd_status(args, mgr: InstanceManager) -> bool:
-    if args.instance_id:
-        status = mgr.get_instance_status(args.instance_id)
-        if status:
-            print(json.dumps(status, indent=2))
-            return True
-        print(f"❌ Instance {args.instance_id} not found")
-        return False
-    mgr.print_status_summary()
-    return True
+# Create status handler
+_cmd_status = create_status_handler(
+    id_attr='instance_id',
+    entity_label='Instance',
+    get_status_func=lambda mgr, id: mgr.get_instance_status(id),
+    print_summary_func=lambda mgr: mgr.print_status_summary()
+)
 
 
 def _cmd_metrics(args, mgr: InstanceManager) -> bool:
@@ -136,10 +135,10 @@ def _cmd_health(args, mgr: InstanceManager) -> bool:
     return True
 
 
-def _cmd_cleanup(args, mgr: InstanceManager) -> bool:
-    mgr.save_instances()
-    print("✅ Cleanup completed")
-    return True
+# Create cleanup handler
+_cmd_cleanup = create_cleanup_handler(
+    save_func=lambda mgr: mgr.save_instances()
+)
 
 
 def main():

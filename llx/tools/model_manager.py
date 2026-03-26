@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 from .docker_manager import DockerManager
 from ._utils import cli_main
+from .utils._cmd_uninstall_extension import create_simple_handler
 
 
 class ModelManager:
@@ -536,7 +537,15 @@ class ModelManager:
         print("🤖 Model Summary")
         print("================")
         
-        # Service status
+        self._print_service_status()
+        self._print_ollama_models()
+        self._print_llx_models()
+        self._print_system_resources()
+        self._print_recommendations()
+        print()
+    
+    def _print_service_status(self):
+        """Print service status for Ollama and llx API."""
         ollama_running = self.check_ollama_running()
         llx_running = self.check_llx_running()
         
@@ -545,41 +554,50 @@ class ModelManager:
         
         print(f"{ollama_icon} Ollama: {'Running' if ollama_running else 'Stopped'}")
         print(f"{llx_icon} llx API: {'Running' if llx_running else 'Stopped'}")
+    
+    def _print_ollama_models(self):
+        """Print available Ollama models."""
+        if not self.check_ollama_running():
+            return
+            
+        ollama_models = self.get_ollama_models()
+        print(f"\n📦 Ollama Models: {len(ollama_models)}")
         
-        if ollama_running:
-            # Available models
-            ollama_models = self.get_ollama_models()
-            print(f"\n📦 Ollama Models: {len(ollama_models)}")
-            
-            total_size = sum(model.get("size", 0) for model in ollama_models)
-            print(f"💾 Total Size: {total_size / (1024**3):.1f}GB")
-            
-            for model in ollama_models[:10]:  # Show first 10
-                size_gb = model.get("size", 0) / (1024**3)
-                print(f"  • {model['name']} ({size_gb:.1f}GB)")
-            
-            if len(ollama_models) > 10:
-                print(f"  ... and {len(ollama_models) - 10} more")
+        total_size = sum(model.get("size", 0) for model in ollama_models)
+        print(f"💾 Total Size: {total_size / (1024**3):.1f}GB")
         
-        if llx_running:
-            # llx models
-            llx_models = self.get_llx_models()
-            print(f"\n🤖 llx Models: {len(llx_models)}")
-            
-            for model in llx_models[:5]:  # Show first 5
-                print(f"  • {model['id']}")
-            
-            if len(llx_models) > 5:
-                print(f"  ... and {len(llx_models) - 5} more")
+        for model in ollama_models[:10]:  # Show first 10
+            size_gb = model.get("size", 0) / (1024**3)
+            print(f"  • {model['name']} ({size_gb:.1f}GB)")
         
-        # System resources
+        if len(ollama_models) > 10:
+            print(f"  ... and {len(ollama_models) - 10} more")
+    
+    def _print_llx_models(self):
+        """Print available llx models."""
+        if not self.check_llx_running():
+            return
+            
+        llx_models = self.get_llx_models()
+        print(f"\n🤖 llx Models: {len(llx_models)}")
+        
+        for model in llx_models[:5]:  # Show first 5
+            print(f"  • {model['id']}")
+        
+        if len(llx_models) > 5:
+            print(f"  ... and {len(llx_models) - 5} more")
+    
+    def _print_system_resources(self):
+        """Print system resource information."""
         resources = self.get_system_resources()
         print(f"\n💻 System Resources:")
         print(f"  🧠 Memory: {resources['memory_available'] // 1024}GB available / {resources['memory_total'] // 1024}GB total")
         print(f"  💾 Disk: {resources['disk_space']}GB available")
         print(f"  ⚡ CPU: {resources['cpu_cores']} cores")
-        
-        # Recommendations
+    
+    def _print_recommendations(self):
+        """Print model recommendations based on available memory."""
+        resources = self.get_system_resources()
         recommendations = self.recommend_models(resources['memory_available'] // 1024)
         if recommendations:
             print(f"\n🎯 Recommended Models (based on {resources['memory_available'] // 1024}GB RAM):")
@@ -587,8 +605,6 @@ class ModelManager:
                 model_info = self.get_model_info(model)
                 size_gb = model_info.get("size", 0) / (1024**3) if model_info.get("size") else 0
                 print(f"  • {model} ({size_gb:.1f}GB)")
-        
-        print()
 
 
 # CLI interface - Command handlers registry to reduce CC from 29
@@ -615,11 +631,12 @@ def _cmd_pull(args: argparse.Namespace, manager: "ModelManager") -> bool:
     return manager.pull_model(args.model, args.timeout)
 
 
-def _cmd_remove(args: argparse.Namespace, manager: "ModelManager") -> bool:
-    if not args.model:
-        print("❌ --model required for remove")
-        return False
-    return manager.remove_model(args.model)
+# Create remove handler
+_cmd_remove = create_simple_handler(
+    arg_name="model",
+    arg_label="remove",
+    manager_method=lambda mgr, model: mgr.remove_model(model)
+)
 
 
 def _cmd_test(args: argparse.Namespace, manager: "ModelManager") -> bool:
@@ -657,11 +674,12 @@ def _cmd_recommend(args: argparse.Namespace, manager: "ModelManager") -> bool:
     return True
 
 
-def _cmd_profile(args: argparse.Namespace, manager: "ModelManager") -> bool:
-    if not args.model:
-        print("❌ --model required for profile")
-        return False
-    return manager.create_model_profile(args.model)
+# Create profile handler
+_cmd_profile = create_simple_handler(
+    arg_name="model",
+    arg_label="profile",
+    manager_method=lambda mgr, model: mgr.create_model_profile(model)
+)
 
 
 def _cmd_benchmark(args: argparse.Namespace, manager: "ModelManager") -> bool:

@@ -6,6 +6,8 @@ from datetime import datetime
 
 from .._utils import cli_main
 from ..cli_utils import cmd_remove_wrapper
+from ..utils._cmd_remove import create_remove_handler
+from ..utils._cmd_cleanup import create_cleanup_handler
 
 from .models import RequestPriority, QueueRequest, QueueConfig
 from .manager import QueueManager
@@ -69,14 +71,13 @@ def _cmd_add(args, mgr: QueueManager) -> bool:
     return success
 
 
-def _cmd_remove(args, mgr: QueueManager) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr="queue_id",
-        id_label="Queue",
-        remove_func=mgr.remove_queue,
-        save_func=mgr.save_queues,
-    )
+# Create remove handler
+_cmd_remove = create_remove_handler(
+    id_attr="queue_id",
+    id_label="Queue",
+    remove_func=lambda mgr, id: mgr.remove_queue(id),
+    save_func=lambda mgr: mgr.save_queues()
+)
 
 
 def _cmd_enqueue(args, mgr: QueueManager) -> bool:
@@ -134,10 +135,10 @@ def _cmd_metrics(args, mgr: QueueManager) -> bool:
     return False
 
 
-def _cmd_cleanup(args, mgr: QueueManager) -> bool:
-    mgr.save_queues()
-    print("✅ Cleanup completed")
-    return True
+# Create cleanup handler
+_cmd_cleanup = create_cleanup_handler(
+    save_func=lambda mgr: mgr.save_queues()
+)
 
 
 def main():

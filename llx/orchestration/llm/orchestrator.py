@@ -603,26 +603,37 @@ class LLMOrchestrator:
         print("🤖 LLM Orchestrator Status")
         print("==========================")
 
+        self._print_usage_stats()
+        self._print_provider_status()
+        self._print_model_summary()
+        print()
+    
+    def _print_usage_stats(self):
+        """Print usage statistics."""
         usage_stats = self.get_usage_stats()
-        provider_status = self.get_provider_status()
-
         print(f"📊 Total Requests: {usage_stats['total_requests']}")
         print(f"✅ Successful: {usage_stats['successful_requests']}")
         print(f"❌ Failed: {usage_stats['failed_requests']}")
         print(f"📈 Success Rate: {usage_stats['success_rate']:.1f}%")
         print(f"💰 Total Cost: ${usage_stats['total_cost']:.4f}")
         print(f"🔤 Total Tokens: {usage_stats['total_tokens']}")
-
+    
+    def _print_provider_status(self):
+        """Print provider status information."""
+        provider_status = self.get_provider_status()
+        
         print(f"\n🏢 Providers ({provider_status['total_providers']}):")
         print(f"  🟢 Healthy: {provider_status['healthy_providers']}")
         print(f"  🔴 Unhealthy: {provider_status['unhealthy_providers']}")
-
+        
         for pid, st in provider_status["providers"].items():
             print(
                 f"  • {pid}: {st['health_status']} "
                 f"({st['success_rate']:.1f}% success, {st['models_count']} models)"
             )
-
+    
+    def _print_model_summary(self):
+        """Print model capability summary."""
         print(f"\n🤖 Models ({len(self.model_cache)}):")
         capability_counts: Dict[str, int] = {}
         for model in self.model_cache.values():
@@ -630,4 +641,3 @@ class LLMOrchestrator:
                 capability_counts[cap.value] = capability_counts.get(cap.value, 0) + 1
         for cap_name, count in capability_counts.items():
             print(f"  • {cap_name}: {count} models")
-        print()

@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.29] - 2026-03-26
+
+### Docs
+- Update REFACTORING_SUMMARY.md
+- Update docs/README.md
+- Update examples/python-api/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_planfile_generate_strategy.py
+
+### Other
+- Update examples/python-api/api-strategy.yaml
+- Update examples/python-api/run.sh
+- Update llx/cli/app.py
+- Update llx/cli/formatters.py
+- Update llx/mcp/tools.py
+- Update llx/orchestration/_utils.py
+- Update llx/orchestration/instances/cli.py
+- Update llx/orchestration/llm/cli.py
+- Update llx/orchestration/llm/orchestrator.py
+- Update llx/orchestration/queue/cli.py
+- ... and 28 more files
+
 ## [0.1.28] - 2026-03-26
 
 ### Other

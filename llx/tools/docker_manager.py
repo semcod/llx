@@ -496,47 +496,52 @@ def _build_parser() -> "argparse.ArgumentParser":
 
 
 def _dispatch(args, manager: DockerManager) -> bool:
-    if args.command == "start":
-        services = [args.service] if args.service else None
-        return manager.start_environment(args.env, services)
-    elif args.command == "stop":
-        services = [args.service] if args.service else None
-        return manager.stop_environment(args.env, services)
-    elif args.command == "restart":
-        return manager.restart_service(args.env, args.service)
-    elif args.command == "status":
-        manager.print_status_summary(args.env)
-        return True
-    elif args.command == "logs":
-        logs = manager.get_service_logs(args.env, args.service, args.tail)
-        print(logs)
-        return True
-    elif args.command == "build":
-        return manager.build_images(args.env, args.service)
-    elif args.command == "pull":
-        return manager.pull_images(args.env, args.service)
-    elif args.command == "cleanup":
-        return manager.cleanup_environment(args.env, args.remove_volumes)
-    elif args.command == "backup":
-        return manager.backup_volumes(args.env, args.backup_dir)
-    elif args.command == "restore":
-        if not args.backup_dir:
-            print("❌ --backup-dir required for restore")
-            return False
-        return manager.restore_volumes(args.backup_dir, args.env)
-    elif args.command == "health":
-        if args.service:
-            ok = manager.check_service_health(args.service, args.env)
-            print(f"🏥 {args.service}: {'✅ Healthy' if ok else '❌ Unhealthy'}")
-            return ok
-        manager.print_status_summary(args.env)
-        return True
-    elif args.command == "wait":
-        if not args.service:
-            print("❌ --service required for wait")
-            return False
-        return manager.wait_for_service(args.service, args.env, args.timeout)
+    """Dispatch command to appropriate handler."""
+    handlers = {
+        "start": lambda a, m: m.start_environment(a.env, [a.service] if a.service else None),
+        "stop": lambda a, m: m.stop_environment(a.env, [a.service] if a.service else None),
+        "restart": lambda a, m: m.restart_service(a.env, a.service),
+        "status": lambda a, m: (m.print_status_summary(a.env), True)[1],
+        "logs": lambda a, m: (print(m.get_service_logs(a.env, a.service, a.tail)), True)[1],
+        "build": lambda a, m: m.build_images(a.env, a.service),
+        "pull": lambda a, m: m.pull_images(a.env, a.service),
+        "cleanup": lambda a, m: m.cleanup_environment(a.env, a.remove_volumes),
+        "backup": lambda a, m: m.backup_volumes(a.env, a.backup_dir),
+        "restore": _handle_restore,
+        "health": _handle_health,
+        "wait": _handle_wait,
+    }
+    
+    handler = handlers.get(args.command)
+    if handler:
+        return handler(args, manager)
     return False
+
+
+def _handle_restore(args, manager: DockerManager) -> bool:
+    """Handle restore command with validation."""
+    if not args.backup_dir:
+        print("❌ --backup-dir required for restore")
+        return False
+    return manager.restore_volumes(args.backup_dir, args.env)
+
+
+def _handle_health(args, manager: DockerManager) -> bool:
+    """Handle health command."""
+    if args.service:
+        ok = manager.check_service_health(args.service, args.env)
+        print(f"🏥 {args.service}: {'✅ Healthy' if ok else '❌ Unhealthy'}")
+        return ok
+    manager.print_status_summary(args.env)
+    return True
+
+
+def _handle_wait(args, manager: DockerManager) -> bool:
+    """Handle wait command with validation."""
+    if not args.service:
+        print("❌ --service required for wait")
+        return False
+    return manager.wait_for_service(args.service, args.env, args.timeout)
 
 
 def main():

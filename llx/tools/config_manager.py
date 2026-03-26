@@ -12,6 +12,7 @@ from pathlib import Path
 import shutil
 
 from ._utils import cli_main
+from .utils._cmd_uninstall_extension import create_simple_handler
 
 
 class ConfigManager:
@@ -683,40 +684,44 @@ def _cmd_add_model(args: argparse.Namespace, manager: "ConfigManager") -> bool:
         return False
 
 
-def _cmd_remove_model(args: argparse.Namespace, manager: "ConfigManager") -> bool:
-    if not args.tier:
-        print("❌ --tier required for remove-model")
-        return False
-    return manager.remove_model(args.tier)
+# Create remove model handler
+_cmd_remove_model = create_simple_handler(
+    arg_name="tier",
+    arg_label="remove-model",
+    manager_method=lambda mgr, tier: mgr.remove_model(tier)
+)
 
 
 def _cmd_backup(args: argparse.Namespace, manager: "ConfigManager") -> bool:
     return manager.backup_configs(args.backup_dir)
 
 
-def _cmd_restore(args: argparse.Namespace, manager: "ConfigManager") -> bool:
-    if not args.backup_dir:
-        print("❌ --backup-dir required for restore")
-        return False
-    return manager.restore_configs(args.backup_dir)
+# Create restore handler
+_cmd_restore = create_simple_handler(
+    arg_name="backup_dir",
+    arg_label="restore",
+    manager_method=lambda mgr, dir: mgr.restore_configs(dir)
+)
 
 
 def _cmd_docker_env(args: argparse.Namespace, manager: "ConfigManager") -> bool:
     return manager.generate_docker_env_file(args.env)
 
 
-def _cmd_create_profile(args: argparse.Namespace, manager: "ConfigManager") -> bool:
-    if not args.profile:
-        print("❌ --profile required for create-profile")
-        return False
-    return manager.create_profile(args.profile)
+# Create create profile handler
+_cmd_create_profile = create_simple_handler(
+    arg_name="profile",
+    arg_label="create-profile",
+    manager_method=lambda mgr, profile: mgr.create_profile(profile)
+)
 
 
-def _cmd_load_profile(args: argparse.Namespace, manager: "ConfigManager") -> bool:
-    if not args.profile:
-        print("❌ --profile required for load-profile")
-        return False
-    return manager.load_profile(args.profile)
+# Create load profile handler
+_cmd_load_profile = create_simple_handler(
+    arg_name="profile",
+    arg_label="load-profile",
+    manager_method=lambda mgr, profile: mgr.load_profile(profile)
+)
 
 
 def _cmd_list_profiles(args: argparse.Namespace, manager: "ConfigManager") -> bool:

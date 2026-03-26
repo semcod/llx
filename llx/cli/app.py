@@ -421,102 +421,103 @@ def plan_generate(
 ) -> None:
     """Generate strategy.yaml using built-in generator."""
     try:
-        # Use built-in generator
+        # Import required modules
         from llx.planfile.generate_strategy import generate_strategy_with_fix, save_fixed_strategy
         from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
         
-        if not model:
-            # Create filter based on parameters
-            filter_params = {}
-            
-            # Use predefined profile if specified
-            if profile:
-                from llx.planfile.model_selector import (
-                    FREE_FILTER, LOCAL_FILTER, CLOUD_FREE_FILTER,
-                    OPENROUTER_FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER
-                )
-                profile_map = {
-                    "free": FREE_FILTER,
-                    "local": LOCAL_FILTER,
-                    "cloud-free": CLOUD_FREE_FILTER,
-                    "openrouter-free": OPENROUTER_FREE_FILTER,
-                    "cheap": CHEAP_FILTER,
-                    "balanced": BALANCED_FILTER
-                }
-                model_filter = profile_map.get(profile)
-                if not model_filter:
-                    console.print(f"[red]Unknown profile: {profile}[/red]")
-                    console.print(f"Available profiles: {', '.join(profile_map.keys())}")
-                    raise typer.Exit(1)
-            else:
-                # Build custom filter
-                if provider:
-                    try:
-                        filter_params["provider"] = ModelProvider(provider.lower())
-                    except ValueError:
-                        console.print(f"[red]Unknown provider: {provider}[/red]")
-                        console.print("Available providers: openai, anthropic, openrouter, ollama")
-                        raise typer.Exit(1)
-                
-                if tier:
-                    try:
-                        filter_params["tier"] = ModelTier(tier.lower())
-                    except ValueError:
-                        console.print(f"[red]Unknown tier: {tier}[/red]")
-                        console.print("Available tiers: free, cheap, balanced, premium")
-                        raise typer.Exit(1)
-                
-                filter_params["local_only"] = local_only
-                filter_params["cloud_only"] = cloud_only
-                
-                model_filter = ModelFilter(**filter_params)
-            
-            # Select model
-            selector = ModelSelector(path)
-            model = selector.select_model(model_filter)
-            
-            if not model:
-                console.print("[red]No model found matching the criteria[/red]")
-                
-                # Show available models
-                console.print("\n[yellow]Available models:[/yellow]")
-                available = selector.list_models()
-                for m in available[:10]:  # Show first 10
-                    status = "✓" if m["has_api_key"] else "✗ (no API key)"
-                    console.print(f"  {status} {m['id']} [{m['provider']}][{m['tier']}]")
-                
-                raise typer.Exit(1)
+        # Get model selection
+        selected_model = _get_model_for_generation(model, profile, provider, tier, local_only, cloud_only)
         
+        if not selected_model:
+            console.print("[red]No suitable model found[/red]")
+            return
+        
+        # Generate strategy
+        console.print(f"\n[blue]Generating strategy for {path}...[/blue]")
         strategy_data = generate_strategy_with_fix(
-            project_path=path,
-            model=model,
-            sprints=sprints,
+            path, 
+            model=selected_model, 
+            sprints=sprints, 
             focus=focus
         )
         
         # Save strategy
         save_fixed_strategy(strategy_data, output)
-        console.print(f"[green]Strategy saved to {output}[/green]")
-        console.print(f"[dim]Used model: {model}[/dim]")
+        console.print(f"[green]✓ Strategy saved to {output}[/green]")
         
-        # Show filter info if used
-        if not model and profile:
-            console.print(f"[dim]Profile: {profile}[/dim]")
-        elif not model and any([provider, tier, local_only, cloud_only]):
-            filter_desc = []
-            if provider:
-                filter_desc.append(f"provider={provider}")
-            if tier:
-                filter_desc.append(f"tier={tier}")
-            if local_only:
-                filter_desc.append("local only")
-            if cloud_only:
-                filter_desc.append("cloud only")
-            console.print(f"[dim]Filter: {', '.join(filter_desc)}[/dim]")
-            
     except Exception as e:
         console.print(f"[red]Error generating strategy: {e}[/red]")
         raise typer.Exit(1)
+
+
+def _get_model_for_generation(model, profile, provider, tier, local_only, cloud_only):
+    """Get model for strategy generation based on filters."""
+    from llx.planfile.model_selector import (
+        ModelSelector, ModelFilter, ModelProvider, ModelTier,
+        FREE_FILTER, LOCAL_FILTER, CLOUD_FREE_FILTER,
+        OPENROUTER_FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER
+    )
+    
+    if model:
+        return model
+    
+    # Use predefined profile if specified
+    if profile:
+        profile_map = {
+            "free": FREE_FILTER,
+            "local": LOCAL_FILTER,
+            "cloud-free": CLOUD_FREE_FILTER,
+            "openrouter-free": OPENROUTER_FREE_FILTER,
+            "cheap": CHEAP_FILTER,
+            "balanced": BALANCED_FILTER
+        }
+        model_filter = profile_map.get(profile)
+        if not model_filter:
+            console.print(f"[red]Unknown profile: {profile}[/red]")
+            console.print(f"Available profiles: {', '.join(profile_map.keys())}")
+            raise typer.Exit(1)
+    else:
+        # Build custom filter
+        filter_params = {}
+        
+        if provider:
+            try:
+                filter_params["provider"] = ModelProvider(provider.lower())
+            except ValueError:
+                console.print(f"[red]Unknown provider: {provider}[/red]")
+                console.print("Available providers: openai, anthropic, openrouter, ollama")
+                raise typer.Exit(1)
+        
+        if tier:
+            try:
+                filter_params["tier"] = ModelTier(tier.lower())
+            except ValueError:
+                console.print(f"[red]Unknown tier: {tier}[/red]")
+                console.print("Available tiers: free, cheap, balanced, premium")
+                raise typer.Exit(1)
+        
+        filter_params["local_only"] = local_only
+        filter_params["cloud_only"] = cloud_only
+        
+        model_filter = ModelFilter(**filter_params)
+    
+    # Select model using "." as path for default config
+    selector = ModelSelector(".")
+    selected_model = selector.select_model(model_filter)
+    
+    if not selected_model:
+        console.print("[red]No model found matching the criteria[/red]")
+        
+        # Show available models
+        console.print("\n[yellow]Available models:[/yellow]")
+        available = selector.list_models()
+        for m in available[:10]:  # Show first 10
+            status = "✓" if m["has_api_key"] else "✗ (no API key)"
+            console.print(f"  {status} {m['id']} [{m['provider']}][{m['tier']}]")
+        
+        raise typer.Exit(1)
+    
+    return selected_model
 
 @plan_app.command("review")
 def plan_review(
@@ -530,12 +531,206 @@ def plan_review(
         console.print(f"[green]Strategy loaded: {s.name}[/green]")
         console.print(f"  Sprints: {len(s.sprints)}")
         console.print(f"  Quality gates: {len(s.quality_gates)}")
-        
-        # TODO: Implement actual review logic
-        console.print("[yellow]Review functionality not yet implemented[/yellow]")
+
+        console.print("\n[bold]Quality Gates:[/bold]")
+        for gate in s.quality_gates:
+            console.print(f"  [cyan]•[/cyan] {gate.name}: {', '.join(gate.criteria)}")
     except Exception as e:
         console.print(f"[red]Error reviewing strategy: {e}[/red]")
 
 
+@plan_app.command("code")
+def plan_code(
+    strategy: str = typer.Argument(..., help="Path to strategy.yaml"),
+    output_dir: str = typer.Argument("./project", help="Directory to write generated files"),
+    profile: Optional[str] = typer.Option("free", "--profile", "-p",
+        help="Model profile: free, local, cheap, balanced"),
+) -> None:
+    """Generate project code from strategy using LLM (free tier by default).
+
+    This command reads the strategy, builds a prompt per sprint task and
+    calls the LLM to generate Python source files written to output_dir.
+    """
+    import yaml as _yaml
+    import re
+
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    with open(strategy, encoding="utf-8") as f:
+        strat = _yaml.safe_load(f)
+
+    project_name = strat.get("name", "My Project")
+    description = strat.get("description") or strat.get("goal", {}).get("short", project_name)
+    if isinstance(description, dict):
+        description = description.get("short", project_name)
+    sprints = strat.get("sprints", [])
+
+    # Select model
+    from llx.planfile.model_selector import ModelSelector, ModelFilter
+    selector = ModelSelector(".")
+    try:
+        from llx.planfile.model_selector import FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER, LOCAL_FILTER
+        profile_map = {"free": FREE_FILTER, "cheap": CHEAP_FILTER,
+                       "balanced": BALANCED_FILTER, "local": LOCAL_FILTER}
+        model_filter = profile_map.get(profile or "free", FREE_FILTER)
+        model = selector.select_model(model_filter)
+    except Exception:
+        model = None
+
+    if not model:
+        console.print("[red]No model available for the selected profile.[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"[bold]Generating code for:[/bold] {project_name}")
+    console.print(f"  Strategy: {strategy}")
+    console.print(f"  Output:   {out.resolve()}")
+    console.print(f"  Model:    {model}")
+    console.print()
+
+    config = LlxConfig.load(".")
+    from llx.routing.client import LlxClient, ChatMessage
+
+    # Sprint → file mapping
+    SPRINT_FILES = {
+        1: ("main.py",      "Generate a complete FastAPI main.py for '{name}' ({desc}). "
+                             "Include CRUD endpoints, in-memory storage, /health endpoint. Return only Python code."),
+        2: ("models.py",    "Generate Pydantic models (ItemBase, ItemCreate, Item) for '{name}' ({desc}). Return only Python code."),
+        3: ("test_api.py",  "Generate pytest tests for a FastAPI '{name}' API ({desc}) using TestClient. Return only Python code."),
+        4: ("Dockerfile",   "Generate a Dockerfile for '{name}' FastAPI app. Use python:3.11-slim, install fastapi uvicorn, expose 8000. Return only Dockerfile."),
+    }
+
+    generated = {}
+    with LlxClient(config) as client:
+        for sprint in sprints:
+            sid = sprint.get("id", 0)
+            sname = sprint.get("name", f"Sprint {sid}")
+            file_info = SPRINT_FILES.get(sid)
+            if not file_info:
+                continue
+            filename, prompt_tmpl = file_info
+            prompt = prompt_tmpl.format(name=project_name, desc=description)
+
+            with console.status(f"[cyan]{sname} → {filename}[/cyan]"):
+                try:
+                    resp = client.chat([ChatMessage(role="user", content=prompt)], model=model)
+                    code = resp.content
+                    # Strip markdown fences
+                    code = re.sub(r"```[a-z]*\n?", "", code).replace("```", "").strip()
+                    (out / filename).write_text(code, encoding="utf-8")
+                    console.print(f"  [green]✓[/green] {filename} ({len(code.splitlines())} lines)")
+                    generated[filename] = code
+                except Exception as e:
+                    console.print(f"  [yellow]⚠[/yellow] {filename}: {e}")
+
+    # Always write requirements.txt and README
+    (out / "requirements.txt").write_text(
+        "fastapi\nuvicorn[standard]\npydantic>=2.0\nhttpx\npytest\npytest-cov\n",
+        encoding="utf-8",
+    )
+    console.print("  [green]✓[/green] requirements.txt")
+
+    (out / "README.md").write_text(
+        f"# {project_name}\n\n{description}\n\n"
+        "## Run\n```bash\npip install -r requirements.txt\nuvicorn main:app --reload\n```\n\n"
+        "## Test\n```bash\npytest test_api.py -v\n```\n\n"
+        "## Docker\n```bash\ndocker compose up --build\n```\n",
+        encoding="utf-8",
+    )
+    console.print("  [green]✓[/green] README.md")
+    console.print(f"\n[bold green]✅ Code generated in {out.resolve()}[/bold green]")
+
+
+@plan_app.command("run")
+def plan_run(
+    project_dir: str = typer.Argument("./project", help="Directory with generated project"),
+    port: int = typer.Option(8000, "--port", "-p", help="Port to listen on"),
+    install: bool = typer.Option(True, "--install/--no-install", help="pip install -r requirements.txt first"),
+) -> None:
+    """Start the generated FastAPI application with uvicorn."""
+    import subprocess
+
+    proj = Path(project_dir).resolve()
+    if not (proj / "main.py").exists():
+        console.print(f"[red]main.py not found in {proj}[/red]")
+        console.print("  Run `llx plan code strategy.yaml` first.")
+        raise typer.Exit(1)
+
+    if install and (proj / "requirements.txt").exists():
+        console.print("[cyan]Installing dependencies...[/cyan]")
+        subprocess.run(["pip", "install", "-r", "requirements.txt", "-q"], cwd=proj, check=True)
+
+    console.print(f"[bold green]Starting API on http://localhost:{port}[/bold green]")
+    console.print(f"  Docs: http://localhost:{port}/docs")
+    console.print(f"  Health: http://localhost:{port}/health")
+    console.print("  [dim](Ctrl+C to stop)[/dim]\n")
+    subprocess.run(
+        ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", str(port)],
+        cwd=proj,
+    )
+
+
+@plan_app.command("monitor")
+def plan_monitor(
+    strategy: str = typer.Argument("strategy.yaml", help="Path to strategy.yaml"),
+    url: str = typer.Option("http://localhost:8000", "--url", "-u", help="Base URL of the running app"),
+    interval: int = typer.Option(0, "--interval", "-i", help="Repeat every N seconds (0 = once)"),
+) -> None:
+    """Monitor a running application: health check + quality gates summary."""
+    import httpx
+    import time
+    import yaml as _yaml
+
+    with open(strategy, encoding="utf-8") as f:
+        strat = _yaml.safe_load(f)
+
+    project_name = strat.get("name", "App")
+    gates = strat.get("quality_gates", [])
+
+    def _check() -> None:
+        console.print(f"\n[bold]Monitor: {project_name}[/bold]  ({url})")
+        console.print(f"[dim]{time.strftime('%H:%M:%S')}[/dim]\n")
+
+        # Health check
+        try:
+            r = httpx.get(f"{url}/health", timeout=3)
+            if r.status_code == 200:
+                console.print(f"  [green]✓[/green] /health → {r.status_code}  {r.text[:60]}")
+            else:
+                console.print(f"  [yellow]⚠[/yellow] /health → {r.status_code}")
+        except Exception as e:
+            console.print(f"  [red]✗[/red] /health unreachable: {e}")
+
+        # Docs check
+        try:
+            r = httpx.get(f"{url}/docs", timeout=3)
+            icon = "[green]✓[/green]" if r.status_code == 200 else "[yellow]⚠[/yellow]"
+            console.print(f"  {icon} /docs  → {r.status_code}")
+        except Exception:
+            console.print("  [red]✗[/red] /docs unreachable")
+
+        # Quality gates summary
+        if gates:
+            console.print("\n  [bold]Quality Gates (from strategy):[/bold]")
+            for gate in gates:
+                name = gate.get("name") if isinstance(gate, dict) else str(gate)
+                criteria = gate.get("criteria", []) if isinstance(gate, dict) else []
+                console.print(f"    [cyan]•[/cyan] {name}")
+                for c in criteria:
+                    console.print(f"      [dim]- {c}[/dim]")
+
+    if interval > 0:
+        console.print(f"[dim]Monitoring every {interval}s — Ctrl+C to stop[/dim]")
+        try:
+            while True:
+                _check()
+                time.sleep(interval)
+        except KeyboardInterrupt:
+            console.print("\n[dim]Monitor stopped.[/dim]")
+    else:
+        _check()
+
+
 def main() -> None:
     app()
+

@@ -5,6 +5,9 @@ import argparse
 
 from .._utils import cli_main
 from ..cli_utils import cmd_remove_wrapper
+from ..utils._cmd_remove import create_remove_handler
+from ..utils._cmd_status import create_status_handler
+from ..utils._cmd_cleanup import create_cleanup_handler
 
 from .models import VSCodeAccountType, VSCodeAccount, VSCodeInstanceConfig
 from .orchestrator import VSCodeOrchestrator
@@ -74,14 +77,20 @@ def _cmd_add_account(args, orch: VSCodeOrchestrator) -> bool:
     return success
 
 
-def _cmd_remove_account(args, orch: VSCodeOrchestrator) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr="account_id",
-        id_label="Account",
-        remove_func=orch.remove_account,
-        save_func=orch.save_config,
-    )
+# Create remove handlers
+_cmd_remove_account = create_remove_handler(
+    id_attr="account_id",
+    id_label="Account",
+    remove_func=lambda orch, id: orch.remove_account(id),
+    save_func=lambda orch: orch.save_config()
+)
+
+_cmd_remove = create_remove_handler(
+    id_attr="instance_id",
+    id_label="Instance",
+    remove_func=lambda orch, id: orch.remove_instance(id),
+    save_func=lambda orch: orch.save_config()
+)
 
 
 def _cmd_list_accounts(args, orch: VSCodeOrchestrator) -> bool:
@@ -107,16 +116,6 @@ def _cmd_create(args, orch: VSCodeOrchestrator) -> bool:
     if success:
         orch.save_config()
     return success
-
-
-def _cmd_remove(args, orch: VSCodeOrchestrator) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr="instance_id",
-        id_label="Instance",
-        remove_func=orch.remove_instance,
-        save_func=orch.save_config,
-    )
 
 
 def _cmd_start(args, orch: VSCodeOrchestrator) -> bool:
@@ -161,22 +160,19 @@ def _cmd_sessions(args, orch: VSCodeOrchestrator) -> bool:
     return True
 
 
-def _cmd_status(args, orch: VSCodeOrchestrator) -> bool:
-    if args.session_id:
-        status = orch.get_session_status(args.session_id)
-        if status:
-            print(json.dumps(status, indent=2))
-            return True
-        print(f"❌ Session {args.session_id} not found")
-        return False
-    orch.print_status_summary()
-    return True
+# Create status handler
+_cmd_status = create_status_handler(
+    id_attr='session_id',
+    entity_label='Session',
+    get_status_func=lambda orch, id: orch.get_session_status(id),
+    print_summary_func=lambda orch: orch.print_status_summary()
+)
 
 
-def _cmd_cleanup(args, orch: VSCodeOrchestrator) -> bool:
-    orch.save_config()
-    print("✅ Cleanup completed")
-    return True
+# Create cleanup handler
+_cmd_cleanup = create_cleanup_handler(
+    save_func=lambda orch: orch.save_config()
+)
 
 
 def main():

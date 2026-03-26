@@ -37,27 +37,4 @@ def save_json(path: Path, data: Dict[str, Any], label: str = "config") -> bool:
 
 # ── CLI boilerplate ──────────────────────────────────────
 
-def cli_main(
-    build_parser: Callable,
-    dispatch: Callable,
-    factory: Callable,
-    cleanup: Optional[Callable] = None,
-) -> None:
-    """Generic CLI entry point.
-
-    Parameters
-    ----------
-    build_parser : callable returning argparse.ArgumentParser
-    dispatch : callable(args, instance) -> bool
-    factory : callable() -> manager/orchestrator instance
-    cleanup : optional callable(instance) called in finally block
-    """
-    parser = build_parser()
-    args = parser.parse_args()
-    instance = factory()
-    try:
-        success = dispatch(args, instance)
-    finally:
-        if cleanup:
-            cleanup(instance)
-    sys.exit(0 if success else 1)
+from ..utils.cli_main import cli_main

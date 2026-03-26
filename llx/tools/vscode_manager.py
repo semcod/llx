@@ -14,6 +14,7 @@ import requests
 from .docker_manager import DockerManager
 from ._utils import cli_main
 from ._docker import is_container_running as _is_container_running, docker_exec, docker_cp
+from .utils._cmd_uninstall_extension import create_simple_handler
 
 
 class VSCodeManager:
@@ -701,11 +702,12 @@ def _cmd_list_extensions(args: argparse.Namespace, manager: "VSCodeManager") -> 
     return True
 
 
-def _cmd_uninstall_extension(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
-    if not args.extension:
-        print("❌ --extension required for uninstall")
-        return False
-    return manager.uninstall_extension(args.extension)
+# Create uninstall extension handler
+_cmd_uninstall_extension = create_simple_handler(
+    arg_name="extension",
+    arg_label="uninstall",
+    manager_method=lambda mgr, ext: mgr.uninstall_extension(ext)
+)
 
 
 def _cmd_update_extensions(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
@@ -728,11 +730,12 @@ def _cmd_backup(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
     return manager.backup_settings(args.backup_dir)
 
 
-def _cmd_restore(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
-    if not args.backup_dir:
-        print("❌ --backup-dir required for restore")
-        return False
-    return manager.restore_settings(args.backup_dir)
+# Create restore handler
+_cmd_restore = create_simple_handler(
+    arg_name="backup_dir",
+    arg_label="restore",
+    manager_method=lambda mgr, dir: mgr.restore_settings(dir)
+)
 
 
 def _cmd_quick_start(args: argparse.Namespace, manager: "VSCodeManager") -> bool:

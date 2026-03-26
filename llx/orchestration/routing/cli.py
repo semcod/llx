@@ -4,6 +4,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..utils._cmd_cleanup import create_cleanup_handler
 
 from .models import RoutingStrategy, ResourceType, RequestPriority, RoutingRequest
 from .engine import RoutingEngine
@@ -102,10 +103,10 @@ def _cmd_optimize(args, engine: RoutingEngine) -> bool:
     return True
 
 
-def _cmd_cleanup(args, engine: RoutingEngine) -> bool:
-    engine.save_config()
-    print("✅ Cleanup completed")
-    return True
+# Create cleanup handler
+_cmd_cleanup = create_cleanup_handler(
+    save_func=lambda engine: engine.save_config()
+)
 
 
 def main():

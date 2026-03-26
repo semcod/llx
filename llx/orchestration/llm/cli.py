@@ -8,6 +8,8 @@ import argparse
 
 from .._utils import cli_main
 from ..cli_utils import cmd_remove_wrapper
+from ..utils._cmd_remove import create_remove_handler
+from ..utils._cmd_cleanup import create_cleanup_handler
 
 from .models import LLMProviderType, ModelCapability, LLMProvider
 from .orchestrator import LLMOrchestrator
@@ -82,14 +84,13 @@ def _cmd_add_provider(args, orch: LLMOrchestrator) -> bool:
     return success
 
 
-def _cmd_remove_provider(args, orch: LLMOrchestrator) -> bool:
-    return cmd_remove_wrapper(
-        args,
-        id_attr="provider_id",
-        id_label="Provider",
-        remove_func=orch.remove_provider,
-        save_func=orch.save_config,
-    )
+# Create remove provider handler
+_cmd_remove_provider = create_remove_handler(
+    id_attr="provider_id",
+    id_label="Provider",
+    remove_func=lambda orch, id: orch.remove_provider(id),
+    save_func=lambda orch: orch.save_config()
+)
 
 
 def _cmd_list_providers(args, orch: LLMOrchestrator) -> bool:
@@ -142,10 +143,10 @@ def _cmd_usage(args, orch: LLMOrchestrator) -> bool:
     return True
 
 
-def _cmd_cleanup(args, orch: LLMOrchestrator) -> bool:
-    orch.save_config()
-    print("✅ Cleanup completed")
-    return True
+# Create cleanup handler
+_cmd_cleanup = create_cleanup_handler(
+    save_func=lambda orch: orch.save_config()
+)
 
 
 def main():

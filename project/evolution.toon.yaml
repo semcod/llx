@@ -1,53 +1,49 @@
-# code2llm/evolution | 989 func | 89f | 2026-03-26
+# code2llm/evolution | 996 func | 96f | 2026-03-26
 
-NEXT[9] (ranked by impact):
+NEXT[8] (ranked by impact):
   [1] !! SPLIT           llx/mcp/tools.py
-      WHY: 748L, 1 classes, max CC=13
-      EFFORT: ~4h  IMPACT: 9724
+      WHY: 747L, 1 classes, max CC=13
+      EFFORT: ~4h  IMPACT: 9711
 
   [2] !! SPLIT           llx/tools/config_manager.py
-      WHY: 790L, 1 classes, max CC=12
-      EFFORT: ~4h  IMPACT: 9480
+      WHY: 795L, 1 classes, max CC=12
+      EFFORT: ~4h  IMPACT: 9540
 
   [3] !! SPLIT           llx/tools/vscode_manager.py
-      WHY: 789L, 1 classes, max CC=10
-      EFFORT: ~4h  IMPACT: 7890
+      WHY: 792L, 1 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 7920
 
-  [4] !  SPLIT-FUNC      plan_generate  CC=20  fan=23
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 460
-
-  [5] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
+  [4] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 420
 
-  [6] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
+  [5] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 247
 
-  [7] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
+  [6] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 180
 
-  [8] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
+  [7] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 165
 
-  [9] !  SPLIT-FUNC      _render_tiers_table  CC=15  fan=9
+  [8] !  SPLIT-FUNC      _render_tiers_table  CC=15  fan=9
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 135
 
 
 RISKS[3]:
-  ⚠ Splitting llx/tools/config_manager.py may break 49 import paths
-  ⚠ Splitting llx/tools/vscode_manager.py may break 40 import paths
+  ⚠ Splitting llx/tools/config_manager.py may break 45 import paths
+  ⚠ Splitting llx/tools/vscode_manager.py may break 38 import paths
   ⚠ Splitting llx/mcp/tools.py may break 14 import paths
 
 METRICS-TARGET:
   CC̄:          3.8 → ≤2.7
   max-CC:      21 → ≤10
   god-modules: 15 → 0
-  high-CC(≥15): 6 → ≤3
+  high-CC(≥15): 5 → ≤2
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

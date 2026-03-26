@@ -1,84 +1,60 @@
 #!/usr/bin/env bash
-# python-api example: 2-step workflow
-# Krok 1: planfile generuje plan YAML
-# Krok 2: llx plan apply wykonuje plan krok po kroku
-
+# examples/python-api-full/run.sh
+#
+# Kompletny workflow: prompt → planfile → kod → uruchomienie → monitoring
+# Użycie: bash run.sh ["Opis projektu"]
+#
 set -e
 
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
+DESCRIPTION="${1:-Zbuduj REST API do zarządzania listą zadań Todo z FastAPI}"
+STRATEGY="strategy.yaml"
+PROJECT="./my-api"
+PORT=8000
 
-# ── Resolve llx ───────────────────────────────────────────────
-if ! command -v llx &>/dev/null; then
-    LLX_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-    if [ -x "$LLX_ROOT/.venv/bin/llx" ]; then
-        shopt -s expand_aliases
-        alias llx="$LLX_ROOT/.venv/bin/llx"
-    else
-        export PYTHONPATH="$LLX_ROOT"
-        shopt -s expand_aliases
-        alias llx="$LLX_ROOT/.venv/bin/python3 -m llx"
-    fi
-fi
+# Locate llx in repo venv
+LLX_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+LLX="${LLX_ROOT}/.venv/bin/llx"
+PLANFILE="${LLX_ROOT}/../planfile/.venv/bin/planfile"
 
-# ── Resolve planfile ──────────────────────────────────────────
-if ! command -v planfile &>/dev/null; then
-    PF_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../../planfile" && pwd)"
-    if [ -x "$PF_ROOT/.venv/bin/planfile" ]; then
-        shopt -s expand_aliases
-        alias planfile="$PF_ROOT/.venv/bin/planfile"
-    else
-        export PYTHONPATH="$PF_ROOT:$PYTHONPATH"
-        shopt -s expand_aliases
-        alias planfile="$PF_ROOT/.venv/bin/python3 -m planfile"
-    fi
-fi
-
-OUTPUT_STRATEGY="api-strategy.yaml"
-PROJECT_DIR="./my-api"
-
-echo -e "${BLUE}══════════════════════════════════════════════════${NC}"
-echo -e "${BLUE}  Python API — 2-krokowy Workflow planfile + llx  ${NC}"
-echo -e "${BLUE}══════════════════════════════════════════════════${NC}"
-
-# ─────────────────────────────────────────────────────────────
-# KROK 1: planfile generuje strategię
-# ─────────────────────────────────────────────────────────────
-echo -e "\n${YELLOW}━━━ KROK 1: Generowanie planu (planfile) ━━━${NC}"
-
-if [ -f "$OUTPUT_STRATEGY" ]; then
-    echo -e "  Używam istniejącego pliku: ${OUTPUT_STRATEGY}"
-else
-    echo -e "  Generuję szablon dla projektu API..."
-    planfile template api backend --output "$OUTPUT_STRATEGY"
-    echo -e "  ${GREEN}✓ Wygenerowano: ${OUTPUT_STRATEGY}${NC}"
-fi
-
-echo -e "\n  Walidacja strategii..."
-planfile validate "$OUTPUT_STRATEGY"
-echo -e "  ${GREEN}✓ Strategia jest poprawna${NC}"
-
-echo -e "\n  Statystyki planu:"
-planfile stats "$OUTPUT_STRATEGY"
-
-# ─────────────────────────────────────────────────────────────
-# KROK 2: llx wykonuje plan krok po kroku
-# ─────────────────────────────────────────────────────────────
-echo -e "\n${YELLOW}━━━ KROK 2: Wykonanie planu (llx plan apply) ━━━${NC}"
-echo -e "  Tryb: ${BLUE}dry-run${NC} (usuń --dry-run aby realnie wykonać)"
+echo "═══════════════════════════════════════════"
+echo "  Python API — planfile + llx workflow"
+echo "═══════════════════════════════════════════"
+echo "  Opis : $DESCRIPTION"
 echo ""
 
-mkdir -p "$PROJECT_DIR"
+# ── KROK 1: Generuj planfile ─────────────────────────────────
+echo "▶ KROK 1: Generowanie planfile (LLM free tier)"
+"$LLX" plan generate . \
+    --profile free \
+    --sprints 4 \
+    --focus api \
+    --output "$STRATEGY"
 
-llx plan apply "$OUTPUT_STRATEGY" "$PROJECT_DIR" --dry-run
+# Walidacja planfile (jeśli planfile jest dostępny)
+if [ -x "$PLANFILE" ]; then
+    echo ""
+    "$PLANFILE" validate "$STRATEGY"
+    "$PLANFILE" stats "$STRATEGY"
+fi
 
 echo ""
-echo -e "${GREEN}✅ Przykład ukończony!${NC}"
+
+# ── KROK 2: Generuj kod ──────────────────────────────────────
+echo "▶ KROK 2: Generowanie kodu Python API (LLM free tier)"
+"$LLX" plan code "$STRATEGY" "$PROJECT" --profile free
+
 echo ""
-echo -e "${BLUE}Następne kroki:${NC}"
-echo "  1. Przejrzyj plan: planfile review $OUTPUT_STRATEGY"
-echo "  2. Uruchom realnie: llx plan apply $OUTPUT_STRATEGY $PROJECT_DIR"
-echo "  3. Sprawdź sprint 1: llx plan apply $OUTPUT_STRATEGY $PROJECT_DIR --sprint 1"
+
+# ── KROK 3: Uruchom aplikację ────────────────────────────────
+echo "▶ KROK 3: Uruchamianie API"
+echo "  (w osobnym terminalu: llx plan run $PROJECT)"
+echo ""
+echo "  Aby uruchomić teraz:"
+echo "    $LLX plan run $PROJECT"
+echo ""
+echo "  Aby monitorować (po uruchomieniu):"
+echo "    $LLX plan monitor $STRATEGY --url http://localhost:$PORT"
+echo ""
+echo "═══════════════════════════════════════════"
+echo "  ✅ Gotowe! Projekt w: $PROJECT"
+echo "═══════════════════════════════════════════"
