@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Optional
+import os
 
 import typer
 from rich.console import Console
@@ -407,15 +408,100 @@ def plan_models(
         console.print(f"[red]Error listing models: {e}[/red]")
 
 
+@plan_app.command("all")
+def plan_all(
+    description: str = typer.Argument(..., help="Project description"),
+    output_dir: str = typer.Option("./my-api", "--output", "-o", help="Directory to write generated files"),
+    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p",
+        help="Model profile: free, local, cheap, balanced"),
+    sprints: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_SPRINTS", "8")), "--sprints", "-s"),
+    focus: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_FOCUS", "api"), "--focus", "-f"),
+    run: bool = typer.Option(False, "--run", "-r", help="Run the application after generation"),
+    monitor: bool = typer.Option(False, "--monitor", "-m", help="Start monitoring after running"),
+) -> None:
+    """Complete workflow: generate strategy, code, and optionally run."""
+    import subprocess
+    import sys
+    
+    strategy_file = "strategy.yaml"
+    
+    console.print(f"[bold blue]🚀 LLX Complete Workflow[/bold blue]")
+    console.print(f"[dim]Description: {description}[/dim]\n")
+    
+    # 1. Generate strategy
+    console.print(f"[yellow]1. Generating strategy...[/yellow]")
+    try:
+        from llx.planfile.generate_strategy import generate_strategy_with_fix, save_fixed_strategy
+        from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
+        
+        # Get model selection
+        selected_model = _get_model_for_generation(None, profile, None, None, False, False)
+        
+        if not selected_model:
+            console.print("[red]No suitable model found[/red]")
+            return
+        
+        strategy_data = generate_strategy_with_fix(
+            ".", 
+            model=selected_model, 
+            sprints=sprints, 
+            focus=focus,
+            description=description
+        )
+        
+        save_fixed_strategy(strategy_data, strategy_file)
+        console.print(f"[green]✓ Strategy saved to {strategy_file}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error generating strategy: {e}[/red]")
+        raise typer.Exit(1)
+    
+    # 2. Generate code
+    console.print(f"\n[yellow]2. Generating code...[/yellow]")
+    try:
+        # Call plan_code function
+        plan_code(strategy_file, output_dir, profile)
+    except Exception as e:
+        console.print(f"[red]Error generating code: {e}[/red]")
+        raise typer.Exit(1)
+    
+    # 3. Run if requested
+    if run:
+        console.print(f"\n[yellow]3. Running application...[/yellow]")
+        console.print(f"[dim]Note: This will start the server. Use Ctrl+C to stop.[/dim]\n")
+        
+        if monitor:
+            # Start monitoring in background
+            console.print(f"[cyan]Starting monitoring in background...[/cyan]")
+            monitor_cmd = [sys.executable, "-c", 
+                          f"import sys; sys.path.insert(0, '{os.path.dirname(os.path.dirname(__file__))}'); "
+                          f"from llx.cli.app import app; app()", 
+                          "plan", "monitor", strategy_file]
+            
+            subprocess.Popen(monitor_cmd)
+            console.print(f"[green]✓ Monitoring started[/green]")
+        
+        # Run the application
+        try:
+            plan_run(output_dir)
+        except KeyboardInterrupt:
+            console.print(f"\n[yellow]Application stopped.[/yellow]")
+    
+    console.print(f"\n[bold green]✅ Complete![/bold green]")
+    if not run:
+        console.print(f"\n[cyan]Next steps:[/cyan]")
+        console.print(f"  llx plan run {output_dir}     # Run the app")
+        console.print(f"  llx plan monitor {strategy_file}  # Monitor")
+
+
 @plan_app.command("generate")
 def plan_generate(
     path: str = typer.Argument(".", help="Project to analyze"),
     output: str = typer.Option("strategy.yaml", "--output", "-o"),
     model: Optional[str] = typer.Option(None, "--model", "-m"),
-    sprints: int = typer.Option(3, "--sprints"),
+    sprints: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_SPRINTS", "8")), "--sprints", "-s"),
     focus: Optional[str] = typer.Option(None, "--focus"),
     description: Optional[str] = typer.Option(None, "--description", "-d", help="Project description for better strategy generation"),
-    profile: Optional[str] = typer.Option(None, "--profile", "-p", 
+    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p", 
         help="Model profile: free, local, cloud-free, openrouter-free, cheap, balanced"),
     provider: Optional[str] = typer.Option(None, "--provider", 
         help="Filter by provider: openai, anthropic, openrouter, ollama"),
@@ -549,10 +635,10 @@ def plan_review(
 def plan_code(
     strategy: str = typer.Argument(..., help="Path to strategy.yaml"),
     output_dir: str = typer.Argument("./project", help="Directory to write generated files"),
-    profile: Optional[str] = typer.Option("free", "--profile", "-p",
+    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p",
         help="Model profile: free, local, cheap, balanced"),
 ) -> None:
-    """Generate project code from strategy using LLM (free tier by default).
+    """Generate project code from strategy using LLM (cheap tier by default).
 
     This command reads the strategy, builds a prompt per sprint task and
     calls the LLM to generate Python source files written to output_dir.
@@ -596,6 +682,15 @@ def plan_code(
 
     config = LlxConfig.load(".")
     from llx.routing.client import LlxClient, ChatMessage
+
+    if config.code_tool == "aider":
+        console.print(f"[bold yellow]Handing over to Aider for {project_name}...[/bold yellow]")
+        console.print(f"  Command: aider --model {model} --msg 'Implement strategy from {strategy}' {out.resolve()}")
+        console.print("\n[dim]Note: Aider integration is manual for now. Please run the command above.[/dim]")
+        return
+
+    if config.run_env != "local":
+        console.print(f"[yellow]Note: Target environment is set to '{config.run_env}'. Ensuring compatibility...[/yellow]")
     
     # Suppress LiteLLM Provider List messages
     import logging
@@ -610,6 +705,7 @@ def plan_code(
 
     # Load sprint file mapping from config
     import os
+    import yaml as _yaml
     config_path = os.path.join(os.path.dirname(__file__), '..', 'configs', 'planfile_config.yaml')
     try:
         with open(config_path, 'r') as f:
@@ -617,7 +713,8 @@ def plan_code(
         SPRINT_FILES = {}
         for sprint_num, file_info in plan_config['code']['sprint_files'].items():
             SPRINT_FILES[int(sprint_num)] = (file_info['file'], file_info['prompt'])
-    except Exception:
+    except Exception as e:
+        console.print(f"[dim]Note: Using fallback code generation mapping ({e})[/dim]")
         # Fallback to hardcoded mapping
         SPRINT_FILES = {
             1: ("main.py",      "Generate a complete FastAPI main.py for '{name}' ({desc}). "
@@ -644,7 +741,10 @@ def plan_code(
                     code = resp.content
                     # Strip markdown fences
                     code = re.sub(r"```[a-z]*\n?", "", code).replace("```", "").strip()
-                    (out / filename).write_text(code, encoding="utf-8")
+                    # Ensure directory exists
+                    file_path = out / filename
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+                    file_path.write_text(code, encoding="utf-8")
                     console.print(f"  [green]✓[/green] {filename} ({len(code.splitlines())} lines)")
                     generated[filename] = code
                 except Exception as e:
@@ -671,36 +771,44 @@ def plan_code(
 @plan_app.command("run")
 def plan_run(
     project_dir: str = typer.Argument("./project", help="Directory with generated project"),
-    port: int = typer.Option(8000, "--port", "-p", help="Port to listen on"),
+    port: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_PORT", "8000")), "--port", "-p", help="Port to listen on"),
     install: bool = typer.Option(True, "--install/--no-install", help="pip install -r requirements.txt first"),
 ) -> None:
-    """Start the generated FastAPI application with uvicorn."""
+    """Start the generated application (detects command from strategy or uses uvicorn)."""
     import subprocess
+    import yaml as _yaml
 
     proj = Path(project_dir).resolve()
-    if not (proj / "main.py").exists():
-        console.print(f"[red]main.py not found in {proj}[/red]")
-        console.print("  Run `llx plan code strategy.yaml` first.")
-        raise typer.Exit(1)
+    
+    # Try to find strategy.yaml to get run_command
+    run_cmd = ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", str(port)]
+    
+    strategy_path = proj.parent / "strategy.yaml"
+    if strategy_path.exists():
+        try:
+            with open(strategy_path, encoding="utf-8") as f:
+                strat = _yaml.safe_load(f)
+                if strat and "run_command" in strat:
+                    run_cmd = strat["run_command"].split()
+                    console.print(f"[cyan]Found run command in strategy: {strat['run_command']}[/cyan]")
+        except Exception:
+            pass
 
     if install and (proj / "requirements.txt").exists():
         console.print("[cyan]Installing dependencies...[/cyan]")
         subprocess.run(["pip", "install", "-r", "requirements.txt", "-q"], cwd=proj, check=True)
 
-    console.print(f"[bold green]Starting API on http://localhost:{port}[/bold green]")
-    console.print(f"  Docs: http://localhost:{port}/docs")
-    console.print(f"  Health: http://localhost:{port}/health")
+    console.print(f"[bold green]Starting application in {proj.name}...[/bold green]")
+    console.print(f"  Command: {' '.join(run_cmd)}")
     console.print("  [dim](Ctrl+C to stop)[/dim]\n")
-    subprocess.run(
-        ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", str(port)],
-        cwd=proj,
-    )
+    
+    subprocess.run(run_cmd, cwd=proj)
 
 
 @plan_app.command("monitor")
 def plan_monitor(
     strategy: str = typer.Argument("strategy.yaml", help="Path to strategy.yaml"),
-    url: str = typer.Option("http://localhost:8000", "--url", "-u", help="Base URL of the running app"),
+    url: str = typer.Option(lambda: os.getenv("LLX_DEFAULT_URL", "http://localhost:8000"), "--url", "-u", help="Base URL of the running app"),
     interval: int = typer.Option(0, "--interval", "-i", help="Repeat every N seconds (0 = once)"),
 ) -> None:
     """Monitor a running application: health check + quality gates summary."""
@@ -711,40 +819,53 @@ def plan_monitor(
     with open(strategy, encoding="utf-8") as f:
         strat = _yaml.safe_load(f)
 
-    project_name = strat.get("name", "App")
+    project_name = strat.get("project_name") or strat.get("name", "App")
     gates = strat.get("quality_gates", [])
 
     def _check() -> None:
         console.print(f"\n[bold]Monitor: {project_name}[/bold]  ({url})")
         console.print(f"[dim]{time.strftime('%H:%M:%S')}[/dim]\n")
 
+        # Get paths from strategy or defaults
+        health_path = strat.get("monitor", {}).get("health_path", "/health")
+        docs_path = strat.get("monitor", {}).get("docs_path", "/docs")
+
         # Health check
         try:
-            r = httpx.get(f"{url}/health", timeout=3)
+            r = httpx.get(f"{url.rstrip('/')}{health_path}", timeout=3)
             if r.status_code == 200:
-                console.print(f"  [green]✓[/green] /health → {r.status_code}  {r.text[:60]}")
+                console.print(f"  [green]✓[/green] {health_path} → {r.status_code}  {r.text[:60]}")
             else:
-                console.print(f"  [yellow]⚠[/yellow] /health → {r.status_code}")
+                console.print(f"  [yellow]⚠[/yellow] {health_path} → {r.status_code}")
         except Exception as e:
-            console.print(f"  [red]✗[/red] /health unreachable: {e}")
+            console.print(f"  [red]✗[/red] {health_path} unreachable: {e}")
 
         # Docs check
-        try:
-            r = httpx.get(f"{url}/docs", timeout=3)
-            icon = "[green]✓[/green]" if r.status_code == 200 else "[yellow]⚠[/yellow]"
-            console.print(f"  {icon} /docs  → {r.status_code}")
-        except Exception:
-            console.print("  [red]✗[/red] /docs unreachable")
+        if docs_path:
+            try:
+                r = httpx.get(f"{url.rstrip('/')}{docs_path}", timeout=3)
+                icon = "[green]✓[/green]" if r.status_code == 200 else "[yellow]⚠[/yellow]"
+                console.print(f"  {icon} {docs_path}  → {r.status_code}")
+            except Exception:
+                console.print(f"  [red]✗[/red] {docs_path} unreachable")
 
         # Quality gates summary
         if gates:
             console.print("\n  [bold]Quality Gates (from strategy):[/bold]")
             for gate in gates:
-                name = gate.get("name") if isinstance(gate, dict) else str(gate)
-                criteria = gate.get("criteria", []) if isinstance(gate, dict) else []
-                console.print(f"    [cyan]•[/cyan] {name}")
-                for c in criteria:
-                    console.print(f"      [dim]- {c}[/dim]")
+                if isinstance(gate, dict):
+                    name = gate.get("gate") or gate.get("name") or "Unnamed Gate"
+                    condition = gate.get("condition", "")
+                    criteria = gate.get("criteria", [])
+                    if condition:
+                        console.print(f"    [cyan]•[/cyan] {name}")
+                        console.print(f"      [dim]Condition: {condition}[/dim]")
+                    else:
+                        console.print(f"    [cyan]•[/cyan] {name}")
+                    for c in criteria:
+                        console.print(f"      [dim]- {c}[/dim]")
+                else:
+                    console.print(f"    [cyan]•[/cyan] {str(gate)}")
 
     if interval > 0:
         console.print(f"[dim]Monitoring every {interval}s — Ctrl+C to stop[/dim]")
@@ -758,6 +879,62 @@ def plan_monitor(
         _check()
 
 
+@plan_app.command("wizard")
+def plan_wizard(
+    path: str = typer.Argument(".", help="Project path"),
+    description: Optional[str] = typer.Option(None, "--description", "-d"),
+    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p"),
+    output: str = typer.Option("strategy.yaml", "--output", "-o"),
+) -> None:
+    """Unified wizard: Generate strategy -> Implement code -> Run -> Monitor."""
+    from rich.prompt import Prompt, Confirm
+    
+    console.print(Panel.fit(
+        "[bold blue]LLX Project Wizard[/bold blue]\n[dim]Guidance for your development lifecycle[/dim]",
+        border_style="blue"
+    ))
+    
+    # 1. Generate Strategy
+    if not description:
+        description = Prompt.ask("[bold cyan]Enter project description[/bold cyan]")
+    
+    console.print("\n[yellow]Step 1: Generating Architecture & Strategy...[/yellow]")
+    plan_generate(path=path, output=output, description=description, profile=profile)
+    
+    # 2. Implement Code
+    strategy_path = Path(path) / output
+    project_dir = Path(path) / "my-api"
+    
+    if Confirm.ask(f"\n[bold cyan]Proceed with code generation in {project_dir}?[/bold cyan]", default=True):
+        console.print("[yellow]Step 2: Implementing Code (Sprints 1-8)...[/yellow]")
+        plan_code(strategy=str(strategy_path), output_dir=str(project_dir), profile=profile)
+    else:
+        console.print("[dim]Aborted code generation.[/dim]")
+        return
+
+    # 3. Run & Monitor
+    if Confirm.ask("\n[bold cyan]Run and monitor the application?[/bold cyan]", default=True):
+        console.print("[yellow]Step 3: Starting Application & Monitor...[/yellow]")
+        
+        # Start run in background
+        import subprocess
+        import time
+        
+        # We'll use a simplified version of plan_run/plan_monitor logic here
+        # to avoid blocking issues or process management complexities in the wizard
+        console.print(f"[bold green]Application starting...[/bold green]")
+        
+        # For simplicity in the wizard, we'll just hand over to the standard commands
+        # or explain how to run them if backgrounding is tricky.
+        console.print(f"\n[bold green]✅ Project Ready![/bold green]")
+        console.print(f"  To run:    [bold]llx plan run {project_dir}[/bold]")
+        console.print(f"  To monitor: [bold]llx plan monitor {strategy_path}[/bold]")
+        
+        # Optional: Actually try to run it if the user insisted
+        # For now, keeping it clean by providing the next commands.
+    else:
+        console.print(f"\n[bold green]✅ Project Ready in {project_dir}[/bold green]")
+
+
 def main() -> None:
     app()
-

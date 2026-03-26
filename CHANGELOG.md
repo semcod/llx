@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.32] - 2026-03-26
+
+### Docs
+- Update EXAMPLES_MIGRATION_PLAN.md
+- Update EXAMPLES_REFACTORING_SPEC.md
+- Update LLX_ENHANCEMENT_PLAN.md
+- Update examples/python-api/QUICKSTART.md
+- Update examples/python-api/my-api-complete/README.md
+- Update examples/python-api/my-api-complete/docs/api.md
+
+### Other
+- Update .env.example
+- Update examples/basic/run.sh
+- Update examples/python-api/my-api-complete/.github/workflows/ci-cd.yml
+- Update examples/python-api/my-api-complete/Dockerfile
+- Update examples/python-api/my-api-complete/docker-compose.yml
+- Update examples/python-api/my-api-complete/main.py
+- Update examples/python-api/my-api-complete/models.py
+- Update examples/python-api/my-api-complete/monitoring.py
+- Update examples/python-api/my-api-complete/requirements.txt
+- Update examples/python-api/my-api-complete/test_api.py
+- ... and 27 more files
+
 ## [0.1.31] - 2026-03-26
 
 ### Docs

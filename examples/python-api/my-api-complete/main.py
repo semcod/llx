@@ -1,14 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from typing import List, Optional
-from uuid import uuid4, UUID
+import uuid
 
-app = FastAPI(title="RestaurantOrderAPI", description="REST API for managing restaurant orders")
+app = FastAPI(title="RestaurantOrderAPI", description="API for managing restaurant orders")
 
-# In-memory storage
+# In-memory storage for orders
 orders_db = {}
 
-# Models
+# Pydantic models
 class OrderItem(BaseModel):
     name: str
     quantity: int
@@ -16,7 +16,7 @@ class OrderItem(BaseModel):
 
 class OrderCreate(BaseModel):
     customer_name: str
-    items: List[OrderItem]
+    items: List[Order游戏副本]
     status: str = "received"
 
 class OrderUpdate(BaseModel):
@@ -25,17 +25,17 @@ class OrderUpdate(BaseModel):
     status: Optional[str] = None
 
 class Order(OrderCreate):
-    id: UUID
+    id: str
 
 # Health check endpoint
-@app.get("/health")
+@app.get("/health", status_code=status.HTTP_200_OK)
 def health_check():
     return {"status": "healthy"}
 
-# Create order
-@app.post("/orders", response_model=Order, status_code=201)
+# Create a new order
+@app.post("/orders", response_model=Order, status_code=status.HTTP_201_CREATED)
 def create_order(order: OrderCreate):
-    order_id = uuid4()
+    order_id = str(uuid.uuid4())
     new_order = Order(id=order_id, **order.dict())
     orders_db[order_id] = new_order
     return new_order
@@ -47,34 +47,40 @@ def get_orders():
 
 # Get order by ID
 @app.get("/orders/{order_id}", response_model=Order)
-def get_order(order_id: UUID):
+def get_order(order_id: str):
     if order_id not in orders_db:
-        raise HTTPException(status_code=404, detail="Order not found")
-    return orders_db[order_id]
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Order with id {order_id} not found"
+        )
+    return orders_db[order游戏副本]
 
-# Update order
+# Update order by ID
 @app.put("/orders/{order_id}", response_model=Order)
-def update_order(order_id: UUID, order_update: OrderUpdate):
+def update_order(order_id: str, order: OrderUpdate):
     if order_id not in orders_db:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Order with id {order_id} not found"
+        )
     
     existing_order = orders_db[order_id]
     
-    if order_update.customer_name is not None:
-        existing_order.customer_name = order_update.customer_name
-    if order_update.items is not None:
-        existing_order.items = order_update.items
-    if order_update.status is not None:
-        existing_order.status = order_update.status
+    update_data = order.dict(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(existing_order, field, value)
     
     orders_db[order_id] = existing_order
     return existing_order
 
-# Delete order
-@app.delete("/orders/{order_id}", status_code=204)
-def delete_order(order_id: UUID):
+# Delete order by ID
+@app.delete("/orders/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_order(order_id: str):
     if order_id not in orders_db:
-        raise HTTPException(status_code=404, detail="Order not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Order with id {order_id} not found"
+        )
     
     del orders_db[order_id]
     return None

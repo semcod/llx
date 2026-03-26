@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# examples/python-api/run.sh
+# Simple LLX workflow - all logic handled by LLX
+
+set -e
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# Project configuration
+DESCRIPTION="${1:-}"
+PROJECT="${2:-./my-api}"
+
+echo -e "${BOLD}🚀 LLX Python API Generator${NC}"
+echo -e "${CYAN}────────────────────────${NC}"
+
+# Use LLX for everything
+# 1. Generate planfile
+echo -e "\n${YELLOW}Step 1: Architecture & Strategy Generation${NC}"
+DEFAULT_DESC="A simple REST API for notes management"
+read -p "Enter project description (default: ${DESCRIPTION:-$DEFAULT_DESC}): " USER_DESC
+DESCRIPTION=${USER_DESC:-${DESCRIPTION:-$DEFAULT_DESC}}
+
+llx plan generate . --description "$DESCRIPTION"
+
+# 2. Generate code
+echo -e "\n${YELLOW}Step 2: Code Implementation (8 Sprints)${NC}"
+echo -e "${CYAN}Using tool:${NC} ${LLX_CODE_TOOL:-internal}"
+echo -e "${CYAN}Target environment:${NC} ${LLX_RUN_ENV:-local}"
+echo -e "${CYAN}Model tier:${NC} ${LLX_DEFAULT_PROFILE:-cheap}"
+
+read -p "Proceed with code generation? [Y/n] " PROCEED
+if [[ $PROCEED =~ ^[Nn]$ ]]; then
+    echo "Aborted."
+    exit 1
+fi
+
+llx plan code strategy.yaml "$PROJECT"
+
+# 3. Run and Monitor
+echo -e "\n${YELLOW}Step 3: Run & Monitor${NC}"
+echo -e "Starting application in background..."
+llx plan run "$PROJECT" &
+RUN_PID=$!
+sleep 3
+
+echo -e "\n${YELLOW}Step 4: Monitoring${NC}"
+llx plan monitor strategy.yaml --interval 10

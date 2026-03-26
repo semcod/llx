@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+# examples/python-api/run.sh
+# Enhanced workflow: tool selection → planfile → code → run → monitor
+
+set -e
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# Load configuration from .env if exists
+if [ -f ".env" ]; then
+    source .env
+fi
+
+# Default values (can be overridden by .env)
+LLX_TOOL="${LLX_TOOL:-llx}"
+LLX_PROFILE="${LLX_PROFILE:-cheap}"
+LLX_SPRINTS="${LLX_SPRINTS:-8}"
+LLX_PORT="${LLX_PORT:-8000}"
+LLX_HOST="${LLX_HOST:-0.0.0.0}"
+MONITOR_INTERVAL="${MONITOR_INTERVAL:-30}"
+AUTO_INSTALL="${AUTO_INSTALL:-true}"
+
+# Support description as argument
+DESCRIPTION="${1:-}"
+
+# Interactive mode if no description provided
+if [ -z "$DESCRIPTION" ]; then
+    echo -e "${BLUE}🚀 LLX Python API Generator${NC}"
+    echo -e "${CYAN}────────────────────────────${NC}"
+    echo
+    read -p "📝 Opisz projekt do wygenerowania: " DESCRIPTION
+    echo
+    
+    # Tool selection
+    echo -e "${YELLOW}Wybierz narzędzie do generowania kodu:${NC}"
+    echo "1) llx (wbudowane)"
+    echo "2) aider (AI pair programming)"
+    echo "3) cursor (IDE z AI)"
+    echo
+    while true; do
+        read -p "Twój wybór [1-3]: " tool_choice
+        case $tool_choice in
+            1) LLX_TOOL="llx"; break;;
+            2) LLX_TOOL="aider"; break;;
+            3) LLX_TOOL="cursor"; break;;
+            *) echo -e "${RED}Nieprawidłowy wybór. Spróbuj ponownie.${NC}";;
+        esac
+    done
+    
+    # Environment selection
+    echo
+    echo -e "${YELLOW}Wybierz środowisko:${NC}"
+    echo "1) lokalny development"
+    echo "2) docker kontener"
+    echo "3) chmura (AWS/azure/GCP)"
+    echo
+    while true; do
+        read -p "Twój wybór [1-3]: " env_choice
+        case $env_choice in
+            1) ENVIRONMENT="local"; break;;
+            2) ENVIRONMENT="docker"; break;;
+            3) ENVIRONMENT="cloud"; break;;
+            *) echo -e "${RED}Nieprawidłowy wybór. Spróbuj ponownie.${NC}";;
+        esac
+    done
+    
+    echo
+    echo -e "${CYAN}Konfiguracja:${NC}"
+    echo "  • Narzędzie: ${LLX_TOOL}"
+    echo "  • Profil: ${LLX_PROFILE} (cheap tier)"
+    echo "  • Sprinty: ${LLX_SPRINTS}"
+    echo "  • Środowisko: ${ENVIRONMENT}"
+    echo "  • Opis: ${DESCRIPTION}"
+    echo
+    read -p "Kontynuować? [T/n]: " confirm
+    if [[ $confirm =~ ^[Nn]$ ]]; then
+        echo -e "${RED}Anulowano.${NC}"
+        exit 0
+    fi
+else
+    ENVIRONMENT="local"  # Default when description is provided
+fi
+
+# Project configuration
+STRATEGY="strategy.yaml"
+PROJECT="./my-api"
+
+# ── Setup llx alias ──────────────────────────────────────────
+if ! command -v llx &>/dev/null; then
+    LLX_VENV="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/.venv/bin/llx"
+    if [ -x "$LLX_VENV" ]; then
+        alias llx="$LLX_VENV"
+    else
+        echo -e "${RED}Error: llx not found. Please install it first.${NC}"
+        exit 1
+    fi
+fi
+shopt -s expand_aliases
+
+echo -e "${BOLD}🚀 Generowanie projektu API${NC}"
+echo -e "${CYAN}─────────────────────────${NC}"
+
+# 1. Generate planfile
+echo -e "\n${YELLOW}1. Generowanie strategii...${NC}"
+if [ -n "$DESCRIPTION" ]; then
+    llx plan generate . --profile "$LLX_PROFILE" --sprints "$LLX_SPRINTS" --focus api -o "$STRATEGY" --description "$DESCRIPTION"
+else
+    llx plan generate . --profile "$LLX_PROFILE" --sprints "$LLX_SPRINTS" --focus api -o "$STRATEGY"
+fi
+
+# 2. Generate code based on selected tool
+echo -e "\n${YELLOW}2. Generowanie kodu (${LLX_TOOL})...${NC}"
+case $LLX_TOOL in
+    "aider")
+        echo -e "${CYAN}Używam aider do generowania kodu...${NC}"
+        aider --message="Implement the API based on $STRATEGY" "$PROJECT"
+        ;;
+    "cursor")
+        echo -e "${CYAN}Otwieram projekt w Cursor...${NC}"
+        cursor "$PROJECT"
+        ;;
+    *)
+        llx plan code "$STRATEGY" "$PROJECT" --profile "$LLX_PROFILE"
+        ;;
+esac
+
+# 3. Setup environment
+echo -e "\n${YELLOW}3. Przygotowanie środowiska (${ENVIRONMENT})...${NC}"
+case $ENVIRONMENT in
+    "docker")
+        if [ -f "$PROJECT/docker-compose.yml" ]; then
+            echo -e "${GREEN}Uruchamiam kontenery Docker...${NC}"
+            cd "$PROJECT"
+            docker-compose up -d
+            echo -e "${GREEN}✓ Kontenery uruchomione${NC}"
+        else
+            echo -e "${YELLOW}Brak docker-compose.yml, używam standardowego uruchomienia${NC}"
+        fi
+        ;;
+    "cloud")
+        echo -e "${CYAN}Konfiguracja deploymentu do chmury...${NC}"
+        echo "TODO: Dodaj konfigurację dla wybranej chmury"
+        ;;
+esac
+
+# 4. Run the application
+echo -e "\n${YELLOW}4. Uruchamianie aplikacji...${NC}"
+if [ "$ENVIRONMENT" != "docker" ] || [ ! -f "$PROJECT/docker-compose.yml" ]; then
+    llx plan run "$PROJECT" --port "$LLX_PORT" --install "$AUTO_INSTALL"
+fi
+
+# 5. Start monitoring in background
+echo -e "\n${YELLOW}5. Uruchamianie monitorowania...${NC}"
+if [ "$MONITOR_INTERVAL" -gt 0 ]; then
+    echo -e "${GREEN}Monitorowanie co $MONITOR_INTERVAL sekund...${NC}"
+    (
+        while true; do
+            llx plan monitor "$STRATEGY" --url "http://localhost:$LLX_PORT"
+            sleep "$MONITOR_INTERVAL"
+        done
+    ) &
+    MONITOR_PID=$!
+    echo -e "${CYAN}Monitorowanie PID: $MONITOR_PID${NC}"
+    echo -e "${YELLOW}Aby zatrzymać: kill $MONITOR_PID${NC}"
+fi
+
+# Summary
+echo -e "\n${BOLD}${GREEN}✅ Projekt wygenerowany pomyślnie!${NC}"
+echo -e "${CYAN}─────────────────────────────────${NC}"
+echo -e "📁 Projekt:     ${PROJECT}"
+echo -e "🌐 URL:          http://localhost:${LLX_PORT}"
+echo -e "📚 Dokumentacja: http://localhost:${LLX_PORT}/docs"
+echo -e "💚 Health:       http://localhost:${LLX_PORT}/health"
+echo -e "📊 Strategia:    ${STRATEGY}"
+if [ -n "$MONITOR_PID" ]; then
+    echo -e "👁️  Monitorowanie: PID $MONITOR_PID"
+fi
+echo
+echo -e "${YELLOW}Przydatne komendy:${NC}"
+echo -e "  llx plan run $PROJECT --port $LLX_PORT"
+echo -e "  llx plan monitor $STRATEGY --url http://localhost:$LLX_PORT"
+echo -e "  llx plan code $STRATEGY $PROJECT --profile $LLX_PROFILE"
+echo
+echo -e "${DIM}Aby zatrzymać aplikację: Ctrl+C${NC}"

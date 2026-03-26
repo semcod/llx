@@ -1,47 +1,9 @@
 #!/usr/bin/env bash
-# examples/python-api/run.sh
-# One-liner workflow: prompt → planfile → code → run → monitor
+# examples/python-api/run.sh - Powered by LLX Wizard
+# Simplest possible workflow: Let LLX handle the lifecycle.
 
-set -e
+DESCRIPTION="${1:-}"
+PROJECT="${2:-./my-api}"
 
-# Support description as argument
-DESCRIPTION="${1:-Zbuduj REST API do zarządzania listą zadań Todo z FastAPI}"
-STRATEGY="strategy.yaml"
-PROJECT="./my-api"
-
-# ── Setup llx alias ──────────────────────────────────────────
-if ! command -v llx &>/dev/null; then
-    LLX_VENV="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/.venv/bin/llx"
-    if [ -x "$LLX_VENV" ]; then
-        alias llx="$LLX_VENV"
-    else
-        echo "Error: llx not found. Please install it first."
-        exit 1
-    fi
-fi
-shopt -s expand_aliases
-
-echo "🚀 Python API Workflow"
-echo "──────────────────────"
-
-# 1. Generate planfile
-echo "1. Generating planfile..."
-if [ -n "$DESCRIPTION" ]; then
-    llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY" --description "$DESCRIPTION"
-else
-    llx plan generate . --profile free --sprints 4 --focus api -o "$STRATEGY"
-fi
-
-# 2. Generate code
-echo -e "\n2. Generating Python code..."
-llx plan code "$STRATEGY" "$PROJECT" --profile free
-
-# 3. Next steps
-echo -e "\n✅ Done! Project in: $PROJECT"
-echo "----------------------------------------"
-echo "To run the app:"
-echo "  llx plan run $PROJECT"
-echo ""
-echo "To monitor (in another terminal):"
-echo "  llx plan monitor $STRATEGY"
-echo "----------------------------------------"
+# Unified command for architecture, code, and guidance
+llx plan wizard --description "$DESCRIPTION" --output strategy.yaml

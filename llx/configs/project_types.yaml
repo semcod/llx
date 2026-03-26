@@ -1,0 +1,108 @@
+project_types:
+  api:
+    display_name: "REST API"
+    default_focus: "api"
+    default_sprints: 8
+    default_framework: "fastapi"
+    supported_frameworks: ["fastapi", "express", "flask", "django", "spring-boot"]
+    detection_patterns:
+      - "*-api"
+      - "*api*"
+      - "rest-*"
+    templates:
+      strategy_template: "api_strategy"
+      code_template: "api_code"
+    monitor:
+      health_path: "/health"
+      docs_path: "/docs"
+    
+  webapp:
+    display_name: "Web Application"
+    default_focus: "webapp"
+    default_sprints: 6
+    default_framework: "react"
+    supported_frameworks: ["react", "vue", "nextjs", "angular", "svelte"]
+    detection_patterns:
+      - "*-app"
+      - "*app*"
+      - "web-*"
+    templates:
+      strategy_template: "webapp_strategy"
+      code_template: "webapp_code"
+    monitor:
+      health_path: "/api/health"
+      docs_path: "/docs"
+      
+  cli:
+    display_name: "CLI Tool"
+    default_focus: "cli"
+    default_sprints: 4
+    default_framework: "click"
+    supported_frameworks: ["click", "commander", "clap", "argparse"]
+    detection_patterns:
+      - "*-cli"
+      - "*cli*"
+      - "tool-*"
+    templates:
+      strategy_template: "cli_strategy"
+      code_template: "cli_code"
+    monitor:
+      health_path: null
+      docs_path: null
+      
+  data:
+    display_name: "Data Processing"
+    default_focus: "data"
+    default_sprints: 6
+    default_framework: "pandas"
+    supported_frameworks: ["pandas", "polars", "spark", "dask"]
+    detection_patterns:
+      - "*-data*"
+      - "*-pipeline*"
+      - "*-analytics*"
+    templates:
+      strategy_template: "data_strategy"
+      code_template: "data_code"
+    monitor:
+      health_path: "/status"
+      docs_path: "/api/docs"
+      
+  ml:
+    display_name: "Machine Learning"
+    default_focus: "ml"
+    default_sprints: 8
+    default_framework: "scikit-learn"
+    supported_frameworks: ["scikit-learn", "tensorflow", "pytorch", "xgboost"]
+    detection_patterns:
+      - "*-ml*"
+      - "*-model*"
+      - "*ml-*"
+    templates:
+      strategy_template: "ml_strategy"
+      code_template: "ml_code"
+    monitor:
+      health_path: "/health"
+      docs_path: "/docs"
+
+# Default settings per project type
+defaults:
+  api:
+    sprints: 8
+    focus: "api"
+    files: ["main.py", "models.py", "test_api.py", "Dockerfile", "docker-compose.yml", "README.md"]
+  webapp:
+    sprints: 6
+    focus: "webapp"
+    files: ["package.json", "src/App.jsx", "src/index.js", "README.md"]
+  cli:
+    sprints: 4
+    focus: "cli"
+    files: ["main.py", "cli.py", "setup.py", "README.md"]
+  data:
+    sprints: 6
+    focus: "data"
+    files: ["pipeline.py", "config.yaml", "requirements.txt", "README.md"]
+  ml:
+    sprints: 8
+    focus: "ml"
+    files: ["model.py", "train.py", "predict.py", "requirements.txt", "README.md"]

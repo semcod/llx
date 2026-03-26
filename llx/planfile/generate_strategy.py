@@ -156,7 +156,7 @@ def _normalize_metadata(data):
     return metadata
 
 
-def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity", description=None):
+def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=8, focus="api", description=None):
     """Generate strategy using llx.planfile."""
     _print_generation_info(project_path, model, sprints, focus, description)
     
@@ -216,9 +216,9 @@ def _build_strategy_prompt(metrics, sprints, focus, description=None):
         return prompt
     except Exception as e:
         # Fallback to hardcoded template if config fails
-        console.print(f"[yellow]Warning: Could not load config, using default template[/yellow]")
+        console.print(f"[yellow]Warning: Could not load config, using default template ({e})[/yellow]")
         return f"""
-Generate a refactoring strategy for this project.
+Generate a project strategy (development or refactoring).
 YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
 
 Project Metrics:
@@ -229,7 +229,7 @@ Project Metrics:
 
 Focus: {focus}
 Number of sprints: {sprints}
-Description: {description or "Generate a refactoring strategy for this project"}
+Description: {description or "Plan the next steps for this project"}
 
 YAML Structure Required:
 project_name: "Name"

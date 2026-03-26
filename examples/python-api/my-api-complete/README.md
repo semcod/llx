@@ -1,6 +1,6 @@
-# My Project
+# RestaurantOrderAPI
 
-Improve code quality
+Zbuduj REST API do zarządzania zamówieniami restauracji
 
 ## Run
 ```bash

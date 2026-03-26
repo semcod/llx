@@ -146,6 +146,8 @@ class LlxConfig:
     enable_redup: bool = True
     enable_vallm: bool = True
     verbose: bool = False
+    code_tool: str = "internal"  # internal, aider, etc.
+    run_env: str = "local"     # local, docker, k8s, etc.
     litellm_config: LiteLLMConfig = field(default_factory=LiteLLMConfig._default_config)
 
     @classmethod
@@ -322,6 +324,10 @@ def _apply_env(config: LlxConfig) -> LlxConfig:
         config.proxy.port = int(port)
     if master_key := os.environ.get("LLX_PROXY_MASTER_KEY"):
         config.proxy.master_key = master_key
+    if tool := os.environ.get("LLX_CODE_TOOL"):
+        config.code_tool = tool
+    if env := os.environ.get("LLX_RUN_ENV"):
+        config.run_env = env
     if os.environ.get("LLX_VERBOSE", "").lower() in ("1", "true", "yes"):
         config.verbose = True
     return config
