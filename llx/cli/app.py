@@ -495,8 +495,8 @@ def plan_all(
     # 2. Generate code
     console.print(f"\n[yellow]2. Generating code...[/yellow]")
     try:
-        # Call plan_code function
-        plan_code(strategy_file, output_dir, profile)
+        # Call internal implementation
+        _plan_code_impl(strategy_file, Path(output_dir), None, profile)
     except Exception as e:
         console.print(f"[red]Error generating code: {e}[/red]")
         raise typer.Exit(1)
@@ -729,20 +729,22 @@ def plan_review(
 
 @plan_app.command("code")
 def plan_code(
-    strategy: str = typer.Argument(..., help="Path to strategy.yaml"),
+    strategy: str = typer.Argument("strategy.yaml", help="Path to strategy.yaml"),
     output_dir: str = typer.Argument("./project", help="Directory to write generated files"),
-    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p",
-        help="Model profile: free, local, cheap, balanced"),
+    model: Optional[str] = typer.Option(None, "--model", "-m"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p"),
 ) -> None:
-    """Generate project code from strategy using LLM (cheap tier by default).
+    """Implement the strategy sprint-by-sprint."""
+    _plan_code_impl(strategy, Path(output_dir), model, profile)
 
-    This command reads the strategy, builds a prompt per sprint task and
-    calls the LLM to generate Python source files written to output_dir.
-    """
+def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Optional[str]) -> None:
+    """Internal implementation of plan code."""
     import yaml as _yaml
     import re
+    
+    if profile is None:
+        profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
 
-    out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
     with open(strategy, encoding="utf-8") as f:
@@ -757,23 +759,27 @@ def plan_code(
     # Select model
     from llx.planfile.model_selector import ModelSelector, ModelFilter
     selector = ModelSelector(".")
-    try:
-        from llx.planfile.model_selector import FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER, LOCAL_FILTER
-        profile_map = {"free": FREE_FILTER, "cheap": CHEAP_FILTER,
-                       "balanced": BALANCED_FILTER, "local": LOCAL_FILTER}
-        model_filter = profile_map.get(profile or "free", FREE_FILTER)
-        model = selector.select_model(model_filter)
-    except Exception:
-        model = None
+    
+    if model:
+        selected_model = model
+    else:
+        try:
+            from llx.planfile.model_selector import FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER, LOCAL_FILTER
+            profile_map = {"free": FREE_FILTER, "cheap": CHEAP_FILTER,
+                           "balanced": BALANCED_FILTER, "local": LOCAL_FILTER}
+            model_filter = profile_map.get(profile or "free", FREE_FILTER)
+            selected_model = selector.select_model(model_filter)
+        except Exception:
+            selected_model = None
 
-    if not model:
+    if not selected_model:
         console.print("[red]No model available for the selected profile.[/red]")
         raise typer.Exit(1)
 
     console.print(f"[bold]Generating code for:[/bold] {project_name}")
     console.print(f"  Strategy: {strategy}")
     console.print(f"  Output:   {out.resolve()}")
-    console.print(f"  Model:    {model}")
+    console.print(f"  Model:    {selected_model}")
     console.print()
 
     config = LlxConfig.load(".")
@@ -781,7 +787,7 @@ def plan_code(
 
     if config.code_tool == "aider":
         console.print(f"[bold yellow]Handing over to Aider for {project_name}...[/bold yellow]")
-        console.print(f"  Command: aider --model {model} --msg 'Implement strategy from {strategy}' {out.resolve()}")
+        console.print(f"  Command: aider --model {selected_model} --msg 'Implement strategy from {strategy}' {out.resolve()}")
         console.print("\n[dim]Note: Aider integration is manual for now. Please run the command above.[/dim]")
         return
 
@@ -801,7 +807,6 @@ def plan_code(
 
     # Load sprint file mapping from config
     import os
-    import yaml as _yaml
     config_path = os.path.join(os.path.dirname(__file__), '..', 'configs', 'planfile_config.yaml')
     try:
         with open(config_path, 'r') as f:
@@ -813,11 +818,11 @@ def plan_code(
         console.print(f"[dim]Note: Using fallback code generation mapping ({e})[/dim]")
         # Fallback to hardcoded mapping
         SPRINT_FILES = {
-            1: ("main.py",      "Generate a complete FastAPI main.py for '{name}' ({desc}). "
+            1: ("main.py",      "Generate a complete FastAPI main.py for '{project_name}' ({description}). "
                                  "Include CRUD endpoints, in-memory storage, /health endpoint. Return only Python code."),
-            2: ("models.py",    "Generate Pydantic models (ItemBase, ItemCreate, Item) for '{name}' ({desc}). Return only Python code."),
-            3: ("test_api.py",  "Generate pytest tests for a FastAPI '{name}' API ({desc}) using TestClient. Return only Python code."),
-            4: ("Dockerfile",   "Generate a Dockerfile for '{name}' FastAPI app. Use python:3.11-slim, install fastapi uvicorn, expose 8000. Return only Dockerfile."),
+            2: ("models.py",    "Generate Pydantic models (ItemBase, ItemCreate, Item) for '{project_name}' ({description}). Return only Python code."),
+            3: ("test_api.py",  "Generate pytest tests for a FastAPI '{project_name}' API ({description}) using TestClient. Return only Python code."),
+            4: ("Dockerfile",   "Generate a Dockerfile for '{project_name}' FastAPI app. Use python:3.11-slim, install fastapi uvicorn, expose 8000. Return only Dockerfile."),
         }
 
     generated = {}
@@ -829,11 +834,12 @@ def plan_code(
             if not file_info:
                 continue
             filename, prompt_tmpl = file_info
+            # Use project_name and description in prompt
             prompt = prompt_tmpl.format(project_name=project_name, description=description)
 
             with console.status(f"[cyan]{sname} → {filename}[/cyan]"):
                 try:
-                    resp = client.chat([ChatMessage(role="user", content=prompt)], model=model)
+                    resp = client.chat([ChatMessage(role="user", content=prompt)], model=selected_model)
                     code = resp.content
                     # Strip markdown fences
                     code = re.sub(r"```[a-z]*\n?", "", code).replace("```", "").strip()
@@ -862,8 +868,6 @@ def plan_code(
     )
     console.print("  [green]✓[/green] README.md")
     console.print(f"\n[bold green]✅ Code generated in {out.resolve()}[/bold green]")
-
-
 @plan_app.command("run")
 def plan_run(
     project_dir: str = typer.Argument("./project", help="Directory with generated project"),

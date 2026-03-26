@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.35] - 2026-03-26
+
+### Test
+- Update test_cli.py
+
+### Other
+- Update llx/cli/app.py
+- Update llx/configs/project_types.yaml
+
 ## [0.1.34] - 2026-03-26
 
 ### Docs

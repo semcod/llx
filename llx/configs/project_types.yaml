@@ -26,6 +26,7 @@ project_types:
       - "*-app"
       - "*app*"
       - "web-*"
+      - "react-*"
     templates:
       strategy_template: "webapp_strategy"
       code_template: "webapp_code"
