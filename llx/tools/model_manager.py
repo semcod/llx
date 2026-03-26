@@ -531,52 +531,6 @@ class ModelManager:
         
         return requirements
     
-    def _print_model_service_status(self, ollama_running: bool, llx_running: bool) -> None:
-        ollama_icon = "✅" if ollama_running else "❌"
-        llx_icon = "✅" if llx_running else "❌"
-
-        print(f"{ollama_icon} Ollama: {'Running' if ollama_running else 'Stopped'}")
-        print(f"{llx_icon} llx API: {'Running' if llx_running else 'Stopped'}")
-
-    def _print_ollama_models_summary(self, ollama_models: List[Dict[str, any]]) -> None:
-        print(f"\n📦 Ollama Models: {len(ollama_models)}")
-        
-        total_size = sum(model.get("size", 0) for model in ollama_models)
-        print(f"💾 Total Size: {total_size / (1024**3):.1f}GB")
-        
-        # Show first 10
-        for model in ollama_models[:10]:
-            size_gb = model.get("size", 0) / (1024**3)
-            print(f"  • {model['name']} ({size_gb:.1f}GB)")
-
-        if len(ollama_models) > 10:
-            print(f"  ... and {len(ollama_models) - 10} more")
-
-    def _print_llx_models_summary(self, llx_models: List[Dict[str, any]]) -> None:
-        print(f"\n🤖 llx Models: {len(llx_models)}")
-        
-        # Show first 5
-        for model in llx_models[:5]:
-            print(f"  • {model['id']}")
-
-        if len(llx_models) > 5:
-            print(f"  ... and {len(llx_models) - 5} more")
-
-    def _print_system_resources_summary(self, resources: Dict[str, any]) -> None:
-        print(f"\n💻 System Resources:")
-        print(f"  🧠 Memory: {resources['memory_available'] // 1024}GB available / {resources['memory_total'] // 1024}GB total")
-        print(f"  💾 Disk: {resources['disk_space']}GB available")
-        print(f"  ⚡ CPU: {resources['cpu_cores']} cores")
-
-    def _print_recommendations_summary(self, resources: Dict[str, any]) -> None:
-        recommendations = self.recommend_models(resources['memory_available'] // 1024)
-        if recommendations:
-            print(f"\n🎯 Recommended Models (based on {resources['memory_available'] // 1024}GB RAM):")
-            for model in recommendations[:3]:
-                model_info = self.get_model_info(model)
-                size_gb = model_info.get("size", 0) / (1024**3) if model_info.get("size") else 0
-                print(f"  • {model} ({size_gb:.1f}GB)")
-
     def print_model_summary(self):
         """Print comprehensive model summary."""
         print("🤖 Model Summary")
@@ -585,25 +539,54 @@ class ModelManager:
         # Service status
         ollama_running = self.check_ollama_running()
         llx_running = self.check_llx_running()
-
-        self._print_model_service_status(ollama_running, llx_running)
+        
+        ollama_icon = "✅" if ollama_running else "❌"
+        llx_icon = "✅" if llx_running else "❌"
+        
+        print(f"{ollama_icon} Ollama: {'Running' if ollama_running else 'Stopped'}")
+        print(f"{llx_icon} llx API: {'Running' if llx_running else 'Stopped'}")
         
         if ollama_running:
             # Available models
             ollama_models = self.get_ollama_models()
-            self._print_ollama_models_summary(ollama_models)
+            print(f"\n📦 Ollama Models: {len(ollama_models)}")
+            
+            total_size = sum(model.get("size", 0) for model in ollama_models)
+            print(f"💾 Total Size: {total_size / (1024**3):.1f}GB")
+            
+            for model in ollama_models[:10]:  # Show first 10
+                size_gb = model.get("size", 0) / (1024**3)
+                print(f"  • {model['name']} ({size_gb:.1f}GB)")
+            
+            if len(ollama_models) > 10:
+                print(f"  ... and {len(ollama_models) - 10} more")
         
         if llx_running:
             # llx models
             llx_models = self.get_llx_models()
-            self._print_llx_models_summary(llx_models)
+            print(f"\n🤖 llx Models: {len(llx_models)}")
+            
+            for model in llx_models[:5]:  # Show first 5
+                print(f"  • {model['id']}")
+            
+            if len(llx_models) > 5:
+                print(f"  ... and {len(llx_models) - 5} more")
         
         # System resources
         resources = self.get_system_resources()
-        self._print_system_resources_summary(resources)
+        print(f"\n💻 System Resources:")
+        print(f"  🧠 Memory: {resources['memory_available'] // 1024}GB available / {resources['memory_total'] // 1024}GB total")
+        print(f"  💾 Disk: {resources['disk_space']}GB available")
+        print(f"  ⚡ CPU: {resources['cpu_cores']} cores")
         
         # Recommendations
-        self._print_recommendations_summary(resources)
+        recommendations = self.recommend_models(resources['memory_available'] // 1024)
+        if recommendations:
+            print(f"\n🎯 Recommended Models (based on {resources['memory_available'] // 1024}GB RAM):")
+            for model in recommendations[:3]:
+                model_info = self.get_model_info(model)
+                size_gb = model_info.get("size", 0) / (1024**3) if model_info.get("size") else 0
+                print(f"  • {model} ({size_gb:.1f}GB)")
         
         print()
 

@@ -4,6 +4,7 @@ import json
 import argparse
 
 from .._utils import cli_main
+from ..cli_utils import cmd_remove_wrapper, cmd_list_wrapper, cmd_cleanup_wrapper
 
 from .models import SessionType, SessionConfig
 from .manager import SessionManager
@@ -64,13 +65,13 @@ def _cmd_create(args, mgr: SessionManager) -> bool:
 
 
 def _cmd_remove(args, mgr: SessionManager) -> bool:
-    if not args.session_id:
-        print("❌ --session-id required for remove")
-        return False
-    success = mgr.remove_session(args.session_id)
-    if success:
-        mgr.save_sessions()
-    return success
+    return cmd_remove_wrapper(
+        args,
+        id_attr='session_id',
+        id_label='Session',
+        remove_func=mgr.remove_session,
+        save_func=mgr.save_sessions
+    )
 
 
 def _cmd_list(args, mgr: SessionManager) -> bool:

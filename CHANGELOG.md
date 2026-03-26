@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.22] - 2026-03-26
+
+### Docs
+- Update TODO.md
+- Update docs/integration-status.md
+
+### Other
+- Update examples/ai-tools/main.py
+- Update examples/filtering/advanced_filters.py
+- Update examples/planfile/async_refactor_demo.py
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/generated_strategy.yaml
+- Update examples/planfile/strategy_final.yaml
+- Update examples/planfile/strategy_v3.yaml
+- Update examples/planfile/utils/__init__.py
+- Update llx/cli/app.py
+- Update llx/cli/formatters.py
+- ... and 5 more files
+
 ## [0.1.21] - 2026-03-26
 
 ### Docs

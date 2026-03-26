@@ -233,13 +233,53 @@ def _render_tools_table() -> None:
 
 def _render_tiers_table(config) -> None:
     """Render model tiers from config."""
-    rows = []
-    for tier_name, model in config.models.items():
-        row = _build_model_row(model)
-        row["tier"] = tier_name
-        rows.append(row)
+    model_table = Table(title="Model Tiers", show_header=True)
+    model_table.add_column("Tier", style="bold", width=10)
+    model_table.add_column("Model", width=20)
+    model_table.add_column("Provider", width=12)
+    model_table.add_column("Context", justify="right", width=8)
+    model_table.add_column("Cost (1K in/out)", width=14)
+    model_table.add_column("Tags", width=30)
 
-    _render_models_table(rows, "Model Tiers")
+    for tier_name, model in config.models.items():
+        # Shorten model names for display
+        display_name = model.model_id
+        if len(display_name) > 18:
+            # Split on first slash or dash to get shorter name
+            if '/' in display_name:
+                parts = display_name.split('/')
+                if len(parts) > 1:
+                    display_name = parts[-1]  # Take last part
+            if '-' in display_name and len(display_name) > 18:
+                display_name = display_name.split('-')[0]
+            if len(display_name) > 18:
+                display_name = display_name[:15] + "..."
+        
+        # Color code tags for better readability
+        colored_tags = []
+        for tag in model.tags:
+            if tag in ["FREE", "FAST"]:
+                colored_tags.append(f"[green]{tag}[/green]")
+            elif tag in ["EXPENSIVE", "SLOW"]:
+                colored_tags.append(f"[red]{tag}[/red]")
+            elif tag in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING"]:
+                colored_tags.append(f"[blue]{tag}[/blue]")
+            elif tag in ["HIGH_QUALITY", "COMPLEX_REASONING"]:
+                colored_tags.append(f"[magenta]{tag}[/magenta]")
+            elif tag in ["OFFLINE", "PRIVATE"]:
+                colored_tags.append(f"[cyan]{tag}[/cyan]")
+            else:
+                colored_tags.append(f"[yellow]{tag}[/yellow]")
+        
+        tags_colored = " ".join(colored_tags) if colored_tags else "—"
+        
+        model_table.add_row(
+            tier_name, display_name, model.provider,
+            f"{model.max_context:,}",
+            f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
+            tags_colored,
+        )
+    console.print(model_table)
 
 
 def _render_agents_table() -> None:

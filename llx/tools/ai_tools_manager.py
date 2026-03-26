@@ -509,116 +509,16 @@ class AIToolsManager:
         print("  cursor-llx --prompt 'Optimize code' file.py")
 
 
-# CLI interface - Command handlers registry to reduce CC from 21
+# CLI interface
 
-import argparse
-from typing import Callable, Dict
-
-CmdHandler = Callable[[argparse.Namespace, "AIToolsManager"], bool]
-
-
-def _cmd_start(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.start_ai_tools()
-
-
-def _cmd_stop(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.stop_ai_tools()
-
-
-def _cmd_restart(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.restart_ai_tools()
-
-
-def _cmd_shell(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.access_shell()
-
-
-def _cmd_status(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    manager.print_status_summary()
-    return True
-
-
-def _cmd_logs(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    logs = manager.get_logs(args.tail)
-    print(logs)
-    return True
-
-
-def _cmd_test(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    results = manager.test_connectivity()
-    print("🧪 Connectivity Test Results:")
-    for test, passed in results.items():
-        icon = "✅" if passed else "❌"
-        print(f"  {icon} {test}")
-    return all(results.values())
-
-
-def _cmd_chat(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.run_chat_test(args.model, args.message)
-
-
-def _cmd_models(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    models = manager.get_available_models()
-    print(f"📦 Available Models ({len(models)}):")
-    for model in models:
-        print(f"  • {model}")
-    return True
-
-
-def _cmd_install(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    if not args.tool:
-        print("❌ --tool required for install")
-        return False
-    return manager.install_tool(args.tool)
-
-
-def _cmd_update(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.update_tools()
-
-
-def _cmd_backup(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.backup_configurations(args.backup_dir)
-
-
-def _cmd_restore(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    if not args.backup_dir:
-        print("❌ --backup-dir required for restore")
-        return False
-    return manager.restore_configurations(args.backup_dir)
-
-
-def _cmd_workspace(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    return manager.create_workspace_example(args.project)
-
-
-def _cmd_examples(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    manager.print_usage_examples()
-    return True
-
-
-# Command registry: maps command names to handler functions
-_COMMAND_HANDLERS: Dict[str, CmdHandler] = {
-    "start": _cmd_start,
-    "stop": _cmd_stop,
-    "restart": _cmd_restart,
-    "shell": _cmd_shell,
-    "status": _cmd_status,
-    "logs": _cmd_logs,
-    "test": _cmd_test,
-    "chat": _cmd_chat,
-    "models": _cmd_models,
-    "install": _cmd_install,
-    "update": _cmd_update,
-    "backup": _cmd_backup,
-    "restore": _cmd_restore,
-    "workspace": _cmd_workspace,
-    "examples": _cmd_examples,
-}
-
-
-def _build_parser() -> argparse.ArgumentParser:
+def _build_parser() -> "argparse.ArgumentParser":
+    import argparse
     parser = argparse.ArgumentParser(description="llx AI Tools Manager")
-    parser.add_argument("command", choices=list(_COMMAND_HANDLERS.keys()))
+    parser.add_argument("command", choices=[
+        "start", "stop", "restart", "shell", "status", "logs", "test",
+        "chat", "models", "install", "update", "backup", "restore",
+        "workspace", "examples"
+    ])
     parser.add_argument("--tool", help="Specific tool")
     parser.add_argument("--model", default="qwen2.5-coder:7b", help="Model for chat")
     parser.add_argument("--message", default="Hello! Write a simple Python function.", help="Chat message")
@@ -628,14 +528,56 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _dispatch(args: argparse.Namespace, manager: "AIToolsManager") -> bool:
-    """Dispatch command to appropriate handler using registry pattern.
-
-    CC reduced from 21 to ~3 by using handler registry instead of if-elif chain.
-    """
-    handler = _COMMAND_HANDLERS.get(args.command)
-    if handler:
-        return handler(args, manager)
+def _dispatch(args, manager: AIToolsManager) -> bool:
+    if args.command == "start":
+        return manager.start_ai_tools()
+    elif args.command == "stop":
+        return manager.stop_ai_tools()
+    elif args.command == "restart":
+        return manager.restart_ai_tools()
+    elif args.command == "shell":
+        return manager.access_shell()
+    elif args.command == "status":
+        manager.print_status_summary()
+        return True
+    elif args.command == "logs":
+        logs = manager.get_logs(args.tail)
+        print(logs)
+        return True
+    elif args.command == "test":
+        results = manager.test_connectivity()
+        print("🧪 Connectivity Test Results:")
+        for test, passed in results.items():
+            icon = "✅" if passed else "❌"
+            print(f"  {icon} {test}")
+        return all(results.values())
+    elif args.command == "chat":
+        return manager.run_chat_test(args.model, args.message)
+    elif args.command == "models":
+        models = manager.get_available_models()
+        print(f"📦 Available Models ({len(models)}):")
+        for model in models:
+            print(f"  • {model}")
+        return True
+    elif args.command == "install":
+        if not args.tool:
+            print("❌ --tool required for install")
+            return False
+        return manager.install_tool(args.tool)
+    elif args.command == "update":
+        return manager.update_tools()
+    elif args.command == "backup":
+        return manager.backup_configurations(args.backup_dir)
+    elif args.command == "restore":
+        if not args.backup_dir:
+            print("❌ --backup-dir required for restore")
+            return False
+        return manager.restore_configurations(args.backup_dir)
+    elif args.command == "workspace":
+        return manager.create_workspace_example(args.project)
+    elif args.command == "examples":
+        manager.print_usage_examples()
+        return True
     return False
 
 

@@ -499,16 +499,30 @@ async def _handle_aider(args: dict) -> dict:
     model = args.get("model", "ollama/qwen2.5-coder:7b")
     files = args.get("files", [])
     use_docker = args.get("use_docker", False)
+    docker_args = args.get("docker_args", [])
     
     # Try Docker first if requested or if local aider fails
     if use_docker:
         docker_cmd = [
             "docker", "run", "--rm",
-            "-v", f"{path.absolute()}:/workspace",
+            "-v", f"{path.absolute()}:/workspace"
+        ]
+        
+        # Add docker args if provided
+        if docker_args:
+            docker_cmd.extend(docker_args)
+        
+        # Add host network for Ollama access if not specified
+        if "--network" not in " ".join(docker_args):
+            docker_cmd.extend(["--network", "host"])
+        
+        # Add environment variables for Ollama
+        docker_cmd.extend([
+            "-e", "OLLAMA_API_BASE=http://host.docker.internal:11434",
             "paulgauthier/aider",
             "--model", model.replace("ollama/", "ollama_chat/"),
             "--message", prompt
-        ]
+        ])
         
         # Add specific files if provided
         if files:
@@ -603,6 +617,7 @@ tool_aider = McpTool(
                 "model": {"type": "string", "default": "ollama/qwen2.5-coder:7b", "description": "Model to use (Ollama format)"},
                 "files": {"type": "array", "items": {"type": "string"}, "description": "Specific files to edit (optional)"},
                 "use_docker": {"type": "boolean", "default": False, "description": "Use Docker instead of local installation"},
+                "docker_args": {"type": "array", "items": {"type": "string"}, "description": "Additional Docker arguments (optional)"},
             },
         },
     ),

@@ -70,90 +70,70 @@ def test_ai_tools_container():
     except Exception as e:
         return False, str(e)
 
-def demonstrate_aider():
-    """Demonstrate Aider usage"""
-    print("🤖 Demonstrating Aider...")
-    print("========================")
-    
+def _run_ai_tool_demo(
+    tool_name,
+    separator,
+    sample_file,
+    sample_content,
+    command,
+    warning_message,
+):
+    """Shared helper for the shell-based AI tool demos."""
+    print(f"🤖 Demonstrating {tool_name}...")
+    print(separator)
+
     try:
-        # Create a simple Python file to modify
-        test_file = "/tmp/test_aider.py"
-        with open(test_file, 'w') as f:
-            f.write("""# Simple Python function
-def hello():
-    print("Hello")
-""")
-        
-        # Run Aider command (simulation)
-        cmd = [
-            'docker', 'exec', 'llx-ai-tools-dev',
-            'aider-llx', '--message', 'Add proper docstring and type hints', test_file
-        ]
-        
-        print(f"🔧 Running: {' '.join(cmd)}")
-        print("⚠️  This is a demonstration - actual Aider requires interactive mode")
-        
+        with open(sample_file, 'w') as f:
+            f.write(sample_content)
+
+        print(f"🔧 Running: {' '.join(command)}")
+        print(warning_message)
         return True
     except Exception as e:
-        print(f"❌ Aider demo failed: {e}")
+        print(f"❌ {tool_name} demo failed: {e}")
         return False
+
+def demonstrate_aider():
+    """Demonstrate Aider usage"""
+    return _run_ai_tool_demo(
+        "Aider",
+        "========================",
+        "/tmp/test_aider.py",
+        "# Simple Python function\ndef hello():\n    print(\"Hello\")\n",
+        [
+            'docker', 'exec', 'llx-ai-tools-dev',
+            'aider-llx', '--message', 'Add proper docstring and type hints', '/tmp/test_aider.py'
+        ],
+        "⚠️  This is a demonstration - actual Aider requires interactive mode",
+    )
 
 def demonstrate_claude_code():
     """Demonstrate Claude Code usage"""
-    print("\n🤖 Demonstrating Claude Code...")
-    print("==============================")
-    
-    try:
-        # Create a simple task file
-        task_file = "/tmp/claude_task.py"
-        with open(task_file, 'w') as f:
-            f.write("""# TODO: Implement a simple calculator
-def calculate(a, b, operation):
-    pass
-""")
-        
-        # Run Claude Code command (simulation)
-        cmd = [
+    return _run_ai_tool_demo(
+        "Claude Code",
+        "==============================",
+        "/tmp/claude_task.py",
+        "# TODO: Implement a simple calculator\ndef calculate(a, b, operation):\n    pass\n",
+        [
             'docker', 'exec', 'llx-ai-tools-dev',
-            'claude-llx', '--task', 'Complete the calculator function', task_file
-        ]
-        
-        print(f"🔧 Running: {' '.join(cmd)}")
-        print("⚠️  This is a demonstration - actual Claude Code requires interactive mode")
-        
-        return True
-    except Exception as e:
-        print(f"❌ Claude Code demo failed: {e}")
-        return False
+            'claude-llx', '--task', 'Complete the calculator function', '/tmp/claude_task.py'
+        ],
+        "⚠️  This is a demonstration - actual Claude Code requires interactive mode",
+    )
 
 def demonstrate_cursor():
     """Demonstrate Cursor usage"""
-    print("\n🤖 Demonstrating Cursor...")
-    print("========================")
-    
-    try:
-        # Create a simple code file
-        code_file = "/tmp/cursor_example.py"
-        with open(code_file, 'w') as f:
-            f.write("""# Write a function that checks if a number is prime
-def is_prime(n):
-    # TODO: Implement
-    pass
-""")
-        
-        # Run Cursor command (simulation)
-        cmd = [
+    return _run_ai_tool_demo(
+        "Cursor",
+        "========================",
+        "/tmp/cursor_example.py",
+        "# Write a function that checks if a number is prime\ndef is_prime(n):\n    # TODO: Implement\n    pass\n",
+        [
             'docker', 'exec', 'llx-ai-tools-dev',
-            'cursor-llx', '--prompt', 'Implement the is_prime function efficiently', code_file
-        ]
-        
-        print(f"🔧 Running: {' '.join(cmd)}")
-        print("⚠️  This is a demonstration - actual Cursor requires interactive mode")
-        
-        return True
-    except Exception as e:
-        print(f"❌ Cursor demo failed: {e}")
-        return False
+            'cursor-llx', '--prompt', 'Implement the is_prime function efficiently', '/tmp/cursor_example.py'
+        ],
+        "⚠️  This is a demonstration - actual Cursor requires interactive mode",
+    )
 
 def test_chat_completion():
     """Test chat completion through AI tools"""

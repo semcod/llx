@@ -5,145 +5,42 @@ Demonstrates refactoring callback hell to proper async/await patterns
 """
 
 import asyncio
-import json
 import subprocess
 from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 
+# Import utility functions
+from utils import create_example_file, CALLBACK_SCRAPER_TEMPLATE, ASYNC_SCRAPER_TEMPLATE
+
 console = Console()
 
 
 def create_callback_hell_example():
     """Create an example of callback hell that needs refactoring."""
+    callback_path = create_example_file(
+        "callback_hell.py",
+        CALLBACK_SCRAPER_TEMPLATE,
+        "Callback Hell Example - Web scraping with nested callbacks",
+        Path(".")
+    )
     
-    callback_hell_code = '''
-"""
-Callback Hell Example - Web scraping with nested callbacks
-This code needs to be refactored to use async/await properly
-"""
+    console.print(f"[green]✓ Created callback_hell.py[/green]")
+    return callback_path
 
-import requests
-from bs4 import BeautifulSoup
-import json
-import time
 
-class WebScraper:
-    """Scraper using callback-based approach - very hard to maintain"""
+def create_async_refactored_version():
+    """Show how the code should look after refactoring."""
+    async_path = create_example_file(
+        "async_refactored.py",
+        ASYNC_SCRAPER_TEMPLATE,
+        "Async/Await Refactored Version",
+        Path(".")
+    )
     
-    def __init__(self):
-        self.session = requests.Session()
-        self.results = []
-    
-    def scrape_website(self, url, callback):
-        """Start scraping with callback"""
-        def handle_response(response):
-            if response.status_code == 200:
-                self.parse_links(response.text, url, callback)
-            else:
-                callback({"error": f"Failed to fetch {url}"})
-        
-        try:
-            response = self.session.get(url, timeout=10)
-            handle_response(response)
-        except Exception as e:
-            callback({"error": str(e)})
-    
-    def parse_links(self, html, base_url, callback):
-        """Parse links with nested callbacks"""
-        soup = BeautifulSoup(html, 'html.parser')
-        links = []
-        
-        for link in soup.find_all('a', href=True):
-            href = link['href']
-            if href.startswith('http'):
-                links.append(href)
-            elif href.startswith('/'):
-                links.append(base_url + href)
-        
-        # Scrape each link with more callbacks
-        def scrape_all_links(links_left, scraped_data):
-            if not links_left:
-                callback({"links": scraped_data})
-                return
-            
-            current_link = links_left[0]
-            remaining_links = links_left[1:]
-            
-            def handle_link_scrape(data):
-                scraped_data.append(data)
-                # Recursive callback - this is the hell!
-                scrape_all_links(remaining_links, scraped_data)
-            
-            self.scrape_single_link(current_link, handle_link_scrape)
-        
-        scrape_all_links(links[:5], [])  # Limit to 5 links
-    
-    def scrape_single_link(self, url, callback):
-        """Scrape individual link with error handling callback"""
-        def handle_response(response):
-            if response.status_code == 200:
-                self.extract_content(response.text, url, callback)
-            else:
-                callback({"url": url, "error": "Failed to fetch"})
-        
-        try:
-            response = self.session.get(url, timeout=5)
-            handle_response(response)
-        except Exception as e:
-            callback({"url": url, "error": str(e)})
-    
-    def extract_content(self, html, url, callback):
-        """Extract content with yet another callback"""
-        soup = BeautifulSoup(html, 'html.parser')
-        
-        # Extract title
-        title = soup.find('title')
-        title_text = title.get_text() if title else "No title"
-        
-        # Extract meta description
-        meta_desc = soup.find('meta', attrs={'name': 'description'})
-        description = meta_desc.get('content', '') if meta_desc else ""
-        
-        # Extract headings
-        headings = []
-        for h in soup.find_all(['h1', 'h2', 'h3']):
-            headings.append({
-                "tag": h.name,
-                "text": h.get_text().strip()
-            })
-        
-        # Extract images (with more callbacks!)
-        def process_images(images, processed):
-            if not images:
-                callback({
-                    "url": url,
-                    "title": title_text,
-                    "description": description,
-                    "headings": headings,
-                    "images": processed
-                })
-                return
-            
-            img = images[0]
-            remaining = images[1:]
-            
-            def handle_image():
-                processed.append({
-                    "src": img.get('src', ''),
-                    "alt": img.get('alt', ''),
-                    "width": img.get('width', ''),
-                    "height": img.get('height', '')
-                })
-                process_images(remaining, processed)
-            
-            # Simulate async image processing
-            time.sleep(0.01)
-            handle_image()
-        
-        images = soup.find_all('img')[:3]  # Limit images
-        process_images(images, [])
+    console.print(f"[green]✓ Created async_refactored.py[/green]")
+    return async_path
 
 
 class DataProcessor:
@@ -189,46 +86,6 @@ class DataProcessor:
             "timestamp": time.time()
         }
         callback(transformed)
-
-
-# Usage example with callback hell
-def main():
-    """Main function demonstrating callback hell"""
-    scraper = WebScraper()
-    processor = DataProcessor()
-    
-    def handle_scraped_data(data):
-        if "error" in data:
-            print(f"Scraping error: {data['error']}")
-            return
-        
-        print(f"Scraped {len(data.get('links', []))} links")
-        
-        # Process scraped data with more callbacks!
-        def process_links(links):
-            def processed_results(results):
-                print(f"Processed {len(results)} items")
-                # Save results
-                with open('results.json', 'w') as f:
-                    json.dump(results, f)
-            
-            processor.process_items(links, processed_results)
-        
-        process_links(data.get('links', []))
-    
-    # Start the callback chain
-    scraper.scrape_website('https://example.com', handle_scraped_data)
-
-
-if __name__ == "__main__":
-    main()
-'''
-    
-    # Write the callback hell example
-    callback_path = Path("callback_hell.py")
-    callback_path.write_text(callback_hell_code)
-    
-    return callback_path
 
 
 def create_async_refactored_version():
@@ -452,6 +309,7 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
 '''
     
     # Write the async version
@@ -463,51 +321,57 @@ if __name__ == "__main__":
 
 async def demonstrate_async_refactoring():
     """Demonstrate async refactoring using planfile."""
-    
     console.print("\n[bold cyan]Async Code Refactoring Demo[/bold cyan]")
     console.print("=" * 50)
-    
-    # Create examples
+
     console.print("\n[blue]Step 1: Creating callback hell example...[/blue]")
     callback_path = create_callback_hell_example()
     console.print(f"[green]✓ Created {callback_path}[/green]")
-    
-    # Show problematic code
+
     console.print("\n[yellow]Problematic Code Pattern:[/yellow]")
-    console.print("""
-    def scrape_links(self, links, callback):
-        def handle_link(data):
-            def process_more(more_data):
-                def even_more(final_data):
-                    callback(final_data)  # Deep nesting!
-                process_more(even_more)
-            handle_link(process_more)
-    """)
-    
-    # Generate refactoring strategy
+    callback_syntax = Syntax(
+        "\n".join([
+            "def scrape_all_links(self, links, callback):",
+            "    if not links:",
+            "        callback({\"links\": scraped_data})",
+            "        return",
+            "",
+            "    current = links[0]",
+            "    remaining = links[1:]",
+            "",
+            "    def handle_link(data):",
+            "        scraped_data.append(data)",
+            "        scrape_all_links(remaining, scraped_data)  # Recursion!",
+            "",
+            "    self.scrape_link(current, handle_link)",
+        ]),
+        "python",
+        theme="monokai",
+        line_numbers=False,
+    )
+    console.print(callback_syntax)
+
     console.print("\n[blue]Step 2: Generating async refactoring strategy...[/blue]")
-    
-    # Use the local generate_strategy.py instead
-    strategy_cmd = [
-        "python3", "generate_strategy.py"
-    ]
-    
+    strategy_cmd = ["python3", "generate_strategy.py"]
+
     try:
-        result = subprocess.run(strategy_cmd, capture_output=True, text=True, cwd="/home/tom/github/semcod/llx/examples/planfile")
-        
+        result = subprocess.run(
+            strategy_cmd,
+            capture_output=True,
+            text=True,
+            cwd="/home/tom/github/semcod/llx/examples/planfile",
+        )
         if result.returncode == 0:
             console.print("[green]✓ Strategy generated successfully[/green]")
         else:
             console.print(f"[red]Strategy generation failed: {result.stderr}[/red]")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-    
-    # Show expected refactored version
+
     console.print("\n[blue]Step 3: Showing expected refactored version...[/blue]")
     async_path = create_async_refactored_version()
     console.print(f"[green]✓ Created {async_path}[/green]")
-    
-    # Show improvement
+
     console.print("\n[yellow]Key Improvements:[/yellow]")
     improvements = [
         "✓ Eliminated callback hell with async/await",
@@ -516,47 +380,29 @@ async def demonstrate_async_refactoring():
         "✓ Type hints for better code clarity",
         "✓ Data classes for structured data",
         "✓ Context managers for resource management",
-        "✓ Separation of concerns with private methods"
+        "✓ Separation of concerns with private methods",
     ]
-    
     for improvement in improvements:
         console.print(f"  {improvement}")
-    
-    # Show code comparison
+
     console.print("\n[blue]Code Comparison:[/blue]")
-    
-    # Callback hell snippet
-    callback_syntax = Syntax('''
-def scrape_all_links(self, links, callback):
-    if not links:
-        callback({"links": scraped_data})
-        return
-    
-    current = links[0]
-    remaining = links[1:]
-    
-    def handle_link(data):
-        scraped_data.append(data)
-        scrape_all_links(remaining, scraped_data)  # Recursion!
-    
-    self.scrape_link(current, handle_link)
-    ''', 'python', theme="monokai", line_numbers=False)
-    
+    async_syntax = Syntax(
+        "\n".join([
+            "async def scrape_all_links(self, links):",
+            "    tasks = [self.scrape_link(link) for link in links]",
+            "    results = await asyncio.gather(*tasks, return_exceptions=True)",
+            "    return [r for r in results if not isinstance(r, Exception)]",
+        ]),
+        "python",
+        theme="monokai",
+        line_numbers=False,
+    )
+
     console.print("\n[red]Before (Callback Hell):[/red]")
     console.print(callback_syntax)
-    
-    # Async version snippet
-    async_syntax = Syntax('''
-async def scrape_all_links(self, links):
-    tasks = [self.scrape_link(link) for link in links]
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-    return [r for r in results if not isinstance(r, Exception)]
-    ''', 'python', theme="monokai", line_numbers=False)
-    
     console.print("\n[green]After (Clean Async):[/green]")
     console.print(async_syntax)
-    
-    # Performance benefits
+
     console.print("\n[yellow]Performance Benefits:[/yellow]")
     console.print("• Concurrent execution: 5x faster for I/O bound tasks")
     console.print("• Memory efficient: No deep callback stacks")
