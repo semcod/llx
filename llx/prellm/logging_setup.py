@@ -16,10 +16,7 @@ import os
 import sys
 from typing import Optional
 
-from nfo.configure import configure
-from nfo.logger import Logger
-from nfo.sinks import MarkdownSink
-from nfo.terminal import TerminalSink
+from llx.prellm._nfo_compat import configure, Logger, MarkdownSink, TerminalSink
 
 _logger: Optional[Logger] = None
 

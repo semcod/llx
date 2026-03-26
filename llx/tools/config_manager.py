@@ -11,6 +11,8 @@ from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import shutil
 
+from ._utils import cli_main
+
 
 class ConfigManager:
     """Manages llx configuration files and settings."""
@@ -708,11 +710,7 @@ def _dispatch(args, manager: "ConfigManager") -> bool:
 
 def main():
     """CLI entry point for config manager."""
-    parser = _build_parser()
-    args = parser.parse_args()
-    manager = ConfigManager()
-    success = _dispatch(args, manager)
-    sys.exit(0 if success else 1)
+    cli_main(_build_parser, _dispatch, ConfigManager)
 
 
 if __name__ == "__main__":

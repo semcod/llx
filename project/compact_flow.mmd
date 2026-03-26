@@ -1,52 +1,59 @@
 flowchart TD
-    docker_ai_tools["docker.ai-tools<br/>2 funcs"]
-    examples_ai_tools["examples.ai-tools<br/>9 funcs"]
-    examples_basic["examples.basic<br/>1 funcs"]
-    examples_docker["examples.docker<br/>9 funcs"]
-    examples_local["examples.local<br/>7 funcs"]
-    examples_multi_provider["examples.multi-provider<br/>5 funcs"]
-    examples_proxy["examples.proxy<br/>8 funcs"]
-    examples_vscode_roocode["examples.vscode-roocode<br/>11 funcs"]
-    llx_analysis["llx.analysis<br/>27 funcs"]
-    llx_cli["llx.cli<br/>26 funcs"]
-    llx_config["llx.config<br/>7 funcs"]
-    llx_integrations["llx.integrations<br/>15 funcs"]
-    llx_litellm_config["llx.litellm_config<br/>10 funcs"]
-    llx_mcp["llx.mcp<br/>15 funcs"]
-    llx_orchestration["llx.orchestration<br/>212 funcs"]
-    llx_prellm["llx.prellm<br/>292 funcs"]
-    llx_routing["llx.routing<br/>19 funcs"]
-    llx_tools["llx.tools<br/>135 funcs"]
-    llx_tools ==>|534| docker_ai_tools
-    llx_orchestration ==>|415| docker_ai_tools
-    examples_ai_tools ==>|93| docker_ai_tools
-    examples_local ==>|80| docker_ai_tools
-    examples_vscode_roocode ==>|71| docker_ai_tools
-    examples_docker ==>|63| docker_ai_tools
-    examples_proxy ==>|44| docker_ai_tools
-    examples_multi_provider ==>|44| docker_ai_tools
-    examples_basic ==>|36| docker_ai_tools
-    llx_cli ==>|8| llx_config
-    llx_mcp ==>|6| llx_analysis
-    llx_cli ==>|5| llx_analysis
-    llx_mcp ==>|5| llx_config
-    llx_cli -->|3| llx_routing
-    llx_cli -->|3| llx_integrations
-    llx_mcp -->|3| llx_routing
-    llx_mcp -->|2| llx_prellm
-    llx_integrations -->|2| llx_routing
-    llx_config -->|1| llx_litellm_config
-    llx_mcp -->|1| llx_integrations
-    llx_routing -->|1| llx_integrations
-    llx_integrations -->|1| llx_config
-    llx_integrations -->|1| llx_analysis
-    examples_docker -->|1| llx_analysis
-    examples_docker -->|1| llx_config
-    examples_multi_provider -->|1| llx_config
-    examples_multi_provider -->|1| llx_routing
-    examples_local -->|1| llx_config
-    examples_local -->|1| llx_analysis
-    examples_local -->|1| llx_routing
-    examples_basic -->|1| llx_config
-    examples_basic -->|1| llx_analysis
-    examples_basic -->|1| llx_routing
+    docker__ai_tools["docker.ai-tools<br/>2 funcs"]
+    examples__ai_tools["examples.ai-tools<br/>9 funcs"]
+    examples__basic["examples.basic<br/>1 funcs"]
+    examples__docker["examples.docker<br/>9 funcs"]
+    examples__local["examples.local<br/>7 funcs"]
+    examples__multi_provider["examples.multi-provider<br/>6 funcs"]
+    examples__proxy["examples.proxy<br/>9 funcs"]
+    examples__vscode_roocode["examples.vscode-roocode<br/>11 funcs"]
+    llx__analysis["llx.analysis<br/>27 funcs"]
+    llx__cli["llx.cli<br/>26 funcs"]
+    llx__config["llx.config<br/>7 funcs"]
+    llx__integrations["llx.integrations<br/>15 funcs"]
+    llx__litellm_config["llx.litellm_config<br/>10 funcs"]
+    llx__mcp["llx.mcp<br/>15 funcs"]
+    llx__orchestration["llx.orchestration<br/>271 funcs"]
+    llx__prellm["llx.prellm<br/>292 funcs"]
+    llx__routing["llx.routing<br/>19 funcs"]
+    llx__tools["llx.tools<br/>139 funcs"]
+    llx__tools ==>|493| docker__ai_tools
+    llx__orchestration ==>|309| docker__ai_tools
+    examples__ai_tools ==>|93| docker__ai_tools
+    examples__local ==>|80| docker__ai_tools
+    examples__vscode_roocode ==>|71| docker__ai_tools
+    examples__docker ==>|63| docker__ai_tools
+    examples__proxy ==>|49| docker__ai_tools
+    examples__multi_provider ==>|44| docker__ai_tools
+    examples__basic ==>|36| docker__ai_tools
+    llx__cli ==>|8| llx__config
+    llx__orchestration ==>|7| llx__tools
+    llx__mcp ==>|6| llx__analysis
+    llx__cli ==>|5| llx__analysis
+    llx__mcp ==>|5| llx__config
+    llx__cli -->|3| llx__routing
+    llx__cli -->|3| llx__integrations
+    llx__mcp -->|3| llx__routing
+    llx__integrations -->|2| llx__routing
+    llx__mcp -->|2| llx__prellm
+    examples__proxy -->|2| llx__integrations
+    llx__config -->|1| llx__litellm_config
+    llx__tools -->|1| llx__prellm
+    llx__tools -->|1| examples__proxy
+    llx__orchestration -->|1| llx__prellm
+    llx__orchestration -->|1| examples__proxy
+    llx__integrations -->|1| llx__config
+    llx__integrations -->|1| llx__analysis
+    llx__routing -->|1| llx__integrations
+    llx__mcp -->|1| llx__integrations
+    examples__proxy -->|1| llx__config
+    examples__docker -->|1| llx__analysis
+    examples__docker -->|1| llx__config
+    examples__local -->|1| llx__config
+    examples__local -->|1| llx__analysis
+    examples__local -->|1| llx__routing
+    examples__basic -->|1| llx__config
+    examples__basic -->|1| llx__analysis
+    examples__basic -->|1| llx__routing
+    examples__multi_provider -->|1| llx__config
+    examples__multi_provider -->|1| llx__routing

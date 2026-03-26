@@ -1,51 +1,53 @@
-# llx | 784 func | 58f | 26649L | python | 2026-03-26
+# llx | 847 func | 72f | 24984L | python | 2026-03-26
 
 HEALTH:
-  CC̄=4.6  critical=71 (limit:10)  dup=3  cycles=0
+  CC̄=4.1  critical=57 (limit:10)  dup=4  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     OrchestratorCLI.create_parser = 36 (limit:10)
-  !!! cc_exceeded      main = 35 (limit:15)
-  !!! cc_exceeded      main = 35 (limit:15)
-  !!! cc_exceeded      main = 31 (limit:15)
-  !!! cc_exceeded      main = 30 (limit:15)
-  !!! high_fan_out     LLXToolsCLI.create_parser = 30 (limit:10)
-  !!! cc_exceeded      main = 29 (limit:15)
-  !!! cc_exceeded      main = 27 (limit:15)
-  !!! high_fan_out     main = 27 (limit:10)
-  !!! high_fan_out     main = 25 (limit:10)
+  !!! cc_exceeded      _dispatch = 36 (limit:15)
+  !!! cc_exceeded      _dispatch = 29 (limit:15)
+  !!! high_fan_out     _dispatch = 25 (limit:10)
+  !!! high_fan_out     _execute_v3_pipeline = 23 (limit:10)
+  !!! high_fan_out     _dispatch = 20 (limit:10)
+  !!! high_fan_out     _dispatch = 20 (limit:10)
+  !!  cc_exceeded      _dispatch = 21 (limit:15)
+  !!  high_fan_out     context = 19 (limit:10)
+  !!  high_fan_out     _write_env_file = 18 (limit:10)
+  !!  high_fan_out     context_show_cmd = 18 (limit:10)
 
-MODULES[76] (top by size):
-  M[llx/orchestration/orchestrator_cli.py] 1263L C:1 F:22 CC↑19 D:0 (python)
-  M[llx/orchestration/llm_orchestrator.py] 1082L C:7 F:33 CC↑24 D:0 (python)
+MODULES[103] (top by size):
   M[llx/prellm/cli.py] 1076L C:0 F:28 CC↑13 D:0 (python)
   M[llx/prellm/core.py] 1032L C:1 F:32 CC↑15 D:4 (python)
-  M[llx/orchestration/vscode_orchestrator.py] 944L C:6 F:32 CC↑35 D:0 (python)
-  M[llx/orchestration/routing_engine.py] 940L C:6 F:39 CC↑11 D:0 (python)
-  M[llx/orchestration/instance_manager.py] 849L C:6 F:24 CC↑31 D:0 (python)
-  M[llx/tools/cli.py] 783L C:1 F:15 CC↑14 D:0 (python)
-  M[llx/tools/health_checker.py] 774L C:1 F:13 CC↑16 D:0 (python)
-  M[llx/tools/vscode_manager.py] 761L C:1 F:23 CC↑20 D:0 (python)
-  M[llx/tools/config_manager.py] 746L C:1 F:25 CC↑35 D:0 (python)
-  M[llx/orchestration/queue_manager.py] 734L C:6 F:23 CC↑27 D:0 (python)
-  M[llx/tools/model_manager.py] 710L C:1 F:20 CC↑30 D:0 (python)
-  M[llx/orchestration/rate_limiter.py] 659L C:4 F:18 CC↑29 D:0 (python)
+  M[llx/tools/health_checker.py] 765L C:1 F:15 CC↑16 D:0 (python)
+  M[llx/tools/vscode_manager.py] 748L C:1 F:25 CC↑19 D:0 (python)
+  M[llx/tools/config_manager.py] 717L C:1 F:27 CC↑36 D:0 (python)
+  M[llx/tools/model_manager.py] 696L C:1 F:22 CC↑29 D:0 (python)
   M[llx/prellm/trace.py] 649L C:2 F:29 CC↑13 D:1 (python)
-  LANGS: python:69/shell:7
+  M[llx/orchestration/routing/engine.py] 640L C:1 F:38 CC↑11 D:0 (python)
+  M[llx/orchestration/llm/orchestrator.py] 633L C:1 F:25 CC↑10 D:0 (python)
+  M[llx/orchestration/vscode/orchestrator.py] 599L C:1 F:27 CC↑12 D:0 (python)
+  M[llx/tools/ai_tools_manager.py] 594L C:1 F:22 CC↑21 D:0 (python)
+  M[llx/orchestration/instances/manager.py] 560L C:1 F:18 CC↑12 D:0 (python)
+  M[llx/tools/docker_manager.py] 548L C:1 F:21 CC↑19 D:0 (python)
+  M[llx/prellm/env_config.py] 528L C:1 F:17 CC↑14 D:2 (python)
+  M[llx/orchestration/ratelimit/limiter.py] 512L C:1 F:17 CC↑15 D:0 (python)
+  LANGS: python:96/shell:7
 
 HOTSPOTS[10]:
-  ★ OrchestratorCLI.create_parser fan=36  // Create argument parser for CLI.
-  ★ LLXToolsCLI.create_parser fan=30  // Create argument parser for CLI.
-  ★ main fan=27  // CLI interface for config manager.
-  ★ main fan=25  // CLI interface for AI tools manager.
-  ★ main fan=25  // CLI interface for model manager.
+  ★ _dispatch fan=25  // 25-way dispatch
+  ★ _execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
+
+
+  ★ _dispatch fan=20  // 20-way dispatch
+  ★ _dispatch fan=20  // 20-way dispatch
+  ★ context fan=19  // Show collected environment context, schema, and blocked sensitive data.
 
 REFACTOR[15]:
-  [1] H/L Split main (CC=35 → target CC<10)
-  [2] H/L Split main (CC=30 → target CC<10)
-  [3] H/L Split main (CC=31 → target CC<10)
-  [4] H/L Split main (CC=29 → target CC<10)
-  [5] H/L Split main (CC=35 → target CC<10)
+  [1] H/L Split _dispatch (CC=36 → target CC<10)
+  [2] H/L Split _dispatch (CC=29 → target CC<10)
+  [3] H/H Split god module llx/tools/config_manager.py (717L, 1 classes)
+  [4] H/H Split god module llx/tools/model_manager.py (696L, 1 classes)
+  [5] H/H Split god module llx/tools/ai_tools_manager.py (594L, 1 classes)
 
 EVOLUTION:
-  2026-03-26 CC̄=4.6 crit=71 26649L // Automated analysis
+  2026-03-26 CC̄=4.1 crit=57 24984L // Automated analysis

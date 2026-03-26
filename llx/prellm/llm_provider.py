@@ -11,7 +11,7 @@ import logging
 import warnings
 from typing import Any
 
-from nfo.decorators import log_call
+from llx.prellm._nfo_compat import log_call
 
 from llx.prellm.models import LLMProviderConfig
 

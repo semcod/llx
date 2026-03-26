@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import yaml
-from nfo.decorators import log_call
+from llx.prellm._nfo_compat import log_call
 from pydantic import BaseModel, Field
 
 from llx.prellm.llm_provider import LLMProvider

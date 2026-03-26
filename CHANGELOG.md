@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-03-26
+
+### Docs
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update llx/prellm/_nfo_compat.py
+- Update llx/prellm/agents/executor.py
+- Update llx/prellm/agents/preprocessor.py
+- Update llx/prellm/core.py
+- Update llx/prellm/llm_provider.py
+- Update llx/prellm/logging_setup.py
+- Update llx/prellm/pipeline.py
+- Update llx/prellm/server.py
+- Update llx/tools/config_manager.py
+- Update project/analysis.toon.yaml
+- ... and 13 more files
+
 ## [0.1.8] - 2026-03-26
 
 ### Docs

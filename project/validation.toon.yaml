@@ -1,53 +1,54 @@
-# vallm batch | 151f | 87✓ 7⚠ 28✗ | 2026-03-26
+# vallm batch | 178f | 96✓ 3⚠ 46✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 151  passed: 87 (57.6%)  warnings: 7  errors: 28  unsupported: 36
+  scanned: 178  passed: 96 (53.9%)  warnings: 3  errors: 46  unsupported: 36
 
-WARNINGS[7]{path,score}:
-  llx/orchestration/instance_manager.py,0.96
-    issues[3]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 31 (max: 15),739
-      complexity.maintainability,warning,Low maintainability index: 12.4 (threshold: 20),
-      complexity.lizard_cc,warning,main: CC=31 exceeds limit 15,739
-  llx/orchestration/rate_limiter.py,0.96
-    issues[3]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 29 (max: 15),561
-      complexity.maintainability,warning,Low maintainability index: 16.5 (threshold: 20),
-      complexity.lizard_cc,warning,main: CC=29 exceeds limit 15,561
-  llx/orchestration/queue_manager.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 27 (max: 15),616
-      complexity.lizard_cc,warning,main: CC=28 exceeds limit 15,616
-  llx/orchestration/session_manager.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 20 (max: 15),518
-      complexity.lizard_cc,warning,main: CC=20 exceeds limit 15,518
-  llx/tools/docker_manager.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 20 (max: 15),479
-      complexity.lizard_cc,warning,main: CC=19 exceeds limit 15,479
+WARNINGS[3]{path,score}:
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
       complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,99
+  llx/prellm/cli.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 10.4 (threshold: 20),
   llx/prellm/trace.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[28]{path,score}:
+ERRORS[46]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  llx/orchestration/__init__.py,0.57
-    issues[8]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'session_manager' not found,6
-      python.import.resolvable,error,Module 'instance_manager' not found,7
-      python.import.resolvable,error,Module 'rate_limiter' not found,8
-      python.import.resolvable,error,Module 'queue_manager' not found,9
-      python.import.resolvable,error,Module 'routing_engine' not found,10
-      python.import.resolvable,error,Module 'vscode_orchestrator' not found,11
-      python.import.resolvable,error,Module 'llm_orchestrator' not found,12
-      python.import.resolvable,error,Module 'orchestrator_cli' not found,13
+  llx/orchestration/instances/__init__.py,0.57
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'manager' not found,4
+      python.import.resolvable,error,Module 'ports' not found,5
+  llx/orchestration/llm/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,7
+      python.import.resolvable,error,Module 'orchestrator' not found,15
+  llx/orchestration/queue/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'manager' not found,4
+  llx/orchestration/ratelimit/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'limiter' not found,4
+  llx/orchestration/routing/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'engine' not found,11
+  llx/orchestration/session/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'manager' not found,4
+  llx/orchestration/vscode/__init__.py,0.57
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'orchestrator' not found,4
+      python.import.resolvable,error,Module 'ports' not found,5
   llx/prellm/utils/__init__.py,0.57
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'lazy_imports' not found,3
@@ -60,40 +61,79 @@ ERRORS[28]{path,score}:
       python.import.resolvable,error,Module 'model_manager' not found,9
       python.import.resolvable,error,Module 'config_manager' not found,10
       python.import.resolvable,error,Module 'health_checker' not found,11
-  llx/orchestration/orchestrator_cli.py,0.72
-    issues[19]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'session_manager' not found,15
-      python.import.resolvable,error,Module 'instance_manager' not found,16
-      python.import.resolvable,error,Module 'rate_limiter' not found,17
-      python.import.resolvable,error,Module 'queue_manager' not found,18
-      python.import.resolvable,error,Module 'routing_engine' not found,19
-      python.import.resolvable,error,Module 'vscode_orchestrator' not found,20
-      python.import.resolvable,error,Module 'llm_orchestrator' not found,21
-      python.import.resolvable,error,Module 'routing_engine' not found,904
-      python.import.resolvable,error,Module 'routing_engine' not found,1171
-      python.import.resolvable,error,Module 'rate_limiter' not found,1199
-      python.import.resolvable,error,Module 'queue_manager' not found,1220
-      python.import.resolvable,error,Module 'session_manager' not found,994
-      python.import.resolvable,error,Module 'instance_manager' not found,1032
-      python.import.resolvable,error,Module 'llm_orchestrator' not found,843
-      python.import.resolvable,error,Module 'rate_limiter' not found,976
-      python.import.resolvable,error,Module 'session_manager' not found,1005
-      python.import.resolvable,error,Module 'instance_manager' not found,1043
-      python.import.resolvable,error,Module 'llm_orchestrator' not found,867
-      python.import.resolvable,error,Module 'vscode_orchestrator' not found,809
-  llx/tools/cli.py,0.77
+  llx/orchestration/__init__.py,0.63
     issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,13
-      python.import.resolvable,error,Module 'ai_tools_manager' not found,14
-      python.import.resolvable,error,Module 'vscode_manager' not found,15
-      python.import.resolvable,error,Module 'model_manager' not found,16
-      python.import.resolvable,error,Module 'config_manager' not found,17
-      python.import.resolvable,error,Module 'health_checker' not found,18
-  llx/mcp/server.py,0.82
+      python.import.resolvable,error,Module 'session' not found,17
+      python.import.resolvable,error,Module 'instances' not found,18
+      python.import.resolvable,error,Module 'ratelimit' not found,19
+      python.import.resolvable,error,Module 'routing' not found,21
+      python.import.resolvable,error,Module 'vscode' not found,22
+      python.import.resolvable,error,Module 'llm' not found,23
+  llx/orchestration/instances/cli.py,0.74
     issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'mcp.server' not found,22
-      python.import.resolvable,error,Module 'mcp.types' not found,23
-      python.import.resolvable,error,Module 'mcp.server.stdio' not found,68
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'models' not found,8
+      python.import.resolvable,error,Module 'manager' not found,9
+  llx/orchestration/llm/cli.py,0.74
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,9
+      python.import.resolvable,error,Module 'models' not found,11
+      python.import.resolvable,error,Module 'orchestrator' not found,12
+  llx/orchestration/ratelimit/cli.py,0.74
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'models' not found,8
+      python.import.resolvable,error,Module 'limiter' not found,9
+  llx/orchestration/routing/cli.py,0.74
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'models' not found,8
+      python.import.resolvable,error,Module 'engine' not found,9
+  llx/orchestration/session/cli.py,0.74
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'models' not found,8
+      python.import.resolvable,error,Module 'manager' not found,9
+  llx/orchestration/vscode/cli.py,0.74
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,6
+      python.import.resolvable,error,Module 'models' not found,8
+      python.import.resolvable,error,Module 'orchestrator' not found,9
+  llx/orchestration/llm/orchestrator.py,0.76
+    issues[9]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,15
+      python.import.resolvable,error,Module 'session.manager' not found,16
+      python.import.resolvable,error,Module 'ratelimit.limiter' not found,17
+      python.import.resolvable,error,Module 'ratelimit.models' not found,18
+      python.import.resolvable,error,Module 'routing.engine' not found,19
+      python.import.resolvable,error,Module 'routing.models' not found,20
+      python.import.resolvable,error,Module 'models' not found,27
+      python.import.resolvable,error,Module 'executors' not found,35
+      python.import.resolvable,error,Module 'health' not found,36
+  llx/orchestration/routing/engine.py,0.76
+    issues[8]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,12
+      python.import.resolvable,error,Module 'models' not found,14
+      python.import.resolvable,error,Module 'session.manager' not found,22
+      python.import.resolvable,error,Module 'session.models' not found,23
+      python.import.resolvable,error,Module 'instances.manager' not found,24
+      python.import.resolvable,error,Module 'instances.models' not found,25
+      python.import.resolvable,error,Module 'ratelimit.limiter' not found,26
+      python.import.resolvable,error,Module 'ratelimit.models' not found,27
+  llx/orchestration/queue/cli.py,0.79
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module '_utils' not found,7
+      python.import.resolvable,error,Module 'models' not found,9
+      python.import.resolvable,error,Module 'manager' not found,10
+  llx/orchestration/vscode/orchestrator.py,0.81
+    issues[7]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,16
+      python.import.resolvable,error,Module 'ports' not found,17
+      python.import.resolvable,error,Module 'instances.manager' not found,18
+      python.import.resolvable,error,Module 'instances.models' not found,19
+      python.import.resolvable,error,Module 'session.manager' not found,20
+      python.import.resolvable,error,Module 'ratelimit.limiter' not found,21
+      python.import.resolvable,error,Module 'routing.engine' not found,22
   llx/prellm/env_config.py,0.84
     issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'getv' not found,27
@@ -106,81 +146,88 @@ ERRORS[28]{path,score}:
       python.import.resolvable,error,Module 'nfo.logger' not found,20
       python.import.resolvable,error,Module 'nfo.sinks' not found,21
       python.import.resolvable,error,Module 'nfo.terminal' not found,22
-  llx/prellm/server.py,0.88
+  llx/orchestration/llm/executors.py,0.86
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,10
+  llx/orchestration/llm/health.py,0.86
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,10
+  llx/tools/health_checker.py,0.86
     issues[5]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'fastapi' not found,22
-      python.import.resolvable,error,Module 'nfo.decorators' not found,23
-      python.import.resolvable,error,Module 'fastapi.middleware.cors' not found,24
-      python.import.resolvable,error,Module 'fastapi.responses' not found,25
-      python.import.resolvable,error,Module 'starlette.middleware.base' not found,27
-  llx/tools/health_checker.py,0.88
-    issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module 'model_manager' not found,15
-      python.import.resolvable,error,Module 'vscode_manager' not found,16
-      python.import.resolvable,error,Module 'ai_tools_manager' not found,17
-  llx/orchestration/routing_engine.py,0.90
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'session_manager' not found,19
-      python.import.resolvable,error,Module 'instance_manager' not found,20
-      python.import.resolvable,error,Module 'rate_limiter' not found,21
-      python.import.resolvable,error,Module 'queue_manager' not found,22
-  llx/orchestration/vscode_orchestrator.py,0.90
-    issues[5]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'instance_manager' not found,21
-      python.import.resolvable,error,Module 'session_manager' not found,22
-      python.import.resolvable,error,Module 'rate_limiter' not found,23
-      python.import.resolvable,error,Module 'routing_engine' not found,24
-      python.import.resolvable,error,Module 'instance_manager' not found,415
+      python.import.resolvable,error,Module '_utils' not found,16
+      python.import.resolvable,error,Module 'vscode_manager' not found,17
+      python.import.resolvable,error,Module 'ai_tools_manager' not found,18
+  llx/orchestration/cli.py,0.87
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'instances' not found,88
+      python.import.resolvable,error,Module 'session' not found,105
+      python.import.resolvable,error,Module 'instances' not found,106
+  llx/orchestration/instances/ports.py,0.89
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,7
+  llx/orchestration/instances/manager.py,0.91
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,15
+      python.import.resolvable,error,Module 'ports' not found,16
   llx/config.py,0.92
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'litellm_config' not found,32
       python.import.resolvable,error,Module 'tomli' not found,28
-  llx/orchestration/llm_orchestrator.py,0.92
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'session_manager' not found,20
-      python.import.resolvable,error,Module 'rate_limiter' not found,21
-      python.import.resolvable,error,Module 'routing_engine' not found,22
   llx/prellm/llm_provider.py,0.92
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.decorators' not found,14
       python.import.resolvable,error,Module 'instructor' not found,160
+  llx/tools/ai_tools_manager.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+  llx/tools/config_manager.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'toml' not found,9
+      python.import.resolvable,error,Module '_utils' not found,14
+  llx/tools/model_manager.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+  llx/tools/vscode_manager.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+  llx/orchestration/ratelimit/limiter.py,0.94
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,13
+  llx/orchestration/session/manager.py,0.95
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,14
   llx/prellm/agents/executor.py,0.95
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.decorators' not found,17
+  llx/orchestration/queue/manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,16
   llx/prellm/agents/preprocessor.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.decorators' not found,17
   llx/prellm/context/user_memory.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'chromadb' not found,83
-  llx/tools/ai_tools_manager.py,0.96
+  llx/tools/docker_manager.py,0.96
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-  llx/tools/config_manager.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'toml' not found,9
-  llx/tools/model_manager.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-  llx/tools/vscode_manager.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
   llx/prellm/analyzers/context_engine.py,0.97
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'git' not found,182
   llx/prellm/pipeline.py,0.97
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.decorators' not found,18
-  llx/mcp/tools.py,0.98
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'mcp.types' not found,11
   llx/prellm/core.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.decorators' not found,28
-  llx/prellm/cli.py,0.99
+  llx/prellm/server.py,0.98
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'uvicorn' not found,433
+      python.import.resolvable,error,Module 'nfo.decorators' not found,23
 
 UNSUPPORTED[5]{bucket,count}:
   *.md,15

@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from nfo.decorators import catch, log_call
+from llx.prellm._nfo_compat import catch, log_call
 
 from llx.prellm.analyzers.context_engine import ContextEngine
 from llx.prellm.llm_provider import LLMProvider

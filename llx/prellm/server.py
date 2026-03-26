@@ -20,12 +20,12 @@ import uuid
 from typing import Any, AsyncGenerator
 
 from fastapi import FastAPI, HTTPException, Request
-from nfo.decorators import log_call
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from llx.prellm._nfo_compat import log_call
 from llx.prellm.core import PreLLM, preprocess_and_execute
 from llx.prellm.env_config import get_env_config, EnvConfig
 from llx.prellm.models import (

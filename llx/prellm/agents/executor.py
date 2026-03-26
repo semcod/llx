@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from nfo.decorators import log_call
+from llx.prellm._nfo_compat import log_call
 from pydantic import BaseModel, Field
 
 from llx.prellm.llm_provider import LLMProvider
