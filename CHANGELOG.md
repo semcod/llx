@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.34] - 2026-03-26
+
+### Docs
+- Update examples/README.md
+- Update examples/python-api/test-api-new/README.md
+
+### Test
+- Update tests/test_detection.py
+
+### Other
+- Update examples/fullstack/fullstack-strategy.yaml
+- Update examples/proxy/run.sh
+- Update examples/python-api/my-api-complete/main.py
+- Update examples/python-api/my-api-complete/models.py
+- Update examples/python-api/my-api-complete/monitoring.py
+- Update examples/python-api/my-api-complete/test_api.py
+- Update examples/python-api/my-api-final/main.py
+- Update examples/python-api/my-api-final/models.py
+- Update examples/python-api/my-api-final/test_api.py
+- Update examples/python-api/my-api-restaurant/main.py
+- ... and 15 more files
+
 ## [0.1.33] - 2026-03-26
 
 ### Docs

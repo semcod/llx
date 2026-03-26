@@ -1,30 +1,26 @@
 # LLX Examples
 
-Simplified workflow for project analysis, strategy generation, and code implementation.
+A collection of examples demonstrating the unified, strategy-driven development lifecycle with LLX.
 
-## Main Workflow
+## The Unified Flow
 
-The recommended way to use LLX is the 4-step strategy-driven workflow:
-
-1. **Generate Strategy**: Create a `strategy.yaml` based on a prompt or project analysis.
-2. **Generate Code**: Implement the strategy sprint-by-sprint.
-3. **Run App**: Launch the generated application with automatic dependency check.
-4. **Monitor**: Check health and quality gates.
-
-### 4-Step One-Liners
+All examples now follow a standardized **1-command workflow**. Whether you are building an API, a CLI tool, or a full-stack app, the process is the same:
 
 ```bash
-# 1. Generate (uses free NVIDIA models by default)
-llx plan generate . --profile free --focus api -o strategy.yaml
+# In any example directory:
+bash run.sh "Your project description"
+```
 
-# 2. Code
-llx plan code strategy.yaml ./my-project --profile free
+This single command triggers the **LLX Project Wizard**, which guides you through:
+1.  **Architecture & Strategy**: Generating a robust `strategy.yaml`.
+2.  **Implementation**: Coding exactly 8 sprints (Spec, Impl, Test, Deploy, Monitor).
+3.  **Run & Monitor**: Instructions for starting and health-checking your app.
 
-# 3. Run
-llx plan run ./my-project
+### Manual One-Liners
 
-# 4. Monitor
-llx plan monitor strategy.yaml --url http://localhost:8000
+If you prefer using the CLI directly:
+```bash
+llx plan wizard --description "Build a notes API"
 ```
 
 ## Available Examples

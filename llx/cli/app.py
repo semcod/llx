@@ -425,6 +425,12 @@ def plan_all(
     import subprocess
     import sys
     
+    # Internal defaults
+    if profile is None:
+        profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
+    if sprints is None:
+        sprints = int(os.getenv("LLX_DEFAULT_SPRINTS", "8"))
+    
     from llx.detection import ProjectTypeDetector
     
     strategy_file = "strategy.yaml"
@@ -584,32 +590,39 @@ def plan_generate(
     path: str = typer.Argument(".", help="Project to analyze"),
     output: str = typer.Option("strategy.yaml", "--output", "-o"),
     model: Optional[str] = typer.Option(None, "--model", "-m"),
-    sprints: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_SPRINTS", "8")), "--sprints", "-s"),
+    sprints: Optional[int] = typer.Option(None, "--sprints", "-s"),
     focus: Optional[str] = typer.Option(None, "--focus"),
-    description: Optional[str] = typer.Option(None, "--description", "-d", help="Project description for better strategy generation"),
-    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p", 
-        help="Model profile: free, local, cloud-free, openrouter-free, cheap, balanced"),
-    provider: Optional[str] = typer.Option(None, "--provider", 
-        help="Filter by provider: openai, anthropic, openrouter, ollama"),
-    tier: Optional[str] = typer.Option(None, "--tier", 
-        help="Filter by tier: free, cheap, balanced, premium"),
-    local_only: bool = typer.Option(False, "--local", help="Use local models only"),
-    cloud_only: bool = typer.Option(False, "--cloud", help="Use cloud models only"),
+    description: Optional[str] = typer.Option(None, "--description", "-d"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p"),
+    provider: Optional[str] = typer.Option(None, "--provider"),
+    tier: Optional[str] = typer.Option(None, "--tier"),
+    local_only: bool = typer.Option(False, "--local"),
+    cloud_only: bool = typer.Option(False, "--cloud"),
 ) -> None:
     """Generate strategy.yaml using built-in generator."""
+    _plan_generate_impl(path, output, model, sprints, focus, description, profile, provider, tier, local_only, cloud_only)
+
+def _plan_generate_impl(
+    path: str, output: str, model: Optional[str], sprints: Optional[int], 
+    focus: Optional[str], description: Optional[str], profile: Optional[str], 
+    provider: Optional[str], tier: Optional[str], local_only: bool, cloud_only: bool
+) -> None:
+    """Internal implementation of plan generate."""
+    if profile is None:
+        profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
+    if sprints is None:
+        sprints = int(os.getenv("LLX_DEFAULT_SPRINTS", "8"))
+    if focus is None:
+        focus = "api"
+
     try:
-        # Import required modules
         from llx.planfile.generate_strategy import generate_strategy_with_fix, save_fixed_strategy
-        from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
         
-        # Get model selection
         selected_model = _get_model_for_generation(model, profile, provider, tier, local_only, cloud_only)
-        
         if not selected_model:
             console.print("[red]No suitable model found[/red]")
             return
         
-        # Generate strategy
         console.print(f"\n[blue]Generating strategy for {path}...[/blue]")
         strategy_data = generate_strategy_with_fix(
             path, 
@@ -618,11 +631,8 @@ def plan_generate(
             focus=focus,
             description=description
         )
-        
-        # Save strategy
         save_fixed_strategy(strategy_data, output)
         console.print(f"[green]✓ Strategy saved to {output}[/green]")
-        
     except Exception as e:
         console.print(f"[red]Error generating strategy: {e}[/red]")
         raise typer.Exit(1)
@@ -857,12 +867,16 @@ def plan_code(
 @plan_app.command("run")
 def plan_run(
     project_dir: str = typer.Argument("./project", help="Directory with generated project"),
-    port: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_PORT", "8000")), "--port", "-p", help="Port to listen on"),
+    port: Optional[int] = typer.Option(None, "--port", "-p", help="Port to listen on"),
     install: bool = typer.Option(True, "--install/--no-install", help="pip install -r requirements.txt first"),
 ) -> None:
     """Start the generated application (detects command from strategy or uses uvicorn)."""
     import subprocess
     import yaml as _yaml
+
+    # Internal defaults
+    if port is None:
+        port = int(os.getenv("LLX_DEFAULT_PORT", "8000"))
 
     proj = Path(project_dir).resolve()
     
@@ -894,13 +908,17 @@ def plan_run(
 @plan_app.command("monitor")
 def plan_monitor(
     strategy: str = typer.Argument("strategy.yaml", help="Path to strategy.yaml"),
-    url: str = typer.Option(lambda: os.getenv("LLX_DEFAULT_URL", "http://localhost:8000"), "--url", "-u", help="Base URL of the running app"),
+    url: Optional[str] = typer.Option(None, "--url", "-u", help="Base URL of the running app"),
     interval: int = typer.Option(0, "--interval", "-i", help="Repeat every N seconds (0 = once)"),
 ) -> None:
     """Monitor a running application: health check + quality gates summary."""
     import httpx
     import time
     import yaml as _yaml
+
+    # Internal defaults
+    if url is None:
+        url = os.getenv("LLX_DEFAULT_URL", "http://localhost:8000")
 
     with open(strategy, encoding="utf-8") as f:
         strat = _yaml.safe_load(f)
@@ -969,11 +987,15 @@ def plan_monitor(
 def plan_wizard(
     path: str = typer.Argument(".", help="Project path"),
     description: Optional[str] = typer.Option(None, "--description", "-d"),
-    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p"),
     output: str = typer.Option("strategy.yaml", "--output", "-o"),
 ) -> None:
     """Unified wizard: Generate strategy -> Implement code -> Run -> Monitor."""
     from rich.prompt import Prompt, Confirm
+    
+    # Internal defaults
+    if profile is None:
+        profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
     
     console.print(Panel.fit(
         "[bold blue]LLX Project Wizard[/bold blue]\n[dim]Guidance for your development lifecycle[/dim]",
@@ -985,7 +1007,11 @@ def plan_wizard(
         description = Prompt.ask("[bold cyan]Enter project description[/bold cyan]")
     
     console.print("\n[yellow]Step 1: Generating Architecture & Strategy...[/yellow]")
-    plan_generate(path=path, output=output, description=description, profile=profile)
+    _plan_generate_impl(
+        path=path, output=output, description=description, profile=profile,
+        model=None, sprints=None, focus=None, provider=None, tier=None, 
+        local_only=False, cloud_only=False
+    )
     
     # 2. Implement Code
     strategy_path = Path(path) / output
@@ -993,7 +1019,7 @@ def plan_wizard(
     
     if Confirm.ask(f"\n[bold cyan]Proceed with code generation in {project_dir}?[/bold cyan]", default=True):
         console.print("[yellow]Step 2: Implementing Code (Sprints 1-8)...[/yellow]")
-        plan_code(strategy=str(strategy_path), output_dir=str(project_dir), profile=profile)
+        _plan_code_impl(strategy=str(strategy_path), out=Path(project_dir), model=None, profile=profile)
     else:
         console.print("[dim]Aborted code generation.[/dim]")
         return

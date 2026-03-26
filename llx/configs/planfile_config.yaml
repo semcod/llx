@@ -17,8 +17,9 @@ strategy:
       Focus: {focus}
       Number of sprints: {sprints}
       Description: {description}
+      Framework: {framework}
 
-      Generate a comprehensive strategy with at least 8 sprints covering:
+      Generate a comprehensive REST API strategy with at least 8 sprints covering:
       1. Project setup and core models
       2. API implementation and CRUD operations
       3. Testing and quality assurance
@@ -27,6 +28,98 @@ strategy:
       6. Monitoring and observability
       7. Documentation and API spec
       8. Performance optimization and final review
+
+    webapp: |
+      Generate a refactoring strategy for this web application.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+      Framework: {framework}
+
+      Generate a comprehensive web application strategy with 6 sprints covering:
+      1. Project setup and architecture
+      2. Core components and routing
+      3. State management and data flow
+      4. UI/UX implementation
+      5. Testing and deployment
+      6. Performance optimization
+
+    cli: |
+      Generate a refactoring strategy for this CLI tool.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+      Framework: {framework}
+
+      Generate a comprehensive CLI tool strategy with 4 sprints covering:
+      1. Project setup and core logic
+      2. CLI interface and commands
+      3. Testing and validation
+      4. Packaging and distribution
+
+    data: |
+      Generate a refactoring strategy for this data processing project.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+      Framework: {framework}
+
+      Generate a comprehensive data processing strategy with 6 sprints covering:
+      1. Data ingestion and validation
+      2. Processing pipeline
+      3. Storage and caching
+      4. Monitoring and logging
+      5. Testing and quality
+      6. Deployment and optimization
+
+    ml: |
+      Generate a refactoring strategy for this machine learning project.
+      YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
+
+      Project Metrics:
+      - Files: {files}
+      - Lines: {lines}
+      - Complexity: {complexity:.1f}
+      - Scale: {scale:.1f}
+
+      Focus: {focus}
+      Number of sprints: {sprints}
+      Description: {description}
+      Framework: {framework}
+
+      Generate a comprehensive ML project strategy with 8 sprints covering:
+      1. Data preparation and exploration
+      2. Feature engineering
+      3. Model development
+      4. Training and validation
+      5. Model evaluation
+      6. Deployment pipeline
+      7. Monitoring and observability
+      8. Documentation and maintenance
 
       YAML Structure Required:
       project_name: "Name based on description"
