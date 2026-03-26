@@ -1,10 +1,10 @@
-# llx | 121f 26251L | python:114,shell:7 | 2026-03-26
-# stats: 960 func | 0 cls | 121 mod | CC̄=3.9 | critical:8 | cycles:0
+# llx | 122f 26587L | python:115,shell:7 | 2026-03-26
+# stats: 989 func | 0 cls | 122 mod | CC̄=3.8 | critical:6 | cycles:0
 # alerts[5]: fan-out execute_v3_pipeline=23; fan-out plan_generate=23; fan-out _dispatch=20; CC _dispatch=21; CC plan_generate=20
 # hotspots[5]: execute_v3_pipeline fan=23; plan_generate fan=23; _dispatch fan=20; _write_env_file fan=18; context fan=18
-# evolution: CC̄ 4.0→3.9 (improved -0.1)
+# evolution: CC̄ 3.9→3.8 (improved -0.1)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[121]:
+M[122]:
   ai-tools-manage.sh,351
   docker-manage.sh,406
   docker/ai-tools/entrypoint.sh,175
@@ -18,7 +18,7 @@ M[121]:
   llx/analysis/runner.py,80
   llx/cli/__init__.py,5
   llx/cli/app.py,548
-  llx/cli/formatters.py,298
+  llx/cli/formatters.py,338
   llx/cli/strategy_commands.py,110
   llx/config.py,327
   llx/integrations/__init__.py,1
@@ -28,10 +28,11 @@ M[121]:
   llx/mcp/__init__.py,1
   llx/mcp/__main__.py,4
   llx/mcp/server.py,83
-  llx/mcp/tools.py,684
+  llx/mcp/tools.py,748
   llx/orchestration/__init__.py,35
   llx/orchestration/_utils.py,63
   llx/orchestration/cli.py,193
+  llx/orchestration/cli_utils.py,122
   llx/orchestration/instances/__init__.py,14
   llx/orchestration/instances/cli.py,149
   llx/orchestration/instances/manager.py,556
@@ -56,7 +57,7 @@ M[121]:
   llx/orchestration/routing/engine.py,640
   llx/orchestration/routing/models.py,75
   llx/orchestration/session/__init__.py,12
-  llx/orchestration/session/cli.py,115
+  llx/orchestration/session/cli.py,116
   llx/orchestration/session/manager.py,445
   llx/orchestration/session/models.py,54
   llx/orchestration/vscode/__init__.py,14
@@ -94,7 +95,7 @@ M[121]:
   llx/prellm/context/shell_collector.py,169
   llx/prellm/context/user_memory.py,361
   llx/prellm/context_ops.py,181
-  llx/prellm/core.py,421
+  llx/prellm/core.py,464
   llx/prellm/env_config.py,528
   llx/prellm/extractors.py,229
   llx/prellm/llm_provider.py,236
@@ -117,11 +118,11 @@ M[121]:
   llx/tools/__init__.py,22
   llx/tools/_docker.py,53
   llx/tools/_utils.py,33
-  llx/tools/ai_tools_manager.py,582
+  llx/tools/ai_tools_manager.py,590
   llx/tools/cli.py,133
-  llx/tools/config_manager.py,779
+  llx/tools/config_manager.py,790
   llx/tools/docker_manager.py,548
-  llx/tools/health_checker.py,543
+  llx/tools/health_checker.py,590
   llx/tools/health_runner.py,266
   llx/tools/model_manager.py,740
   llx/tools/vscode_manager.py,789
@@ -129,7 +130,7 @@ M[121]:
 D:
   llx/tools/ai_tools_manager.py:
     e: AIToolsManager,_build_parser,_dispatch,main
-    AIToolsManager: __init__(1),is_container_running(0),start_ai_tools(1),stop_ai_tools(0),restart_ai_tools(0),access_shell(0),execute_command(2),get_status(0),test_connectivity(0),run_chat_test(2),get_available_models(0),install_tool(1),update_tools(0),get_logs(1),create_workspace_example(1),backup_configurations(1),restore_configurations(1),print_status_summary(0),print_usage_examples(0)  # Manages AI tools container and operations...
+    AIToolsManager: __init__(1),is_container_running(0),start_ai_tools(1),stop_ai_tools(0),restart_ai_tools(0),access_shell(0),execute_command(2),_get_service_statuses(0),_get_tool_statuses(0),_get_workspace_status(0),get_status(0),test_connectivity(0),run_chat_test(2),get_available_models(0),install_tool(1),update_tools(0),get_logs(1),create_workspace_example(1),backup_configurations(1),restore_configurations(1),print_status_summary(0),print_usage_examples(0)  # Manages AI tools container and operations...
     _build_parser()
     _dispatch(args;manager)
     main()
@@ -159,39 +160,6 @@ D:
     _build_parser()
     _dispatch(args;manager)
     main()
-  llx/tools/config_manager.py:
-    e: ConfigManager,_cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_remove_model,_cmd_backup,_cmd_restore,_cmd_docker_env,_cmd_create_profile,_cmd_load_profile,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main
-    ConfigManager: __init__(1),load_config(1),save_config(2),_load_env_file(1),_save_env_file(2),create_default_env(1),update_env_var(2),get_env_var(2),validate_env_config(0),get_llx_config(0),update_llx_config(1),get_model_config(0),add_model(2),remove_model(1),list_models(0),backup_configs(1),restore_configs(1),generate_docker_env_file(1),validate_docker_configs(0),create_profile(2),load_profile(1),list_profiles(0),get_config_summary(0),print_config_summary(0)  # Manages llx configuration files and settings...
-    _cmd_load(args;manager)
-    _cmd_save(args;manager)
-    _cmd_create_env(args;manager)
-    _cmd_update_env(args;manager)
-    _cmd_get_env(args;manager)
-    _cmd_validate(args;manager)
-    _cmd_list_models(args;manager)
-    _cmd_add_model(args;manager)
-    _cmd_remove_model(args;manager)
-    _cmd_backup(args;manager)
-    _cmd_restore(args;manager)
-    _cmd_docker_env(args;manager)
-    _cmd_create_profile(args;manager)
-    _cmd_load_profile(args;manager)
-    _cmd_list_profiles(args;manager)
-    _cmd_summary(args;manager)
-    _build_parser()
-    _dispatch(args;manager)
-    main()
-  llx/tools/health_checker.py:
-    e: HealthChecker,_build_parser,_dispatch,main
-    HealthChecker: __init__(1),check_service_health(1),check_container_health(1),check_system_resources(0),check_filesystem_health(0),check_network_connectivity(0),run_comprehensive_health_check(0),_generate_recommendations(1),_print_health_summary(1),run_quick_health_check(0),monitor_services(2)  # Comprehensive health monitoring for llx ecosystem...
-    _build_parser()
-    _dispatch(args;checker)
-    main()
-  llx/prellm/core.py:
-    e: PreLLM,preprocess_and_execute,preprocess_and_execute_sync
-    PreLLM: __init__(2),__call__(3),decompose_only(3),get_audit_log(0),_audit(3),_load_config(0)  # preLLM v0.2/v0.3 — small LLM decomposition before large LLM ...
-    preprocess_and_execute(query;small_llm;large_llm;strategy;user_context;config_path;domain_rules;pipeline;prompts_path;pipelines_path;schemas_path;memory_path;codebase_path;collect_env;collect_runtime;session_path;compress_folder;sanitize;sensitive_rules)
-    preprocess_and_execute_sync(query;small_llm;large_llm;strategy;user_context;config_path;domain_rules;pipeline;prompts_path;pipelines_path;schemas_path)
   llx/tools/model_manager.py:
     e: ModelManager,_cmd_list,_cmd_pull,_cmd_remove,_cmd_test,_cmd_info,_cmd_recommend,_cmd_profile,_cmd_benchmark,_cmd_cleanup,_cmd_summary,_cmd_requirements,_build_parser,_dispatch,main
     ModelManager: __init__(1),check_ollama_running(0),check_llx_running(0),get_ollama_models(0),get_llx_models(0),pull_model(2),remove_model(1),test_model(2),test_llx_model(2),get_model_info(1),list_recommended_models(1),get_system_resources(0),recommend_models(1),create_model_profile(1),load_model_profile(1),benchmark_model(2),cleanup_unused_models(1),estimate_model_requirements(1),print_model_summary(0)  # Manages local Ollama models and llx configurations...
@@ -209,6 +177,20 @@ D:
     _build_parser()
     _dispatch(args;manager)
     main()
+  llx/cli/formatters.py:
+    e: output_rich,output_json,_filter_models,_build_model_row,_render_models_table,_build_title,print_models_table,_render_tools_table,_render_tiers_table,_render_agents_table,_render_tags_legend,print_info_tables
+    output_rich(metrics;result;verbose)
+    output_json(metrics;result)
+    _filter_models(models;tag;provider;tier)
+    _build_model_row(model)
+    _render_models_table(rows;title)
+    _build_title(tag;provider;tier)
+    print_models_table(config;tag;provider;tier)
+    _render_tools_table()
+    _render_tiers_table(config)
+    _render_agents_table()
+    _render_tags_legend()
+    print_info_tables(config)
   llx/orchestration/ratelimit/limiter.py:
     e: RateLimiter
     RateLimiter: __init__(1),load_limits(0),save_limits(0),_create_default_limits(0),add_limit(1),remove_limit(2),check_rate_limit(4),record_request(5),release_request(2),get_status(2),get_available_providers(1),_reset_counters_if_needed(2),_apply_penalty(1),_cleanup_worker(0),_cleanup_expired_penalties(0),_save_state_if_needed(0),print_status_summary(0)  # Manages rate limiting for multiple providers and accounts...
@@ -239,20 +221,6 @@ D:
     ResponseValidator(LazyLoader): __init__(1),_load(0),list_schemas(0),validate(2),validate_or_retry(4),_check_type(2),_check_constraints(2)  # Validates LLM responses against YAML-defined schemas.
 
 Usage...
-  llx/cli/formatters.py:
-    e: output_rich,output_json,_filter_models,_build_model_row,_render_models_table,_build_title,print_models_table,_render_tools_table,_render_tiers_table,_render_agents_table,_render_tags_legend,print_info_tables
-    output_rich(metrics;result;verbose)
-    output_json(metrics;result)
-    _filter_models(models;tag;provider;tier)
-    _build_model_row(model)
-    _render_models_table(rows;title)
-    _build_title(tag;provider;tier)
-    print_models_table(config;tag;provider;tier)
-    _render_tools_table()
-    _render_tiers_table(config)
-    _render_agents_table()
-    _render_tags_legend()
-    print_info_tables(config)
   llx/orchestration/session/manager.py:
     e: SessionManager
     SessionManager: __init__(1),load_sessions(0),save_sessions(0),create_session(1),remove_session(1),get_available_session(4),request_session(2),release_session(3),get_session_status(1),list_sessions(2),get_queue_status(0),_is_rate_limited(2),_should_rate_limit(1),_get_utilization(1),_get_time_until_available(1),_get_next_available_time(0),_cleanup_worker(0),_cleanup_expired_limits(0),_update_session_stats(0),print_status_summary(0)  # Manages multiple sessions with intelligent scheduling and ra...
@@ -299,6 +267,23 @@ Usage:
     _execute_task(task;project_path;config;metrics;dry_run;model_override)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
+  llx/mcp/tools.py:
+    e: McpTool,_handle_llx_analyze,_handle_llx_select,_handle_llx_chat,_handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate,_handle_llx_preprocess,_handle_llx_context,_handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat,_handle_aider,_handle_planfile_generate,_handle_planfile_apply
+    McpTool:
+    _handle_llx_analyze(args)
+    _handle_llx_select(args)
+    _handle_llx_chat(args)
+    _handle_code2llm_analyze(args)
+    _handle_redup_scan(args)
+    _handle_vallm_validate(args)
+    _handle_llx_preprocess(args)
+    _handle_llx_context(args)
+    _handle_llx_proxy_status(args)
+    _handle_llx_proxym_status(args)
+    _handle_llx_proxym_chat(args)
+    _handle_aider(args)
+    _handle_planfile_generate(args)
+    _handle_planfile_apply(args)
   llx/prellm/agents/preprocessor.py:
     e: PreprocessResult,PreprocessorAgent,_get_user_memory_class,_get_codebase_indexer_class
     PreprocessResult(BaseModel):  # Output of the PreprocessorAgent — structured input for the E...
@@ -335,6 +320,28 @@ Usage:
     _stream_response(query;small;large;strategy;extras)
     batch_process(items)
     create_app(small_model;large_model;strategy;config_path;master_key;dotenv_path)
+  llx/tools/config_manager.py:
+    e: ConfigManager,_cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_remove_model,_cmd_backup,_cmd_restore,_cmd_docker_env,_cmd_create_profile,_cmd_load_profile,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main
+    ConfigManager: __init__(1),load_config(1),save_config(2),_load_env_file(1),_save_env_file(2),create_default_env(1),update_env_var(2),get_env_var(2),validate_env_config(0),get_llx_config(0),update_llx_config(1),get_model_config(0),add_model(2),remove_model(1),list_models(0),backup_configs(1),restore_configs(1),generate_docker_env_file(1),validate_docker_configs(0),create_profile(2),load_profile(1),list_profiles(0),get_config_summary(0),_print_config_files_summary(1),_print_env_summary(1),_print_model_summary(1),_count_summary_issues(1),_print_issue_summary(1),_print_profiles_summary(1),print_config_summary(0)  # Manages llx configuration files and settings...
+    _cmd_load(args;manager)
+    _cmd_save(args;manager)
+    _cmd_create_env(args;manager)
+    _cmd_update_env(args;manager)
+    _cmd_get_env(args;manager)
+    _cmd_validate(args;manager)
+    _cmd_list_models(args;manager)
+    _cmd_add_model(args;manager)
+    _cmd_remove_model(args;manager)
+    _cmd_backup(args;manager)
+    _cmd_restore(args;manager)
+    _cmd_docker_env(args;manager)
+    _cmd_create_profile(args;manager)
+    _cmd_load_profile(args;manager)
+    _cmd_list_profiles(args;manager)
+    _cmd_summary(args;manager)
+    _build_parser()
+    _dispatch(args;manager)
+    main()
   llx/planfile/runner.py:
     e: load_valid_strategy,verify_strategy_post_execution,analyze_project_metrics,apply_strategy_to_tickets,run_strategy
     load_valid_strategy(path)
@@ -354,6 +361,9 @@ Usage:
 
 Usage:
  ...
+  llx/orchestration/routing/engine.py:
+    e: RoutingEngine
+    RoutingEngine: __init__(1),load_config(0),save_config(0),route_request(1),_get_candidates(1),_get_llm_candidates(1),_get_vscode_candidates(1),_get_ai_tools_candidates(1),_filter_candidates(2),_filter_by_rate_limits(2),_apply_routing_strategy(2),_apply_strategy(3),_round_robin_strategy(2),_least_loaded_strategy(2),_priority_based_strategy(2),_cost_optimized_strategy(2),_performance_optimized_strategy(2),_availability_first_strategy(2),_create_decision_from_candidate(5),_validate_decision(1),_create_no_resources_decision(1),_create_routing_failed_decision(1),_create_validation_failed_decision(1),_calculate_llm_score(2),_calculate_vscode_score(2),_calculate_ai_tools_score(2),_get_cost_per_token(2),_get_vscode_cost_per_hour(1),_get_ai_tools_cost_per_hour(1),_get_provider_performance(1),_update_routing_metrics(3),start_background_tasks(0),_metrics_worker(0),_optimization_worker(0),_collect_system_metrics(0),_optimize_routing(0),get_routing_status(0),print_status_summary(0)  # Intelligent routing engine for LLM and VS Code requests...
   llx/prellm/context/folder_compressor.py:
     e: FolderCompressor,_relative_path,_path_to_module,_extract_module_from_import,_extract_module_docstring
     FolderCompressor: __init__(1),compress(3),to_toon(1),to_dependency_graph(1),to_summary(1),estimate_token_count(0)  # Compresses a project folder into a lightweight representatio...
@@ -361,9 +371,6 @@ Usage:
     _path_to_module(rel_path)
     _extract_module_from_import(import_line;project_name)
     _extract_module_docstring(path)
-  llx/orchestration/routing/engine.py:
-    e: RoutingEngine
-    RoutingEngine: __init__(1),load_config(0),save_config(0),route_request(1),_get_candidates(1),_get_llm_candidates(1),_get_vscode_candidates(1),_get_ai_tools_candidates(1),_filter_candidates(2),_filter_by_rate_limits(2),_apply_routing_strategy(2),_apply_strategy(3),_round_robin_strategy(2),_least_loaded_strategy(2),_priority_based_strategy(2),_cost_optimized_strategy(2),_performance_optimized_strategy(2),_availability_first_strategy(2),_create_decision_from_candidate(5),_validate_decision(1),_create_no_resources_decision(1),_create_routing_failed_decision(1),_create_validation_failed_decision(1),_calculate_llm_score(2),_calculate_vscode_score(2),_calculate_ai_tools_score(2),_get_cost_per_token(2),_get_vscode_cost_per_hour(1),_get_ai_tools_cost_per_hour(1),_get_provider_performance(1),_update_routing_metrics(3),start_background_tasks(0),_metrics_worker(0),_optimization_worker(0),_collect_system_metrics(0),_optimize_routing(0),get_routing_status(0),print_status_summary(0)  # Intelligent routing engine for LLM and VS Code requests...
   llx/prellm/context/schema_generator.py:
     e: ContextSchemaGenerator
     ContextSchemaGenerator: generate(5),to_prompt_section(1),estimate_relevance(2),_detect_execution_env(0),_detect_tools(-1),_detect_project_type(0),_build_project_summary(0),_summarize_history(0),_estimate_token_cost(0)  # Generates a structured context schema from available context...
@@ -373,6 +380,14 @@ Usage:
     FileIndex:  # Index of a single source file...
     CodebaseIndex:  # Full codebase index...
     CodebaseIndexer: __init__(1),_check_tree_sitter(-1),index_directory(3),_index_file(2),_extract_with_tree_sitter(3),_get_parser(1),_walk_tree(4),_get_line(1),_extract_with_regex(2),_extract_imports(1),search(3),get_context_for_query(3),get_compressed_context(3),estimate_tokens(0)  # Index a codebase using tree-sitter for AST-based symbol extr...
+  llx/prellm/core.py:
+    e: PreLLM,_resolve_pipeline_name,_apply_config_overrides,_trace_preprocess_configuration,preprocess_and_execute,preprocess_and_execute_sync
+    PreLLM: __init__(2),__call__(3),decompose_only(3),get_audit_log(0),_audit(3),_load_config(0)  # preLLM v0.2/v0.3 — small LLM decomposition before large LLM ...
+    _resolve_pipeline_name(strategy;pipeline)
+    _apply_config_overrides(small_llm;large_llm;domain_rules;config_path;kwargs)
+    _trace_preprocess_configuration(trace;small_llm;large_llm;pipeline_name;config_path;user_context)
+    preprocess_and_execute(query;small_llm;large_llm;strategy;user_context;config_path;domain_rules;pipeline;prompts_path;pipelines_path;schemas_path;memory_path;codebase_path;collect_env;collect_runtime;session_path;compress_folder;sanitize;sensitive_rules)
+    preprocess_and_execute_sync(query;small_llm;large_llm;strategy;user_context;config_path;domain_rules;pipeline;prompts_path;pipelines_path;schemas_path)
   llx/analysis/collector.py:
     e: ProjectMetrics,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_extract_metrics_target,_extract_evolution_stats,_extract_evolution_actions,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_parse_map_stats_line,_parse_map_alerts_line,_parse_map_hotspots_line,_count_map_modules,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope
     ProjectMetrics:  # Aggregated project metrics that drive model selection.
@@ -419,6 +434,21 @@ Ever...
     _cmd_quick_start(args;manager)
     _build_parser()
     _dispatch(args;manager)
+    main()
+  llx/tools/health_checker.py:
+    e: HealthChecker,_build_parser,_write_json_output,_handle_check_command,_handle_quick_command,_handle_monitor_command,_handle_service_command,_handle_container_command,_handle_system_command,_handle_filesystem_command,_handle_network_command,_dispatch,main
+    HealthChecker: __init__(1),_build_service_result(1),_check_redis_health(3),_populate_service_details(3),_check_http_health(4),check_service_health(1),check_container_health(1),check_system_resources(0),check_filesystem_health(0),check_network_connectivity(0),run_comprehensive_health_check(0),_generate_recommendations(1),_print_health_summary(1),run_quick_health_check(0),monitor_services(2)  # Comprehensive health monitoring for llx ecosystem...
+    _build_parser()
+    _write_json_output(output_path;data)
+    _handle_check_command(args;checker)
+    _handle_quick_command(args;checker)
+    _handle_monitor_command(args;checker)
+    _handle_service_command(args;checker)
+    _handle_container_command(args;checker)
+    _handle_system_command(args;checker)
+    _handle_filesystem_command(args;checker)
+    _handle_network_command(args;checker)
+    _dispatch(args;checker)
     main()
   llx/tools/health_runner.py:
     e: HealthCheckRunner
@@ -615,23 +645,6 @@ Usage:
     ChatMessage:  # A single chat message...
     ChatResponse:  # Response from LLM completion...
     LlxClient: __init__(1),chat(2),chat_with_context(3),_build_payload(5),_parse_response(2),_fallback_direct(2),_metrics_headers(0),close(0),__enter__(0),__exit__(0)  # LLM client that routes through LiteLLM proxy or calls direct...
-  llx/mcp/tools.py:
-    e: McpTool,_handle_llx_analyze,_handle_llx_select,_handle_llx_chat,_handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate,_handle_llx_preprocess,_handle_llx_context,_handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat,_handle_aider,_handle_planfile_generate,_handle_planfile_apply
-    McpTool:
-    _handle_llx_analyze(args)
-    _handle_llx_select(args)
-    _handle_llx_chat(args)
-    _handle_code2llm_analyze(args)
-    _handle_redup_scan(args)
-    _handle_vallm_validate(args)
-    _handle_llx_preprocess(args)
-    _handle_llx_context(args)
-    _handle_llx_proxy_status(args)
-    _handle_llx_proxym_status(args)
-    _handle_llx_proxym_chat(args)
-    _handle_aider(args)
-    _handle_planfile_generate(args)
-    _handle_planfile_apply(args)
   llx/orchestration/queue/cli.py:
     e: _build_parser,_dispatch,_cmd_add,_cmd_remove,_cmd_enqueue,_cmd_dequeue,_cmd_complete,_cmd_status,_cmd_metrics,_cmd_cleanup,main
     _build_parser()
@@ -743,6 +756,12 @@ Usage:
     LiteLLMModelConfig:  # Configuration for a single LiteLLM model...
     LiteLLMConfig: load(1),_default_config(0),get_model_config(1),get_models_by_tag(1),get_models_by_provider(1),get_models_by_tier(1),resolve_alias(1),to_llx_models(0),get_proxy_config(0)  # Complete LiteLLM configuration...
     load_litellm_config(project_path)
+  llx/orchestration/cli_utils.py:
+    e: cmd_remove_wrapper,cmd_status_wrapper,cmd_list_wrapper,cmd_cleanup_wrapper
+    cmd_remove_wrapper(args;id_attr;id_label;remove_func;save_func)
+    cmd_status_wrapper(args;id_attr;id_label;status_func)
+    cmd_list_wrapper(items;title;formatter)
+    cmd_cleanup_wrapper(cleanup_func;item_label)
   llx/orchestration/instances/ports.py:
     e: PortAllocator
     PortAllocator: __init__(0),allocate_port(1),release_port(1),_is_port_available(1),get_status(0)  # Manages port allocation for instances...
@@ -841,8 +860,8 @@ Usage:
     StepResult(BaseModel):  # Result of a single process chain step...
     ProcessResult(BaseModel):  # Result of a full process chain execution...
     AuditEntry(BaseModel):  # Single audit log entry for traceability...
-  llx/__main__.py:
   llx/__init__.py:
+  llx/__main__.py:
   llx/prellm/_nfo_compat.py:
   llx/analysis/__init__.py:
   llx/tools/__init__.py:
@@ -862,6 +881,12 @@ Usage:
     SessionConfig:  # Configuration for a session...
     SessionState:  # Current state of a session...
   llx/orchestration/vscode/__init__.py:
+  llx/orchestration/vscode/models.py:
+    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
+    VSCodeAccountType(Enum):  # Types of VS Code accounts...
+    VSCodeAccount:  # VS Code account configuration...
+    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
+    VSCodeSession:  # Active VS Code session...
   llx/orchestration/llm/__init__.py:
   llx/orchestration/instances/models.py:
     e: InstanceType,InstanceStatus,InstanceConfig,InstanceState
@@ -878,12 +903,6 @@ Usage:
     LLMRequest:  # LLM request...
     LLMResponse:  # LLM response...
   llx/orchestration/queue/__init__.py:
-  llx/orchestration/vscode/models.py:
-    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
-    VSCodeAccountType(Enum):  # Types of VS Code accounts...
-    VSCodeAccount:  # VS Code account configuration...
-    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
-    VSCodeSession:  # Active VS Code session...
   llx/orchestration/ratelimit/__init__.py:
   llx/orchestration/ratelimit/models.py:
     e: LimitType,RateLimitConfig,RateLimitState
@@ -936,9 +955,9 @@ Usage:
     e: is_extension_installed,install_extension
     is_extension_installed()
     install_extension()
-  docker/ai-tools/install-tools.sh:
   docker/ai-tools/entrypoint.sh:
     e: hello_world,print,hello_world
     hello_world()
     print()
     hello_world()
+  docker/ai-tools/install-tools.sh:

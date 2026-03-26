@@ -1,22 +1,53 @@
 domain: software
-goal: complexity
+goal:
+  delivery:
+  - Complete in sprints
+  - Review changes
+  metrics:
+  - Complexity reduction
+  - Test coverage
+  quality:
+  - Reduce complexity
+  - Improve maintainability
+  short: Improve complexity
+goals:
+- Reduce overall cyclomatic complexity by 30%
+- Increase unit test coverage to at least 80%
+- Enforce consistent code style and eliminate duplication
 name: Refactoring Strategy
+project:
+  name: RefactorDemo
+  type: Web Application
 project_type: python
 quality_gates:
-- Average CC < 5
-- Test coverage >= 80%
+- description: Quality gate
+  metric: cyclomatic_complexity
+  threshold: < 5 per function
+- description: Quality gate
+  metric: test_coverage
+  threshold: '>= 80%'
+- description: Quality gate
+  metric: lint_errors
+  threshold: '0'
+- description: Quality gate
+  metric: code_duplication
+  threshold: < 5%
 sprints:
-- id: 1
-  name: Sprint 1
+- number: 1
   objectives:
-  - Reduce complexity
-  - Add tests
+  - "Identify and prioritize high\u2011complexity modules"
+  - "Extract long functions into smaller, well\u2011named units"
+  - Create baseline unit tests for refactored code
   tasks:
-  - description: Analyze code complexity
-    model_hints: balanced
-    name: Analyze Complexity
-    type: feature
-  - description: Add unit tests
-    model_hints: cheap
-    name: Add Tests
-    type: test
+  - pattern: 'Analyze file: {file}'
+  - pattern: 'Refactor function: {function} in {file}'
+  - pattern: 'Add unit test for: {function}'
+- number: 2
+  objectives:
+  - Apply appropriate design patterns to simplify logic
+  - Remove duplicated code by introducing shared utilities
+  - Finalize documentation, linting, and performance checks
+- tasks:
+  - pattern: 'Extract duplicate code into utility: {utility}'
+  - pattern: Apply {pattern} pattern to {module}
+  - pattern: Update documentation for {module}

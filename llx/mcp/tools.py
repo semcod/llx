@@ -518,7 +518,7 @@ async def _handle_aider(args: dict) -> dict:
         
         # Add environment variables for Ollama
         docker_cmd.extend([
-            "-e", "OLLAMA_API_BASE=http://host.docker.internal:11434",
+            "-e", "OLLAMA_API_BASE=http://172.17.0.1:11434",
             "paulgauthier/aider",
             "--model", model.replace("ollama/", "ollama_chat/"),
             "--message", prompt

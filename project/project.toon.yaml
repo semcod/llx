@@ -1,7 +1,7 @@
-# llx | 960 func | 88f | 28137L | python | 2026-03-26
+# llx | 989 func | 89f | 28473L | python | 2026-03-26
 
 HEALTH:
-  CC̄=3.9  critical=56 (limit:10)  dup=5  cycles=0
+  CC̄=3.8  critical=54 (limit:10)  dup=5  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
@@ -15,23 +15,23 @@ ALERTS[20]:
   !!  high_fan_out     chat_completions = 16 (limit:10)
   !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
 
-MODULES[121] (top by size):
+MODULES[122] (top by size):
+  M[llx/tools/config_manager.py] 790L C:1 F:49 CC↑12 D:0 (python)
   M[llx/tools/vscode_manager.py] 789L C:1 F:40 CC↑10 D:0 (python)
-  M[llx/tools/config_manager.py] 779L C:1 F:43 CC↑17 D:0 (python)
+  M[llx/mcp/tools.py] 748L C:1 F:14 CC↑13 D:1 (python)
   M[llx/tools/model_manager.py] 740L C:1 F:33 CC↑15 D:0 (python)
-  M[llx/mcp/tools.py] 684L C:1 F:14 CC↑6 D:1 (python)
   M[llx/prellm/trace.py] 649L C:2 F:29 CC↑13 D:2 (python)
   M[llx/orchestration/routing/engine.py] 640L C:1 F:38 CC↑11 D:0 (python)
   M[llx/orchestration/llm/orchestrator.py] 633L C:1 F:25 CC↑10 D:0 (python)
   M[llx/orchestration/vscode/orchestrator.py] 595L C:1 F:27 CC↑12 D:0 (python)
-  M[llx/tools/ai_tools_manager.py] 582L C:1 F:22 CC↑21 D:0 (python)
+  M[llx/tools/ai_tools_manager.py] 590L C:1 F:25 CC↑21 D:0 (python)
+  M[llx/tools/health_checker.py] 590L C:1 F:27 CC↑10 D:0 (python)
   M[llx/orchestration/instances/manager.py] 556L C:1 F:18 CC↑12 D:0 (python)
   M[llx/cli/app.py] 548L C:0 F:18 CC↑20 D:0 (python)
   M[llx/tools/docker_manager.py] 548L C:1 F:21 CC↑19 D:0 (python)
-  M[llx/tools/health_checker.py] 543L C:1 F:14 CC↑16 D:0 (python)
   M[llx/prellm/env_config.py] 528L C:1 F:17 CC↑14 D:4 (python)
   M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
-  LANGS: python:114/shell:7
+  LANGS: python:115/shell:7
 
 HOTSPOTS[10]:
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
@@ -45,11 +45,11 @@ Delegates to getv.Env
   ★ context fan=18  // Show collected environment context, schema, and blocked sensitive data.
 
 REFACTOR[15]:
-  [1] H/H Split god module llx/tools/ai_tools_manager.py (582L, 1 classes)
+  [1] H/H Split god module llx/tools/ai_tools_manager.py (590L, 1 classes)
   [2] H/H Split god module llx/cli/app.py (548L, 0 classes)
   [3] H/H Split god module llx/tools/docker_manager.py (548L, 1 classes)
-  [4] H/H Split god module llx/tools/config_manager.py (779L, 1 classes)
-  [5] H/H Split god module llx/tools/health_checker.py (543L, 1 classes)
+  [4] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
+  [5] H/H Split god module llx/tools/model_manager.py (740L, 1 classes)
 
 EVOLUTION:
-  2026-03-26 CC̄=3.9 crit=56 28137L // Automated analysis
+  2026-03-26 CC̄=3.8 crit=54 28473L // Automated analysis
