@@ -1,36 +1,191 @@
 domain: software
-goal: complexity
+goal:
+  delivery:
+  - Complete in sprints
+  - Review changes
+  metrics:
+  - Complexity reduction
+  - Test coverage
+  quality:
+  - Reduce complexity
+  - Improve maintainability
+  short: Improve improvement
 goals:
-- Reduce complexity to improve maintainability and scalability.
-- Enhance readability and reduce cognitive load on developers.
-- sprints: null
-- duration: 1 sprint (2 weeks)
-  objectives:
-  - Analyze code complexity and identify high-priority areas for refactoring.
-  - Implement simple, incremental changes to reduce complexity.
-  - Conduct code reviews to ensure quality and adherence to best practices.
-  - Document refactoring steps and improvements.
+- Reduce technical debt
+- Improve code readability
+- Enhance maintainability
+- Optimize performance where applicable
 name: Refactoring Strategy
 project:
-  name: Refactoring Project
-  type: Code Optimization
+  name: Codebase Refactoring
+  type: Software Maintenance
 project_type: python
+sprints:
+- sprint1:
+    name: Code Analysis and Initial Cleanup
+    objectives:
+    - Conduct static code analysis
+    - Identify and document code smells
+    - Remove dead/unused code
+    - Standardize file naming and structure
+  tasks:
+  - description: 'Execute analysis: perform code review and identify refactoring targets'
+    model_hints: cheap
+    name: 'analysis: Perform code review and identify refactoring targets'
+    type: tech_debt
+  - description: 'Execute cleanup: remove redundant code and fix style violations'
+    model_hints: cheap
+    name: 'cleanup: Remove redundant code and fix style violations'
+    type: feature
+  - description: 'Execute modularize: break down monolithic components'
+    model_hints: cheap
+    name: 'modularize: Break down monolithic components'
+    type: feature
+  - description: 'Execute test: write or update tests for refactored code'
+    model_hints: cheap
+    name: 'test: Write or update tests for refactored code'
+    type: tech_debt
+  - description: 'Execute document: update inline and external documentation'
+    model_hints: cheap
+    name: 'document: Update inline and external documentation'
+    type: feature
+  - description: 'Execute {''quality_gates'': none}'
+    model_hints: cheap
+    name: '{''quality_gates'': None}'
+    type: feature
+  - description: Execute all unit tests must pass post-refactoring
+    model_hints: cheap
+    name: All unit tests must pass post-refactoring
+    type: tech_debt
+  - description: Execute code coverage must not decrease by more than 5%
+    model_hints: cheap
+    name: Code coverage must not decrease by more than 5%
+    type: feature
+  - description: Execute static analysis must show reduced complexity metrics
+    model_hints: balanced
+    name: Static analysis must show reduced complexity metrics
+    type: feature
+  - description: Execute peer review required for all major changes
+    model_hints: cheap
+    name: Peer review required for all major changes
+    type: feature
+  - description: Execute documentation must be updated for all affected components
+    model_hints: cheap
+    name: Documentation must be updated for all affected components
+    type: feature
+- sprint2:
+    name: Structural Refactoring
+    objectives:
+    - Refactor complex functions into smaller units
+    - Improve module cohesion
+    - Reduce coupling between components
+    - Implement design patterns where applicable
+  tasks:
+  - description: 'Execute analysis: perform code review and identify refactoring targets'
+    model_hints: cheap
+    name: 'analysis: Perform code review and identify refactoring targets'
+    type: tech_debt
+  - description: 'Execute cleanup: remove redundant code and fix style violations'
+    model_hints: cheap
+    name: 'cleanup: Remove redundant code and fix style violations'
+    type: feature
+  - description: 'Execute modularize: break down monolithic components'
+    model_hints: cheap
+    name: 'modularize: Break down monolithic components'
+    type: feature
+  - description: 'Execute test: write or update tests for refactored code'
+    model_hints: cheap
+    name: 'test: Write or update tests for refactored code'
+    type: tech_debt
+  - description: 'Execute document: update inline and external documentation'
+    model_hints: cheap
+    name: 'document: Update inline and external documentation'
+    type: feature
+  - description: 'Execute {''quality_gates'': none}'
+    model_hints: cheap
+    name: '{''quality_gates'': None}'
+    type: feature
+  - description: Execute all unit tests must pass post-refactoring
+    model_hints: cheap
+    name: All unit tests must pass post-refactoring
+    type: tech_debt
+  - description: Execute code coverage must not decrease by more than 5%
+    model_hints: cheap
+    name: Code coverage must not decrease by more than 5%
+    type: feature
+  - description: Execute static analysis must show reduced complexity metrics
+    model_hints: balanced
+    name: Static analysis must show reduced complexity metrics
+    type: feature
+  - description: Execute peer review required for all major changes
+    model_hints: cheap
+    name: Peer review required for all major changes
+    type: feature
+  - description: Execute documentation must be updated for all affected components
+    model_hints: cheap
+    name: Documentation must be updated for all affected components
+    type: feature
+- sprint3:
+    name: Optimization and Validation
+    objectives:
+    - Optimize performance-critical sections
+    - Write unit tests for refactored code
+    - Validate functionality against original behavior
+    - Update documentation
+  tasks:
+  - description: 'Execute analysis: perform code review and identify refactoring targets'
+    model_hints: cheap
+    name: 'analysis: Perform code review and identify refactoring targets'
+    type: tech_debt
+  - description: 'Execute cleanup: remove redundant code and fix style violations'
+    model_hints: cheap
+    name: 'cleanup: Remove redundant code and fix style violations'
+    type: feature
+  - description: 'Execute modularize: break down monolithic components'
+    model_hints: cheap
+    name: 'modularize: Break down monolithic components'
+    type: feature
+  - description: 'Execute test: write or update tests for refactored code'
+    model_hints: cheap
+    name: 'test: Write or update tests for refactored code'
+    type: tech_debt
+  - description: 'Execute document: update inline and external documentation'
+    model_hints: cheap
+    name: 'document: Update inline and external documentation'
+    type: feature
+  - description: 'Execute {''quality_gates'': none}'
+    model_hints: cheap
+    name: '{''quality_gates'': None}'
+    type: feature
+  - description: Execute all unit tests must pass post-refactoring
+    model_hints: cheap
+    name: All unit tests must pass post-refactoring
+    type: tech_debt
+  - description: Execute code coverage must not decrease by more than 5%
+    model_hints: cheap
+    name: Code coverage must not decrease by more than 5%
+    type: feature
+  - description: Execute static analysis must show reduced complexity metrics
+    model_hints: balanced
+    name: Static analysis must show reduced complexity metrics
+    type: feature
+  - description: Execute peer review required for all major changes
+    model_hints: cheap
+    name: Peer review required for all major changes
+    type: feature
+  - description: Execute documentation must be updated for all affected components
+    model_hints: cheap
+    name: Documentation must be updated for all affected components
+    type: feature
 task_patterns:
-- description: Break down large functions into smaller, more manageable pieces.
-  pattern: Refactor large functions
-- description: Reduce nested conditionals by using early returns or other techniques.
-  pattern: Simplify conditional logic
-- description: Identify and eliminate duplicate code to improve maintainability.
-  pattern: Remove redundant code
-- description: Choose the most appropriate data structures for better performance.
-  pattern: Optimize data structures
+- 'analysis: Perform code review and identify refactoring targets'
+- 'cleanup: Remove redundant code and fix style violations'
+- 'modularize: Break down monolithic components'
+- 'test: Write or update tests for refactored code'
+- 'document: Update inline and external documentation'
 - quality_gates: null
-- action: Review and refactor high-complexity areas.
-  gate: Code Complexity
-  threshold: 0.5
-- action: Increase test coverage to ensure refactoring does not break existing functionality.
-  gate: Code Coverage
-  threshold: 80%
-- action: Fix any critical issues identified by the static code analysis tool.
-  gate: Static Code Analysis
-  tool: SonarQube
+- All unit tests must pass post-refactoring
+- Code coverage must not decrease by more than 5%
+- Static analysis must show reduced complexity metrics
+- Peer review required for all major changes
+- Documentation must be updated for all affected components

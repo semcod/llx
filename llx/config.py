@@ -101,10 +101,10 @@ DEFAULT_MODELS: dict[str, ModelConfig] = {
         tags=["FAST", "CHEAP", "PROGRAMMING", "QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION"]
     ),
     "free": ModelConfig(
-        name="free", provider="google",
-        model_id="gemini/gemini-2.5-pro",
-        max_context=1_000_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
-        tags=["FREE", "LARGE_CONTEXT", "GENERAL_PURPOSE", "FAST", "COST_EFFECTIVE"]
+        name="free", provider="openrouter",
+        model_id="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        max_context=32_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
+        tags=["FREE", "FAST", "GENERAL_PURPOSE"]
     ),
     "local": ModelConfig(
         name="local", provider="ollama",

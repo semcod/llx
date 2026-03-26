@@ -121,23 +121,26 @@ build_llx_cmd() {
     case $COMMAND in
         generate)
             cmd="$cmd plan generate"
-            cmd="$cmd --sprints $SPRINTS"
             [ -n "$MODEL" ] && cmd="$cmd --model $MODEL"
             [ -n "$FOCUS" ] && cmd="$cmd --focus $FOCUS"
+            cmd="$cmd --sprints $SPRINTS"
+            cmd="$cmd --output $STRATEGY_FILE $PROJECT_PATH"
             ;;
         review)
             cmd="$cmd plan review"
+            cmd="$cmd $STRATEGY_FILE $PROJECT_PATH"
             ;;
         execute)
             cmd="$cmd plan apply"
             [ "$DRY_RUN" = true ] && cmd="$cmd --dry-run"
+            cmd="$cmd $STRATEGY_FILE $PROJECT_PATH"
             ;;
         monitor|status)
             cmd="$cmd plan status"
+            cmd="$cmd $STRATEGY_FILE $PROJECT_PATH"
             ;;
     esac
     
-    cmd="$cmd $STRATEGY_FILE $PROJECT_PATH"
     echo "$cmd"
 }
 

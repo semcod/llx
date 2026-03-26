@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.25] - 2026-03-26
+
+### Docs
+- Update examples/cli-tools/.llx/code2llm/README.md
+- Update examples/cli-tools/.llx/code2llm/context.md
+- Update examples/planfile/README.md
+
+### Other
+- Update examples/ai-tools/run.sh
+- Update examples/basic/run.sh
+- Update examples/cli-tools/.llx/code2llm/analysis.toon.yaml
+- Update examples/cli-tools/.llx/redup/duplication.json
+- Update examples/cli-tools/run.sh
+- Update examples/cloud-local/run.sh
+- Update examples/docker/run.sh
+- Update examples/filtering/filtering.sh
+- Update examples/filtering/run.sh
+- Update examples/fullstack/fullstack-strategy.yaml
+- ... and 14 more files
+
 ## [0.1.24] - 2026-03-26
 
 ### Docs

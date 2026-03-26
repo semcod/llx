@@ -117,8 +117,8 @@ if [ -z "$OUTPUT_DIR" ]; then
 fi
 
 # Validate tier
-if [[ ! "$TIER" =~ ^(cheap|balanced|premium)$ ]]; then
-    print_error "Invalid tier. Must be: cheap, balanced, or premium"
+if [[ ! "$TIER" =~ ^(cheap|balanced|premium|openrouter/.*)$ ]]; then
+    print_error "Invalid tier. Must be: cheap, balanced, premium, or openrouter model"
     exit 1
 fi
 
@@ -228,10 +228,14 @@ main() {
     if [ -n "$USE_LOCAL" ]; then
         llx_cmd="llx chat $USE_LOCAL --task refactor"
     else
-        llx_cmd="llx chat --model $TIER --task refactor"
+        if [ "$TIER" = "openrouter/deepseek/deepseek-chat-v3-0324" ]; then
+            llx_cmd="llx chat --model openrouter/deepseek/deepseek-chat-v3-0324 --task refactor"
+        else
+            llx_cmd="llx chat --model $TIER --task refactor"
+        fi
     fi
     
-    [ -n "$PROVIDER" ] && llx_cmd="$llx_cmd --provider $PROVIDER"
+    # Note: provider not supported in llx chat
     llx_cmd="$llx_cmd --prompt \"$prompt\""
     
     print_status "Executing: $llx_cmd"

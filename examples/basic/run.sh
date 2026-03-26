@@ -25,4 +25,4 @@ llx select . --max-tier free
 
 echo -e "\n${GREEN}✅ Example completed!${NC}"
 echo -e "${BLUE}💡 Next steps:${NC}"
-echo "  • Try asking a question: llx chat . -p 'Explain this project' --max-tier free"
+echo "  • Try asking a question: llx chat . -p 'Explain this project' --tier free"

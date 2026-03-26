@@ -1,0 +1,16 @@
+{
+  "project_path": "/home/tom/github/semcod/llx/examples/cli-tools",
+  "stats": {
+    "files_scanned": 0,
+    "total_lines": 0,
+    "total_blocks": 0,
+    "scan_time_ms": 0.6
+  },
+  "summary": {
+    "total_groups": 0,
+    "total_fragments": 0,
+    "total_saved_lines": 0
+  },
+  "groups": [],
+  "refactor_suggestions": []
+}

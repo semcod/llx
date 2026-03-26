@@ -172,13 +172,17 @@ build_llx_cmd() {
     if [ "$LOCAL" = true ]; then
         cmd="$cmd --local"
     elif [ -n "$TIER" ]; then
-        cmd="$cmd --model $TIER"
+        if [ "$TIER" = "cheap" ]; then
+            cmd="$cmd --model openrouter/deepseek/deepseek-chat-v3-0324"
+        else
+            cmd="$cmd --model $TIER"
+        fi
     else
         # Smart selection based on task type
         task_type=$(determine_task_type "$PROMPT")
         case $task_type in
             test|boilerplate)
-                cmd="$cmd --model cheap"
+                cmd="$cmd --model openrouter/deepseek/deepseek-chat-v3-0324"
                 ;;
             refactor|api)
                 cmd="$cmd --model balanced"
@@ -191,9 +195,6 @@ build_llx_cmd() {
                 ;;
         esac
     fi
-    
-    # Provider
-    [ -n "$PROVIDER" ] && cmd="$cmd --provider $PROVIDER"
     
     # Task type
     cmd="$cmd --task $task_type"

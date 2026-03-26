@@ -16,7 +16,7 @@ This example demonstrates how to use LLX's planfile integration to execute compr
 ### 1. **Generate → Review → Apply**
 ```bash
 # Phase 1: Generate comprehensive strategy
-llx plan generate . --model claude-sonnet-4 --sprints 3 --focus complexity --output refactor-strategy.yaml
+llx plan generate . --sprints 3 --focus complexity --tier free --output refactor-strategy.yaml
 
 # Phase 2: Review quality gates
 llx plan review refactor-strategy.yaml .

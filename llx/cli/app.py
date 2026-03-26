@@ -224,8 +224,8 @@ provider = "anthropic"
 model_id = "claude-haiku-4-5-20251001"
 
 [models.free]
-provider = "google"
-model_id = "gemini/gemini-2.5-pro"
+provider = "openrouter"
+model_id = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
 
 [models.local]
 provider = "ollama"

@@ -11,43 +11,126 @@ goal:
   - Improve maintainability
   short: Improve complexity
 goals:
-- Reduce overall cyclomatic complexity by 30%
-- Increase unit test coverage to at least 80%
-- Enforce consistent code style and eliminate duplication
+- Reduce overall cyclomatic complexity to improve readability and maintainability  -
+  Increase automated test coverage to safeguard refactoring changes
+- Establish consistent coding standards across the 30 files
 name: Refactoring Strategy
 project:
-  name: RefactorDemo
-  type: Web Application
+  name: CodeBase Refactor
+  type: Backend Service
 project_type: python
 quality_gates:
 - description: Quality gate
-  metric: cyclomatic_complexity
-  threshold: < 5 per function
+  metric: Cyclomatic Complexity per Function
+  threshold: <= 5
 - description: Quality gate
-  metric: test_coverage
+  metric: Average Cyclomatic Complexity per Class
+  threshold: <= 10
+- description: Quality gate
+  metric: Test Coverage (Overall)
   threshold: '>= 80%'
 - description: Quality gate
-  metric: lint_errors
-  threshold: '0'
+  metric: Duplicated Lines
+  threshold: <= 5% of total lines
 - description: Quality gate
-  metric: code_duplication
-  threshold: < 5%
+  metric: Technical Debt Ratio
+  threshold: <= 10%
 sprints:
 - number: 1
   objectives:
-  - "Identify and prioritize high\u2011complexity modules"
-  - "Extract long functions into smaller, well\u2011named units"
-  - Create baseline unit tests for refactored code
+  - "Identify and prioritize high\u2011complexity functions/modules"
+  - "Refactor the top 20% of complex units (\u22486 functions) using extract\u2011\
+    method and extract\u2011class patterns"
+  - "Add unit tests for refactored units aiming for \u226580% coverage on those units"
   tasks:
-  - pattern: 'Analyze file: {file}'
-  - pattern: 'Refactor function: {function} in {file}'
-  - pattern: 'Add unit test for: {function}'
+  - description: "Execute {'pattern': 'extract method', 'description': 'break down\
+      \ a large method into smaller, well\u2011named methods.'}"
+    model_hints: cheap
+    name: "{'pattern': 'Extract Method', 'description': 'Break down a large method\
+      \ into smaller, well\u2011named methods.'}"
+    type: tech_debt
+  - description: 'Execute {''steps'': [''identify code fragment with a single responsibility      -
+      extract fragment into a new method with clear intent-revealing name'', ''replace
+      original fragment with a call to the new method'', ''update tests to cover the
+      new method'']}'
+    model_hints: cheap
+    name: '{''steps'': [''Identify code fragment with a single responsibility      -
+      Extract fragment into a new method with clear intent-revealing name'', ''Replace
+      original fragment with a call to the new method'', ''Update tests to cover the
+      new method'']}'
+    type: tech_debt
+  - description: 'Execute {''pattern'': ''extract class'', ''description'': ''separate
+      concerns when a class has too many responsibilities.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Extract Class'', ''description'': ''Separate concerns when
+      a class has too many responsibilities.''}'
+    type: tech_debt
+  - description: 'Execute {''steps'': [''list responsibilities of the class      -
+      group related fields and methods into a candidate new class'', ''create the
+      new class, move selected fields/methods'', ''adjust original class to delegate
+      to the new class via composition'', ''update tests for both classes'']}'
+    model_hints: cheap
+    name: '{''steps'': [''List responsibilities of the class      - Group related
+      fields and methods into a candidate new class'', ''Create the new class, move
+      selected fields/methods'', ''Adjust original class to delegate to the new class
+      via composition'', ''Update tests for both classes'']}'
+    type: feature
+  - description: 'Execute {''pattern'': ''create utility function'', ''description'':
+      ''eliminate duplicated code by centralizing common logic.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Create Utility Function'', ''description'': ''Eliminate
+      duplicated code by centralizing common logic.''}'
+    type: feature
+  - description: 'Execute {''steps'': [''locate duplicated code blocks across files'',
+      ''design a generic utility function signature'', ''place function in an appropriate
+      shared module'', ''replace each duplicate block with a call to the utility'',
+      ''add unit tests for the utility function'']}'
+    model_hints: cheap
+    name: '{''steps'': [''Locate duplicated code blocks across files'', ''Design a
+      generic utility function signature'', ''Place function in an appropriate shared
+      module'', ''Replace each duplicate block with a call to the utility'', ''Add
+      unit tests for the utility function'']}'
+    type: feature
+- tasks:
+  - Run static analysis to generate complexity report      - Review report with team
+    and select refactoring candidates
+  - "Apply extract\u2011method to functions >30 lines or CC >10"
+  - "Apply extract\u2011class to classes with >200 lines or multiple responsibilities"
+  - Write/update unit tests for each refactored unit
+  - Conduct peer review of changes
 - number: 2
   objectives:
-  - Apply appropriate design patterns to simplify logic
-  - Remove duplicated code by introducing shared utilities
-  - Finalize documentation, linting, and performance checks
-- tasks:
-  - pattern: 'Extract duplicate code into utility: {utility}'
-  - pattern: Apply {pattern} pattern to {module}
-  - pattern: Update documentation for {module}
+  - "Address remaining medium\u2011complexity units"
+  - Introduce shared utilities to eliminate duplication
+  - Enforce quality gates across the entire codebase
+  tasks:
+  - "Re\u2011run complexity analysis to verify progress"
+  - "Refactor remaining functions with CC between 5\u201110 using similar patterns"
+  - Identify duplicated code blocks (>10 lines) and create shared utility functions/modules
+  - Update documentation to reflect new structure
+  - "Run full test suite and ensure \u226580% overall coverage"
+  - Validate quality gates before marking sprint complete
+task_patterns:
+- description: "Break down a large method into smaller, well\u2011named methods."
+  pattern: Extract Method
+- steps:
+  - Identify code fragment with a single responsibility      - Extract fragment into
+    a new method with clear intent-revealing name
+  - Replace original fragment with a call to the new method
+  - Update tests to cover the new method
+- description: Separate concerns when a class has too many responsibilities.
+  pattern: Extract Class
+- steps:
+  - List responsibilities of the class      - Group related fields and methods into
+    a candidate new class
+  - Create the new class, move selected fields/methods
+  - Adjust original class to delegate to the new class via composition
+  - Update tests for both classes
+- description: Eliminate duplicated code by centralizing common logic.
+  pattern: Create Utility Function
+- steps:
+  - Locate duplicated code blocks across files
+  - Design a generic utility function signature
+  - Place function in an appropriate shared module
+  - Replace each duplicate block with a call to the utility
+  - Add unit tests for the utility function

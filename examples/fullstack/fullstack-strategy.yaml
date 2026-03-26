@@ -1,0 +1,141 @@
+domain: software
+goal:
+  delivery:
+  - Complete in sprints
+  - Review changes
+  metrics:
+  - Complexity reduction
+  - Test coverage
+  quality:
+  - Reduce complexity
+  - Improve maintainability
+  short: Improve improvement
+goals:
+- Reduce overall lines of code by eliminating duplication
+- Improve readability and maintainability through consistent naming and structure
+- Increase test coverage to >= 80% of refactored modules
+name: Refactoring Strategy
+project:
+  name: CodeBaseRefactor
+  type: Refactoring
+project_type: python
+quality_gates:
+- description: Quality gate
+  gate: Static analysis complexity per function
+  threshold: < 0.5
+- description: Quality gate
+  gate: Unit test coverage
+  threshold: '>= 80%'
+- description: Quality gate
+  gate: Duplicate lines percentage
+  threshold: < 5%
+- description: Quality gate
+  gate: Build success
+  threshold: 100% (no compilation errors)
+sprints:
+- number: 1
+  objectives:
+  - Identify duplicate code blocks across the 4 files
+  - Extract duplicated logic into shared utility functions
+  - Rename ambiguous variables and functions to follow project naming conventions
+  tasks:
+  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
+      \ code sequences and move them into a new, well\u2011named function.'}"
+    model_hints: cheap
+    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
+      \ and move them into a new, well\u2011named function.'}"
+    type: tech_debt
+  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
+      variable, function, or class names to be descriptive and follow the project''s
+      naming convention."}'
+    model_hints: cheap
+    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
+      or class names to be descriptive and follow the project''s naming convention."}'
+    type: feature
+  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
+      ''replace long parameter lists with a single object to improve readability.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
+      long parameter lists with a single object to improve readability.''}'
+    type: feature
+  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
+      ''substitute literal numbers with named constants or enums.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
+      literal numbers with named constants or enums.''}'
+    type: feature
+- number: 2
+  objectives:
+  - "Refactor large functions (>50 lines) into smaller, single\u2011purpose methods\
+    \      - Introduce module boundaries to separate concerns (e.g., UI, business\
+    \ logic, data access)"
+  - Add unit tests for newly extracted utilities aiming for 60% coverage
+  tasks:
+  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
+      \ code sequences and move them into a new, well\u2011named function.'}"
+    model_hints: cheap
+    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
+      \ and move them into a new, well\u2011named function.'}"
+    type: tech_debt
+  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
+      variable, function, or class names to be descriptive and follow the project''s
+      naming convention."}'
+    model_hints: cheap
+    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
+      or class names to be descriptive and follow the project''s naming convention."}'
+    type: feature
+  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
+      ''replace long parameter lists with a single object to improve readability.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
+      long parameter lists with a single object to improve readability.''}'
+    type: feature
+  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
+      ''substitute literal numbers with named constants or enums.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
+      literal numbers with named constants or enums.''}'
+    type: feature
+- number: 3
+  objectives:
+  - Complete remaining refactorings and ensure all functions adhere to SRP
+  - Run static analysis to achieve complexity score < 0.5 per function
+  - Reach overall test coverage >= 80% and validate no regression via existing test
+    suite
+  tasks:
+  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
+      \ code sequences and move them into a new, well\u2011named function.'}"
+    model_hints: cheap
+    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
+      \ and move them into a new, well\u2011named function.'}"
+    type: tech_debt
+  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
+      variable, function, or class names to be descriptive and follow the project''s
+      naming convention."}'
+    model_hints: cheap
+    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
+      or class names to be descriptive and follow the project''s naming convention."}'
+    type: feature
+  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
+      ''replace long parameter lists with a single object to improve readability.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
+      long parameter lists with a single object to improve readability.''}'
+    type: feature
+  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
+      ''substitute literal numbers with named constants or enums.''}'
+    model_hints: cheap
+    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
+      literal numbers with named constants or enums.''}'
+    type: feature
+task_patterns:
+- description: "Identify repeated code sequences and move them into a new, well\u2011\
+    named function."
+  pattern: Extract Method
+- description: Update variable, function, or class names to be descriptive and follow
+    the project's naming convention.
+  pattern: Rename Symbol
+- description: Replace long parameter lists with a single object to improve readability.
+  pattern: Introduce Parameter Object
+- description: Substitute literal numbers with named constants or enums.
+  pattern: Replace Magic Numbers

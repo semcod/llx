@@ -104,6 +104,8 @@ select_model() {
     local provider="$4"
     local prefer_local="$5"
     
+    local model_args=""
+    
     # Prefer local if requested
     if [ "$prefer_local" = true ]; then
         echo "--local"
@@ -114,32 +116,32 @@ select_model() {
     case $task in
         refactor)
             if [ -n "$max_tier" ]; then
-                echo "--model $max_tier"
+                model_args="--model $max_tier"
             else
-                echo "--model balanced"
+                model_args="--model balanced"
             fi
             ;;
         explain|quick_fix)
             if [ -n "$cost_limit" ] && [ "$(echo "$cost_limit < 0.005" | bc -l)" -eq 1 ]; then
-                echo "--model cheap"
+                model_args="--model openrouter/deepseek/deepseek-chat-v3-0324"
             else
-                echo "--model cheap"
+                model_args="--model openrouter/deepseek/deepseek-chat-v3-0324"
             fi
             ;;
         review)
             if [ -n "$max_tier" ]; then
-                echo "--model $max_tier"
+                model_args="--model $max_tier"
             else
-                echo "--model premium"
+                model_args="--model premium"
             fi
             ;;
         *)
-            echo "--model balanced"
+            model_args="--model balanced"
             ;;
     esac
     
-    # Add provider if specified
-    [ -n "$provider" ] && echo "--provider $provider"
+    # Note: provider is set via environment or config, not CLI flag
+    echo "$model_args"
 }
 
 # Demo functions
