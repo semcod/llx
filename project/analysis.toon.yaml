@@ -6,8 +6,8 @@ HEALTH[10]:
   🟡 CC    _dispatch CC=21 (limit:15)
   🟡 CC    _dispatch CC=19 (limit:15)
   🟡 CC    _dispatch CC=19 (limit:15)
-  🟡 CC    print_config_summary CC=17 (limit:15)
   🟡 CC    check_service_health CC=16 (limit:15)
+  🟡 CC    print_config_summary CC=17 (limit:15)
   🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    _render_tiers_table CC=15 (limit:15)
   🟡 CC    get_status CC=15 (limit:15)
@@ -174,17 +174,17 @@ COUPLING:
          llx.prellm                                    ←1                 ←1                                                       ←2                                                                                             ←1                 ──  hub
   CYCLES: none
   HUB: docker.ai-tools/ (fan-in=852)
-  HUB: llx/ (fan-in=15)
-  HUB: llx.prellm/ (fan-in=5)
+  HUB: llx.tools/ (fan-in=7)
   HUB: llx.analysis/ (fan-in=13)
   HUB: llx.routing/ (fan-in=9)
-  HUB: llx.tools/ (fan-in=7)
   HUB: llx.integrations/ (fan-in=5)
+  HUB: llx/ (fan-in=15)
+  HUB: llx.prellm/ (fan-in=5)
   SMELL: llx.cli/ fan-out=48 → split needed
-  SMELL: llx.orchestration/ fan-out=317 → split needed
   SMELL: llx.strategy/ fan-out=26 → split needed
   SMELL: llx.tools/ fan-out=494 → split needed
   SMELL: llx.mcp/ fan-out=18 → split needed
+  SMELL: llx.orchestration/ fan-out=317 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

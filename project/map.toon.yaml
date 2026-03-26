@@ -817,8 +817,8 @@ Usage:
   llx/__main__.py:
   llx/__init__.py:
   llx/strategy/__init__.py:
-  llx/analysis/__init__.py:
   llx/prellm/_nfo_compat.py:
+  llx/analysis/__init__.py:
   llx/tools/__init__.py:
   llx/cli/__init__.py:
   llx/planfile/__init__.py:
@@ -828,13 +828,13 @@ Usage:
   llx/integrations/__init__.py:
   llx/routing/__init__.py:
   llx/orchestration/session/__init__.py:
+  llx/orchestration/instances/__init__.py:
   llx/orchestration/session/models.py:
     e: SessionType,SessionStatus,SessionConfig,SessionState
     SessionType(Enum):  # Types of sessions...
     SessionStatus(Enum):  # Session status...
     SessionConfig:  # Configuration for a session...
     SessionState:  # Current state of a session...
-  llx/orchestration/instances/__init__.py:
   llx/orchestration/vscode/__init__.py:
   llx/orchestration/llm/__init__.py:
   llx/orchestration/instances/models.py:

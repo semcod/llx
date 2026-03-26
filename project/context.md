@@ -53,15 +53,15 @@
 - **Classes**: 1
 - **File**: `ai_tools_manager.py`
 
-### llx.tools.docker_manager
-- **Functions**: 21
-- **Classes**: 1
-- **File**: `docker_manager.py`
-
 ### llx.analysis.collector
 - **Functions**: 21
 - **Classes**: 1
 - **File**: `collector.py`
+
+### llx.tools.docker_manager
+- **Functions**: 21
+- **Classes**: 1
+- **File**: `docker_manager.py`
 
 ### llx.orchestration.queue.manager
 - **Functions**: 21
@@ -434,17 +434,27 @@ Key functions that process and transform data:
 > Group config entries into categorized sections for display.
 - **Output to**: entries.items, None.append, None.append, var.startswith, None.append
 
-### llx.prellm.cli.process
-> Execute a DevOps process chain.
-- **Output to**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option
-
 ### llx.prellm.env_config._parse_env_line
 > Parse a single .env line. Returns (key, value) or None if invalid.
 - **Output to**: line.strip, line.partition, key.strip, None.strip, line.startswith
 
+### llx.prellm.cli.process
+> Execute a DevOps process chain.
+- **Output to**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option
+
 ### llx.prellm.trace._format_tree_value
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
+
+### llx.strategy.models.Strategy.validate_sprint_ids
+> Ensure sprint IDs are unique.
+- **Output to**: validator, len, len, ValueError, set
+
+### llx.strategy.models.Strategy.model_validate_yaml
+> Load strategy from YAML string.
+- **Output to**: yaml.safe_load, cls.model_validate, isinstance, obj.items, isinstance
+
+### llx.prellm._get_process_chain
 
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
@@ -455,32 +465,6 @@ Special cases
 ### llx.prellm.server.batch_process
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm._get_process_chain
-
-### llx.prellm.extractors.format_classification_context
-> Extract and format classification context from preprocessing result.
-- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
-
-### llx.prellm.extractors.format_context_schema
-> Extract and format context schema information.
-- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
-
-### llx.prellm.extractors.format_runtime_context
-> Extract and format runtime context information.
-- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
-
-### llx.prellm.extractors.format_user_context
-> Extract and format user context information.
-- **Output to**: extra_context.get, parts.append
-
-### llx.strategy.models.Strategy.validate_sprint_ids
-> Ensure sprint IDs are unique.
-- **Output to**: validator, len, len, ValueError, set
-
-### llx.strategy.models.Strategy.model_validate_yaml
-> Load strategy from YAML string.
-- **Output to**: yaml.safe_load, cls.model_validate, isinstance, obj.items, isinstance
 
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
@@ -509,6 +493,22 @@ Args:
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
 
+### llx.prellm.extractors.format_classification_context
+> Extract and format classification context from preprocessing result.
+- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
+
+### llx.prellm.extractors.format_context_schema
+> Extract and format context schema information.
+- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
+
+### llx.prellm.extractors.format_runtime_context
+> Extract and format runtime context information.
+- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
+
+### llx.prellm.extractors.format_user_context
+> Extract and format user context information.
+- **Output to**: extra_context.get, parts.append
+
 ### llx.prellm.core.preprocess_and_execute
 > One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
 - **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
@@ -524,16 +524,17 @@ Usage:
 > Best-effort JSON extraction from LLM output.
 - **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
 
-### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
-> Format pipeline state into structured executor input.
-- **Output to**: inputs.get, state.get, state.get, isinstance, str
-
 ### llx.prellm.cli_commands.process
 > Execute a DevOps process chain.
 - **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
 
-### llx.tools.ai_tools_manager._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
+> Format pipeline state into structured executor input.
+- **Output to**: inputs.get, state.get, state.get, isinstance, str
+
+### llx.analysis.collector._parse_map_stats_line
+> Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
+- **Output to**: line.split, part.strip, re.search, re.search, re.search
 
 ## Behavioral Patterns
 
@@ -589,8 +590,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 - `examples.docker.main.main` - 25 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
-- `examples.local.main.demonstrate_local_model_selection` - 24 calls
 - `examples.multi-provider.main.main` - 24 calls
+- `examples.local.main.demonstrate_local_model_selection` - 24 calls
 - `llx.strategy.runner.run_strategy` - 23 calls
 - `llx.config.LlxConfig.load` - 23 calls
 - `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
