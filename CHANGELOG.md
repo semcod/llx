@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.33] - 2026-03-26
+
+### Docs
+- Update examples/planfile/FINAL_SUMMARY.md
+- Update examples/planfile/FINAL_TEST_REPORT.md
+- Update examples/planfile/OPENROUTER_INTEGRATION.md
+- Update examples/planfile/PLANFILE_USAGE_GUIDE.md
+- Update examples/planfile/README_NEW.md
+- Update examples/planfile/TEST_REPORT.md
+
+### Other
+- Update examples/aider/run.sh
+- Update examples/cli-tools/run.sh
+- Update examples/docker/run.sh
+- Update examples/filtering/run.sh
+- Update examples/fullstack/run.sh
+- Update examples/hybrid/run.sh
+- Update examples/local/run.sh
+- Update examples/multi-provider/run.sh
+- Update examples/planfile/duplication_refactor_strategy.yaml
+- Update examples/planfile/duplication_refactor_strategy_v2.yaml
+- ... and 15 more files
+
 ## [0.1.32] - 2026-03-26
 
 ### Docs

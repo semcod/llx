@@ -1,33 +1,5 @@
 #!/usr/bin/env bash
-# Docker Environment Example Runner
-
-set -e
-
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
-NC='\033[0m'
-
-echo -e "${BLUE}🚀 llx Docker Usage Example Runner${NC}"
-echo "=================================="
-
-# Try to find llx command or fallback to local repo
-if ! command -v llx &> /dev/null; then
-    LLX_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-    if [ -x "$LLX_PATH/.venv/bin/llx" ]; then
-        shopt -s expand_aliases
-        alias llx="$LLX_PATH/.venv/bin/llx"
-    else
-        export PYTHONPATH="$LLX_PATH"
-        shopt -s expand_aliases
-        alias llx="$LLX_PATH/.venv/bin/python3 -m llx"
-    fi
-fi
-
-echo -e "\n${BLUE}🐳 Demonstrating how to use llx in Docker...${NC}"
-echo "You can mount your project directory into an llx container:"
-echo "  docker run -v \$(pwd):/project -it llx/llx analyze /project --max-tier free"
-
-echo -e "\n${BLUE}🔍 For now, analyzing the current directory natively...${NC}"
-llx analyze . --max-tier free
-
-echo -e "\n${GREEN}✅ Example completed!${NC}"
+# examples/docker/run.sh - Unified Flow for Docker
+# This example demonstrates planning and implementing a Docker-ready application.
+export LLX_RUN_ENV=docker
+llx plan wizard --description "${1:-A containerized microservice}"

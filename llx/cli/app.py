@@ -411,11 +411,13 @@ def plan_models(
 @plan_app.command("all")
 def plan_all(
     description: str = typer.Argument(..., help="Project description"),
-    output_dir: str = typer.Option("./my-api", "--output", "-o", help="Directory to write generated files"),
-    profile: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_PROFILE", "cheap"), "--profile", "-p",
+    output_dir: str = typer.Option("./my-project", "--output", "-o", help="Directory to write generated files"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p",
         help="Model profile: free, local, cheap, balanced"),
-    sprints: int = typer.Option(lambda: int(os.getenv("LLX_DEFAULT_SPRINTS", "8")), "--sprints", "-s"),
-    focus: Optional[str] = typer.Option(lambda: os.getenv("LLX_DEFAULT_FOCUS", "api"), "--focus", "-f"),
+    project_type: Optional[str] = typer.Option(None, "--type", "-t", help="Project type: api, webapp, cli, data, ml"),
+    framework: Optional[str] = typer.Option(None, "--framework", "-f", help="Framework to use"),
+    sprints: Optional[int] = typer.Option(None, "--sprints", "-s", help="Number of sprints"),
+    focus: Optional[str] = typer.Option(None, "--focus", help="Project focus"),
     run: bool = typer.Option(False, "--run", "-r", help="Run the application after generation"),
     monitor: bool = typer.Option(False, "--monitor", "-m", help="Start monitoring after running"),
 ) -> None:
@@ -423,10 +425,39 @@ def plan_all(
     import subprocess
     import sys
     
+    from llx.detection import ProjectTypeDetector
+    
     strategy_file = "strategy.yaml"
     
     console.print(f"[bold blue]🚀 LLX Complete Workflow[/bold blue]")
     console.print(f"[dim]Description: {description}[/dim]\n")
+    
+    # Detect project type if not specified
+    detector = ProjectTypeDetector()
+    if not project_type:
+        project_type = detector.detect(Path.cwd())
+        console.print(f"[dim]Detected project type: {project_type}[/dim]")
+    
+    # Get project configuration
+    project_config = detector.get_project_config(project_type)
+    
+    # Set defaults from project type or environment
+    if not profile:
+        profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
+    if not sprints:
+        sprints = project_config.get("default_sprints", 8)
+    if not focus:
+        focus = project_config.get("default_focus", "api")
+    if not framework:
+        framework = project_config.get("default_framework")
+    
+    # Show configuration
+    console.print(f"[dim]Configuration:[/dim]")
+    console.print(f"  Type: {project_type}")
+    console.print(f"  Framework: {framework or 'default'}")
+    console.print(f"  Sprints: {sprints}")
+    console.print(f"  Focus: {focus}")
+    console.print(f"  Profile: {profile}\n")
     
     # 1. Generate strategy
     console.print(f"[yellow]1. Generating strategy...[/yellow]")
@@ -491,6 +522,61 @@ def plan_all(
         console.print(f"\n[cyan]Next steps:[/cyan]")
         console.print(f"  llx plan run {output_dir}     # Run the app")
         console.print(f"  llx plan monitor {strategy_file}  # Monitor")
+
+
+@plan_app.command("detect")
+def plan_detect(
+    path: str = typer.Argument(".", help="Path to analyze")
+) -> None:
+    """Detect project type and show configuration."""
+    from llx.detection import ProjectTypeDetector
+    
+    detector = ProjectTypeDetector()
+    project_path = Path(path).resolve()
+    
+    # Detect from path
+    type_from_path = detector.detect_from_path(project_path)
+    
+    # Detect from files
+    type_from_files = detector.detect_from_files(project_path)
+    
+    # Detect from config
+    type_from_config = detector.detect_from_config(project_path)
+    
+    console.print(f"[bold]Project Detection Results[/bold]")
+    console.print(f"  Path: {project_path}")
+    console.print(f"  From directory name: {type_from_path or 'None'}")
+    console.print(f"  From files: {type_from_files or 'None'}")
+    console.print(f"  From config: {type_from_config or 'None'}")
+    
+    final_type = detector.detect(project_path)
+    console.print(f"  [green]Detected type: {final_type}[/green]")
+    
+    # Show configuration
+    config = detector.get_project_config(final_type)
+    console.print(f"\n[bold]Configuration:[/bold]")
+    console.print(f"  Display name: {config.get('display_name', '')}")
+    console.print(f"  Default sprints: {config.get('default_sprints', 8)}")
+    console.print(f"  Default focus: {config.get('default_focus', 'api')}")
+    console.print(f"  Default framework: {config.get('default_framework', 'fastapi')}")
+    console.print(f"  Supported frameworks: {', '.join(config.get('supported_frameworks', []))}")
+
+
+@plan_app.command("types")
+def plan_types() -> None:
+    """List all available project types."""
+    from llx.detection import ProjectTypeDetector
+    
+    detector = ProjectTypeDetector()
+    
+    console.print("[bold]Available Project Types:[/bold]\n")
+    
+    for project_type, config in detector.get_all_types().items():
+        console.print(f"[cyan]{project_type}[/cyan] - {config.get('display_name', '')}")
+        console.print(f"  Default sprints: {config.get('default_sprints')}")
+        console.print(f"  Default framework: {config.get('default_framework')}")
+        console.print(f"  Supported frameworks: {', '.join(config.get('supported_frameworks', []))}")
+        console.print()
 
 
 @plan_app.command("generate")
