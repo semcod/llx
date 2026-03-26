@@ -31,7 +31,7 @@ def run_command(cmd, capture_output=True):
 
 
 def test_simple_refactoring():
-    """Test simple code refactoring with available models."""
+    """Test simple code refactoring with OpenRouter free models."""
     
     console.print("\n[bold blue]Test 1: Simple Function Refactoring[/bold blue]")
     console.print("-" * 50)
@@ -57,9 +57,9 @@ def process_data(items):
     
     Path("simple_test.py").write_text(test_code)
     
-    # Generate strategy with nemotron (free)
-    console.print("[yellow]Generating refactoring strategy with nemotron...[/yellow]")
-    cmd = "python3 -m llx plan generate . --model nemotron --sprints 1 --focus complexity --output simple-strategy.yaml"
+    # Generate strategy with OpenRouter free model
+    console.print("[yellow]Generating refactoring strategy with OpenRouter Nemotron...[/yellow]")
+    cmd = "python3 -m llx plan generate . --model nemotron-3-super --sprints 1 --focus complexity --output simple-strategy.yaml"
     result = run_command(cmd)
     
     if result and result.returncode == 0:
@@ -95,7 +95,7 @@ def process_data(items):
 
 
 def test_duplication_removal():
-    """Test duplicate code removal with local model."""
+    """Test duplicate code removal with OpenRouter."""
     
     console.print("\n[bold blue]Test 2: Duplicate Code Removal[/bold blue]")
     console.print("-" * 50)
@@ -140,9 +140,9 @@ def validate_customer(customer):
     
     Path("duplicate_test.py").write_text(duplicate_code)
     
-    # Generate strategy with local model
-    console.print("[yellow]Generating deduplication strategy with qwen2.5-coder:7b...[/yellow]")
-    cmd = "python3 -m llx plan generate . --model qwen2.5-coder:7b --sprints 1 --focus duplication --output dedup-strategy.yaml"
+    # Generate strategy with OpenRouter
+    console.print("[yellow]Generating deduplication strategy with OpenRouter Mistral...[/yellow]")
+    cmd = "python3 -m llx plan generate . --model openrouter/mistral-7b-instruct:free --sprints 1 --focus duplication --output dedup-strategy.yaml"
     result = run_command(cmd)
     
     if result and result.returncode == 0:
@@ -195,8 +195,8 @@ class Calculator:
     Path("calculator.py").write_text(code_without_tests)
     
     # Generate test strategy
-    console.print("[yellow]Generating test strategy with nemotron...[/yellow]")
-    cmd = "python3 -m llx plan generate . --model nemotron --sprints 1 --focus tests --output test-strategy.yaml"
+    console.print("[yellow]Generating test strategy with OpenRouter Gemma...[/yellow]")
+    cmd = "python3 -m llx plan generate . --model openrouter/google/gemma-2-9b-it:free --sprints 1 --focus tests --output test-strategy.yaml"
     result = run_command(cmd)
     
     if result and result.returncode == 0:

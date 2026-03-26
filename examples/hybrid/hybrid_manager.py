@@ -325,7 +325,7 @@ class HybridManager:
             print("🐍 Installing Python dependencies...")
             subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
         elif (work_dir / "go.mod").exists():
-            print "🏗️  Building Go application..."
+            print("🏗️  Building Go application...")
             subprocess.run(["go", "build"], check=True)
     
     def batch_process(self, tasks: List[str], budget: Optional[float] = None):

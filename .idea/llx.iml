@@ -6,5 +6,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="prellm" />
     <orderEntry type="module" module-name="proxy" />
+    <orderEntry type="module" module-name="planfile" />
   </component>
 </module>

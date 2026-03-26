@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-03-26
+
+### Docs
+- Update examples/planfile/FINAL_SUMMARY.md
+
+### Other
+- Update .idea/llx.iml
+- Update .idea/modules.xml
+- Update .idea/vcs.xml
+- Update examples/hybrid/hybrid_manager.py
+- Update examples/planfile/calculator.py
+- Update examples/planfile/complete_workflow.py
+- Update examples/planfile/duplicate_test.py
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/generated_strategy.yaml
+- Update examples/planfile/simple_test.py
+- ... and 10 more files
+
 ## [0.1.15] - 2026-03-26
 
 ### Other

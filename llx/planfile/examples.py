@@ -6,7 +6,7 @@ from pathlib import Path
 # Example 1: Create strategy interactively
 def example_create_strategy():
     """Create a strategy using LLX with local LLM."""
-    from llx.strategy import create_strategy_command
+    from llx.planfile import create_strategy_command
     
     # This will prompt user interactively
     create_strategy_command(
@@ -19,7 +19,7 @@ def example_create_strategy():
 # Example 2: Load and validate strategy
 def example_validate_strategy():
     """Load and validate an existing strategy."""
-    from llx.strategy import load_valid_strategy
+    from llx.planfile import load_valid_strategy
     
     try:
         strategy = load_valid_strategy("my_strategy.yaml")
@@ -32,7 +32,7 @@ def example_validate_strategy():
 # Example 3: Run strategy (dry run)
 def example_run_strategy():
     """Run strategy to create tickets (dry run)."""
-    from llx.strategy import run_strategy
+    from llx.planfile import run_strategy
     
     run_strategy(
         strategy_path="my_strategy.yaml",
@@ -45,7 +45,7 @@ def example_run_strategy():
 # Example 4: Verify strategy after execution
 def example_verify_strategy():
     """Verify strategy execution."""
-    from llx.strategy import load_valid_strategy, verify_strategy_post_execution
+    from llx.planfile import load_valid_strategy, verify_strategy_post_execution
     
     strategy = load_valid_strategy("my_strategy.yaml")
     issues = verify_strategy_post_execution(
@@ -63,7 +63,7 @@ def example_verify_strategy():
 # Example 5: Programmatic strategy creation
 def example_programmatic_strategy():
     """Create strategy programmatically without LLM."""
-    from llx.strategy.models import (
+    from llx.planfile.models import (
         Strategy, Goal, Sprint, TaskPattern,
         TaskType, ModelHints
     )

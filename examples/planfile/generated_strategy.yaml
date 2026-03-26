@@ -1,0 +1,97 @@
+domain: software
+goal: complexity
+name: Refactoring Strategy
+project_type: python
+quality_gates:
+- metric: avg_cc
+  name: CC gate
+  operator: <=
+  threshold: 3.0
+sprints:
+- goal: Eliminate god modules and fix blocking issues
+  id: 1
+  name: Critical Fixes
+  task_patterns:
+  - description: Split X.py (1082L, 7 classes) into sub-package
+    model_hints:
+      implementation: balanced
+      planning: premium
+      review: balanced
+    name: Split god module X
+    priority: critical
+    task_type: refactor
+  - description: Reduce cyclomatic complexity in Y.py by extracting functions and
+      simplifying logic
+    model_hints:
+      implementation: cheap
+      planning: balanced
+      review: premium
+    name: Refactor Y.py for readability
+    priority: high
+    task_type: refactor
+  - description: Refactor Z.sh to extract a new function for better modularity and
+      readability
+    model_hints:
+      implementation: local
+      planning: cheap
+      review: balanced
+    name: Extract function from Z.sh
+    priority: medium
+    task_type: refactor
+  - description: Write unit tests for functions in module A to ensure correctness
+      and coverage
+    model_hints:
+      implementation: balanced
+      planning: premium
+      review: balanced
+    name: Add unit tests for module A
+    priority: high
+    task_type: test
+  tasks:
+  - task-1
+  - task-2
+  - task-3
+  - task-4
+- goal: Improve code quality through cleanup and documentation
+  id: 2
+  name: Code Cleanup and Documentation
+  task_patterns:
+  - description: Optimize logic in B.py to improve performance without increasing
+      complexity
+    model_hints:
+      implementation: cheap
+      planning: balanced
+      review: premium
+    name: Refactor B.py for performance
+    priority: medium
+    task_type: refactor
+  - description: Add docstrings and comments for all public functions in C.py
+    model_hints:
+      implementation: local
+      planning: cheap
+      review: balanced
+    name: Document C.py functions
+    priority: low
+    task_type: docs
+  - description: Simplify and modularize D.sh to improve maintainability
+    model_hints:
+      implementation: local
+      planning: cheap
+      review: balanced
+    name: Refactor D.sh script
+    priority: medium
+    task_type: refactor
+  - description: Write integration tests to ensure that modules B and C work together
+      correctly
+    model_hints:
+      implementation: balanced
+      planning: premium
+      review: balanced
+    name: Add integration tests for module B and C
+    priority: high
+    task_type: test
+  tasks:
+  - task-1
+  - task-2
+  - task-3
+  - task-4
