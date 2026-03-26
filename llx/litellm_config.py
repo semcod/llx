@@ -118,7 +118,7 @@ class LiteLLMConfig:
         
         for model in self.model_list:
             llx_model = ModelConfig(
-                name=model.tier,
+                name=model.model_name,
                 provider=model.provider,
                 model_id=model.litellm_params.get("model", model.model_name),
                 max_context=model.context_window,
@@ -126,7 +126,7 @@ class LiteLLMConfig:
                 cost_per_1k_output=model.pricing.get("output_per_token", 0.0) * 1000,
                 tags=model.tags,
             )
-            models[model.tier] = llx_model
+            models[model.model_name] = llx_model
         
         return models
     

@@ -9,9 +9,17 @@ NC='\033[0m'
 echo -e "${BLUE}🚀 llx AI Tools Example Runner${NC}"
 echo "================================="
 
+# Try to find llx command or fallback to local repo
 if ! command -v llx &> /dev/null; then
-    echo "❌ Error: llx command not found."
-    exit 1
+    LLX_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+    if [ -x "$LLX_PATH/.venv/bin/llx" ]; then
+        shopt -s expand_aliases
+        alias llx="$LLX_PATH/.venv/bin/llx"
+    else
+        export PYTHONPATH="$LLX_PATH"
+        shopt -s expand_aliases
+        alias llx="$LLX_PATH/.venv/bin/python3 -m llx"
+    fi
 fi
 
 echo -e "\n${BLUE}🛠️  Showing available models and tools...${NC}"

@@ -5,7 +5,10 @@
 ### What Works:
 1. **Strategy Application** - `llx plan apply` successfully executes strategies
 2. **Model Selection** - LLX automatically selects appropriate models
-3. **Free Models Available** - `gemma-2-9b-it:free` is configured and available
+3. **Free Models Available** - Multiple free models are configured and available:
+   - `openrouter/meta-llama/llama-3.2-3b-instruct:free`
+   - `openrouter/mistral/mistral-7b-instruct:free`
+   - `openrouter/deepseek/deepseek-chat-v3-0324`
 
 ### What Doesn't Work:
 1. **Direct Chat** - OpenRouter API authentication issues
@@ -94,9 +97,9 @@ OPENROUTER_API_KEY=sk-or-v1-xxxxx
 ### Model Configuration:
 In `litellm-config.yaml`:
 ```yaml
-- model_name: gemma-2-9b-it:free
+- model_name: meta-llama/llama-3.2-3b-instruct:free
   litellm_params:
-    model: openrouter/google/gemma-2-9b-it:free
+    model: openrouter/meta-llama/llama-3.2-3b-instruct:free
     api_base: https://openrouter.ai/api/v1
   tier: free
   provider: openrouter

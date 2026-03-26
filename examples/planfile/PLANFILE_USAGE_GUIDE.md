@@ -120,7 +120,9 @@ OPENROUTER_API_KEY=sk-or-v1-xxxxx
 ```
 
 Free models available:
-- `gemma-2-9b-it:free`
+- `meta-llama/llama-3.2-3b-instruct:free`
+- `mistral/mistral-7b-instruct:free`
+- `deepseek/deepseek-chat-v3-0324`
 - `meta-llama/llama-3.2-3b-instruct:free`
 
 ## Example: Full Refactoring Strategy

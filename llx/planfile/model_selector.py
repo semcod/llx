@@ -116,14 +116,33 @@ class ModelSelector:
         
         # Add models from config
         for tier_name, model in self.config.models.items():
+            # Special handling for models loaded from LiteLLM config
+            # They might have model_name as key in config.models
+            if tier_name in ['nemotron-3-super', 'llama-3.2-3b-instruct', 'mistral-7b-instruct', 
+                            'qwen2.5-coder:7b', 'deepseek-chat-v3-0324', 'gpt-4o', 'gpt-4o-mini',
+                            'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-haiku-4-5-20251001']:
+                # These are from LiteLLM config, determine actual tier
+                if 'nemotron' in model.model_id or 'llama-3.2-3b-instruct:free' in model.model_id or 'mistral-7b-instruct:free' in model.model_id:
+                    actual_tier = 'free'
+                elif 'gpt-4o-mini' in model.model_id or 'claude-haiku' in model.model_id:
+                    actual_tier = 'cheap'
+                elif 'gpt-4o' in model.model_id or 'claude-sonnet' in model.model_id:
+                    actual_tier = 'balanced'
+                elif 'claude-opus' in model.model_id:
+                    actual_tier = 'premium'
+                else:
+                    actual_tier = tier_name  # fallback
+            else:
+                actual_tier = tier_name  # Standard tiers (free, cheap, balanced, premium, local)
+            
             registry[model.model_id] = {
-                "tier": tier_name,
+                "tier": actual_tier,
                 "provider": self._get_provider(model.model_id),
                 "cost_per_input": getattr(model, "cost_per_input", None),
                 "cost_per_output": getattr(model, "cost_per_output", None),
             }
         
-        # Add known free models (only verified working ones)
+        # Add known free models (only verified working ones) - only if not already in registry
         free_models = {
             "openrouter/deepseek/deepseek-chat-v3-0324": {
                 "tier": "free",
@@ -163,7 +182,11 @@ class ModelSelector:
             }
         }
         
-        registry.update(free_models)
+        # Only add models not already in registry
+        for model_id, info in free_models.items():
+            if model_id not in registry:
+                registry[model_id] = info
+        
         return registry
     
     def _get_provider(self, model_id: str) -> str:
@@ -174,9 +197,27 @@ class ModelSelector:
     
     def select_model(self, filter: ModelFilter) -> Optional[str]:
         """Select first model matching the filter."""
+        # Separate cloud and local models
+        cloud_models = []
+        local_models = []
+        
         for model_id, model_info in self._model_registry.items():
             if filter.matches(model_id, model_info):
-                return model_id
+                if model_id.startswith("ollama/"):
+                    local_models.append(model_id)
+                else:
+                    cloud_models.append(model_id)
+        
+        # Prefer cloud models for free tier
+        if filter.tier == ModelTier.FREE and cloud_models:
+            return cloud_models[0]
+        
+        # Return first match (cloud first, then local)
+        if cloud_models:
+            return cloud_models[0]
+        elif local_models:
+            return local_models[0]
+        
         return None
     
     def list_models(self, filter: Optional[ModelFilter] = None) -> List[Dict[str, Any]]:

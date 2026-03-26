@@ -11,131 +11,171 @@ goal:
   - Improve maintainability
   short: Improve improvement
 goals:
-- Reduce overall lines of code by eliminating duplication
-- Improve readability and maintainability through consistent naming and structure
-- Increase test coverage to >= 80% of refactored modules
+- Reduce technical debt
+- Improve code readability
+- Increase test coverage
+- Ensure maintainability
 name: Refactoring Strategy
 project:
-  name: CodeBaseRefactor
+  name: ExampleProject
   type: Refactoring
 project_type: python
 quality_gates:
-- description: Quality gate
-  gate: Static analysis complexity per function
-  threshold: < 0.5
-- description: Quality gate
-  gate: Unit test coverage
-  threshold: '>= 80%'
-- description: Quality gate
-  gate: Duplicate lines percentage
-  threshold: < 5%
-- description: Quality gate
-  gate: Build success
-  threshold: 100% (no compilation errors)
+- criteria:
+  - Quality gate 1
+  description: Quality gate 1
+  gate: Linting
+  name: Quality gate 1
+  required: true
+  threshold: Zero new warnings
+- criteria:
+  - Quality gate 2
+  description: Quality gate 2
+  gate: Complexity
+  name: Quality gate 2
+  required: true
+  threshold: Average cyclomatic complexity < 5 per function
+- criteria:
+  - Quality gate 3
+  description: Quality gate 3
+  gate: TestCoverage
+  name: Quality gate 3
+  required: true
+  threshold: Overall coverage >= 80%
+- criteria:
+  - Quality gate 4
+  description: Quality gate 4
+  gate: Duplication
+  name: Quality gate 4
+  required: true
+  threshold: No duplicated blocks > 10 lines
 sprints:
-- number: 1
+- id: 1
+  name: Sprint 1
+  number: 1
   objectives:
-  - Identify duplicate code blocks across the 4 files
-  - Extract duplicated logic into shared utility functions
-  - Rename ambiguous variables and functions to follow project naming conventions
+  - Analyze current codebase
+  - Identify duplication and dead code
+  - Create refactoring backlog
   tasks:
-  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
-      \ code sequences and move them into a new, well\u2011named function.'}"
+  - description: 'Execute {''pattern'': ''analyzefile'', ''description'': ''review
+      a single file for smells, duplication, and complexity'', ''steps'': [''run linting'',
+      ''run complexity metrics'', ''document findings'']}'
+    model_hints: balanced
+    name: '{''pattern'': ''AnalyzeFile'', ''description'': ''Review a single file
+      for smells, duplication, and complexity'', ''steps'': [''Run linting'', ''Run
+      complexity metrics'', ''Document findings'']}'
+    type: feature
+  - description: 'Execute {''pattern'': ''extractmethod'', ''description'': ''identify
+      a block of code to extract into a new function'', ''steps'': [''select cohesive
+      block'', ''create new function with clear name'', ''replace block with call'',
+      ''add unit test for new function'']}'
     model_hints: cheap
-    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
-      \ and move them into a new, well\u2011named function.'}"
+    name: '{''pattern'': ''ExtractMethod'', ''description'': ''Identify a block of
+      code to extract into a new function'', ''steps'': [''Select cohesive block'',
+      ''Create new function with clear name'', ''Replace block with call'', ''Add
+      unit test for new function'']}'
     type: tech_debt
-  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
-      variable, function, or class names to be descriptive and follow the project''s
-      naming convention."}'
+  - description: 'Execute {''pattern'': ''addunittest'', ''description'': ''write
+      unit test for a function or module'', ''steps'': [''identify test scenarios'',
+      ''write test using existing framework'', ''run test to ensure passes'', ''commit
+      with descriptive message'']}'
     model_hints: cheap
-    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
-      or class names to be descriptive and follow the project''s naming convention."}'
+    name: '{''pattern'': ''AddUnitTest'', ''description'': ''Write unit test for a
+      function or module'', ''steps'': [''Identify test scenarios'', ''Write test
+      using existing framework'', ''Run test to ensure passes'', ''Commit with descriptive
+      message'']}'
     type: feature
-  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
-      ''replace long parameter lists with a single object to improve readability.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
-      long parameter lists with a single object to improve readability.''}'
-    type: feature
-  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
-      ''substitute literal numbers with named constants or enums.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
-      literal numbers with named constants or enums.''}'
-    type: feature
-- number: 2
+- id: 2
+  name: Sprint 2
+  number: 2
   objectives:
-  - "Refactor large functions (>50 lines) into smaller, single\u2011purpose methods\
-    \      - Introduce module boundaries to separate concerns (e.g., UI, business\
-    \ logic, data access)"
-  - Add unit tests for newly extracted utilities aiming for 60% coverage
+  - Extract common utilities
+  - Simplify complex functions
+  - Introduce unit tests for refactored modules
   tasks:
-  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
-      \ code sequences and move them into a new, well\u2011named function.'}"
+  - description: 'Execute {''pattern'': ''analyzefile'', ''description'': ''review
+      a single file for smells, duplication, and complexity'', ''steps'': [''run linting'',
+      ''run complexity metrics'', ''document findings'']}'
+    model_hints: balanced
+    name: '{''pattern'': ''AnalyzeFile'', ''description'': ''Review a single file
+      for smells, duplication, and complexity'', ''steps'': [''Run linting'', ''Run
+      complexity metrics'', ''Document findings'']}'
+    type: feature
+  - description: 'Execute {''pattern'': ''extractmethod'', ''description'': ''identify
+      a block of code to extract into a new function'', ''steps'': [''select cohesive
+      block'', ''create new function with clear name'', ''replace block with call'',
+      ''add unit test for new function'']}'
     model_hints: cheap
-    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
-      \ and move them into a new, well\u2011named function.'}"
+    name: '{''pattern'': ''ExtractMethod'', ''description'': ''Identify a block of
+      code to extract into a new function'', ''steps'': [''Select cohesive block'',
+      ''Create new function with clear name'', ''Replace block with call'', ''Add
+      unit test for new function'']}'
     type: tech_debt
-  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
-      variable, function, or class names to be descriptive and follow the project''s
-      naming convention."}'
+  - description: 'Execute {''pattern'': ''addunittest'', ''description'': ''write
+      unit test for a function or module'', ''steps'': [''identify test scenarios'',
+      ''write test using existing framework'', ''run test to ensure passes'', ''commit
+      with descriptive message'']}'
     model_hints: cheap
-    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
-      or class names to be descriptive and follow the project''s naming convention."}'
+    name: '{''pattern'': ''AddUnitTest'', ''description'': ''Write unit test for a
+      function or module'', ''steps'': [''Identify test scenarios'', ''Write test
+      using existing framework'', ''Run test to ensure passes'', ''Commit with descriptive
+      message'']}'
     type: feature
-  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
-      ''replace long parameter lists with a single object to improve readability.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
-      long parameter lists with a single object to improve readability.''}'
-    type: feature
-  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
-      ''substitute literal numbers with named constants or enums.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
-      literal numbers with named constants or enums.''}'
-    type: feature
-- number: 3
+- id: 3
+  name: Sprint 3
+  number: 3
   objectives:
-  - Complete remaining refactorings and ensure all functions adhere to SRP
-  - Run static analysis to achieve complexity score < 0.5 per function
-  - Reach overall test coverage >= 80% and validate no regression via existing test
-    suite
+  - Apply consistent naming and style
+  - Run static analysis and fix violations
+  - Final review and documentation update
   tasks:
-  - description: "Execute {'pattern': 'extract method', 'description': 'identify repeated\
-      \ code sequences and move them into a new, well\u2011named function.'}"
+  - description: 'Execute {''pattern'': ''analyzefile'', ''description'': ''review
+      a single file for smells, duplication, and complexity'', ''steps'': [''run linting'',
+      ''run complexity metrics'', ''document findings'']}'
+    model_hints: balanced
+    name: '{''pattern'': ''AnalyzeFile'', ''description'': ''Review a single file
+      for smells, duplication, and complexity'', ''steps'': [''Run linting'', ''Run
+      complexity metrics'', ''Document findings'']}'
+    type: feature
+  - description: 'Execute {''pattern'': ''extractmethod'', ''description'': ''identify
+      a block of code to extract into a new function'', ''steps'': [''select cohesive
+      block'', ''create new function with clear name'', ''replace block with call'',
+      ''add unit test for new function'']}'
     model_hints: cheap
-    name: "{'pattern': 'Extract Method', 'description': 'Identify repeated code sequences\
-      \ and move them into a new, well\u2011named function.'}"
+    name: '{''pattern'': ''ExtractMethod'', ''description'': ''Identify a block of
+      code to extract into a new function'', ''steps'': [''Select cohesive block'',
+      ''Create new function with clear name'', ''Replace block with call'', ''Add
+      unit test for new function'']}'
     type: tech_debt
-  - description: 'Execute {''pattern'': ''rename symbol'', ''description'': "update
-      variable, function, or class names to be descriptive and follow the project''s
-      naming convention."}'
+  - description: 'Execute {''pattern'': ''addunittest'', ''description'': ''write
+      unit test for a function or module'', ''steps'': [''identify test scenarios'',
+      ''write test using existing framework'', ''run test to ensure passes'', ''commit
+      with descriptive message'']}'
     model_hints: cheap
-    name: '{''pattern'': ''Rename Symbol'', ''description'': "Update variable, function,
-      or class names to be descriptive and follow the project''s naming convention."}'
-    type: feature
-  - description: 'Execute {''pattern'': ''introduce parameter object'', ''description'':
-      ''replace long parameter lists with a single object to improve readability.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Introduce Parameter Object'', ''description'': ''Replace
-      long parameter lists with a single object to improve readability.''}'
-    type: feature
-  - description: 'Execute {''pattern'': ''replace magic numbers'', ''description'':
-      ''substitute literal numbers with named constants or enums.''}'
-    model_hints: cheap
-    name: '{''pattern'': ''Replace Magic Numbers'', ''description'': ''Substitute
-      literal numbers with named constants or enums.''}'
+    name: '{''pattern'': ''AddUnitTest'', ''description'': ''Write unit test for a
+      function or module'', ''steps'': [''Identify test scenarios'', ''Write test
+      using existing framework'', ''Run test to ensure passes'', ''Commit with descriptive
+      message'']}'
     type: feature
 task_patterns:
-- description: "Identify repeated code sequences and move them into a new, well\u2011\
-    named function."
-  pattern: Extract Method
-- description: Update variable, function, or class names to be descriptive and follow
-    the project's naming convention.
-  pattern: Rename Symbol
-- description: Replace long parameter lists with a single object to improve readability.
-  pattern: Introduce Parameter Object
-- description: Substitute literal numbers with named constants or enums.
-  pattern: Replace Magic Numbers
+- description: Review a single file for smells, duplication, and complexity
+  pattern: AnalyzeFile
+  steps:
+  - Run linting
+  - Run complexity metrics
+  - Document findings
+- description: Identify a block of code to extract into a new function
+  pattern: ExtractMethod
+  steps:
+  - Select cohesive block
+  - Create new function with clear name
+  - Replace block with call
+  - Add unit test for new function
+- description: Write unit test for a function or module
+  pattern: AddUnitTest
+  steps:
+  - Identify test scenarios
+  - Write test using existing framework
+  - Run test to ensure passes
+  - Commit with descriptive message

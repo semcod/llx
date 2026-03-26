@@ -421,15 +421,8 @@ def plan_generate(
 ) -> None:
     """Generate strategy.yaml using built-in generator."""
     try:
-        # Use built-in generator from examples
-        import sys
-        from pathlib import Path
-        
-        # Add examples to path
-        examples_path = Path(__file__).parent.parent.parent / "examples" / "planfile"
-        sys.path.insert(0, str(examples_path))
-        
-        from generate_strategy import generate_strategy_with_fix, save_fixed_strategy
+        # Use built-in generator
+        from llx.planfile.generate_strategy import generate_strategy_with_fix, save_fixed_strategy
         from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
         
         if not model:

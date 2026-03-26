@@ -15,6 +15,71 @@ import yaml
 console = Console()
 
 
+def _normalize_strategy_data(data):
+    """Normalize strategy data so it matches the expected YAML shape."""
+    sprints = data.get('sprints') if isinstance(data.get('sprints'), list) else []
+    normalized_sprints = []
+    for i, sprint in enumerate(sprints):
+        if not isinstance(sprint, dict):
+            sprint = {'id': i + 1, 'name': str(sprint), 'objectives': [], 'tasks': []}
+        else:
+            sprint = dict(sprint)
+
+        sprint_id = sprint.get('id', i + 1)
+        if isinstance(sprint_id, str):
+            digits = ''.join(ch for ch in sprint_id if ch.isdigit())
+            sprint_id = int(digits) if digits else i + 1
+        sprint['id'] = sprint_id if isinstance(sprint_id, int) else i + 1
+        sprint.setdefault('name', f"Sprint {sprint['id']}")
+
+        objectives = sprint.get('objectives')
+        sprint['objectives'] = objectives if isinstance(objectives, list) else ([objectives] if objectives else [])
+
+        tasks = sprint.get('tasks')
+        sprint['tasks'] = tasks if isinstance(tasks, list) else ([tasks] if tasks else [])
+
+        if not sprint['tasks']:
+            source_patterns = sprint.get('task_patterns')
+            if not isinstance(source_patterns, list):
+                source_patterns = data.get('task_patterns') if isinstance(data.get('task_patterns'), list) else []
+
+            if source_patterns:
+                sprint['tasks'] = []
+                for task_name in source_patterns:
+                    task_str = task_name.get('name', str(task_name)) if isinstance(task_name, dict) else str(task_name)
+                    sprint['tasks'].append({
+                        'name': task_str,
+                        'description': f"Execute {task_str.lower()}",
+                        'type': 'tech_debt' if 'refactor' in task_str.lower() or 'extract' in task_str.lower() else 'feature',
+                        'model_hints': 'balanced' if 'complex' in task_str.lower() else 'cheap'
+                    })
+
+        normalized_sprints.append(sprint)
+
+    data['sprints'] = normalized_sprints
+
+    quality_gates = data.get('quality_gates') if isinstance(data.get('quality_gates'), list) else []
+    normalized_gates = []
+    for i, gate in enumerate(quality_gates):
+        if not isinstance(gate, dict):
+            text = str(gate)
+            gate = {'name': text, 'description': text, 'criteria': [text], 'required': True}
+        else:
+            gate = dict(gate)
+            criteria = gate.get('criteria')
+            if isinstance(criteria, str):
+                gate['criteria'] = [criteria]
+            elif not isinstance(criteria, list):
+                gate['criteria'] = [gate.get('description') or gate.get('name') or f'Quality gate {i + 1}']
+            gate.setdefault('name', gate.get('description') or f'Quality gate {i + 1}')
+            gate.setdefault('description', gate['name'])
+            gate.setdefault('required', True)
+        normalized_gates.append(gate)
+
+    data['quality_gates'] = normalized_gates
+    return data
+
+
 def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
     """Generate strategy using llx.planfile."""
     
@@ -104,12 +169,10 @@ Return only valid YAML without code blocks.
     
     # Fix line continuation issues - targeted fixes only
     import re
-    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:"
-    yaml_text = re.sub(r'^(- number:\s+\d+)\s{2,}([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \2', yaml_text, flags=re.MULTILINE)
-    # Fix pattern: "name: Valuefield:" -> "name: Value\nfield:"
-    yaml_text = re.sub(r'(name:\s+[a-zA-Z][a-zA-Z0-9_]*)([a-zA-Z][a-zA-Z0-9_]*:)', r'\1\n\2', yaml_text)
-    # Fix pattern: "- number: Xfield:" -> "- number: X\nfield:"
-    yaml_text = re.sub(r'^(- number:\s+\d+)([a-zA-Z][a-zA-Z0-9_]*:)', r'\1\n\2', yaml_text, flags=re.MULTILINE)
+    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:" (only for objectives)
+    yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)(objectives:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
+    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:" (for other fields)
+    yaml_text = re.sub(r'^(- number:\s+\d+)(\s+)([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \3', yaml_text, flags=re.MULTILINE)
     
     # Ensure proper list formatting
     lines = yaml_text.split('\n')
@@ -154,6 +217,8 @@ Return only valid YAML without code blocks.
     # Parse YAML with fallback
     try:
         data = yaml.safe_load(yaml_text)
+        if not isinstance(data, dict):
+            raise yaml.YAMLError("YAML root must be a mapping")
     except yaml.YAMLError as e:
         console.print(f"[red]✗ YAML parsing failed: {e}[/red]")
         console.print("[yellow]Creating fallback strategy...[/yellow]")
@@ -162,7 +227,12 @@ Return only valid YAML without code blocks.
             'name': 'Refactoring Strategy',
             'project_type': 'python',
             'domain': 'software',
-            'goal': focus or 'improvement',
+            'goal': {
+                'short': f"Improve {focus or 'codebase'}",
+                'quality': ['Reduce complexity', 'Improve maintainability'],
+                'delivery': ['Complete in sprints', 'Review changes'],
+                'metrics': ['Complexity reduction', 'Test coverage']
+            },
             'sprints': [
                 {
                     'id': 1,
@@ -191,42 +261,7 @@ Return only valid YAML without code blocks.
         }
     
     # Fix the data to match expected schema
-    if 'sprints' in data:
-        for i, sprint in enumerate(data['sprints']):
-            # Convert string ID to int if needed
-            if isinstance(sprint.get('id'), str):
-                if sprint['id'].startswith('sprint-'):
-                    sprint['id'] = int(sprint['id'].split('-')[1])
-                else:
-                    sprint['id'] = i + 1
-            
-            # Convert task_patterns to embedded tasks (V2 format)
-            if 'task_patterns' in data and 'tasks' not in sprint:
-                sprint['tasks'] = []
-                # Use task_patterns as list of task names
-                if isinstance(data['task_patterns'], list):
-                    for i, task_name in enumerate(data['task_patterns']):
-                        # Handle both string and dict formats
-                        if isinstance(task_name, dict):
-                            task_str = task_name.get('name', str(task_name))
-                        else:
-                            task_str = str(task_name)
-                            
-                        sprint['tasks'].append({
-                            'name': task_str,
-                            'description': f"Execute {task_str.lower()}",
-                            'type': 'tech_debt' if 'refactor' in task_str.lower() or 'extract' in task_str.lower() else 'feature',
-                            'model_hints': 'balanced' if 'complex' in task_str.lower() else 'cheap'
-                        })
-    
-    # Fix quality gates
-    if 'quality_gates' in data:
-        for gate in data['quality_gates']:
-            if 'criteria' in gate and isinstance(gate['criteria'], str):
-                gate['criteria'] = [gate['criteria']]
-            # Ensure description field exists
-            if 'description' not in gate:
-                gate['description'] = gate.get('name', 'Quality gate')
+    data = _normalize_strategy_data(data)
     
     # Ensure required fields
     if 'name' not in data:

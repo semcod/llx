@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.27] - 2026-03-26
+
+### Docs
+- Update SIMPLE_CONFIG.md
+- Update examples/.llx/code2llm/README.md
+- Update examples/.llx/code2llm/context.md
+- Update examples/cli-tools/.llx/code2llm/README.md
+- Update examples/cli-tools/.llx/code2llm/context.md
+- Update examples/planfile/OPENROUTER_INTEGRATION.md
+- Update examples/planfile/PLANFILE_USAGE_GUIDE.md
+
+### Test
+- Update test.yaml
+- Update test_strategy.yaml
+- Update tests/test_planfile_generate_strategy.py
+
+### Other
+- Update examples/.llx/code2llm/analysis.toon.yaml
+- Update examples/.llx/redup/duplication.json
+- Update examples/ai-tools/main.py
+- Update examples/ai-tools/run.sh
+- Update examples/aider/aider_demo.py
+- Update examples/aider/run.sh
+- Update examples/aider/test_integration.py
+- Update examples/basic/main.py
+- Update examples/basic/run.sh
+- Update examples/cli-tools/.llx/code2llm/analysis.toon.yaml
+- ... and 66 more files
+
 ## [0.1.26] - 2026-03-26
 
 ### Other
