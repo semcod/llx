@@ -1,9 +1,9 @@
-# vallm batch | 229f | 133✓ 7⚠ 50✗ | 2026-03-26
+# vallm batch | 239f | 144✓ 10⚠ 48✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 229  passed: 133 (58.1%)  warnings: 7  errors: 50  unsupported: 46
+  scanned: 239  passed: 144 (60.3%)  warnings: 10  errors: 48  unsupported: 47
 
-WARNINGS[7]{path,score}:
+WARNINGS[10]{path,score}:
   examples/planfile/async_refactor_demo.py,0.93
     issues[2]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_callback_hell_example: 209 lines exceeds limit 100,18
@@ -21,6 +21,16 @@ WARNINGS[7]{path,score}:
   examples/hybrid/hybrid_dev.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_cc,warning,execute_task: CC=17 exceeds limit 15,157
+  examples/planfile/complete_workflow.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_sample_project: 204 lines exceeds limit 100,36
+  examples/planfile/generate_strategy.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 19 (max: 15),18
+      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=19 exceeds limit 15,18
+  examples/planfile/test_report.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,main: 117 lines exceeds limit 100,14
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
@@ -29,13 +39,10 @@ WARNINGS[7]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[50]{path,score}:
+ERRORS[48]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  examples/hybrid/hybrid_manager.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: Missing parentheses in call to 'print'. Did you mean print(...)?,328
   examples/planfile/microservice_refactor.py,0.00
     issues[1]{rule,severity,message,line}:
       syntax.parse,error,SyntaxError: '(' was never closed,290
@@ -70,17 +77,15 @@ ERRORS[50]{path,score}:
       python.import.resolvable,error,Module 'orchestrator' not found,4
       python.import.resolvable,error,Module 'ports' not found,5
   llx/planfile/__init__.py,0.57
-    issues[1]{rule,severity,message,line}:
+    issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'executor' not found,3
+      python.import.resolvable,error,Module 'models' not found,4
+      python.import.resolvable,error,Module 'builder' not found,5
+      python.import.resolvable,error,Module 'runner' not found,6
   llx/prellm/utils/__init__.py,0.57
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'lazy_imports' not found,3
       python.import.resolvable,error,Module 'lazy_loader' not found,4
-  llx/strategy/__init__.py,0.57
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,4
-      python.import.resolvable,error,Module 'builder' not found,5
-      python.import.resolvable,error,Module 'runner' not found,6
   llx/tools/__init__.py,0.57
     issues[6]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,6
@@ -200,13 +205,13 @@ ERRORS[50]{path,score}:
       python.import.resolvable,error,Module 'models' not found,15
       python.import.resolvable,error,Module 'ports' not found,16
       python.import.resolvable,error,Module '_utils' not found,17
-  llx/strategy/builder.py,0.88
+  llx/planfile/builder.py,0.88
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,10
       python.import.resolvable,error,Module 'models' not found,304
   llx/cli/strategy_commands.py,0.89
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'strategy' not found,8
+      python.import.resolvable,error,Module 'planfile' not found,8
   llx/orchestration/instances/ports.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,7
@@ -228,7 +233,7 @@ ERRORS[50]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
-  llx/strategy/runner.py,0.91
+  llx/planfile/runner.py,0.91
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,9
   llx/config.py,0.92
@@ -271,7 +276,7 @@ ERRORS[50]{path,score}:
       python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,25
+  *.md,26
   Dockerfile*,1
   *.txt,3
   *.yml,3

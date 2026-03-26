@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 124, shell: 20
+- **Languages**: python: 128, shell: 20
 - **Analysis Mode**: static
-- **Total Functions**: 1080
-- **Total Classes**: 170
-- **Modules**: 144
-- **Entry Points**: 888
+- **Total Functions**: 1113
+- **Total Classes**: 174
+- **Modules**: 148
+- **Entry Points**: 912
 
 ## Architecture by Module
 
@@ -107,10 +107,10 @@
 - **Classes**: 2
 - **File**: `app_generator.py`
 
-### llx.prellm.context.user_memory
-- **Functions**: 15
-- **Classes**: 1
-- **File**: `user_memory.py`
+### examples.hybrid.hybrid_manager
+- **Functions**: 16
+- **Classes**: 3
+- **File**: `hybrid_manager.py`
 
 ## Key Entry Points
 
@@ -153,6 +153,10 @@ Main execution flows into the system:
 > Load rate limits from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
 
+### examples.planfile.generate_strategy.main
+> Generate a complete strategy using the fixed generator.
+- **Calls**: console.print, Path, Panel, examples.planfile.generate_strategy.generate_strategy_with_fix, examples.planfile.generate_strategy.save_fixed_strategy, console.print, console.print, console.print
+
 ### examples.filtering.advanced_filters.demonstrate_filtering
 > Demonstrate various filtering scenarios.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, SmartLLXClient, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, client.chat_with_constraints, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
@@ -180,6 +184,9 @@ Main execution flows into the system:
 ### llx.orchestration.queue.manager.QueueManager.print_status_summary
 > Print comprehensive status summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, sum, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
+### examples.hybrid.hybrid_manager.main
+- **Calls**: argparse.ArgumentParser, parser.add_subparsers, subparsers.add_parser, exec_parser.add_argument, exec_parser.add_argument, exec_parser.add_argument, exec_parser.add_argument, exec_parser.add_argument
 
 ### llx.prellm.cli_commands.decompose
 > [v0.2] Decompose a query using small LLM without calling the large model.
@@ -227,14 +234,6 @@ v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
 Example:
     prellm config show
 - **Calls**: config_app.command, llx.prellm.env_config.get_env_config, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo
-
-### llx.prellm.cli_query._show_debug_info
-> Show schema and blocked sensitive fields if requested.
-- **Calls**: None.generate, typer.echo, typer.echo, typer.echo, ShellContextCollector, collector.collect_env_vars, SensitiveDataFilter, filt.filter_dict
-
-### llx.prellm.core.PreLLM._load_config
-> Load preLLM v0.2 config from YAML file.
-- **Calls**: raw.get, raw.get, raw.get, raw.get, raw.get, DecompositionStrategy, PreLLMConfig, open
 
 ## Process Flows
 
@@ -417,54 +416,32 @@ Used by both core Prellm
 - **Methods**: 13
 - **Key Methods**: llx.prellm.analyzers.context_engine.ContextEngine.__init__, llx.prellm.analyzers.context_engine.ContextEngine.gather, llx.prellm.analyzers.context_engine.ContextEngine.enrich_prompt, llx.prellm.analyzers.context_engine.ContextEngine.gather_runtime, llx.prellm.analyzers.context_engine.ContextEngine._auto_collect_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_process, llx.prellm.analyzers.context_engine.ContextEngine._gather_locale, llx.prellm.analyzers.context_engine.ContextEngine._gather_network, llx.prellm.analyzers.context_engine.ContextEngine._gather_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_git
 
-### llx.tools.health_checker.HealthChecker
-> Comprehensive health monitoring for llx ecosystem.
-- **Methods**: 11
-- **Key Methods**: llx.tools.health_checker.HealthChecker.__init__, llx.tools.health_checker.HealthChecker.check_service_health, llx.tools.health_checker.HealthChecker.check_container_health, llx.tools.health_checker.HealthChecker.check_system_resources, llx.tools.health_checker.HealthChecker.check_filesystem_health, llx.tools.health_checker.HealthChecker.check_network_connectivity, llx.tools.health_checker.HealthChecker.run_comprehensive_health_check, llx.tools.health_checker.HealthChecker._generate_recommendations, llx.tools.health_checker.HealthChecker._print_health_summary, llx.tools.health_checker.HealthChecker.run_quick_health_check
+### examples.hybrid.hybrid_manager.HybridManager
+> Manages hybrid cloud-local development workflow.
+- **Methods**: 12
+- **Key Methods**: examples.hybrid.hybrid_manager.HybridManager.__init__, examples.hybrid.hybrid_manager.HybridManager._analyze_project, examples.hybrid.hybrid_manager.HybridManager._load_usage_log, examples.hybrid.hybrid_manager.HybridManager._save_usage_log, examples.hybrid.hybrid_manager.HybridManager._log_usage, examples.hybrid.hybrid_manager.HybridManager.execute_task, examples.hybrid.hybrid_manager.HybridManager._estimate_cost, examples.hybrid.hybrid_manager.HybridManager._get_provider_for_tier, examples.hybrid.hybrid_manager.HybridManager._execute_generated_code, examples.hybrid.hybrid_manager.HybridManager.batch_process
 
 ## Data Transformation Functions
 
 Key functions that process and transform data:
 
-### llx.strategy.examples.example_validate_strategy
-> Load and validate an existing strategy.
-- **Output to**: llx.strategy.runner.load_valid_strategy, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len
-
 ### llx.prellm.cli_config._format_config_sections
 > Group config entries into categorized sections for display.
 - **Output to**: entries.items, None.append, None.append, var.startswith, None.append
-
-### llx.prellm.env_config._parse_env_line
-> Parse a single .env line. Returns (key, value) or None if invalid.
-- **Output to**: line.strip, line.partition, key.strip, None.strip, line.startswith
 
 ### llx.prellm.cli.process
 > Execute a DevOps process chain.
 - **Output to**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option
 
+### llx.prellm.env_config._parse_env_line
+> Parse a single .env line. Returns (key, value) or None if invalid.
+- **Output to**: line.strip, line.partition, key.strip, None.strip, line.startswith
+
 ### llx.prellm.trace._format_tree_value
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
-### llx.strategy.models.Strategy.validate_sprint_ids
-> Ensure sprint IDs are unique.
-- **Output to**: validator, len, len, ValueError, set
-
-### llx.strategy.models.Strategy.model_validate_yaml
-> Load strategy from YAML string.
-- **Output to**: yaml.safe_load, cls.model_validate, isinstance, obj.items, isinstance
-
 ### llx.prellm._get_process_chain
-
-### llx.prellm.server._parse_model_pair
-> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
-
-Special cases
-- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
-
-### llx.prellm.server.batch_process
-> Process multiple queries in parallel.
-- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
@@ -493,6 +470,21 @@ Args:
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
 
+### llx.prellm.core.preprocess_and_execute
+> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
+- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
+
+### llx.prellm.core.preprocess_and_execute_sync
+> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
+
+Usage:
+
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm.llm_provider.LLMProvider._parse_json
+> Best-effort JSON extraction from LLM output.
+- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
+
 ### llx.prellm.extractors.format_classification_context
 > Extract and format classification context from preprocessing result.
 - **Output to**: state.get, isinstance, state.get, classification.get, classification.get
@@ -509,20 +501,15 @@ Args:
 > Extract and format user context information.
 - **Output to**: extra_context.get, parts.append
 
-### llx.prellm.core.preprocess_and_execute
-> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
-- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
-### llx.prellm.core.preprocess_and_execute_sync
-> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
 
-Usage:
-
-- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm.llm_provider.LLMProvider._parse_json
-> Best-effort JSON extraction from LLM output.
-- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.prellm.cli_commands.process
 > Execute a DevOps process chain.
@@ -535,6 +522,17 @@ Usage:
 ### llx.analysis.collector._parse_map_stats_line
 > Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
 - **Output to**: line.split, part.strip, re.search, re.search, re.search
+
+### llx.analysis.collector._parse_map_alerts_line
+> Parse: # alerts[5]: CC _extract=65; fan-out _extract=45
+- **Output to**: re.finditer, re.finditer, max, max, int
+
+### llx.analysis.collector._parse_map_hotspots_line
+> Parse: # hotspots[5]: _extract fan=45; ...
+- **Output to**: re.search, re.finditer, max, max, int
+
+### llx.tools.ai_tools_manager._build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ## Behavioral Patterns
 
@@ -559,6 +557,7 @@ Functions exposed as public API (no underscore prefix):
 
 - `examples.ai-tools.main.main` - 58 calls
 - `llx.prellm.cli_context.context` - 49 calls
+- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 47 calls
 - `examples.basic.main.main` - 44 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
 - `examples.aider.aider_demo.main` - 42 calls
@@ -568,6 +567,7 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.model_manager.ModelManager.print_model_summary` - 36 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
+- `examples.planfile.generate_strategy.main` - 35 calls
 - `examples.filtering.advanced_filters.demonstrate_filtering` - 35 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
@@ -575,6 +575,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
 - `llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config` - 30 calls
 - `llx.orchestration.queue.manager.QueueManager.print_status_summary` - 30 calls
+- `examples.planfile.async_refactor_demo.demonstrate_async_refactoring` - 30 calls
+- `examples.hybrid.hybrid_manager.main` - 30 calls
 - `llx.prellm.cli_commands.decompose` - 29 calls
 - `llx.tools.config_manager.ConfigManager.print_config_summary` - 29 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary` - 29 calls
@@ -590,13 +592,9 @@ Functions exposed as public API (no underscore prefix):
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 - `examples.docker.main.main` - 25 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
-- `examples.multi-provider.main.main` - 24 calls
 - `examples.local.main.demonstrate_local_model_selection` - 24 calls
-- `llx.strategy.runner.run_strategy` - 23 calls
+- `examples.multi-provider.main.main` - 24 calls
 - `llx.config.LlxConfig.load` - 23 calls
-- `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
-- `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
-- `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
 
 ## System Interactions
 
@@ -629,11 +627,11 @@ graph TD
     load_limits --> get
     load_limits --> print
     load_limits --> _create_default_limi
+    main --> Panel
+    main --> generate_strategy_wi
+    main --> save_fixed_strategy
     demonstrate_filterin --> print
     demonstrate_filterin --> SmartLLXClient
-    load_sessions --> exists
-    load_sessions --> get
-    load_sessions --> print
 ```
 
 ## Reverse Engineering Guidelines

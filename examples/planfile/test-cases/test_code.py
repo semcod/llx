@@ -8,11 +8,11 @@ def calculate_total(items):
             total = total - item
     return total
 
-def process_list(data):
-    result = []
-    for i in range(len(data)):
-        if data[i] % 2 == 0:
-            result.append(data[i] * 2)
+def process_data(items):
+    processed = []
+    for item in items:
+        if item > 0:
+            processed.append(item * 2)
         else:
-            result.append(data[i] * 3)
-    return result
+            processed.append(item * 3)
+    return processed

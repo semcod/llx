@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-Test planfile generator with custom wrapper to fix parsing issues
+Test planfile generator using the new llx.planfile module
 """
 
 import sys
 import os
 sys.path.insert(0, '/home/tom/github/semcod/llx')
-sys.path.insert(0, '/home/tom/github/semcod/planfile')
 
 from pathlib import Path
 from rich.console import Console
@@ -17,11 +16,13 @@ console = Console()
 
 
 def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
-    """Generate strategy using planfile with fixes for parsing issues."""
+    """Generate strategy using llx.planfile."""
     
-    # Import planfile modules
-    from planfile.llm.generator import generate_strategy, build_strategy_prompt, _collect_metrics
-    from planfile.llm.client import call_llm
+    # Import llx.planfile modules
+    from llx.planfile import Strategy, Goal, Sprint, TaskPattern, TaskType, ModelHints
+    from llx.routing.client import LlxClient
+    from llx.config import LlxConfig
+    from llx import analyze_project
     
     console.print(f"[blue]Generating strategy for {project_path}...[/blue]")
     console.print(f"  Model: {model}")
@@ -29,41 +30,82 @@ def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3
     console.print(f"  Focus: {focus}")
     console.print(f"  Using OpenRouter free models")
     
-    # 1. Collect metrics
-    metrics = _collect_metrics(project_path, None)
+    # 1. Collect metrics using llx
+    metrics = analyze_project(project_path)
     
-    # 2. Build prompt
-    from planfile.llm.prompts import build_strategy_prompt
-    prompt = build_strategy_prompt(metrics, sprints=sprints, focus=focus)
+    # 2. Build prompt manually for now
+    prompt = f"""
+Generate a refactoring strategy for this project:
+
+Project Metrics:
+- Files: {metrics.total_files}
+- Lines: {metrics.total_lines}
+- Complexity: {metrics.complexity_score:.1f}
+- Scale: {metrics.scale_score:.1f}
+
+Focus: {focus}
+Number of sprints: {sprints}
+
+Please generate a YAML strategy with:
+1. Project name and type
+2. Clear goals
+3. {sprints} sprints with specific objectives
+4. Task patterns for common work
+5. Quality gates
+
+Return only valid YAML without code blocks.
+"""
     
     console.print(f"\n[yellow]Sending prompt to LLM...[/yellow]")
     
-    # 3. Call LLM with API key
+    # 3. Call LLM using llx client
     import os
     from dotenv import load_dotenv
     load_dotenv('/home/tom/github/semcod/llx/.env')
     
-    # Set API key for LiteLLM
-    os.environ['OPENROUTER_API_KEY'] = os.getenv('OPENROUTER_API_KEY')
+    config = LlxConfig()
+    client = LlxClient(config)
     
-    response = call_llm(prompt, model=model)
+    from llx.routing.client import ChatMessage
+    response = client.chat(
+        messages=[ChatMessage(role="user", content=prompt)],
+        model=model
+    )
     
     console.print(f"[green]Got response from LLM[/green]")
     
-    # Debug: show raw response
-    console.print(f"\n[dim]Raw LLM response (first 500 chars):[/dim]")
-    console.print(f"[dim]{response[:500]}...[/dim]")
+    # Debug: save full response
+    with open("/tmp/llm_response.txt", "w") as f:
+        f.write(response.content)
+    console.print(f"[dim]Full response saved to /tmp/llm_response.txt[/dim]")
     
     # 4. Parse with fixes
-    yaml_text = response
-    if "```yaml" in response:
-        yaml_text = response.split("```yaml")[1].split("```")[0]
-    elif "```" in response:
-        yaml_text = response.split("```")[1].split("```")[0]
+    yaml_text = response.content
+    if "```yaml" in response.content:
+        yaml_text = response.content.split("```yaml")[1].split("```")[0]
+    elif "```" in response.content:
+        yaml_text = response.content.split("```")[1].split("```")[0]
     
-    # Debug: show extracted YAML
-    console.print(f"\n[dim]Extracted YAML (first 300 chars):[/dim]")
-    console.print(f"[dim]{yaml_text[:300]}...[/dim]")
+    # Save extracted YAML
+    with open("/tmp/extracted_yaml.txt", "w") as f:
+        f.write(yaml_text)
+    console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
+    
+    # Fix common YAML formatting issues
+    yaml_text = yaml_text.replace("-id:", "- id:")
+    yaml_text = yaml_text.replace("-name:", "- name:")
+    yaml_text = yaml_text.replace("-task_type:", "- task_type:")
+    yaml_text = yaml_text.replace("-description:", "- description:")
+    yaml_text = yaml_text.replace("-priority:", "- priority:")
+    yaml_text = yaml_text.replace("-model_hints:", "- model_hints:")
+    yaml_text = yaml_text.replace("-planning:", "- planning:")
+    yaml_text = yaml_text.replace("-implementation:", "- implementation:")
+    yaml_text = yaml_text.replace("-review:", "- review:")
+    
+    # Save fixed YAML
+    with open("/tmp/fixed_yaml.txt", "w") as f:
+        f.write(yaml_text)
+    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
     
     console.print(f"\n[yellow]Parsing YAML response...[/yellow]")
     

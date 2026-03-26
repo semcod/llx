@@ -1,4 +1,4 @@
-# llx | 926 func | 86f | 27252L | python | 2026-03-26
+# llx | 926 func | 86f | 27249L | python | 2026-03-26
 
 HEALTH:
   CC̄=3.9  critical=54 (limit:10)  dup=5  cycles=0
@@ -15,7 +15,7 @@ ALERTS[20]:
   !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
   !!  high_fan_out     SessionManager.load_sessions = 16 (limit:10)
 
-MODULES[120] (top by size):
+MODULES[119] (top by size):
   M[llx/tools/config_manager.py] 779L C:1 F:43 CC↑17 D:0 (python)
   M[llx/tools/model_manager.py] 740L C:1 F:33 CC↑15 D:0 (python)
   M[llx/tools/vscode_manager.py] 732L C:1 F:25 CC↑19 D:0 (python)
@@ -31,7 +31,7 @@ MODULES[120] (top by size):
   M[llx/prellm/env_config.py] 528L C:1 F:17 CC↑14 D:4 (python)
   M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
   M[llx/orchestration/queue/manager.py] 495L C:1 F:21 CC↑9 D:0 (python)
-  LANGS: python:113/shell:7
+  LANGS: python:112/shell:7
 
 HOTSPOTS[10]:
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
@@ -52,4 +52,4 @@ REFACTOR[15]:
   [5] H/H Split god module llx/tools/health_checker.py (543L, 1 classes)
 
 EVOLUTION:
-  2026-03-26 CC̄=3.9 crit=54 27252L // Automated analysis
+  2026-03-26 CC̄=3.9 crit=54 27249L // Automated analysis

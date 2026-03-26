@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-03-26
+
+### Docs
+- Update REFACTORING_SPRINT4_SUMMARY.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/test-cases/test_code.py
+- Update examples/planfile/test_planfile_integration.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- Update project/duplication.toon.yaml
+- Update project/flow.mmd
+- ... and 5 more files
+
 ## [0.1.16] - 2026-03-26
 
 ### Docs
