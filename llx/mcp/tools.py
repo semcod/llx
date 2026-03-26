@@ -485,3 +485,200 @@ tool_llx_proxym_chat = McpTool(
     ),
     handler=_handle_llx_proxym_chat,
 )
+
+
+# ─── aider ────────────────────────────────────────────────
+async def _handle_aider(args: dict) -> dict:
+    """Run aider AI pair programming tool."""
+    import subprocess
+    import json
+    from pathlib import Path
+    
+    path = Path(args.get("path", "."))
+    prompt = args.get("prompt", "")
+    model = args.get("model", "ollama/qwen2.5-coder:7b")
+    files = args.get("files", [])
+    
+    # Build aider command
+    cmd = ["aider", "--model", model, "--message", prompt]
+    
+    # Add specific files if provided
+    if files:
+        cmd.extend(files)
+    
+    # Run aider in project directory
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=str(path),
+            capture_output=True,
+            text=True,
+            timeout=300  # 5 minute timeout
+        )
+        
+        return {
+            "success": result.returncode == 0,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "command": " ".join(cmd),
+            "path": str(path)
+        }
+    except subprocess.TimeoutExpired:
+        return {
+            "success": False,
+            "error": "Aider command timed out after 5 minutes",
+            "command": " ".join(cmd)
+        }
+    except FileNotFoundError:
+        return {
+            "success": False,
+            "error": "Aider not found. Install with: pip install aider-chat",
+            "command": " ".join(cmd)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "command": " ".join(cmd)
+        }
+
+tool_aider = McpTool(
+    definition=Tool(
+        name="aider",
+        description="Run aider AI pair programming tool for code editing and refactoring. Works with local Ollama models.",
+        inputSchema={
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string", "description": "The prompt/instruction for aider"},
+                "path": {"type": "string", "default": ".", "description": "Project directory path"},
+                "model": {"type": "string", "default": "ollama/qwen2.5-coder:7b", "description": "Model to use (Ollama format)"},
+                "files": {"type": "array", "items": {"type": "string"}, "description": "Specific files to edit (optional)"},
+            },
+        },
+    ),
+    handler=_handle_aider,
+)
+
+
+# ─── planfile_generate ───────────────────────────────────────────
+
+async def _handle_planfile_generate(args: dict) -> dict:
+    """Generate a strategy.yaml refactoring plan using LLM + project metrics."""
+    try:
+        from planfile.llm.generator import generate_strategy
+        from planfile.loaders.yaml_loader import save_strategy_yaml
+        
+        project_path = args.get("project_path", ".")
+        model = args.get("model")
+        sprints = args.get("sprints", 3)
+        focus = args.get("focus")
+        
+        strategy = generate_strategy(project_path, model=model, sprints=sprints, focus=focus)
+        
+        # Save to temporary file if no output specified
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+            save_strategy_yaml(strategy, f.name)
+            
+        return {
+            "success": True,
+            "strategy_file": f.name,
+            "sprints": len(strategy.get("sprints", [])),
+            "focus": focus,
+            "model": model
+        }
+    except ImportError:
+        return {
+            "success": False,
+            "error": "planfile not installed. Install with: pip install planfile"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+tool_planfile_generate = McpTool(
+    definition=Tool(
+        name="planfile_generate",
+        description="Generate a strategy.yaml refactoring plan using LLM + project metrics.",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "project_path": {"type": "string", "default": ".", "description": "Project path to analyze"},
+                "model": {"type": "string", "description": "LLM model to use for generation"},
+                "sprints": {"type": "integer", "default": 3, "description": "Number of sprints to plan"},
+                "focus": {"type": "string", "enum": ["complexity", "duplication", "tests", "docs"], "description": "Focus area for refactoring"},
+            },
+        },
+    ),
+    handler=_handle_planfile_generate,
+)
+
+
+# ─── planfile_apply ───────────────────────────────────────────────
+
+async def _handle_planfile_apply(args: dict) -> dict:
+    """Apply strategy.yaml — execute each task with optimal model selection."""
+    try:
+        from llx.planfile.executor import execute_strategy
+        
+        strategy_path = args.get("strategy_path")
+        project_path = args.get("project_path", ".")
+        sprint = args.get("sprint")
+        dry_run = args.get("dry_run", False)
+        
+        if not strategy_path:
+            return {
+                "success": False,
+                "error": "strategy_path is required"
+            }
+        
+        results = execute_strategy(
+            strategy_path,
+            project_path,
+            sprint_filter=sprint,
+            dry_run=dry_run
+        )
+        
+        return {
+            "success": True,
+            "results": [
+                {
+                    "task_name": r.task_name,
+                    "status": r.status,
+                    "model_used": r.model_used,
+                    "validated": r.validated,
+                    "validation_score": r.validation_score,
+                    "error": r.error
+                }
+                for r in results
+            ],
+            "total_tasks": len(results),
+            "successful": sum(1 for r in results if r.status == "success"),
+            "dry_run": dry_run
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+tool_planfile_apply = McpTool(
+    definition=Tool(
+        name="planfile_apply",
+        description="Apply strategy.yaml — execute each task with optimal model selection.",
+        inputSchema={
+            "type": "object",
+            "required": ["strategy_path"],
+            "properties": {
+                "strategy_path": {"type": "string", "description": "Path to strategy.yaml file"},
+                "project_path": {"type": "string", "default": ".", "description": "Project path"},
+                "sprint": {"type": "string", "description": "Specific sprint ID to execute"},
+                "dry_run": {"type": "boolean", "default": False, "description": "Simulate execution without making changes"},
+            },
+        },
+    ),
+    handler=_handle_planfile_apply,
+)

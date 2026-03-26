@@ -14,6 +14,7 @@ import requests
 
 from .models import InstanceType, InstanceStatus, InstanceConfig, InstanceState
 from .ports import PortAllocator
+from .._utils import load_json, save_json
 
 
 class InstanceManager:
@@ -110,8 +111,6 @@ class InstanceManager:
     def save_instances(self) -> bool:
         """Save instances to configuration file."""
         try:
-            self.config_file.parent.mkdir(parents=True, exist_ok=True)
-
             data: Dict[str, Any] = {"instances": [], "states": {}}
 
             for config in self.instances.values():
@@ -149,10 +148,7 @@ class InstanceManager:
                     "metadata": state.metadata,
                 }
 
-            with open(self.config_file, "w") as f:
-                json.dump(data, f, indent=2)
-
-            return True
+            return save_json(self.config_file, data, "instances")
 
         except Exception as e:
             print(f"❌ Error saving instances: {e}")

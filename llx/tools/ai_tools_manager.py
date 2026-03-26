@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 from .docker_manager import DockerManager
 from ._utils import cli_main
+from ._docker import is_container_running as _is_container_running, docker_exec, docker_cp
 
 
 class AIToolsManager:
@@ -42,14 +43,7 @@ class AIToolsManager:
     
     def is_container_running(self) -> bool:
         """Check if AI tools container is running."""
-        try:
-            result = subprocess.run(
-                ["docker", "ps", "--format", "{{.Names}}"],
-                capture_output=True, text=True, timeout=10
-            )
-            return self.container_name in result.stdout
-        except:
-            return False
+        return _is_container_running(self.container_name)
     
     def start_ai_tools(self, wait_for_ready: bool = True) -> bool:
         """Start AI tools container."""
@@ -140,9 +134,7 @@ class AIToolsManager:
             print("")
             
             # Use interactive shell
-            subprocess.run([
-                "docker", "exec", "-it", self.container_name, "/bin/bash"
-            ])
+            docker_exec(self.container_name, ["/bin/bash"], interactive=True)
             
             return True
             
@@ -156,9 +148,8 @@ class AIToolsManager:
             return False, "AI tools container is not running"
         
         try:
-            result = subprocess.run(
-                ["docker", "exec", self.container_name, "/bin/bash", "-c", command],
-                capture_output=True, text=True, timeout=timeout
+            result = docker_exec(
+                self.container_name, ["/bin/bash", "-c", command], timeout=timeout
             )
             
             return result.returncode == 0, result.stdout + result.stderr
@@ -393,10 +384,10 @@ class AIToolsManager:
             success, _ = self.execute_command(f"tar -czf /tmp/{backup_name}.tar {config_path} 2>/dev/null || true", timeout=10)
             if success:
                 # Copy backup from container
-                subprocess.run([
-                    "docker", "cp", f"{self.container_name}:/tmp/{backup_name}.tar",
+                docker_cp(
+                    f"{self.container_name}:/tmp/{backup_name}.tar",
                     str(backup_path / f"{backup_name}.tar")
-                ])
+                )
                 print(f"  ✅ Backed up {backup_name}")
         
         print(f"✅ Backup completed: {backup_path}")
@@ -417,10 +408,7 @@ class AIToolsManager:
         
         # Copy backups to container
         for backup_file in backup_path.glob("*.tar"):
-            subprocess.run([
-                "docker", "cp", str(backup_file),
-                f"{self.container_name}:/tmp/"
-            ])
+            docker_cp(str(backup_file), f"{self.container_name}:/tmp/")
             
             # Restore in container
             filename = backup_file.name

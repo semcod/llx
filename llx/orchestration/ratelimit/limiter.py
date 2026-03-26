@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from .models import LimitType, RateLimitConfig, RateLimitState
+from .._utils import save_json
 
 
 class RateLimiter:
@@ -116,8 +117,6 @@ class RateLimiter:
     def save_limits(self) -> bool:
         """Save rate limits to configuration file."""
         try:
-            self.config_file.parent.mkdir(parents=True, exist_ok=True)
-
             data: Dict[str, Any] = {"limits": [], "states": {}}
 
             for config in self.limits.values():
@@ -151,10 +150,7 @@ class RateLimiter:
                     "metadata": state.metadata,
                 }
 
-            with open(self.config_file, "w") as f:
-                json.dump(data, f, indent=2)
-
-            return True
+            return save_json(self.config_file, data, "rate limits")
 
         except Exception as e:
             print(f"❌ Error saving rate limits: {e}")

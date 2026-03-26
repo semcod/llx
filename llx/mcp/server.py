@@ -34,6 +34,9 @@ from llx.mcp.tools import (
     tool_llx_proxy_status,
     tool_llx_proxym_status,
     tool_llx_proxym_chat,
+    tool_aider,
+    tool_planfile_generate,
+    tool_planfile_apply,
 )
 
 server = Server("llx")
@@ -50,6 +53,9 @@ TOOLS = [
     tool_redup_scan,
     tool_vallm_validate,
     tool_llx_proxy_status,
+    tool_aider,
+    tool_planfile_generate,
+    tool_planfile_apply,
 ]
 
 @server.list_tools()

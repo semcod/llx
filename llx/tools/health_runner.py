@@ -31,83 +31,19 @@ class HealthCheckRunner:
             "recommendations": []
         }
         
-        # Check services
-        print("🔍 Checking services...")
-        for service_name in self.checker.endpoints.keys():
-            service_health = self.checker.check_service_health(service_name)
-            health_report["services"][service_name] = service_health
-            
-            status_icon = "✅" if service_health["status"] == "healthy" else "❌"
-            response_time = f" ({service_health.get('response_time', 0):.0f}ms)" if service_health.get("response_time") else ""
-            print(f"  {status_icon} {service_name}: {service_health['status']}{response_time}")
-            
-            if service_health["status"] != "healthy":
-                health_report["issues"].append(
-                    f"Service {service_name} unhealthy: {service_health.get('error', 'Unknown')}"
-                )
+        # Run individual health checks
+        self._check_services(health_report)
+        self._check_containers(health_report)
+        self._check_system_resources(health_report)
+        self._check_filesystem(health_report)
+        self._check_network(health_report)
         
-        # Check containers
-        print("\n🐳 Checking containers...")
-        container_status = self.checker.docker_manager.get_service_status("dev")
-        
-        for service_name, config in self.checker.expected_services.items():
-            container_name = config["container"]
-            container_health = self.checker.check_container_health(container_name)
-            health_report["containers"][service_name] = container_health
-            
-            status_icon = "✅" if container_health["status"] == "running" else "❌"
-            print(f"  {status_icon} {container_name}: {container_health['status']}")
-            
-            if container_health["status"] != "running":
-                health_report["issues"].append(f"Container {container_name} not running")
-        
-        # Check system resources
-        print("\n💻 Checking system resources...")
-        system_resources = self.checker.check_system_resources()
-        health_report["system"] = system_resources
-        
-        print(f"  🧠 CPU: {system_resources['cpu']['cores']} cores")
-        print(f"  🧠 Memory: {system_resources['memory']['available'] // 1024}GB available / {system_resources['memory']['total'] // 1024}GB total")
-        print(f"  💾 Disk: {system_resources['disk']['available']}GB available / {system_resources['disk']['total']}GB total")
-        
-        if system_resources["memory"]["usage"] > 90:
-            health_report["issues"].append("High memory usage (>90%)")
-            health_report["recommendations"].append("Consider closing unused applications")
-        
-        if system_resources["disk"]["usage"] > 90:
-            health_report["issues"].append("Low disk space (<10%)")
-            health_report["recommendations"].append("Clean up unused files and containers")
-        
-        # Check filesystem
-        print("\n📁 Checking filesystem...")
-        filesystem_health = self.checker.check_filesystem_health()
-        health_report["filesystem"] = filesystem_health
-        
-        if not filesystem_health["project_accessible"]:
-            health_report["issues"].append("Project directory not accessible")
-        
-        for issue in filesystem_health.get("issues", []):
-            health_report["issues"].append(f"Filesystem: {issue}")
-        
-        # Check network
-        print("\n🌐 Checking network connectivity...")
-        network_health = self.checker.check_network_connectivity()
-        health_report["network"] = network_health
-        
-        internet_icon = "✅" if network_health["internet"] else "❌"
-        print(f"  {internet_icon} Internet: {'Connected' if network_health['internet'] else 'Disconnected'}")
-        
-        for issue in network_health.get("issues", []):
-            health_report["issues"].append(f"Network: {issue}")
-        
-        # Overall status
+        # Determine overall status
         if health_report["issues"]:
             health_report["overall_status"] = "unhealthy"
         
-        # Generate recommendations
+        # Generate recommendations and print summary
         health_report["recommendations"].extend(self._generate_recommendations(health_report))
-        
-        # Print summary
         self._print_health_summary(health_report)
         
         return health_report
@@ -155,6 +91,78 @@ class HealthCheckRunner:
             recommendations.append("Check internet connection for external API access")
         
         return recommendations
+    
+    def _check_services(self, health_report: Dict[str, Any]) -> None:
+        """Check all service health."""
+        print("🔍 Checking services...")
+        for service_name in self.checker.endpoints.keys():
+            service_health = self.checker.check_service_health(service_name)
+            health_report["services"][service_name] = service_health
+            
+            status_icon = "✅" if service_health["status"] == "healthy" else "❌"
+            response_time = f" ({service_health.get('response_time', 0):.0f}ms)" if service_health.get("response_time") else ""
+            print(f"  {status_icon} {service_name}: {service_health['status']}{response_time}")
+            
+            if service_health["status"] != "healthy":
+                health_report["issues"].append(
+                    f"Service {service_name} unhealthy: {service_health.get('error', 'Unknown')}"
+                )
+    
+    def _check_containers(self, health_report: Dict[str, Any]) -> None:
+        """Check all container health."""
+        print("\n🐳 Checking containers...")
+        for service_name, config in self.checker.expected_services.items():
+            container_name = config["container"]
+            container_health = self.checker.check_container_health(container_name)
+            health_report["containers"][service_name] = container_health
+            
+            status_icon = "✅" if container_health["status"] == "running" else "❌"
+            print(f"  {status_icon} {container_name}: {container_health['status']}")
+            
+            if container_health["status"] != "running":
+                health_report["issues"].append(f"Container {container_name} not running")
+    
+    def _check_system_resources(self, health_report: Dict[str, Any]) -> None:
+        """Check system resource usage."""
+        print("\n💻 Checking system resources...")
+        system_resources = self.checker.check_system_resources()
+        health_report["system"] = system_resources
+        
+        print(f"  🧠 CPU: {system_resources['cpu']['cores']} cores")
+        print(f"  🧠 Memory: {system_resources['memory']['available'] // 1024}GB available / {system_resources['memory']['total'] // 1024}GB total")
+        print(f"  💾 Disk: {system_resources['disk']['available']}GB available / {system_resources['disk']['total']}GB total")
+        
+        if system_resources["memory"]["usage"] > 90:
+            health_report["issues"].append("High memory usage (>90%)")
+            health_report["recommendations"].append("Consider closing unused applications")
+        
+        if system_resources["disk"]["usage"] > 90:
+            health_report["issues"].append("Low disk space (<10%)")
+            health_report["recommendations"].append("Clean up unused files and containers")
+    
+    def _check_filesystem(self, health_report: Dict[str, Any]) -> None:
+        """Check filesystem health."""
+        print("\n📁 Checking filesystem...")
+        filesystem_health = self.checker.check_filesystem_health()
+        health_report["filesystem"] = filesystem_health
+        
+        if not filesystem_health["project_accessible"]:
+            health_report["issues"].append("Project directory not accessible")
+        
+        for issue in filesystem_health.get("issues", []):
+            health_report["issues"].append(f"Filesystem: {issue}")
+    
+    def _check_network(self, health_report: Dict[str, Any]) -> None:
+        """Check network connectivity."""
+        print("\n🌐 Checking network connectivity...")
+        network_health = self.checker.check_network_connectivity()
+        health_report["network"] = network_health
+        
+        internet_icon = "✅" if network_health["internet"] else "❌"
+        print(f"  {internet_icon} Internet: {'Connected' if network_health['internet'] else 'Disconnected'}")
+        
+        for issue in network_health.get("issues", []):
+            health_report["issues"].append(f"Network: {issue}")
     
     def _print_health_summary(self, health_report: Dict[str, Any]):
         """Print health check summary."""

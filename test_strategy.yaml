@@ -1,0 +1,79 @@
+name: "Test Strategy"
+version: "0.1.0"
+project_type: "web"
+domain: "test"
+goal:
+  short: "Build a test web application"
+  quality:
+    - "Test coverage > 80%"
+    - "Performance score > 90"
+  delivery:
+    - "Deploy to staging in 2 weeks"
+    - "Production ready in 4 weeks"
+sprints:
+  - id: 1
+    name: "Foundation"
+    length_days: 14
+    objectives:
+      - "Set up project structure"
+      - "Implement authentication"
+    tasks:
+      - "feature"
+      - "bug"
+  - id: 2
+    name: "Features"
+    length_days: 14
+    objectives:
+      - "Build core features"
+      - "Add UI components"
+    tasks:
+      - "feature"
+      - "tech_debt"
+tasks:
+  patterns:
+    - id: "feature"
+      type: "feature"
+      title: "Implement {feature_name}"
+      description: |
+        Build the {feature_name} feature with:
+        - Requirements analysis
+        - Implementation
+        - Unit tests
+        - Documentation
+      model_hints:
+        design: "balanced"
+        implementation: "balanced"
+    - id: "bug"
+      type: "bug"
+      title: "Fix: {bug_description}"
+      description: |
+        Bug report:
+        - Description: {bug_description}
+        - Reproduction steps
+        - Expected behavior
+      priority: "high"
+      model_hints:
+        triage: "balanced"
+        implementation: "local"
+    - id: "tech_debt"
+      type: "tech_debt"
+      title: "Refactor {component}"
+      description: |
+        Refactor {component} to:
+        - Improve code quality
+        - Reduce complexity
+        - Add tests
+      priority: "medium"
+      model_hints:
+        implementation: "local"
+quality_gates:
+  - name: "Code Review"
+    description: "All code must pass peer review"
+    criteria:
+      - "At least one approval"
+      - "All comments addressed"
+      - "CI checks passing"
+    required: true
+metadata:
+  generated_by: "llx"
+  version: "0.1.0"

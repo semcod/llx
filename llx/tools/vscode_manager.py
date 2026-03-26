@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 from .docker_manager import DockerManager
 from ._utils import cli_main
+from ._docker import is_container_running as _is_container_running, docker_exec, docker_cp
 
 
 class VSCodeManager:
@@ -50,14 +51,7 @@ class VSCodeManager:
     
     def is_vscode_running(self) -> bool:
         """Check if VS Code server is running."""
-        try:
-            result = subprocess.run(
-                ["docker", "ps", "--format", "{{.Names}}"],
-                capture_output=True, text=True, timeout=10
-            )
-            return self.container_name in result.stdout
-        except:
-            return False
+        return _is_container_running(self.container_name)
     
     def start_vscode(self, wait_for_ready: bool = True) -> bool:
         """Start VS Code server."""
@@ -157,10 +151,11 @@ class VSCodeManager:
             print(f"  🔧 Installing {extension}...")
             
             try:
-                result = subprocess.run([
-                    "docker", "exec", self.container_name,
-                    "code", "--install-extension", extension, "--force"
-                ], capture_output=True, text=True, timeout=30)
+                result = docker_exec(
+                    self.container_name,
+                    ["code", "--install-extension", extension, "--force"],
+                    timeout=30,
+                )
                 
                 if result.returncode == 0:
                     successful_extensions.append(extension)
@@ -193,10 +188,9 @@ class VSCodeManager:
             return []
         
         try:
-            result = subprocess.run([
-                "docker", "exec", self.container_name,
-                "code", "--list-extensions"
-            ], capture_output=True, text=True, timeout=10)
+            result = docker_exec(
+                self.container_name, ["code", "--list-extensions"], timeout=10
+            )
             
             if result.returncode == 0:
                 return [ext.strip() for ext in result.stdout.split('\n') if ext.strip()]
@@ -213,10 +207,11 @@ class VSCodeManager:
             return False
         
         try:
-            result = subprocess.run([
-                "docker", "exec", self.container_name,
-                "code", "--uninstall-extension", extension
-            ], capture_output=True, text=True, timeout=15)
+            result = docker_exec(
+                self.container_name,
+                ["code", "--uninstall-extension", extension],
+                timeout=15,
+            )
             
             if result.returncode == 0:
                 print(f"✅ Uninstalled {extension}")
@@ -238,10 +233,9 @@ class VSCodeManager:
         print("🔄 Updating VS Code extensions...")
         
         try:
-            result = subprocess.run([
-                "docker", "exec", self.container_name,
-                "code", "--update-extensions"
-            ], capture_output=True, text=True, timeout=60)
+            result = docker_exec(
+                self.container_name, ["code", "--update-extensions"], timeout=60
+            )
             
             if result.returncode == 0:
                 print("✅ Extensions updated successfully!")
@@ -295,10 +289,9 @@ class VSCodeManager:
         
         try:
             # Read existing settings
-            result = subprocess.run([
-                "docker", "exec", self.container_name,
-                "cat", settings_path
-            ], capture_output=True, text=True, timeout=10)
+            result = docker_exec(
+                self.container_name, ["cat", settings_path], timeout=10
+            )
             
             if result.returncode == 0:
                 try:
@@ -318,10 +311,7 @@ class VSCodeManager:
             temp_file = Path("/tmp/vscode_settings.json")
             temp_file.write_text(settings_json)
             
-            subprocess.run([
-                "docker", "cp", str(temp_file),
-                f"{self.container_name}:{settings_path}"
-            ])
+            docker_cp(str(temp_file), f"{self.container_name}:{settings_path}")
             
             temp_file.unlink()
             
@@ -423,10 +413,7 @@ class VSCodeManager:
             temp_file = Path("/tmp/vscode_tasks.json")
             temp_file.write_text(tasks_json)
             
-            subprocess.run([
-                "docker", "cp", str(temp_file),
-                f"{self.container_name}:{tasks_path}"
-            ])
+            docker_cp(str(temp_file), f"{self.container_name}:{tasks_path}")
             
             temp_file.unlink()
             
@@ -488,10 +475,7 @@ class VSCodeManager:
             temp_file = Path("/tmp/vscode_launch.json")
             temp_file.write_text(launch_json)
             
-            subprocess.run([
-                "docker", "cp", str(temp_file),
-                f"{self.container_name}:{launch_path}"
-            ])
+            docker_cp(str(temp_file), f"{self.container_name}:{launch_path}")
             
             temp_file.unlink()
             
@@ -519,10 +503,10 @@ class VSCodeManager:
         # Backup settings
         settings_path = "/home/coder/.local/share/code-server/User/settings.json"
         try:
-            subprocess.run([
-                "docker", "cp", f"{self.container_name}:{settings_path}",
+            docker_cp(
+                f"{self.container_name}:{settings_path}",
                 str(backup_path / "settings.json")
-            ])
+            )
             print("  ✅ Settings backed up")
         except:
             print("  ⚠️  Settings backup failed")
@@ -553,10 +537,10 @@ class VSCodeManager:
         settings_file = backup_path / "settings.json"
         if settings_file.exists():
             try:
-                subprocess.run([
-                    "docker", "cp", str(settings_file),
+                docker_cp(
+                    str(settings_file),
                     f"{self.container_name}:/home/coder/.local/share/code-server/User/settings.json"
-                ])
+                )
                 print("  ✅ Settings restored")
             except:
                 print("  ⚠️  Settings restore failed")

@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-03-26
+
+### Docs
+- Update LLX_STRATEGY_INTEGRATION.md
+- Update README.md
+- Update docs/aider-integration.md
+- Update examples/aider/README.md
+
+### Test
+- Update test_aider_docker.py
+- Update test_aider_mcp.py
+- Update test_strategy.yaml
+- Update test_strategy_integration.py
+- Update tests/test_aider_mcp.py
+
+### Other
+- Update examples/aider/aider_demo.py
+- Update examples/aider/run.sh
+- Update examples/cli-tools/quick_cli.sh
+- Update examples/cloud-local/integration.sh
+- Update examples/fullstack/generate.sh
+- Update llx/cli/app.py
+- Update llx/cli/strategy_commands.py
+- Update llx/mcp/server.py
+- Update llx/mcp/tools.py
+- Update llx/orchestration/instances/manager.py
+- ... and 16 more files
+
 ## [0.1.10] - 2026-03-26
 
 ### Docs

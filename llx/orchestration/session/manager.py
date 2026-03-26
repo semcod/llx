@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from .models import SessionType, SessionStatus, SessionConfig, SessionState
+from .._utils import save_json
 
 
 class SessionManager:
@@ -91,8 +92,6 @@ class SessionManager:
     def save_sessions(self) -> bool:
         """Save sessions to configuration file."""
         try:
-            self.config_file.parent.mkdir(parents=True, exist_ok=True)
-
             data: Dict[str, Any] = {"sessions": [], "states": {}}
 
             for config in self.sessions.values():
@@ -123,10 +122,7 @@ class SessionManager:
                     "metadata": state.metadata,
                 }
 
-            with open(self.config_file, "w") as f:
-                json.dump(data, f, indent=2)
-
-            return True
+            return save_json(self.config_file, data, "sessions")
 
         except Exception as e:
             print(f"❌ Error saving sessions: {e}")

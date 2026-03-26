@@ -85,6 +85,7 @@ llx mcp tools
 | `redup_scan` | Run duplication detection | `redup` CLI |
 | `vallm_validate` | Validate code quality | `vallm` API/CLI |
 | `llx_proxy_status` | Check LiteLLM proxy status | `llx proxy status` |
+| `aider` | AI pair programming tool | `aider` CLI |
 
 ### Claude Desktop Setup
 

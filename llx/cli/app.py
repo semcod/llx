@@ -28,13 +28,19 @@ from rich.panel import Panel
 from llx.analysis.collector import analyze_project
 from llx.config import LlxConfig
 from llx.routing.selector import ModelTier, select_model, select_with_context_check
+from llx.cli.strategy_commands import add_strategy_commands
 
 console = Console()
 app = typer.Typer(name="llx", help="Intelligent LLM model router driven by real code metrics.", no_args_is_help=True)
 proxy_app = typer.Typer(help="Manage LiteLLM proxy server.")
 mcp_app = typer.Typer(help="MCP server management.")
+plan_app = typer.Typer(help="planfile strategy management.")
 app.add_typer(proxy_app, name="proxy")
 app.add_typer(mcp_app, name="mcp")
+app.add_typer(plan_app, name="plan")
+
+# Add strategy commands
+add_strategy_commands(app)
 
 
 @app.command()
@@ -102,6 +108,11 @@ def chat(
     result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task)
 
     model_id = model_override or result.model_id
+    
+    # Resolve model alias to actual model_id from config
+    if model_override and model_override in config.models:
+        model_id = config.models[model_override].model_id
+    
     console.print(f"[bold]Model:[/bold] {model_id}  [dim]({result.tier.value})[/dim]")
 
     from llx.integrations.context_builder import build_context
@@ -284,7 +295,7 @@ def mcp_tools() -> None:
         tool_llx_preprocess, tool_llx_context,
         tool_llx_proxym_status, tool_llx_proxym_chat,
         tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
-        tool_llx_proxy_status,
+        tool_llx_proxy_status, tool_planfile_generate, tool_planfile_apply,
     )
     from rich.table import Table
     table = Table(title="MCP Tools", show_header=True)
@@ -294,9 +305,64 @@ def mcp_tools() -> None:
               tool_llx_preprocess, tool_llx_context,
               tool_llx_proxym_status, tool_llx_proxym_chat,
               tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
-              tool_llx_proxy_status]:
+              tool_llx_proxy_status, tool_planfile_generate, tool_planfile_apply]:
         table.add_row(t.definition.name, t.definition.description[:80])
     console.print(table)
+
+
+# ─── Plan Commands ──────────────────────────────────────────────
+
+@plan_app.command("apply")
+def plan_apply(
+    strategy: str = typer.Argument(..., help="Path to strategy.yaml"),
+    path: str = typer.Argument(".", help="Project path"),
+    sprint: Optional[str] = typer.Option(None, "--sprint", "-s"),
+    dry_run: bool = typer.Option(False, "--dry-run"),
+) -> None:
+    """Apply a planfile strategy to the project."""
+    from llx.planfile.executor import execute_strategy
+    results = execute_strategy(strategy, path, sprint_filter=sprint, dry_run=dry_run,
+                               on_progress=lambda msg: console.print(f"  {msg}"))
+    for r in results:
+        icon = "✓" if r.status == "success" else "○" if r.status == "dry_run" else "✗"
+        console.print(f"  {icon} {r.task_name} → {r.model_used}")
+
+@plan_app.command("generate")
+def plan_generate(
+    path: str = typer.Argument(".", help="Project to analyze"),
+    output: str = typer.Option("strategy.yaml", "--output", "-o"),
+    model: Optional[str] = typer.Option(None, "--model", "-m"),
+    sprints: int = typer.Option(3, "--sprints"),
+    focus: Optional[str] = typer.Option(None, "--focus"),
+) -> None:
+    """Generate strategy.yaml (delegates to planfile)."""
+    try:
+        from planfile.llm.generator import generate_strategy
+        from planfile.loaders.yaml_loader import save_strategy_yaml
+        strategy = generate_strategy(path, model=model, sprints=sprints, focus=focus)
+        save_strategy_yaml(strategy, output)
+        console.print(f"[green]Strategy saved to {output}[/green]")
+    except ImportError:
+        console.print("[red]planfile not installed. pip install planfile[/red]")
+        raise typer.Exit(1)
+
+@plan_app.command("review")
+def plan_review(
+    strategy: str = typer.Argument(...),
+    path: str = typer.Argument("."),
+) -> None:
+    """Review progress against strategy quality gates."""
+    try:
+        from planfile.runner import review_strategy
+        from planfile.loaders.yaml_loader import load_strategy_yaml
+        s = load_strategy_yaml(strategy)
+        results = review_strategy(s, path, backends={})
+        # Print gate results
+        for gate in results.get("quality_gates", []):
+            icon = "✓" if gate.get("passed") else "✗"
+            console.print(f"  {icon} {gate['name']}: {gate.get('value', '?')} {gate.get('operator', '')} {gate.get('threshold', '')}")
+    except ImportError:
+        console.print("[red]planfile not installed[/red]")
 
 
 def main() -> None:

@@ -182,7 +182,11 @@ generate_app() {
     Add clear setup and run instructions in README.md."
     
     # Build LLX command
-    llx_cmd="llx chat --model "$tier" --task refactor"
+    if [ -n "$USE_LOCAL" ]; then
+        llx_cmd="llx chat --local --task refactor"
+    else
+        llx_cmd="llx chat --model "$tier" --task refactor"
+    fi
     
     if [ -n "$provider" ]; then
         llx_cmd="$llx_cmd --provider $provider"
@@ -241,6 +245,7 @@ show_usage() {
     echo "Options:"
     echo "  -t, --tier TIER       Model tier (cheap/balanced/premium) [default: balanced]"
     echo "  -p, --provider PROVIDER  LLM provider (anthropic/openai/openrouter)"
+    echo "  -l, --local           Use local model instead of cloud"
     echo "  -h, --help            Show this help"
     echo ""
     echo "Examples:"
@@ -253,6 +258,7 @@ show_usage() {
 # Parse command line arguments
 TIER="balanced"
 PROVIDER=""
+USE_LOCAL=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -263,6 +269,10 @@ while [[ $# -gt 0 ]]; do
         -p|--provider)
             PROVIDER="$2"
             shift 2
+            ;;
+        -l|--local)
+            USE_LOCAL="--local"
+            shift
             ;;
         -h|--help)
             show_usage

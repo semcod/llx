@@ -181,14 +181,16 @@ Requirements:
 6. Ensure cross-platform compatibility if applicable"
     
     # Build LLX command
-    local cmd="llx chat --model "$tier" --task refactor"
+    local cmd=""
+    
+    if [ "$local_model" = true ]; then
+        cmd="llx chat --local --task refactor"
+    else
+        cmd="llx chat --model "$tier" --task refactor"
+    fi
     
     if [ -n "$provider" ]; then
         cmd="$cmd --provider $provider"
-    fi
-    
-    if [ "$local_model" = true ]; then
-        cmd="$cmd --local"
     fi
     
     cmd="$cmd --prompt \"$prompt\""
