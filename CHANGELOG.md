@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.24] - 2026-03-26
+
+### Docs
+- Update examples/REFACTORING_FINAL.md
+
+### Other
+- Update examples/ai-tools/run.sh
+- Update examples/aider/run.sh
+- Update examples/basic/run.sh
+- Update examples/docker/docker.sh
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/run.sh
+- Update examples/run.sh
+
 ## [0.1.23] - 2026-03-26
 
 ### Docs

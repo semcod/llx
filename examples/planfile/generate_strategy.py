@@ -204,11 +204,17 @@ Return only valid YAML without code blocks.
                 # Use task_patterns as list of task names
                 if isinstance(data['task_patterns'], list):
                     for i, task_name in enumerate(data['task_patterns']):
+                        # Handle both string and dict formats
+                        if isinstance(task_name, dict):
+                            task_str = task_name.get('name', str(task_name))
+                        else:
+                            task_str = str(task_name)
+                            
                         sprint['tasks'].append({
-                            'name': task_name,
-                            'description': f"Execute {task_name.lower()}",
-                            'type': 'tech_debt' if 'refactor' in task_name.lower() or 'extract' in task_name.lower() else 'feature',
-                            'model_hints': 'balanced' if 'complex' in task_name.lower() else 'cheap'
+                            'name': task_str,
+                            'description': f"Execute {task_str.lower()}",
+                            'type': 'tech_debt' if 'refactor' in task_str.lower() or 'extract' in task_str.lower() else 'feature',
+                            'model_hints': 'balanced' if 'complex' in task_str.lower() else 'cheap'
                         })
     
     # Fix quality gates
