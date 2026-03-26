@@ -470,21 +470,6 @@ Args:
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
 
-### llx.prellm.core.preprocess_and_execute
-> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
-- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
-
-### llx.prellm.core.preprocess_and_execute_sync
-> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
-
-Usage:
-
-- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm.llm_provider.LLMProvider._parse_json
-> Best-effort JSON extraction from LLM output.
-- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
-
 ### llx.prellm.extractors.format_classification_context
 > Extract and format classification context from preprocessing result.
 - **Output to**: state.get, isinstance, state.get, classification.get, classification.get
@@ -501,6 +486,29 @@ Usage:
 > Extract and format user context information.
 - **Output to**: extra_context.get, parts.append
 
+### llx.prellm.core.preprocess_and_execute
+> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
+- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
+
+### llx.prellm.core.preprocess_and_execute_sync
+> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
+
+Usage:
+
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm.llm_provider.LLMProvider._parse_json
+> Best-effort JSON extraction from LLM output.
+- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
+
+### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
+> Format pipeline state into structured executor input.
+- **Output to**: inputs.get, state.get, state.get, isinstance, str
+
+### llx.prellm.cli_commands.process
+> Execute a DevOps process chain.
+- **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
+
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
@@ -510,14 +518,6 @@ Special cases
 ### llx.prellm.server.batch_process
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm.cli_commands.process
-> Execute a DevOps process chain.
-- **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
-
-### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
-> Format pipeline state into structured executor input.
-- **Output to**: inputs.get, state.get, state.get, isinstance, str
 
 ### llx.analysis.collector._parse_map_stats_line
 > Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
@@ -531,7 +531,7 @@ Special cases
 > Parse: # hotspots[5]: _extract fan=45; ...
 - **Output to**: re.search, re.finditer, max, max, int
 
-### llx.tools.ai_tools_manager._build_parser
+### llx.tools.docker_manager._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ## Behavioral Patterns

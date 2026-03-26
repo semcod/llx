@@ -1,7 +1,7 @@
-# vallm batch | 239f | 144✓ 10⚠ 48✗ | 2026-03-26
+# vallm batch | 244f | 147✓ 10⚠ 48✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 239  passed: 144 (60.3%)  warnings: 10  errors: 48  unsupported: 47
+  scanned: 244  passed: 147 (60.2%)  warnings: 10  errors: 48  unsupported: 49
 
 WARNINGS[10]{path,score}:
   examples/planfile/async_refactor_demo.py,0.93
@@ -276,7 +276,7 @@ ERRORS[48]{path,score}:
       python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,26
+  *.md,28
   Dockerfile*,1
   *.txt,3
   *.yml,3

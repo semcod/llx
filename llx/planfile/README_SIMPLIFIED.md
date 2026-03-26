@@ -1,0 +1,173 @@
+# LLX Planfile - Simplified Integration
+
+This document describes the simplified planfile integration in LLX.
+
+## Overview
+
+The LLX planfile module has been simplified to:
+- Support the new V2 format with embedded tasks
+- Handle both V1 and V2 formats seamlessly
+- Reduce complexity and improve maintainability
+- Use LLX's built-in model selection and routing
+
+## Key Changes
+
+### 1. Simplified Executor
+- Removed complex executor implementations
+- Single `executor_simple.py` with clean implementation
+- Automatic format detection and normalization
+
+### 2. Format Support
+- **V1 Format**: Tasks defined separately in `task_patterns`
+- **V2 Format**: Tasks embedded directly in sprints
+- **Mixed Format**: Handles both in the same strategy
+
+### 3. Reduced Dependencies
+- Removed dependency on external planfile package
+- Uses only LLX internals
+- Cleaner import structure
+
+## Usage
+
+### Basic Usage
+```python
+from llx.planfile import execute_strategy
+
+# Execute strategy (supports V1 and V2)
+results = execute_strategy(
+    "strategy.yaml",
+    project_path=".",
+    dry_run=True
+)
+```
+
+### V2 Format Example
+```yaml
+name: "My Strategy"
+goal: "Improve code quality"
+
+sprints:
+  - id: 1
+    name: "Refactoring Sprint"
+    objectives: ["Extract methods", "Add tests"]
+    tasks:  # Embedded tasks (V2)
+      - name: "Extract Methods"
+        description: "Extract complex methods"
+        type: "refactor"
+        model_hints: "balanced"
+```
+
+### V1 Format Example
+```yaml
+name: "My Strategy"
+goal: "Improve code quality"
+
+sprints:
+  - id: 1
+    name: "Refactoring Sprint"
+    objectives: ["Extract methods", "Add tests"]
+    task_patterns:  # Separate patterns (V1)
+      - name: "Extract Methods"
+        description: "Extract complex methods"
+        task_type: "refactor"
+        model_hints:
+          implementation: "balanced"
+```
+
+## Implementation Details
+
+### File Structure
+```
+llx/planfile/
+├── __init__.py           # Main exports
+├── models.py            # Pydantic models
+├── runner.py            # Strategy loading/validation
+├── executor_simple.py   # Simplified executor
+├── builder.py           # Strategy builders
+└── examples.py          # Example strategies
+```
+
+### Executor Flow
+1. Load YAML strategy
+2. Detect format (V1/V2)
+3. Normalize to internal format
+4. Process sprints and tasks
+5. Select model using LLX routing
+6. Execute tasks with LLM
+7. Return results
+
+### Model Selection
+- Uses LLX's built-in model selection
+- Considers task hints and project metrics
+- Supports all LLX model tiers
+- Automatic fallback to default model
+
+## Benefits
+
+1. **Simpler Code**
+   - Single executor implementation
+   - Clear separation of concerns
+   - Easier to maintain
+
+2. **Better UX**
+   - Supports both formats
+   - Clear error messages
+   - Flexible model hints
+
+3. **LLX Integration**
+   - Uses LLX routing
+   - Leverages project metrics
+   - Consistent with LLX patterns
+
+## Migration
+
+### From V1 to V2
+```yaml
+# V1 - Separate patterns
+sprints:
+  - id: 1
+    tasks: ["task1"]
+tasks:
+  patterns:
+    - id: "task1"
+      name: "Task 1"
+
+# V2 - Embedded tasks
+sprints:
+  - id: 1
+    tasks:
+      - name: "Task 1"
+```
+
+### Code Changes
+```python
+# No changes needed - executor handles both formats!
+from llx.planfile import execute_strategy
+results = execute_strategy("strategy.yaml")
+```
+
+## Testing
+
+Run the integration test:
+```bash
+python3 examples/planfile/test_simple_integration.py
+```
+
+## Future Improvements
+
+1. Add more format validation
+2. Support for task dependencies
+3. Progress tracking and resumption
+4. Integration with LLX CLI
+5. Template generation
+
+## Summary
+
+The simplified LLX planfile integration provides:
+- ✅ Support for V1 and V2 formats
+- ✅ Clean, maintainable code
+- ✅ Full LLX integration
+- ✅ Backward compatibility
+- ✅ Better error handling
+
+This makes planfile easier to use and maintain while preserving all functionality.

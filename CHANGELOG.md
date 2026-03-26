@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-03-26
+
+### Docs
+- Update LLX_PLANFILE_SIMPLIFICATION.md
+- Update docs/README.md
+- Update examples/planfile/OPENROUTER_INTEGRATION.md
+- Update examples/planfile/PLANFILE_USAGE_GUIDE.md
+- Update llx/planfile/README_SIMPLIFIED.md
+- Update project/context.md
+
+### Other
+- Update .llx/planfile/current-analysis.txt
+- Update examples/planfile/async_refactor_demo.py
+- Update examples/planfile/calculator.py
+- Update examples/planfile/callback_hell.py
+- Update examples/planfile/duplicate_test.py
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/generated_strategy.yaml
+- Update examples/planfile/microservice_refactor.py
+- Update examples/planfile/planfile_dev.sh
+- Update examples/planfile/run.sh
+- ... and 22 more files
+
 ## [0.1.17] - 2026-03-26
 
 ### Docs

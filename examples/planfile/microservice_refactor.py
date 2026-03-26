@@ -290,7 +290,7 @@ if __name__ == "__main__":
     console.print(Panel(
         "[green]✓ Created monolithic service sample[/green]",
         title="Monolith Created"
-    )
+    ))
     
     return monolith_path
 

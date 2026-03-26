@@ -25,6 +25,15 @@ METRICS_DIR="$PROJECT_ROOT/.code2llm"
 mkdir -p "$PLANFILE_DIR"
 mkdir -p "$METRICS_DIR"
 
+# Helper function to run LLX with proper PYTHONPATH
+run_llx() {
+    if command -v llx &> /dev/null; then
+        llx "$@"
+    else
+        PYTHONPATH=/home/tom/github/semcod/llx python3 -m llx "$@"
+    fi
+}
+
 # Focus area mappings
 declare -A FOCUS_DESCRIPTIONS=(
     ["complexity"]="Reduce cyclomatic complexity and improve code structure"
@@ -111,7 +120,7 @@ generate_strategy() {
     
     # Analyze current state first
     log_info "Analyzing current project state..."
-    llx analyze "$PROJECT_ROOT" --toon-dir "$METRICS_DIR" --task "$focus" > "$PLANFILE_DIR/current-analysis.txt"
+    run_llx analyze "$PROJECT_ROOT" --toon-dir "$METRICS_DIR" --task "$focus" > "$PLANFILE_DIR/current-analysis.txt"
     
     # Select model if auto
     if [[ "$model" == "auto" ]]; then
@@ -121,7 +130,7 @@ generate_strategy() {
     
     # Generate strategy
     log_info "Generating strategy with LLM..."
-    llx plan generate "$PROJECT_ROOT" \
+    run_llx plan generate "$PROJECT_ROOT" \
         --model "$model" \
         --sprints "$sprints" \
         --focus "$focus" \
@@ -160,7 +169,7 @@ review_strategy() {
     echo ""
     
     # Run quality gate review
-    llx plan review "$strategy_file" "$PROJECT_ROOT"
+    run_llx plan review "$strategy_file" "$PROJECT_ROOT"
     
     # Estimate execution cost
     echo ""

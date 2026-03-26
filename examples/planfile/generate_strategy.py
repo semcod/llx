@@ -102,7 +102,28 @@ Return only valid YAML without code blocks.
     yaml_text = yaml_text.replace("-implementation:", "- implementation:")
     yaml_text = yaml_text.replace("-review:", "- review:")
     
+    # Fix line continuation issues
+    import re
+    # Add newline after list items that don't have proper indentation
+    yaml_text = re.sub(r'([a-zA-Z].{50,})\s{2,}([a-zA-Z])', r'\1\n  - \2', yaml_text)
+    # Fix specific case with >=
+    yaml_text = re.sub(r'(coverage|percentage):\s*>=\s*([0-9]+%)', r'\1: >= \2', yaml_text)
+    
+    # Ensure proper list formatting
+    lines = yaml_text.split('\n')
+    fixed_lines = []
+    for i, line in enumerate(lines):
+        fixed_lines.append(line)
+        # If line ends with a list item without proper dash, add newline
+        if line.strip().startswith('- ') and i < len(lines) - 1:
+            next_line = lines[i + 1].strip()
+            if next_line and not next_line.startswith('-') and not next_line.startswith(' '):
+                # Check if it looks like it should be a new list item
+                if any(word in next_line.lower() for word in ['add', 'run', 'enforce', 'introduce', 'apply']):
+                    fixed_lines.append('')
+    
     # Save fixed YAML
+    yaml_text = '\n'.join(fixed_lines)
     with open("/tmp/fixed_yaml.txt", "w") as f:
         f.write(yaml_text)
     console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")

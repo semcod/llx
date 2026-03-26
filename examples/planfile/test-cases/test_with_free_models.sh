@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Test directory
-TEST_DIR="$SCRIPT_DIR/test-cases"
+TEST_DIR="$SCRIPT_DIR"
 cd "$TEST_DIR"
 
 echo -e "${CYAN}"
@@ -29,7 +29,7 @@ echo -e "${NC}"
 # Check if LLX is available
 if ! command -v llx &> /dev/null; then
     echo -e "${YELLOW}Using python -m llx (LLX not in PATH)${NC}"
-    LLX_CMD="python3 -m llx"
+    LLX_CMD="PYTHONPATH=/home/tom/github/semcod/llx python3 -m llx"
 else
     LLX_CMD="llx"
 fi
@@ -52,7 +52,7 @@ run_test() {
     
     # Generate strategy
     echo -e "${YELLOW}Generating strategy...${NC}"
-    if $LLX_CMD plan generate . \
+    if eval $LLX_CMD plan generate . \
         --model "$model" \
         --sprints 1 \
         --focus "$focus" \
@@ -62,11 +62,11 @@ run_test() {
         
         # Review strategy
         echo -e "\n${YELLOW}Reviewing strategy...${NC}"
-        $LLX_CMD plan review "strategy-${focus}-${model##*:}.yaml" . 2>/dev/null || true
+        eval $LLX_CMD plan review "strategy-${focus}-${model##*:}.yaml" . 2>/dev/null || true
         
         # Dry run
         echo -e "\n${YELLOW}Running dry-run...${NC}"
-        if $LLX_CMD plan apply "strategy-${focus}-${model##*:}.yaml" . --dry-run 2>/dev/null; then
+        if eval $LLX_CMD plan apply "strategy-${focus}-${model##*:}.yaml" . --dry-run 2>/dev/null; then
             echo -e "${GREEN}✓ Dry-run completed${NC}"
             
             # Ask for confirmation
@@ -75,7 +75,7 @@ run_test() {
             if [[ "$response" =~ ^[Yy]$ ]]; then
                 # Apply strategy
                 echo -e "${YELLOW}Applying strategy...${NC}"
-                if $LLX_CMD plan apply "strategy-${focus}-${model##*:}.yaml" . 2>/dev/null; then
+                if eval $LLX_CMD plan apply "strategy-${focus}-${model##*:}.yaml" . 2>/dev/null; then
                     echo -e "${GREEN}✓ Strategy applied successfully${NC}"
                     
                     # Show diff
@@ -121,7 +121,7 @@ fi
 
 # Test 1: Local model for complexity reduction
 echo -e "${BLUE}Checking for local models...${NC}"
-if $LLX_CMD chat --local --model list 2>/dev/null | grep -q "qwen2.5\|llama\|mistral"; then
+if eval $LLX_CMD chat --local --model list 2>/dev/null | grep -q "qwen2.5\|llama\|mistral"; then
     LOCAL_MODEL="qwen2.5-coder:7b"
     run_test "Local Model - Complexity" "$LOCAL_MODEL" "complexity" "Reduce cyclomatic complexity using local model"
 else
@@ -150,7 +150,7 @@ if command -v $LLX_CMD &> /dev/null; then
     
     # Generate 3-sprint strategy
     echo -e "${YELLOW}Generating 3-sprint strategy...${NC}"
-    if $LLX_CMD plan generate . \
+    if eval $LLX_CMD plan generate . \
         --model "${LOCAL_MODEL:-qwen2.5-coder:7b}" \
         --sprints 3 \
         --focus complexity \
@@ -168,7 +168,7 @@ if command -v $LLX_CMD &> /dev/null; then
         
         # Execute first sprint only
         echo -e "\n${YELLOW}Executing first sprint...${NC}"
-        if $LLX_CMD plan apply multi-sprint-strategy.yaml . --sprint "sprint-1" 2>/dev/null; then
+        if eval $LLX_CMD plan apply multi-sprint-strategy.yaml . --sprint "sprint-1" 2>/dev/null; then
             echo -e "${GREEN}✓ First sprint executed${NC}"
         else
             echo -e "${RED}✗ Failed to execute first sprint${NC}"

@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
-from rich.code import Syntax
+from rich.syntax import Syntax
 
 console = Console()
 

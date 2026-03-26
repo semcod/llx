@@ -24,7 +24,7 @@ cd "$SCRIPT_DIR"
 # Check if LLX is available
 if ! command -v llx &> /dev/null; then
     echo -e "${YELLOW}Warning: LLX not found in PATH. Using python -m llx${NC}"
-    LLX_CMD="python3 -m llx"
+    LLX_CMD="PYTHONPATH=/home/tom/github/semcod/llx python3 -m llx"
 else
     LLX_CMD="llx"
 fi
@@ -80,19 +80,19 @@ echo ""
 
 # Generate strategy
 echo -e "${BLUE}Generating complexity reduction strategy...${NC}"
-$LLX_CMD plan generate sample-project \
-    --model qwen2.5-coder:7b \
+eval $LLX_CMD plan generate sample-project \
+    --model ollama/qwen2.5-coder:7b \
     --sprints 2 \
     --focus complexity \
     --output sample-project/strategy-complexity.yaml
 
 echo ""
 echo -e "${BLUE}Strategy generated! Reviewing...${NC}"
-$LLX_CMD plan review sample-project/strategy-complexity.yaml sample-project
+eval $LLX_CMD plan review sample-project/strategy-complexity.yaml sample-project
 
 echo ""
 echo -e "${YELLOW}Run dry-run to see what would be changed:${NC}"
-$LLX_CMD plan apply sample-project/strategy-complexity.yaml sample-project --dry-run
+eval $LLX_CMD plan apply sample-project/strategy-complexity.yaml sample-project --dry-run
 
 echo ""
 read -p "Press Enter to apply the strategy (or Ctrl+C to cancel)..."
@@ -100,7 +100,7 @@ echo ""
 
 # Apply strategy
 echo -e "${BLUE}Applying strategy...${NC}"
-$LLX_CMD plan apply sample-project/strategy-complexity.yaml sample-project
+eval $LLX_CMD plan apply sample-project/strategy-complexity.yaml sample-project
 
 echo ""
 echo -e "${GREEN}✓ Strategy applied! Check sample-project/src/services/user_service.py for improvements${NC}"
@@ -161,7 +161,7 @@ echo ""
 
 # Generate deduplication strategy
 echo -e "${BLUE}Generating deduplication strategy...${NC}"
-$LLX_CMD plan generate sample-project \
+eval $LLX_CMD plan generate sample-project \
     --model claude-sonnet-4 \
     --sprints 1 \
     --focus duplication \
@@ -169,7 +169,7 @@ $LLX_CMD plan generate sample-project \
 
 echo ""
 echo -e "${BLUE}Applying deduplication strategy...${NC}"
-$LLX_CMD plan apply sample-project/strategy-dedup.yaml sample-project
+eval $LLX_CMD plan apply sample-project/strategy-dedup.yaml sample-project
 
 echo ""
 echo -e "${GREEN}✓ Deduplication applied! Check for base classes or utility functions${NC}"
@@ -211,7 +211,7 @@ echo ""
 
 # Generate test strategy
 echo -e "${BLUE}Generating test improvement strategy...${NC}"
-$LLX_CMD plan generate sample-project \
+eval $LLX_CMD plan generate sample-project \
     --model claude-sonnet-4 \
     --sprints 1 \
     --focus tests \
@@ -219,7 +219,7 @@ $LLX_CMD plan generate sample-project \
 
 echo ""
 echo -e "${BLUE}Applying test strategy...${NC}"
-$LLX_CMD plan apply sample-project/strategy-tests.yaml sample-project
+eval $LLX_CMD plan apply sample-project/strategy-tests.yaml sample-project
 
 echo ""
 echo -e "${GREEN}✓ Tests generated! Check sample-project/tests/ directory${NC}"

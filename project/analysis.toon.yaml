@@ -1,12 +1,12 @@
-# code2llm | 119f 25629L | python:112,shell:7 | 2026-03-26
+# code2llm | 119f 25630L | python:112,shell:7 | 2026-03-26
 # CC̄=3.9 | critical:9/1113 | dups:0 | cycles:0
 
 HEALTH[11]:
   🟡 CC    preprocess_and_execute CC=15 (limit:15)
-  🟡 CC    _dispatch CC=21 (limit:15)
   🟡 CC    _dispatch CC=19 (limit:15)
   🟡 CC    _dispatch CC=19 (limit:15)
   🟡 CC    print_config_summary CC=17 (limit:15)
+  🟡 CC    _dispatch CC=21 (limit:15)
   🟡 CC    check_service_health CC=16 (limit:15)
   🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    _render_tiers_table CC=15 (limit:15)
@@ -78,7 +78,7 @@ LAYERS:
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
   │ cli                        193L  0C    6m  CC=8      ←0
-  │ executor                   190L  1C    6m  CC=6      ←2
+  │ executor                   191L  1C    6m  CC=6      ←2
   │ preprocessor               188L  2C    6m  CC=13     ←0
   │ cli_query                  186L  0C    5m  CC=9      ←2
   │ cli                        186L  0C   14m  CC=5      ←0
@@ -172,19 +172,19 @@ COUPLING:
    llx.integrations                                                                          ←3                                    ←1                  1                  1                  2                 ──                     hub
          llx.prellm                                    ←1                 ←1                                    ←1                 ←2                                                                                             ──  hub
   CYCLES: none
-  HUB: llx.routing/ (fan-in=9)
-  HUB: llx.tools/ (fan-in=7)
-  HUB: llx.planfile/ (fan-in=6)
-  HUB: llx/ (fan-in=15)
   HUB: docker.ai-tools/ (fan-in=852)
-  HUB: llx.analysis/ (fan-in=13)
-  HUB: llx.integrations/ (fan-in=5)
+  HUB: llx/ (fan-in=15)
+  HUB: llx.routing/ (fan-in=9)
+  HUB: llx.planfile/ (fan-in=6)
   HUB: llx.prellm/ (fan-in=5)
+  HUB: llx.analysis/ (fan-in=13)
+  HUB: llx.tools/ (fan-in=7)
+  HUB: llx.integrations/ (fan-in=5)
+  SMELL: llx.mcp/ fan-out=18 → split needed
+  SMELL: llx.cli/ fan-out=48 → split needed
+  SMELL: llx.planfile/ fan-out=30 → split needed
   SMELL: llx.tools/ fan-out=494 → split needed
   SMELL: llx.orchestration/ fan-out=317 → split needed
-  SMELL: llx.planfile/ fan-out=30 → split needed
-  SMELL: llx.cli/ fan-out=48 → split needed
-  SMELL: llx.mcp/ fan-out=18 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
