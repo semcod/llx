@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.36] - 2026-03-26
+
+### Docs
+- Update examples/python-api/test-cli-debug/README.md
+- Update examples/python-api/test-cli-final/README.md
+- Update examples/python-api/test-cli-v2/README.md
+- Update examples/python-api/test-cli/README.md
+- Update examples/python-api/test-cli/docs/api.md
+- Update examples/python-api/test-webapp/README.md
+- Update my-api/README.md
+- Update my-api/docs/api.md
+
+### Other
+- Update examples/python-api/strategy.yaml
+- Update examples/python-api/test-cli-debug/Dockerfile
+- Update examples/python-api/test-cli-debug/main.py
+- Update examples/python-api/test-cli-debug/models.py
+- Update examples/python-api/test-cli-debug/requirements.txt
+- Update examples/python-api/test-cli-debug/test_api.py
+- Update examples/python-api/test-cli-final/Dockerfile
+- Update examples/python-api/test-cli-final/main.py
+- Update examples/python-api/test-cli-final/models.py
+- Update examples/python-api/test-cli-final/requirements.txt
+- ... and 31 more files
+
 ## [0.1.35] - 2026-03-26
 
 ### Test

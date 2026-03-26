@@ -184,11 +184,11 @@ class ModelSelector:
         
         # Add known cheap models
         cheap_models = {
-            "openrouter/qwen/qwen3-235b-a22b-2507": {
+            "openrouter/meta-llama/llama-3.1-8b-instruct": {
                 "tier": "cheap",
                 "provider": "openrouter",
-                "cost_per_input": 0.0001,
-                "cost_per_output": 0.0002,
+                "cost_per_input": 0.00006,
+                "cost_per_output": 0.00006,
             }
         }
         

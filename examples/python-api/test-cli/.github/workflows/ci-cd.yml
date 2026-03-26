@@ -1,0 +1,155 @@
+name: CI/CD Pipeline for FileMaster CLI
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run tests with pytest
+        run: |
+          pytest tests/ --cov=filemaster --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Bandit security scan
+        uses: shivammathur/setup-python@v2
+        with:
+          python-version: '3.11'
+      - run: |
+          pip install bandit
+          bandit -r filemaster/ -f json -o bandit-report.json
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: security-report
+          path: bandit-report.json
+
+  build-docker:
+    needs: [test, security-scan]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build -t filemaster-cli:latest .
+
+      - name: Login to GitHub Container Registry
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push Docker image to GHCR (staging)
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          docker tag filemaster-cli:latest ghcr.io/${{ github.repository }}:staging
+          docker push ghcr.io/${{ github.repository }}:staging
+
+      - name: Tag and push Docker image to GHCR (production)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker tag filemaster-cli:latest ghcr.io/${{ github.repository }}:latest
+          docker tag filemaster-cli:latest ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  deploy-staging:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    steps:
+      - name: Deploy to Staging Environment
+        run: |
+          echo "Deploying FileMaster CLI Docker image to staging server..."
+          # Example using SSH (customize with your deployment method)
+          # ssh user@staging-server "docker pull ghcr.io/${{ github.repository }}:staging && docker stop filemaster-cli || true && docker rm filemaster-cli || true && docker run -d --name filemaster-cli -p 8080:8080 ghcr.io/${{ github.repository }}:staging"
+        env:
+          STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
+
+  deploy-production:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Request Production Deployment Approval
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: context.payload.deployment.id,
+              state: 'pending',
+              description: 'Waiting for manual approval to deploy to production'
+            })
+            const core = require('@actions/core')
+            core.setOutput('need_approval', 'true')
+
+      - name: Wait for Manual Approval
+        uses: fjogeleit/http-request-action@v1
+        if: steps.github-script.outputs.need_approval == 'true'
+        with:
+          url: 'https://api.github.com/repos/${{ github.repository }}/deployments/${{ github.event.deployment.id }}/statuses'
+          method: 'POST'
+          data: '{"state":"success","description":"Production deployment approved"}'
+          content-type: 'application/json'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Production
+        run: |
+          echo "Deploying FileMaster CLI to production..."
+          # Customize with your production deployment logic
+          # ssh user@prod-server "docker pull ghcr.io/${{ github.repository }}:latest && docker stop filemaster-cli || true && docker rm filemaster-cli || true && docker run -d --name filemaster-cli -p 80:8080 ghcr.io/${{ github.repository }}:latest"
+        env:
+          PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+          PROD_SERVER: ${{ secrets.PROD_SERVER }}

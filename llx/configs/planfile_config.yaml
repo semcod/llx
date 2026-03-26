@@ -40,11 +40,11 @@ strategy:
       - Scale: {scale:.1f}
 
       Focus: {focus}
-      Number of sprints: {sprints}
+      Number of sprints: 6
       Description: {description}
       Framework: {framework}
 
-      Generate a comprehensive web application strategy with 6 sprints covering:
+      Generate a comprehensive web application strategy with exactly 6 sprints covering:
       1. Project setup and architecture
       2. Core components and routing
       3. State management and data flow
@@ -63,11 +63,11 @@ strategy:
       - Scale: {scale:.1f}
 
       Focus: {focus}
-      Number of sprints: {sprints}
+      Number of sprints: 4
       Description: {description}
       Framework: {framework}
 
-      Generate a comprehensive CLI tool strategy with 4 sprints covering:
+      Generate a comprehensive CLI tool strategy with exactly 4 sprints covering:
       1. Project setup and core logic
       2. CLI interface and commands
       3. Testing and validation
@@ -84,11 +84,11 @@ strategy:
       - Scale: {scale:.1f}
 
       Focus: {focus}
-      Number of sprints: {sprints}
+      Number of sprints: 6
       Description: {description}
       Framework: {framework}
 
-      Generate a comprehensive data processing strategy with 6 sprints covering:
+      Generate a comprehensive data processing strategy with exactly 6 sprints covering:
       1. Data ingestion and validation
       2. Processing pipeline
       3. Storage and caching
@@ -107,11 +107,11 @@ strategy:
       - Scale: {scale:.1f}
 
       Focus: {focus}
-      Number of sprints: {sprints}
+      Number of sprints: 8
       Description: {description}
       Framework: {framework}
 
-      Generate a comprehensive ML project strategy with 8 sprints covering:
+      Generate a comprehensive ML project strategy with exactly 8 sprints covering:
       1. Data preparation and exploration
       2. Feature engineering
       3. Model development

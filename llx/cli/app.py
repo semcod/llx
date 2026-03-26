@@ -461,7 +461,7 @@ def plan_all(
     console.print(f"[dim]Configuration:[/dim]")
     console.print(f"  Type: {project_type}")
     console.print(f"  Framework: {framework or 'default'}")
-    console.print(f"  Sprints: {sprints}")
+    console.print(f"  Sprints: {project_config.get('default_sprints', sprints)}")
     console.print(f"  Focus: {focus}")
     console.print(f"  Profile: {profile}\n")
     
@@ -483,7 +483,9 @@ def plan_all(
             model=selected_model, 
             sprints=sprints, 
             focus=focus,
-            description=description
+            description=description,
+            project_type=project_type,
+            framework=framework
         )
         
         save_fixed_strategy(strategy_data, strategy_file)
@@ -623,7 +625,7 @@ def _plan_generate_impl(
             console.print("[red]No suitable model found[/red]")
             return
         
-        console.print(f"\n[blue]Generating strategy for {path}...[/blue]")
+        # generate_strategy_with_fix already prints info
         strategy_data = generate_strategy_with_fix(
             path, 
             model=selected_model, 
@@ -1000,6 +1002,8 @@ def plan_wizard(
     # Internal defaults
     if profile is None:
         profile = os.getenv("LLX_DEFAULT_PROFILE", "cheap")
+    if description is None:
+        description = os.getenv("LLX_DEFAULT_DESCRIPTION", "")
     
     console.print(Panel.fit(
         "[bold blue]LLX Project Wizard[/bold blue]\n[dim]Guidance for your development lifecycle[/dim]",

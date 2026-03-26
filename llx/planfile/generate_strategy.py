@@ -156,7 +156,7 @@ def _normalize_metadata(data):
     return metadata
 
 
-def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=8, focus="api", description=None):
+def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=8, focus="api", description=None, project_type=None, framework=None):
     """Generate strategy using llx.planfile."""
     _print_generation_info(project_path, model, sprints, focus, description)
     
@@ -164,7 +164,7 @@ def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3
     metrics = analyze_project(project_path)
     
     # 2. Build prompt
-    prompt = _build_strategy_prompt(metrics, sprints, focus, description)
+    prompt = _build_strategy_prompt(metrics, sprints, focus, description, project_type, framework)
     
     # 3. Call LLM
     response = _call_llm_for_strategy(prompt, model)
@@ -189,7 +189,7 @@ def _print_generation_info(project_path, model, sprints, focus, description=None
     console.print(f"  Using OpenRouter free models")
 
 
-def _build_strategy_prompt(metrics, sprints, focus, description=None):
+def _build_strategy_prompt(metrics, sprints, focus, description=None, project_type=None, framework=None):
     """Build the prompt for strategy generation."""
     # Load prompt template from config
     import os
@@ -199,8 +199,9 @@ def _build_strategy_prompt(metrics, sprints, focus, description=None):
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
         
-        # Get the appropriate template based on focus
-        template = config['strategy']['prompts'].get(focus, config['strategy']['prompts']['api'])
+        # Use project_type to select template, fallback to focus, then to api
+        template_key = project_type or focus or 'api'
+        template = config['strategy']['prompts'].get(template_key, config['strategy']['prompts']['api'])
         
         # Format the template
         prompt = template.format(
@@ -210,7 +211,8 @@ def _build_strategy_prompt(metrics, sprints, focus, description=None):
             scale=metrics.scale_score,
             focus=focus,
             sprints=sprints,
-            description=description or "Generate a refactoring strategy for this project"
+            description=description or "Generate a refactoring strategy for this project",
+            framework=framework or "default"
         )
         
         return prompt
