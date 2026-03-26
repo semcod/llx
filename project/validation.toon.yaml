@@ -1,13 +1,18 @@
-# vallm batch | 244f | 147✓ 10⚠ 48✗ | 2026-03-26
+# vallm batch | 253f | 151✓ 11⚠ 49✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 244  passed: 147 (60.2%)  warnings: 10  errors: 48  unsupported: 49
+  scanned: 253  passed: 151 (59.7%)  warnings: 11  errors: 49  unsupported: 53
 
-WARNINGS[10]{path,score}:
+WARNINGS[11]{path,score}:
   examples/planfile/async_refactor_demo.py,0.93
     issues[2]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_callback_hell_example: 209 lines exceeds limit 100,18
       complexity.lizard_length,warning,create_async_refactored_version: 223 lines exceeds limit 100,234
+  examples/planfile/generate_strategy.py,0.93
+    issues[3]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 39 (max: 15),18
+      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=39 exceeds limit 15,18
+      complexity.lizard_length,warning,generate_strategy_with_fix: 138 lines exceeds limit 100,18
   examples/cli-tools/quick_cli.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,generate_tool: 120 lines exceeds limit 100,74
@@ -24,10 +29,9 @@ WARNINGS[10]{path,score}:
   examples/planfile/complete_workflow.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_sample_project: 204 lines exceeds limit 100,36
-  examples/planfile/generate_strategy.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 19 (max: 15),18
-      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=19 exceeds limit 15,18
+  examples/planfile/microservice_refactor.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_monolith_sample: 272 lines exceeds limit 100,18
   examples/planfile/test_report.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,main: 117 lines exceeds limit 100,14
@@ -39,13 +43,10 @@ WARNINGS[10]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[48]{path,score}:
+ERRORS[49]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  examples/planfile/microservice_refactor.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: '(' was never closed,290
   llx/orchestration/instances/__init__.py,0.57
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,3
@@ -77,11 +78,10 @@ ERRORS[48]{path,score}:
       python.import.resolvable,error,Module 'orchestrator' not found,4
       python.import.resolvable,error,Module 'ports' not found,5
   llx/planfile/__init__.py,0.57
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'executor' not found,3
-      python.import.resolvable,error,Module 'models' not found,4
-      python.import.resolvable,error,Module 'builder' not found,5
-      python.import.resolvable,error,Module 'runner' not found,6
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,3
+      python.import.resolvable,error,Module 'runner' not found,4
+      python.import.resolvable,error,Module 'executor_simple' not found,5
   llx/prellm/utils/__init__.py,0.57
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'lazy_imports' not found,3
@@ -209,6 +209,13 @@ ERRORS[48]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,10
       python.import.resolvable,error,Module 'models' not found,304
+  examples/planfile/callback_hell.py,0.89
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'bs4' not found,8
+  examples/planfile/test_planfile_v2_integration.py,0.89
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'planfile.models_v2' not found,22
+      python.import.resolvable,error,Module 'planfile.executor_v2' not found,23
   llx/cli/strategy_commands.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'planfile' not found,8
@@ -276,8 +283,8 @@ ERRORS[48]{path,score}:
       python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,28
+  *.md,31
   Dockerfile*,1
-  *.txt,3
+  *.txt,4
   *.yml,3
   other,14

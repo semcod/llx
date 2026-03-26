@@ -1,5 +1,5 @@
-# llx | 119f 25630L | python:112,shell:7 | 2026-03-26
-# stats: 926 func | 0 cls | 119 mod | CC̄=3.9 | critical:9 | cycles:0
+# llx | 119f 25712L | python:112,shell:7 | 2026-03-26
+# stats: 927 func | 0 cls | 119 mod | CC̄=3.9 | critical:9 | cycles:0
 # alerts[5]: fan-out execute_v3_pipeline=23; fan-out _dispatch=20; CC _dispatch=21; CC _dispatch=19; CC _dispatch=19
 # hotspots[5]: execute_v3_pipeline fan=23; _dispatch fan=20; _write_env_file fan=18; context fan=18; LlxConfig.load fan=17
 # evolution: CC̄ 3.9→3.9 (flat 0.0)
@@ -64,9 +64,9 @@ M[119]:
   llx/orchestration/vscode/models.py,61
   llx/orchestration/vscode/orchestrator.py,595
   llx/orchestration/vscode/ports.py,43
-  llx/planfile/__init__.py,24
+  llx/planfile/__init__.py,21
   llx/planfile/examples.py,141
-  llx/planfile/executor.py,191
+  llx/planfile/executor_simple.py,276
   llx/planfile/models.py,159
   llx/planfile/runner.py,263
   llx/prellm/__init__.py,121
@@ -273,6 +273,16 @@ Based on...
 
 Usage:
 ...
+  llx/planfile/executor_simple.py:
+    e: TaskResult,execute_strategy,_load_strategy,_normalize_strategy,_get_sprint_tasks,_execute_task,_select_model,_build_task_prompt
+    TaskResult:  # Result of executing a task...
+    execute_strategy(strategy_path;project_path)
+    _load_strategy(path)
+    _normalize_strategy(strategy)
+    _get_sprint_tasks(sprint)
+    _execute_task(task;project_path;config;metrics;dry_run;model_override)
+    _select_model(task;config;metrics)
+    _build_task_prompt(task;metrics)
   llx/prellm/agents/preprocessor.py:
     e: PreprocessResult,PreprocessorAgent,_get_user_memory_class,_get_codebase_indexer_class
     PreprocessResult(BaseModel):  # Output of the PreprocessorAgent — structured input for the E...
@@ -553,15 +563,6 @@ Usage:
     run_strategy_command(strategy_file;project_path;backend;dry_run)
     verify_strategy(strategy_file;project_path;backend)
     add_strategy_commands(main_app)
-  llx/planfile/executor.py:
-    e: TaskResult,execute_strategy,_execute_task,_select_model_for_task,_build_task_prompt,_validate_result,_load_strategy
-    TaskResult:
-    execute_strategy(strategy_path;project_path)
-    _execute_task(task;project_path;config;metrics;dry_run)
-    _select_model_for_task(task;config;metrics)
-    _build_task_prompt(task;metrics)
-    _validate_result(response;task)
-    _load_strategy(path)
   llx/planfile/models.py:
     e: TaskType,ModelTier,ModelHints,TaskPattern,Sprint,Goal,QualityGate,Strategy
     TaskType(str,Enum):  # Type of task in the strategy...
@@ -769,12 +770,12 @@ Usage:
     QueueRequest: __lt__(1)  # A request in the queue...
     QueueConfig:  # Configuration for a queue...
     QueueState:  # Current state of a queue...
-  llx/prellm/utils/lazy_imports.py:
-    e: lazy_import_global
-    lazy_import_global(name;import_path;globals_dict)
   llx/prellm/utils/lazy_loader.py:
     e: LazyLoader
     LazyLoader: __init__(0),_ensure_loaded(0),_load(0)  # Base class for components that need lazy loading of resource...
+  llx/prellm/utils/lazy_imports.py:
+    e: lazy_import_global
+    lazy_import_global(name;import_path;globals_dict)
   llx/prellm/__init__.py:
     e: _get_process_chain
     _get_process_chain()
@@ -813,8 +814,8 @@ Usage:
     StepResult(BaseModel):  # Result of a single process chain step...
     ProcessResult(BaseModel):  # Result of a full process chain execution...
     AuditEntry(BaseModel):  # Single audit log entry for traceability...
-  llx/__main__.py:
   llx/__init__.py:
+  llx/__main__.py:
   llx/prellm/_nfo_compat.py:
   llx/analysis/__init__.py:
   llx/tools/__init__.py:
@@ -863,7 +864,6 @@ Usage:
     RateLimitConfig:  # Configuration for rate limiting...
     RateLimitState:  # Current state of rate limiting...
   llx/orchestration/routing/__init__.py:
-  llx/prellm/chains/__init__.py:
   llx/orchestration/routing/models.py:
     e: RoutingStrategy,ResourceType,RequestPriority,RoutingRequest,RoutingDecision,RoutingMetrics
     RoutingStrategy(Enum):  # Routing strategies...
@@ -872,6 +872,7 @@ Usage:
     RoutingRequest:  # A request to be routed...
     RoutingDecision:  # A routing decision...
     RoutingMetrics:  # Metrics for routing performance...
+  llx/prellm/chains/__init__.py:
   llx/prellm/utils/__init__.py:
   llx/prellm/context/__init__.py:
   llx/prellm/analyzers/__init__.py:

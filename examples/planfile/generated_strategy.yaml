@@ -1,47 +1,22 @@
 domain: software
 goal: complexity
-goals:
-- Reduce average cyclomatic complexity per function to <5
-- Eliminate duplicated code blocks (>6 lines)
-- Increase unit test coverage to >=80%
-- Improve code readability and maintainability
 name: Refactoring Strategy
-project_name: CodeBaseX
-project_type: Refactoring
+project_type: python
 quality_gates:
-- max_cyclomatic_complexity_per_function: 5
-- max_duplicated_lines_percentage: 5
-- min_test_coverage_percentage: 80
-- lint_pass: true
-- no_new_static_analysis_warnings: true
+- Average CC < 5
+- Test coverage >= 80%
 sprints:
-- number: 1
+- id: 1
+  name: Sprint 1
   objectives:
-  - Identify top 20% most complex functions/files
-  - Apply Extract Method and Replace Conditional with Polymorphism refactorings
-  - Add unit tests for refactored code
-  - Run static analysis to baseline metrics
+  - Reduce complexity
+  - Add tests
   tasks:
-  - pattern: Extract Method
-  - pattern: Replace Conditional with Polymorphism
-  - pattern: Add Unit Test
-  - pattern: Run Linter/Static Analysis
-- number: 2
-  objectives:
-  - "Apply remaining refactorings to lower\u2011complexity areas"
-  - Introduce Parameter Object and Facade patterns where appropriate
-  - Update documentation and API contracts
-  - Verify quality gates and prepare for release
-  tasks:
-  - pattern: Introduce Parameter Object
-  - pattern: Apply Facade Pattern
-  - pattern: Update Documentation
-  - pattern: Run Full Test Suite
-task_patterns:
-- Extract Method
-- Replace Conditional with Polymorphism
-- Introduce Parameter Object
-- Apply Facade Pattern
-- Add Unit Test
-- Run Linter/Static Analysis
-- Update Documentation
+  - description: Analyze code complexity
+    model_hints: balanced
+    name: Analyze Complexity
+    type: feature
+  - description: Add unit tests
+    model_hints: cheap
+    name: Add Tests
+    type: test

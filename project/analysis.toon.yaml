@@ -1,5 +1,5 @@
-# code2llm | 119f 25630L | python:112,shell:7 | 2026-03-26
-# CC̄=3.9 | critical:9/1113 | dups:0 | cycles:0
+# code2llm | 119f 25712L | python:112,shell:7 | 2026-03-26
+# CC̄=3.9 | critical:9/1127 | dups:0 | cycles:0
 
 HEALTH[11]:
   🟡 CC    preprocess_and_execute CC=15 (limit:15)
@@ -11,13 +11,13 @@ HEALTH[11]:
   🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    _render_tiers_table CC=15 (limit:15)
   🟡 CC    get_status CC=15 (limit:15)
-  🟡 CC    generate_strategy_with_fix CC=19 (limit:15)
+  🟡 CC    generate_strategy_with_fix CC=27 (limit:15)
   🟡 CC    chat_with_constraints CC=20 (limit:15)
 
 REFACTOR[1]:
   1. split 11 high-CC methods  (CC>15)
 
-PIPELINES[790]:
+PIPELINES[801]:
   [1] Src [config_set_cmd]: config_set_cmd → config_set → resolve_alias
       PURITY: 100% pure
   [2] Src [config_get_cmd]: config_get_cmd → config_get → resolve_alias
@@ -61,8 +61,9 @@ LAYERS:
   │ proxym                     330L  3C   12m  CC=8      ←1
   │ config                     327L  4C    7m  CC=13     ←13
   │ cli                        280L  0C   13m  CC=3      ←0
+  │ executor_simple            276L  1C    7m  CC=13     ←2
   │ process_chain              275L  1C   10m  CC=7      ←0
-  │ selector                   274L  2C    9m  CC=8      ←10
+  │ selector                   274L  2C    9m  CC=8      ←9
   │ health_runner              266L  1C   10m  CC=10     ←0
   │ runner                     263L  0C    5m  CC=12     ←2
   │ sensitive_filter           262L  1C   14m  CC=7      ←0
@@ -78,11 +79,10 @@ LAYERS:
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
   │ cli                        193L  0C    6m  CC=8      ←0
-  │ executor                   191L  1C    6m  CC=6      ←2
   │ preprocessor               188L  2C    6m  CC=13     ←0
   │ cli_query                  186L  0C    5m  CC=9      ←2
   │ cli                        186L  0C   14m  CC=5      ←0
-  │ prompt_registry            185L  5C   11m  CC=6      ←2
+  │ prompt_registry            185L  5C   11m  CC=6      ←1
   │ context_ops                181L  0C    8m  CC=5      ←1
   │ shell_collector            169L  1C    8m  CC=5      ←0
   │ models                     159L  8C    5m  CC=6      ←1
@@ -121,9 +121,9 @@ LAYERS:
   │ _utils                      33L  0C    1m  CC=3      ←13
   │ __init__                    29L  0C    0m  CC=0.0    ←0
   │ __init__                    25L  0C    0m  CC=0.0    ←0
-  │ __init__                    24L  0C    0m  CC=0.0    ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
   │ lazy_imports                21L  0C    1m  CC=2      ←1
+  │ __init__                    21L  0C    0m  CC=0.0    ←0
   │ __init__                    21L  0C    0m  CC=0.0    ←0
   │ lazy_loader                 20L  1C    3m  CC=2      ←0
   │ __init__                    17L  0C    0m  CC=0.0    ←0
@@ -152,37 +152,36 @@ LAYERS:
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
   │ install-tools.sh           369L  0C    0m  CC=0.0    ←0
-  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←39
+  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←40
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
   ── zero ──
      llx/prellm/chains/__init__.py             0L
 
 COUPLING:
-                       docker.ai-tools          llx.tools  llx.orchestration            llx.cli       llx.planfile            llx.mcp                llx       llx.analysis        llx.routing   llx.integrations         llx.prellm
+                       docker.ai-tools          llx.tools  llx.orchestration            llx.cli       llx.planfile            llx.mcp                llx       llx.analysis   llx.integrations        llx.routing         llx.prellm
     docker.ai-tools                 ──               ←493               ←309                ←24                ←26                                                                                                                    hub
           llx.tools                493                 ──                 ←7                                                                                                                                                       1  hub
   llx.orchestration                309                  7                 ──                                                                                                                                                       1  !! fan-out
             llx.cli                 24                                                       ──                  5                                     8                  5                  3                  3                     !! fan-out
-       llx.planfile                 26                                                       ←5                 ──                 ←1                  1                  1                  1                                     1  hub
-            llx.mcp                                                                                              1                 ──                  5                  6                  3                  1                  2  !! fan-out
-                llx                                                                          ←8                 ←1                 ←5                 ──                                                       ←1                     hub
-       llx.analysis                                                                          ←5                 ←1                 ←6                                    ──                                    ←1                     hub
-        llx.routing                                                                          ←3                 ←1                 ←3                                                       ──                  1                     hub
-   llx.integrations                                                                          ←3                                    ←1                  1                  1                  2                 ──                     hub
-         llx.prellm                                    ←1                 ←1                                    ←1                 ←2                                                                                             ──  hub
+       llx.planfile                 26                                                       ←5                 ──                 ←1                  1                  1                                                           hub
+            llx.mcp                                                                                              1                 ──                  5                  6                  1                  3                  2  !! fan-out
+                llx                                                                          ←8                 ←1                 ←5                 ──                                    ←1                                        hub
+       llx.analysis                                                                          ←5                 ←1                 ←6                                    ──                 ←1                                        hub
+   llx.integrations                                                                          ←3                                    ←1                  1                  1                 ──                  2                     hub
+        llx.routing                                                                          ←3                                    ←3                                                        1                 ──                     hub
+         llx.prellm                                    ←1                 ←1                                                       ←2                                                                                             ──
   CYCLES: none
-  HUB: docker.ai-tools/ (fan-in=852)
-  HUB: llx/ (fan-in=15)
-  HUB: llx.routing/ (fan-in=9)
   HUB: llx.planfile/ (fan-in=6)
-  HUB: llx.prellm/ (fan-in=5)
+  HUB: llx.integrations/ (fan-in=5)
+  HUB: llx.routing/ (fan-in=8)
   HUB: llx.analysis/ (fan-in=13)
   HUB: llx.tools/ (fan-in=7)
-  HUB: llx.integrations/ (fan-in=5)
+  HUB: docker.ai-tools/ (fan-in=852)
+  HUB: llx/ (fan-in=15)
+  SMELL: llx.planfile/ fan-out=28 → split needed
   SMELL: llx.mcp/ fan-out=18 → split needed
   SMELL: llx.cli/ fan-out=48 → split needed
-  SMELL: llx.planfile/ fan-out=30 → split needed
   SMELL: llx.tools/ fan-out=494 → split needed
   SMELL: llx.orchestration/ fan-out=317 → split needed
 

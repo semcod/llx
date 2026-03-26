@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 128, shell: 20
+- **Languages**: python: 130, shell: 20
 - **Analysis Mode**: static
-- **Total Functions**: 1113
-- **Total Classes**: 174
-- **Modules**: 148
-- **Entry Points**: 912
+- **Total Functions**: 1127
+- **Total Classes**: 176
+- **Modules**: 150
+- **Entry Points**: 923
 
 ## Architecture by Module
 
@@ -555,11 +555,12 @@ Special cases
 
 Functions exposed as public API (no underscore prefix):
 
+- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 62 calls
 - `examples.ai-tools.main.main` - 58 calls
 - `llx.prellm.cli_context.context` - 49 calls
-- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 47 calls
 - `examples.basic.main.main` - 44 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
+- `examples.planfile.microservice_refactor.demonstrate_microservice_refactoring` - 43 calls
 - `examples.aider.aider_demo.main` - 42 calls
 - `examples.vscode-roocode.demo.RooCodeDemo.run_demo` - 42 calls
 - `examples.fullstack.app_generator.main` - 37 calls
@@ -594,7 +595,6 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
 - `examples.local.main.demonstrate_local_model_selection` - 24 calls
 - `examples.multi-provider.main.main` - 24 calls
-- `llx.config.LlxConfig.load` - 23 calls
 
 ## System Interactions
 

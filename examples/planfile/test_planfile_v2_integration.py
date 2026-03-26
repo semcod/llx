@@ -4,29 +4,25 @@ Test planfile v2 integration with LLX
 """
 
 import sys
-import os
 from pathlib import Path
 
-# Add LLX and planfile to path
+# Add LLX to path
 sys.path.insert(0, '/home/tom/github/semcod/llx')
-sys.path.insert(0, '/home/tom/github/semcod/planfile')
 
 def test_planfile_v2_integration():
     """Test if planfile v2 can work with LLX."""
     
     print("Testing planfile v2 with LLX...")
     
-    # Test 1: Import planfile v2
+    # Test 1: Import LLX planfile
     try:
-        sys.path.insert(0, '/home/tom/github/semcod/planfile')
-        from planfile.models_v2 import Strategy, Task, Sprint
-        from planfile.executor_v2 import StrategyExecutor
-        print("✓ Planfile v2 imports work")
+        from llx.planfile import execute_strategy, Strategy, TaskType
+        print("✓ LLX planfile imports work")
     except ImportError as e:
-        print(f"✗ Planfile v2 import failed: {e}")
+        print(f"✗ LLX planfile import failed: {e}")
         return False
     
-    # Test 2: Create a simple strategy
+    # Test 2: Create and execute a V2 strategy
     try:
         strategy_data = {
             "name": "Test Strategy",
@@ -52,8 +48,26 @@ def test_planfile_v2_integration():
             ]
         }
         
-        strategy = Strategy(**strategy_data)
-        print(f"✓ Strategy created: {strategy.name}")
+        # Save strategy to file
+        strategy_file = Path("/tmp/test_strategy_v2.yaml")
+        import yaml
+        strategy_file.write_text(yaml.dump(strategy_data))
+        
+        # Execute with LLX
+        results = execute_strategy(str(strategy_file), dry_run=True)
+        print(f"✓ Strategy executed: {len(results)} results")
+        
+        for result in results:
+            print(f"  - {result.task_name}: {result.status}")
+        
+        # Clean up
+        strategy_file.unlink()
+        
+    except Exception as e:
+        print(f"✗ Strategy execution failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
     except Exception as e:
         print(f"✗ Strategy creation failed: {e}")
         return False

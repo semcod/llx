@@ -487,17 +487,13 @@ async def demonstrate_async_refactoring():
     # Generate refactoring strategy
     console.print("\n[blue]Step 2: Generating async refactoring strategy...[/blue]")
     
+    # Use the local generate_strategy.py instead
     strategy_cmd = [
-        "python3", "-m", "llx", "plan", "generate",
-        ".",
-        "--model", "qwen2.5-coder:7b",
-        "--sprints", "2",
-        "--focus", "complexity",
-        "--output", "async-refactor-strategy.yaml"
+        "python3", "generate_strategy.py"
     ]
     
     try:
-        result = subprocess.run(strategy_cmd, capture_output=True, text=True)
+        result = subprocess.run(strategy_cmd, capture_output=True, text=True, cwd="/home/tom/github/semcod/llx/examples/planfile")
         
         if result.returncode == 0:
             console.print("[green]✓ Strategy generated successfully[/green]")
