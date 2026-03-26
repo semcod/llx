@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 130, shell: 20
+- **Languages**: python: 135, shell: 20
 - **Analysis Mode**: static
-- **Total Functions**: 1127
-- **Total Classes**: 176
-- **Modules**: 150
-- **Entry Points**: 923
+- **Total Functions**: 1169
+- **Total Classes**: 187
+- **Modules**: 155
+- **Entry Points**: 965
 
 ## Architecture by Module
 
@@ -83,6 +83,10 @@
 - **Classes**: 5
 - **File**: `pipeline.py`
 
+### llx.cli.app
+- **Functions**: 18
+- **File**: `app.py`
+
 ### llx.orchestration.instances.manager
 - **Functions**: 18
 - **Classes**: 1
@@ -92,10 +96,6 @@
 - **Functions**: 17
 - **Classes**: 1
 - **File**: `env_config.py`
-
-### llx.cli.app
-- **Functions**: 17
-- **File**: `app.py`
 
 ### llx.orchestration.ratelimit.limiter
 - **Functions**: 17
@@ -118,6 +118,10 @@ Main execution flows into the system:
 
 ### examples.ai-tools.main.main
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.ai-tools.main.check_docker_services, services.items
+
+### llx.cli.app.plan_generate
+> Generate strategy.yaml using built-in generator.
+- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
 
 ### examples.basic.main.main
 > Main example execution
@@ -160,6 +164,10 @@ Main execution flows into the system:
 ### examples.filtering.advanced_filters.demonstrate_filtering
 > Demonstrate various filtering scenarios.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, SmartLLXClient, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, client.chat_with_constraints, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
+### llx.cli.app.plan_models
+> List available models.
+- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
 
 ### llx.orchestration.session.manager.SessionManager.load_sessions
 > Load sessions from configuration file.
@@ -224,17 +232,6 @@ v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
 > Print comprehensive status summary.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, self.session_states.values, self.sessions.values, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
-### examples.planfile.planfile_manager.PlanfileManager.monitor_execution
-> Monitor strategy execution in real-time.
-- **Calls**: Table, table.add_column, table.add_column, table.add_column, table.add_column, data.get, data.get, Panel
-
-### llx.prellm.cli_config.config_show_cmd
-> Show effective configuration (resolved from all sources).
-
-Example:
-    prellm config show
-- **Calls**: config_app.command, llx.prellm.env_config.get_env_config, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo
-
 ## Process Flows
 
 Key execution flows identified:
@@ -246,65 +243,61 @@ main [examples.ai-tools.main]
   └─ →> print
 ```
 
-### Flow 2: load_instances
+### Flow 2: plan_generate
+```
+plan_generate [llx.cli.app]
+```
+
+### Flow 3: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 3: run_demo
+### Flow 4: run_demo
 ```
 run_demo [examples.vscode-roocode.demo.RooCodeDemo]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 4: print_quick_start
+### Flow 5: print_quick_start
 ```
 print_quick_start [llx.tools.vscode_manager.VSCodeManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 5: print_model_summary
+### Flow 6: print_model_summary
 ```
 print_model_summary [llx.tools.model_manager.ModelManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 6: load_config
+### Flow 7: load_config
 ```
 load_config [llx.orchestration.vscode.orchestrator.VSCodeOrchestrator]
 ```
 
-### Flow 7: load_limits
+### Flow 8: load_limits
 ```
 load_limits [llx.orchestration.ratelimit.limiter.RateLimiter]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 8: demonstrate_filtering
+### Flow 9: demonstrate_filtering
 ```
 demonstrate_filtering [examples.filtering.advanced_filters]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 9: load_sessions
+### Flow 10: plan_models
 ```
-load_sessions [llx.orchestration.session.manager.SessionManager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 10: load_queues
-```
-load_queues [llx.orchestration.queue.manager.QueueManager]
-  └─ →> print
-  └─ →> print
+plan_models [llx.cli.app]
 ```
 
 ## Key Classes
@@ -349,15 +342,15 @@ load_queues [llx.orchestration.queue.manager.QueueManager]
 - **Methods**: 20
 - **Key Methods**: llx.orchestration.session.manager.SessionManager.__init__, llx.orchestration.session.manager.SessionManager.load_sessions, llx.orchestration.session.manager.SessionManager.save_sessions, llx.orchestration.session.manager.SessionManager.create_session, llx.orchestration.session.manager.SessionManager.remove_session, llx.orchestration.session.manager.SessionManager.get_available_session, llx.orchestration.session.manager.SessionManager.request_session, llx.orchestration.session.manager.SessionManager.release_session, llx.orchestration.session.manager.SessionManager.get_session_status, llx.orchestration.session.manager.SessionManager.list_sessions
 
-### llx.tools.ai_tools_manager.AIToolsManager
-> Manages AI tools container and operations.
-- **Methods**: 19
-- **Key Methods**: llx.tools.ai_tools_manager.AIToolsManager.__init__, llx.tools.ai_tools_manager.AIToolsManager.is_container_running, llx.tools.ai_tools_manager.AIToolsManager.start_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.stop_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.restart_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.access_shell, llx.tools.ai_tools_manager.AIToolsManager.execute_command, llx.tools.ai_tools_manager.AIToolsManager.get_status, llx.tools.ai_tools_manager.AIToolsManager.test_connectivity, llx.tools.ai_tools_manager.AIToolsManager.run_chat_test
-
 ### llx.tools.model_manager.ModelManager
 > Manages local Ollama models and llx configurations.
 - **Methods**: 19
 - **Key Methods**: llx.tools.model_manager.ModelManager.__init__, llx.tools.model_manager.ModelManager.check_ollama_running, llx.tools.model_manager.ModelManager.check_llx_running, llx.tools.model_manager.ModelManager.get_ollama_models, llx.tools.model_manager.ModelManager.get_llx_models, llx.tools.model_manager.ModelManager.pull_model, llx.tools.model_manager.ModelManager.remove_model, llx.tools.model_manager.ModelManager.test_model, llx.tools.model_manager.ModelManager.test_llx_model, llx.tools.model_manager.ModelManager.get_model_info
+
+### llx.tools.ai_tools_manager.AIToolsManager
+> Manages AI tools container and operations.
+- **Methods**: 19
+- **Key Methods**: llx.tools.ai_tools_manager.AIToolsManager.__init__, llx.tools.ai_tools_manager.AIToolsManager.is_container_running, llx.tools.ai_tools_manager.AIToolsManager.start_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.stop_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.restart_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.access_shell, llx.tools.ai_tools_manager.AIToolsManager.execute_command, llx.tools.ai_tools_manager.AIToolsManager.get_status, llx.tools.ai_tools_manager.AIToolsManager.test_connectivity, llx.tools.ai_tools_manager.AIToolsManager.run_chat_test
 
 ### llx.prellm.pipeline.PromptPipeline
 > Generic pipeline — executes a sequence of LLM + algorithmic steps.
@@ -551,12 +544,18 @@ Special cases
 - **Confidence**: 0.70
 - **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
 
+### state_machine_AsyncWebScraper
+- **Type**: state_machine
+- **Confidence**: 0.70
+- **Functions**: examples.planfile.async_refactored.AsyncWebScraper.__init__, examples.planfile.async_refactored.AsyncWebScraper.__aenter__, examples.planfile.async_refactored.AsyncWebScraper.__aexit__, examples.planfile.async_refactored.AsyncWebScraper.scrape_website, examples.planfile.async_refactored.AsyncWebScraper._parse_links
+
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 62 calls
+- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 78 calls
 - `examples.ai-tools.main.main` - 58 calls
+- `llx.cli.app.plan_generate` - 52 calls
 - `llx.prellm.cli_context.context` - 49 calls
 - `examples.basic.main.main` - 44 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
@@ -570,6 +569,7 @@ Functions exposed as public API (no underscore prefix):
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
 - `examples.planfile.generate_strategy.main` - 35 calls
 - `examples.filtering.advanced_filters.demonstrate_filtering` - 35 calls
+- `llx.cli.app.plan_models` - 34 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
@@ -593,8 +593,6 @@ Functions exposed as public API (no underscore prefix):
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 - `examples.docker.main.main` - 25 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
-- `examples.local.main.demonstrate_local_model_selection` - 24 calls
-- `examples.multi-provider.main.main` - 24 calls
 
 ## System Interactions
 
@@ -603,6 +601,9 @@ How components interact:
 ```mermaid
 graph TD
     main --> print
+    plan_generate --> command
+    plan_generate --> Argument
+    plan_generate --> Option
     main --> load
     load_instances --> exists
     load_instances --> get
@@ -629,9 +630,6 @@ graph TD
     load_limits --> _create_default_limi
     main --> Panel
     main --> generate_strategy_wi
-    main --> save_fixed_strategy
-    demonstrate_filterin --> print
-    demonstrate_filterin --> SmartLLXClient
 ```
 
 ## Reverse Engineering Guidelines

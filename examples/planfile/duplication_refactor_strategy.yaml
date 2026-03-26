@@ -1,0 +1,376 @@
+!!python/object:llx.planfile.models.Strategy
+__dict__:
+  name: Duplication Refactoring Strategy
+  version: 0.1.0
+  project_type: python
+  domain: software
+  goal: !!python/object:llx.planfile.models.Goal
+    __dict__:
+      short: Improve duplication in the codebase
+      quality:
+      - Reduce duplication issues
+      - Improve maintainability
+      delivery:
+      - Complete in sprints
+      - Review changes
+      metrics: []
+    __pydantic_extra__: null
+    __pydantic_fields_set__: !!set
+      short: null
+      delivery: null
+      quality: null
+    __pydantic_private__: null
+  description: null
+  sprints:
+  - !!python/object:llx.planfile.models.Sprint
+    __dict__:
+      id: 1
+      name: Sprint 1
+      length_days: 14
+      objectives:
+      - Scan for duplicate code
+      - Identify common patterns
+      start_date: null
+      tasks:
+      - task-1
+      - task-2
+      - task-3
+    __pydantic_extra__: null
+    __pydantic_fields_set__: !!set
+      name: null
+      objectives: null
+      tasks: null
+      id: null
+    __pydantic_private__: null
+  - !!python/object:llx.planfile.models.Sprint
+    __dict__:
+      id: 2
+      name: Sprint 2
+      length_days: 14
+      objectives:
+      - Extract common functionality
+      - Create shared utilities
+      start_date: null
+      tasks:
+      - task-1
+      - task-2
+      - task-3
+    __pydantic_extra__: null
+    __pydantic_fields_set__: !!set
+      name: null
+      objectives: null
+      tasks: null
+      id: null
+    __pydantic_private__: null
+  - !!python/object:llx.planfile.models.Sprint
+    __dict__:
+      id: 3
+      name: Sprint 3
+      length_days: 14
+      objectives:
+      - Eliminate remaining duplicates
+      - Update documentation
+      start_date: null
+      tasks:
+      - task-1
+      - task-2
+      - task-3
+    __pydantic_extra__: null
+    __pydantic_fields_set__: !!set
+      name: null
+      objectives: null
+      tasks: null
+      id: null
+    __pydantic_private__: null
+  tasks:
+    patterns:
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-1
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Find duplicates
+        description: Execute find duplicates
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-2
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - tech_debt
+        title: Extract common
+        description: Execute extract common
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-3
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Create utilities
+        description: Execute create utilities
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-1
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Find duplicates
+        description: Execute find duplicates
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-2
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - tech_debt
+        title: Extract common
+        description: Execute extract common
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-3
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Create utilities
+        description: Execute create utilities
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-1
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Find duplicates
+        description: Execute find duplicates
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-2
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - tech_debt
+        title: Extract common
+        description: Execute extract common
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+    - !!python/object:llx.planfile.models.TaskPattern
+      __dict__:
+        id: task-3
+        type: !!python/object/apply:llx.planfile.models.TaskType
+        - feature
+        title: Create utilities
+        description: Execute create utilities
+        priority: medium
+        estimate: null
+        labels: []
+        model_hints: !!python/object:llx.planfile.models.ModelHints
+          __dict__:
+            design: null
+            implementation: !!python/object/apply:llx.planfile.models.ModelTier
+            - cheap
+            review: null
+            triage: null
+          __pydantic_extra__: null
+          __pydantic_fields_set__: !!set
+            implementation: null
+          __pydantic_private__: null
+        metadata: {}
+      __pydantic_extra__: null
+      __pydantic_fields_set__: !!set
+        model_hints: null
+        priority: null
+        type: null
+        title: null
+        id: null
+        description: null
+      __pydantic_private__: null
+  quality_gates: []
+  metadata: {}
+__pydantic_extra__: null
+__pydantic_fields_set__: !!set
+  tasks: null
+  domain: null
+  goal: null
+  name: null
+  sprints: null
+  project_type: null
+__pydantic_private__: null

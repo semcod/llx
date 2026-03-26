@@ -1,0 +1,41 @@
+description: null
+domain: software
+goal:
+  delivery:
+  - Complete in sprints
+  - Review changes
+  metrics: []
+  quality:
+  - Reduce complexity issues
+  - Improve maintainability
+  short: Improve complexity in the codebase
+metadata: {}
+name: Complexity Refactoring Strategy
+project_type: python
+quality_gates: []
+sprints:
+- id: 1
+  length_days: 14
+  name: Sprint 1
+  objectives:
+  - Identify high-complexity functions
+  - Analyze cyclomatic complexity
+  start_date: null
+  tasks:
+  - task-1
+  - task-2
+  - task-3
+- id: 2
+  length_days: 14
+  name: Sprint 2
+  objectives:
+  - Extract complex methods
+  - Reduce nesting depth
+  start_date: null
+  tasks:
+  - task-1
+  - task-2
+  - task-3
+tasks:
+  patterns: []
+version: 0.1.0

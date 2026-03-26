@@ -1,7 +1,7 @@
-# vallm batch | 253f | 151✓ 11⚠ 49✗ | 2026-03-26
+# vallm batch | 273f | 166✓ 11⚠ 51✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 253  passed: 151 (59.7%)  warnings: 11  errors: 49  unsupported: 53
+  scanned: 273  passed: 166 (60.8%)  warnings: 11  errors: 51  unsupported: 56
 
 WARNINGS[11]{path,score}:
   examples/planfile/async_refactor_demo.py,0.93
@@ -10,9 +10,9 @@ WARNINGS[11]{path,score}:
       complexity.lizard_length,warning,create_async_refactored_version: 223 lines exceeds limit 100,234
   examples/planfile/generate_strategy.py,0.93
     issues[3]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 39 (max: 15),18
-      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=39 exceeds limit 15,18
-      complexity.lizard_length,warning,generate_strategy_with_fix: 138 lines exceeds limit 100,18
+      complexity.cyclomatic,warning,generate_strategy_with_fix has cyclomatic complexity 43 (max: 15),18
+      complexity.lizard_cc,warning,generate_strategy_with_fix: CC=42 exceeds limit 15,18
+      complexity.lizard_length,warning,generate_strategy_with_fix: 150 lines exceeds limit 100,18
   examples/cli-tools/quick_cli.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,generate_tool: 120 lines exceeds limit 100,74
@@ -43,7 +43,7 @@ WARNINGS[11]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[49]{path,score}:
+ERRORS[51]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
@@ -78,10 +78,11 @@ ERRORS[49]{path,score}:
       python.import.resolvable,error,Module 'orchestrator' not found,4
       python.import.resolvable,error,Module 'ports' not found,5
   llx/planfile/__init__.py,0.57
-    issues[3]{rule,severity,message,line}:
+    issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,3
       python.import.resolvable,error,Module 'runner' not found,4
       python.import.resolvable,error,Module 'executor_simple' not found,5
+      python.import.resolvable,error,Module 'builder_simple' not found,6
   llx/prellm/utils/__init__.py,0.57
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'lazy_imports' not found,3
@@ -212,10 +213,6 @@ ERRORS[49]{path,score}:
   examples/planfile/callback_hell.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'bs4' not found,8
-  examples/planfile/test_planfile_v2_integration.py,0.89
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'planfile.models_v2' not found,22
-      python.import.resolvable,error,Module 'planfile.executor_v2' not found,23
   llx/cli/strategy_commands.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'planfile' not found,8
@@ -240,6 +237,10 @@ ERRORS[49]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
+  llx/planfile/builder_simple.py,0.90
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,10
+      python.import.resolvable,error,Module 'config' not found,11
   llx/planfile/runner.py,0.91
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,9
@@ -251,6 +252,9 @@ ERRORS[49]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,16
       python.import.resolvable,error,Module '_utils' not found,17
+  examples/planfile/monolith_service.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'flask' not found,234
   llx/tools/config_manager.py,0.93
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'toml' not found,9
@@ -259,12 +263,9 @@ ERRORS[49]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
-  llx/cli/app.py,0.94
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'planfile.llm.generator' not found,340
-      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,341
-      python.import.resolvable,error,Module 'planfile.runner' not found,356
-      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,357
+  examples/planfile/async_refactored.py,0.94
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'bs4' not found,9
   llx/prellm/context/user_memory.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'chromadb' not found,83
@@ -281,9 +282,12 @@ ERRORS[49]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'planfile.llm.generator' not found,569
       python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
+  llx/cli/app.py,0.99
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'generate_strategy' not found,432
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,31
+  *.md,34
   Dockerfile*,1
   *.txt,4
   *.yml,3

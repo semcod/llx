@@ -1,10 +1,10 @@
-# llx | 119f 25712L | python:112,shell:7 | 2026-03-26
-# stats: 927 func | 0 cls | 119 mod | CC̄=3.9 | critical:9 | cycles:0
-# alerts[5]: fan-out execute_v3_pipeline=23; fan-out _dispatch=20; CC _dispatch=21; CC _dispatch=19; CC _dispatch=19
-# hotspots[5]: execute_v3_pipeline fan=23; _dispatch fan=20; _write_env_file fan=18; context fan=18; LlxConfig.load fan=17
-# evolution: CC̄ 3.9→3.9 (flat 0.0)
+# llx | 121f 26210L | python:114,shell:7 | 2026-03-26
+# stats: 941 func | 0 cls | 121 mod | CC̄=4.0 | critical:11 | cycles:0
+# alerts[5]: fan-out execute_v3_pipeline=23; fan-out plan_generate=23; fan-out _dispatch=20; CC ModelFilter.matches=21; CC _dispatch=21
+# hotspots[5]: execute_v3_pipeline fan=23; plan_generate fan=23; _dispatch fan=20; _write_env_file fan=18; context fan=18
+# evolution: CC̄ 4.0→4.0 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[119]:
+M[121]:
   ai-tools-manage.sh,351
   docker-manage.sh,406
   docker/ai-tools/entrypoint.sh,175
@@ -17,7 +17,7 @@ M[119]:
   llx/analysis/collector.py,441
   llx/analysis/runner.py,80
   llx/cli/__init__.py,5
-  llx/cli/app.py,369
+  llx/cli/app.py,548
   llx/cli/formatters.py,338
   llx/cli/strategy_commands.py,110
   llx/config.py,327
@@ -64,9 +64,11 @@ M[119]:
   llx/orchestration/vscode/models.py,61
   llx/orchestration/vscode/orchestrator.py,595
   llx/orchestration/vscode/ports.py,43
-  llx/planfile/__init__.py,21
+  llx/planfile/__init__.py,23
+  llx/planfile/config.py,124
   llx/planfile/examples.py,141
   llx/planfile/executor_simple.py,276
+  llx/planfile/model_selector.py,193
   llx/planfile/models.py,159
   llx/planfile/runner.py,263
   llx/prellm/__init__.py,121
@@ -130,6 +132,32 @@ D:
     AIToolsManager: __init__(1),is_container_running(0),start_ai_tools(1),stop_ai_tools(0),restart_ai_tools(0),access_shell(0),execute_command(2),get_status(0),test_connectivity(0),run_chat_test(2),get_available_models(0),install_tool(1),update_tools(0),get_logs(1),create_workspace_example(1),backup_configurations(1),restore_configurations(1),print_status_summary(0),print_usage_examples(0)  # Manages AI tools container and operations...
     _build_parser()
     _dispatch(args;manager)
+    main()
+  llx/planfile/model_selector.py:
+    e: ModelProvider,ModelTier,ModelFilter,ModelSelector
+    ModelProvider(Enum):  # Available model providers...
+    ModelTier(Enum):  # Model pricing tiers...
+    ModelFilter: matches(2),_has_api_key(1)  # Filter criteria for model selection...
+    ModelSelector: __init__(1),_build_model_registry(0),_get_provider(1),select_model(1),list_models(1),_check_api_key(1)  # Select models based on filters and preferences...
+  llx/cli/app.py:
+    e: analyze,select,chat,proxy_start,proxy_config,proxy_status,models,info,init,_run_analysis_tools,mcp_start,mcp_config,mcp_tools,plan_apply,plan_models,plan_generate,plan_review,main
+    analyze(path;toon_dir;task;local;max_tier;run_tools;verbose;json_output)
+    select(path;toon_dir;task;local)
+    chat(path;prompt;toon_dir;task;model_override;local)
+    proxy_start(config_path;port;background)
+    proxy_config(output)
+    proxy_status()
+    models(tag;provider;tier)
+    info()
+    init(path)
+    _run_analysis_tools(project_path;config)
+    mcp_start(mode;port)
+    mcp_config()
+    mcp_tools()
+    plan_apply(strategy;path;sprint;dry_run)
+    plan_models(provider;tier;local_only;cloud_only;show_keys)
+    plan_generate(path;output;model;sprints;focus;profile;provider;tier;local_only;cloud_only)
+    plan_review(strategy;path)
     main()
   llx/tools/docker_manager.py:
     e: DockerManager,_build_parser,_dispatch,main
@@ -283,15 +311,15 @@ Usage:
     _execute_task(task;project_path;config;metrics;dry_run;model_override)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
+  llx/prellm/analyzers/context_engine.py:
+    e: ContextEngine
+    ContextEngine: __init__(1),gather(0),enrich_prompt(2),gather_runtime(0),_auto_collect_env(0),_gather_process(-1),_gather_locale(-1),_gather_network(-1),_gather_env(0),_gather_git(0),_gather_git_gitpython(0),_gather_git_subprocess(0),_gather_system(0)  # Collects context from environment, git, and system for promp...
   llx/prellm/agents/preprocessor.py:
     e: PreprocessResult,PreprocessorAgent,_get_user_memory_class,_get_codebase_indexer_class
     PreprocessResult(BaseModel):  # Output of the PreprocessorAgent — structured input for the E...
     PreprocessorAgent: __init__(7),preprocess(3),_extract_executor_input(1),_extract_confidence(0)  # Agent preprocessing — small LLM (≤24B) analyzes and structur...
     _get_user_memory_class()
     _get_codebase_indexer_class()
-  llx/prellm/analyzers/context_engine.py:
-    e: ContextEngine
-    ContextEngine: __init__(1),gather(0),enrich_prompt(2),gather_runtime(0),_auto_collect_env(0),_gather_process(-1),_gather_locale(-1),_gather_network(-1),_gather_env(0),_gather_git(0),_gather_git_gitpython(0),_gather_git_subprocess(0),_gather_system(0)  # Collects context from environment, git, and system for promp...
   llx/prellm/pipeline_ops.py:
     e: execute_v3_pipeline,run_preprocessing,run_execution,persist_session,record_trace
     execute_v3_pipeline(query;small_llm;large_llm;pipeline;user_context;domain_rules;prompts_path;pipelines_path;schemas_path;memory_path;codebase_path;collect_env;compress_folder;sanitize;sensitive_rules)
@@ -348,15 +376,15 @@ Usage:
     _path_to_module(rel_path)
     _extract_module_from_import(import_line;project_name)
     _extract_module_docstring(path)
-  llx/prellm/context/schema_generator.py:
-    e: ContextSchemaGenerator
-    ContextSchemaGenerator: generate(5),to_prompt_section(1),estimate_relevance(2),_detect_execution_env(0),_detect_tools(-1),_detect_project_type(0),_build_project_summary(0),_summarize_history(0),_estimate_token_cost(0)  # Generates a structured context schema from available context...
   llx/prellm/context/codebase_indexer.py:
     e: CodeSymbol,FileIndex,CodebaseIndex,CodebaseIndexer
     CodeSymbol:  # A code symbol extracted from source...
     FileIndex:  # Index of a single source file...
     CodebaseIndex:  # Full codebase index...
     CodebaseIndexer: __init__(1),_check_tree_sitter(-1),index_directory(3),_index_file(2),_extract_with_tree_sitter(3),_get_parser(1),_walk_tree(4),_get_line(1),_extract_with_regex(2),_extract_imports(1),search(3),get_context_for_query(3),get_compressed_context(3),estimate_tokens(0)  # Index a codebase using tree-sitter for AST-based symbol extr...
+  llx/prellm/context/schema_generator.py:
+    e: ContextSchemaGenerator
+    ContextSchemaGenerator: generate(5),to_prompt_section(1),estimate_relevance(2),_detect_execution_env(0),_detect_tools(-1),_detect_project_type(0),_build_project_summary(0),_summarize_history(0),_estimate_token_cost(0)  # Generates a structured context schema from available context...
   llx/analysis/collector.py:
     e: ProjectMetrics,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_extract_metrics_target,_extract_evolution_stats,_extract_evolution_actions,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_parse_map_stats_line,_parse_map_alerts_line,_parse_map_hotspots_line,_count_map_modules,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope
     ProjectMetrics:  # Aggregated project metrics that drive model selection.
@@ -641,25 +669,9 @@ Usage:
     initialize_context_components(memory_path;codebase_path)
     prepare_context(user_context;domain_rules;collect_env;compress_folder;codebase_path;sanitize;sensitive_rules;memory_path)
     build_pipeline_context(extra_context)
-  llx/cli/app.py:
-    e: analyze,select,chat,proxy_start,proxy_config,proxy_status,models,info,init,_run_analysis_tools,mcp_start,mcp_config,mcp_tools,plan_apply,plan_generate,plan_review,main
-    analyze(path;toon_dir;task;local;max_tier;run_tools;verbose;json_output)
-    select(path;toon_dir;task;local)
-    chat(path;prompt;toon_dir;task;model_override;local)
-    proxy_start(config_path;port;background)
-    proxy_config(output)
-    proxy_status()
-    models(tag;provider;tier)
-    info()
-    init(path)
-    _run_analysis_tools(project_path;config)
-    mcp_start(mode;port)
-    mcp_config()
-    mcp_tools()
-    plan_apply(strategy;path;sprint;dry_run)
-    plan_generate(path;output;model;sprints;focus)
-    plan_review(strategy;path)
-    main()
+  llx/planfile/config.py:
+    e: PlanfileConfig
+    PlanfileConfig: __init__(1),load_config(1),_merge_config(2),get(2),save_default_config(1)  # Configuration for planfile generation and execution...
   llx/orchestration/vscode/cli.py:
     e: _build_parser,_dispatch,_cmd_add_account,_cmd_remove_account,_cmd_list_accounts,_cmd_create,_cmd_remove,_cmd_start,_cmd_stop,_cmd_list,_cmd_sessions,_cmd_status,_cmd_cleanup,main
     _build_parser()
@@ -770,12 +782,12 @@ Usage:
     QueueRequest: __lt__(1)  # A request in the queue...
     QueueConfig:  # Configuration for a queue...
     QueueState:  # Current state of a queue...
-  llx/prellm/utils/lazy_loader.py:
-    e: LazyLoader
-    LazyLoader: __init__(0),_ensure_loaded(0),_load(0)  # Base class for components that need lazy loading of resource...
   llx/prellm/utils/lazy_imports.py:
     e: lazy_import_global
     lazy_import_global(name;import_path;globals_dict)
+  llx/prellm/utils/lazy_loader.py:
+    e: LazyLoader
+    LazyLoader: __init__(0),_ensure_loaded(0),_load(0)  # Base class for components that need lazy loading of resource...
   llx/prellm/__init__.py:
     e: _get_process_chain
     _get_process_chain()
@@ -816,8 +828,8 @@ Usage:
     AuditEntry(BaseModel):  # Single audit log entry for traceability...
   llx/__init__.py:
   llx/__main__.py:
-  llx/prellm/_nfo_compat.py:
   llx/analysis/__init__.py:
+  llx/prellm/_nfo_compat.py:
   llx/tools/__init__.py:
   llx/cli/__init__.py:
   llx/planfile/__init__.py:
@@ -827,28 +839,21 @@ Usage:
   llx/integrations/__init__.py:
   llx/routing/__init__.py:
   llx/orchestration/session/__init__.py:
-  llx/orchestration/instances/__init__.py:
   llx/orchestration/session/models.py:
     e: SessionType,SessionStatus,SessionConfig,SessionState
     SessionType(Enum):  # Types of sessions...
     SessionStatus(Enum):  # Session status...
     SessionConfig:  # Configuration for a session...
     SessionState:  # Current state of a session...
-  llx/orchestration/vscode/__init__.py:
-  llx/orchestration/vscode/models.py:
-    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
-    VSCodeAccountType(Enum):  # Types of VS Code accounts...
-    VSCodeAccount:  # VS Code account configuration...
-    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
-    VSCodeSession:  # Active VS Code session...
-  llx/orchestration/llm/__init__.py:
+  llx/orchestration/instances/__init__.py:
   llx/orchestration/instances/models.py:
     e: InstanceType,InstanceStatus,InstanceConfig,InstanceState
     InstanceType(Enum):  # Types of instances...
     InstanceStatus(Enum):  # Instance status...
     InstanceConfig:  # Configuration for an instance...
     InstanceState:  # Current state of an instance...
-  llx/orchestration/queue/__init__.py:
+  llx/orchestration/vscode/__init__.py:
+  llx/orchestration/llm/__init__.py:
   llx/orchestration/llm/models.py:
     e: LLMProviderType,ModelCapability,LLMModel,LLMProvider,LLMRequest,LLMResponse
     LLMProviderType(Enum):  # Types of LLM providers...
@@ -857,6 +862,13 @@ Usage:
     LLMProvider:  # LLM provider configuration...
     LLMRequest:  # LLM request...
     LLMResponse:  # LLM response...
+  llx/orchestration/queue/__init__.py:
+  llx/orchestration/vscode/models.py:
+    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
+    VSCodeAccountType(Enum):  # Types of VS Code accounts...
+    VSCodeAccount:  # VS Code account configuration...
+    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
+    VSCodeSession:  # Active VS Code session...
   llx/orchestration/ratelimit/__init__.py:
   llx/orchestration/ratelimit/models.py:
     e: LimitType,RateLimitConfig,RateLimitState
@@ -864,6 +876,7 @@ Usage:
     RateLimitConfig:  # Configuration for rate limiting...
     RateLimitState:  # Current state of rate limiting...
   llx/orchestration/routing/__init__.py:
+  llx/prellm/chains/__init__.py:
   llx/orchestration/routing/models.py:
     e: RoutingStrategy,ResourceType,RequestPriority,RoutingRequest,RoutingDecision,RoutingMetrics
     RoutingStrategy(Enum):  # Routing strategies...
@@ -872,7 +885,6 @@ Usage:
     RoutingRequest:  # A request to be routed...
     RoutingDecision:  # A routing decision...
     RoutingMetrics:  # Metrics for routing performance...
-  llx/prellm/chains/__init__.py:
   llx/prellm/utils/__init__.py:
   llx/prellm/context/__init__.py:
   llx/prellm/analyzers/__init__.py:

@@ -224,8 +224,23 @@ Return only valid YAML without code blocks.
         data['project_type'] = 'python'
     if 'domain' not in data:
         data['domain'] = 'software'
-    if 'goal' not in data:
-        data['goal'] = focus or 'improvement'
+    
+    # Fix goal to be a proper Goal object
+    if 'goal' not in data or isinstance(data.get('goal'), str):
+        goal_str = data.get('goal', focus or 'improvement')
+        data['goal'] = {
+            'short': f"Improve {goal_str}" if goal_str else "Improve codebase",
+            'quality': ['Reduce complexity', 'Improve maintainability'],
+            'delivery': ['Complete in sprints', 'Review changes'],
+            'metrics': ['Complexity reduction', 'Test coverage']
+        }
+    elif isinstance(data.get('goal'), dict):
+        # Ensure all required fields exist
+        goal = data['goal']
+        goal.setdefault('short', f"Improve {focus or 'codebase'}")
+        goal.setdefault('quality', ['Reduce complexity', 'Improve maintainability'])
+        goal.setdefault('delivery', ['Complete in sprints', 'Review changes'])
+        goal.setdefault('metrics', ['Complexity reduction', 'Test coverage'])
     
     console.print(f"[green]✓ Strategy parsed and fixed[/green]")
     

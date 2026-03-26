@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.20] - 2026-03-26
+
+### Docs
+- Update docs/README.md
+- Update examples/planfile/FINAL_TEST_REPORT.md
+- Update llx/planfile/IMPROVEMENTS_SUMMARY.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update test_strategy.yaml
+
+### Other
+- Update examples/aider/demo_project/calculator.py
+- Update examples/planfile/.llx/planfile/strategy-FocusArea.COMPLEXITY-20260326-154918.yaml
+- Update examples/planfile/.llx/planfile/strategy-FocusArea.COMPLEXITY-20260326-155016.yaml
+- Update examples/planfile/duplication_refactor_strategy.yaml
+- Update examples/planfile/duplication_refactor_strategy_v2.yaml
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/generated_strategy.yaml
+- Update examples/planfile/planfile_config.yaml
+- Update examples/planfile/planfile_manager.py
+- Update examples/planfile/strategy.yaml
+- ... and 25 more files
+
 ## [0.1.19] - 2026-03-26
 
 ### Docs

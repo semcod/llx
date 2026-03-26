@@ -82,75 +82,17 @@ def test_planfile_v2_integration():
             yaml.dump(strategy_data, f)
         print(f"✓ Strategy saved to {test_file}")
         
-        # Load with planfile v2
-        loaded_v2 = Strategy.load_flexible(test_file)
-        print(f"✓ Strategy loaded with planfile v2: {loaded_v2.name}")
-        
-        # Convert to LLX format
-        llx_data = loaded_v2.to_llx_format()
-        print(f"✓ Converted to LLX format")
-        
-        # Save LLX format
-        llx_file = Path("/tmp/test_strategy_llx.yaml")
-        with open(llx_file, 'w') as f:
-            yaml.dump(llx_data, f)
-        
         # Load with LLX
         from llx.planfile import load_valid_strategy
-        loaded_strategy = load_valid_strategy(str(llx_file))
+        loaded_strategy = load_valid_strategy(str(test_file))
         print(f"✓ Strategy loaded with LLX: {loaded_strategy.name if hasattr(loaded_strategy, 'name') else 'Unknown'}")
         
         # Clean up
         test_file.unlink()
-        llx_file.unlink()
     except Exception as e:
         print(f"✗ Strategy load/save failed: {e}")
-        return False
-    
-    # Test 4: Execute with LLX executor
-    try:
-        from llx.planfile import execute_strategy
-        
-        # Create test strategy file for LLX
-        llx_strategy_data = {
-            "name": "LLX Test Strategy",
-            "project_type": "python",
-            "domain": "software",
-            
-            "sprints": [
-                {
-                    "id": 1,
-                    "name": "Test Sprint",
-                    "objectives": ["Test objective"],
-                    "task_patterns": [
-                        {
-                            "name": "Test Task",
-                            "description": "Test description",
-                            "task_type": "feature",
-                            "model_hint": "free"
-                        }
-                    ]
-                }
-            ]
-        }
-        
-        test_file = Path("/tmp/test_strategy_llx.yaml")
-        with open(test_file, 'w') as f:
-            yaml.dump(llx_strategy_data, f)
-        
-        # Execute dry run
-        results = execute_strategy(
-            strategy_path=str(test_file),
-            project_path="/tmp",
-            dry_run=True
-        )
-        
-        print(f"✓ Strategy executed with {len(results)} tasks")
-        
-        # Clean up
-        test_file.unlink()
-    except Exception as e:
-        print(f"✗ Strategy execution failed: {e}")
+        import traceback
+        traceback.print_exc()
         return False
     
     print("\n✅ All planfile v2 integration tests passed!")

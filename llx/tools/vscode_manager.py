@@ -658,68 +658,125 @@ class VSCodeManager:
         print()
 
 
-# CLI interface
+# CLI interface - Command handlers registry to reduce CC from 19
 
-def _build_parser() -> "argparse.ArgumentParser":
-    import argparse
+import argparse
+from typing import Callable, Dict
+
+CmdHandler = Callable[[argparse.Namespace, "VSCodeManager"], bool]
+
+
+def _cmd_start(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.start_vscode()
+
+
+def _cmd_stop(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.stop_vscode()
+
+
+def _cmd_restart(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.restart_vscode()
+
+
+def _cmd_status(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    manager.print_status_summary()
+    return True
+
+
+def _cmd_logs(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    logs = manager.get_vscode_logs(args.tail)
+    print(logs)
+    return True
+
+
+def _cmd_install_extensions(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.install_extensions()
+
+
+def _cmd_list_extensions(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    extensions = manager.list_installed_extensions()
+    print(f"📦 Installed Extensions ({len(extensions)}):")
+    for ext in extensions:
+        print(f"  • {ext}")
+    return True
+
+
+def _cmd_uninstall_extension(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    if not args.extension:
+        print("❌ --extension required for uninstall")
+        return False
+    return manager.uninstall_extension(args.extension)
+
+
+def _cmd_update_extensions(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.update_extensions()
+
+
+def _cmd_configure_roocode(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.configure_roocode()
+
+
+def _cmd_create_tasks(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.create_workspace_tasks()
+
+
+def _cmd_create_launch(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.create_launch_config()
+
+
+def _cmd_backup(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    return manager.backup_settings(args.backup_dir)
+
+
+def _cmd_restore(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    if not args.backup_dir:
+        print("❌ --backup-dir required for restore")
+        return False
+    return manager.restore_settings(args.backup_dir)
+
+
+def _cmd_quick_start(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    manager.print_quick_start()
+    return True
+
+
+# Command registry: maps command names to handler functions
+_COMMAND_HANDLERS: Dict[str, CmdHandler] = {
+    "start": _cmd_start,
+    "stop": _cmd_stop,
+    "restart": _cmd_restart,
+    "status": _cmd_status,
+    "logs": _cmd_logs,
+    "install-extensions": _cmd_install_extensions,
+    "list-extensions": _cmd_list_extensions,
+    "uninstall-extension": _cmd_uninstall_extension,
+    "update-extensions": _cmd_update_extensions,
+    "configure-roocode": _cmd_configure_roocode,
+    "create-tasks": _cmd_create_tasks,
+    "create-launch": _cmd_create_launch,
+    "backup": _cmd_backup,
+    "restore": _cmd_restore,
+    "quick-start": _cmd_quick_start,
+}
+
+
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="llx VS Code Manager")
-    parser.add_argument("command", choices=[
-        "start", "stop", "restart", "status", "logs", "install-extensions",
-        "list-extensions", "uninstall-extension", "update-extensions",
-        "configure-roocode", "create-tasks", "create-launch",
-        "backup", "restore", "quick-start"
-    ])
+    parser.add_argument("command", choices=list(_COMMAND_HANDLERS.keys()))
     parser.add_argument("--extension", help="Specific extension")
     parser.add_argument("--backup-dir", help="Backup directory")
     parser.add_argument("--tail", type=int, default=50, help="Log tail lines")
     return parser
 
 
-def _dispatch(args, manager: "VSCodeManager") -> bool:
-    if args.command == "start":
-        return manager.start_vscode()
-    elif args.command == "stop":
-        return manager.stop_vscode()
-    elif args.command == "restart":
-        return manager.restart_vscode()
-    elif args.command == "status":
-        manager.print_status_summary()
-        return True
-    elif args.command == "logs":
-        logs = manager.get_vscode_logs(args.tail)
-        print(logs)
-        return True
-    elif args.command == "install-extensions":
-        return manager.install_extensions()
-    elif args.command == "list-extensions":
-        extensions = manager.list_installed_extensions()
-        print(f"📦 Installed Extensions ({len(extensions)}):")
-        for ext in extensions:
-            print(f"  • {ext}")
-        return True
-    elif args.command == "uninstall-extension":
-        if not args.extension:
-            print("❌ --extension required for uninstall")
-            return False
-        return manager.uninstall_extension(args.extension)
-    elif args.command == "update-extensions":
-        return manager.update_extensions()
-    elif args.command == "configure-roocode":
-        return manager.configure_roocode()
-    elif args.command == "create-tasks":
-        return manager.create_workspace_tasks()
-    elif args.command == "create-launch":
-        return manager.create_launch_config()
-    elif args.command == "backup":
-        return manager.backup_settings(args.backup_dir)
-    elif args.command == "restore":
-        if not args.backup_dir:
-            print("❌ --backup-dir required for restore")
-            return False
-        return manager.restore_settings(args.backup_dir)
-    elif args.command == "quick-start":
-        manager.print_quick_start()
-        return True
+def _dispatch(args: argparse.Namespace, manager: "VSCodeManager") -> bool:
+    """Dispatch command to appropriate handler using registry pattern.
+
+    CC reduced from 19 to ~3 by using handler registry instead of if-elif chain.
+    """
+    handler = _COMMAND_HANDLERS.get(args.command)
+    if handler:
+        return handler(args, manager)
     return False
 
 

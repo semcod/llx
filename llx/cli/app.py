@@ -320,12 +320,88 @@ def plan_apply(
     dry_run: bool = typer.Option(False, "--dry-run"),
 ) -> None:
     """Apply a planfile strategy to the project."""
-    from llx.planfile.executor import execute_strategy
+    from llx.planfile import execute_strategy
     results = execute_strategy(strategy, path, sprint_filter=sprint, dry_run=dry_run,
                                on_progress=lambda msg: console.print(f"  {msg}"))
     for r in results:
         icon = "✓" if r.status == "success" else "○" if r.status == "dry_run" else "✗"
         console.print(f"  {icon} {r.task_name} → {r.model_used}")
+
+@plan_app.command("models")
+def plan_models(
+    provider: Optional[str] = typer.Option(None, "--provider", 
+        help="Filter by provider: openai, anthropic, openrouter, ollama"),
+    tier: Optional[str] = typer.Option(None, "--tier", 
+        help="Filter by tier: free, cheap, balanced, premium"),
+    local_only: bool = typer.Option(False, "--local", help="Show local models only"),
+    cloud_only: bool = typer.Option(False, "--cloud", help="Show cloud models only"),
+    show_keys: bool = typer.Option(False, "--show-keys", help="Show API key status"),
+) -> None:
+    """List available models."""
+    try:
+        from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
+        
+        # Build filter
+        filter_params = {}
+        if provider:
+            filter_params["provider"] = ModelProvider(provider.lower())
+        if tier:
+            filter_params["tier"] = ModelTier(tier.lower())
+        filter_params["local_only"] = local_only
+        filter_params["cloud_only"] = cloud_only
+        
+        model_filter = ModelFilter(**filter_params)
+        
+        # Get models
+        selector = ModelSelector(".")
+        models = selector.list_models(model_filter)
+        
+        if not models:
+            console.print("[yellow]No models found matching the criteria[/yellow]")
+            return
+        
+        # Group by provider
+        by_provider = {}
+        for model in models:
+            provider = model["provider"]
+            if provider not in by_provider:
+                by_provider[provider] = []
+            by_provider[provider].append(model)
+        
+        # Display
+        console.print("[bold]Available Models:[/bold]")
+        console.print()
+        
+        for provider_name, provider_models in sorted(by_provider.items()):
+            console.print(f"[cyan]{provider_name.title()}:[/cyan]")
+            for model in sorted(provider_models, key=lambda x: x.get("tier", "unknown")):
+                status = ""
+                if show_keys:
+                    status = "✓" if model["has_api_key"] else "✗"
+                    status = f"[{status}] "
+                
+                tier_color = {
+                    "free": "green",
+                    "cheap": "yellow",
+                    "balanced": "blue",
+                    "premium": "magenta"
+                }.get(model["tier"], "white")
+                
+                console.print(f"  {status}{model['id']} [{tier_color}]{model['tier']}[/{tier_color}]")
+            console.print()
+        
+        # Show profiles
+        console.print("[bold]Predefined Profiles:[/bold]")
+        console.print("  [green]free[/green] - All free models (local and cloud)")
+        console.print("  [green]local[/green] - Local models only")
+        console.print("  [green]cloud-free[/green] - Free cloud models only")
+        console.print("  [green]openrouter-free[/green] - Free OpenRouter models only")
+        console.print("  [yellow]cheap[/yellow] - Cheap cloud models")
+        console.print("  [blue]balanced[/blue] - Balanced performance/price")
+        
+    except Exception as e:
+        console.print(f"[red]Error listing models: {e}[/red]")
+
 
 @plan_app.command("generate")
 def plan_generate(
@@ -334,16 +410,119 @@ def plan_generate(
     model: Optional[str] = typer.Option(None, "--model", "-m"),
     sprints: int = typer.Option(3, "--sprints"),
     focus: Optional[str] = typer.Option(None, "--focus"),
+    profile: Optional[str] = typer.Option(None, "--profile", "-p", 
+        help="Model profile: free, local, cloud-free, openrouter-free, cheap, balanced"),
+    provider: Optional[str] = typer.Option(None, "--provider", 
+        help="Filter by provider: openai, anthropic, openrouter, ollama"),
+    tier: Optional[str] = typer.Option(None, "--tier", 
+        help="Filter by tier: free, cheap, balanced, premium"),
+    local_only: bool = typer.Option(False, "--local", help="Use local models only"),
+    cloud_only: bool = typer.Option(False, "--cloud", help="Use cloud models only"),
 ) -> None:
-    """Generate strategy.yaml (delegates to planfile)."""
+    """Generate strategy.yaml using built-in generator."""
     try:
-        from planfile.llm.generator import generate_strategy
-        from planfile.loaders.yaml_loader import save_strategy_yaml
-        strategy = generate_strategy(path, model=model, sprints=sprints, focus=focus)
-        save_strategy_yaml(strategy, output)
+        # Use built-in generator from examples
+        import sys
+        from pathlib import Path
+        
+        # Add examples to path
+        examples_path = Path(__file__).parent.parent.parent / "examples" / "planfile"
+        sys.path.insert(0, str(examples_path))
+        
+        from generate_strategy import generate_strategy_with_fix, save_fixed_strategy
+        from llx.planfile.model_selector import ModelSelector, ModelFilter, ModelProvider, ModelTier
+        
+        if not model:
+            # Create filter based on parameters
+            filter_params = {}
+            
+            # Use predefined profile if specified
+            if profile:
+                from llx.planfile.model_selector import (
+                    FREE_FILTER, LOCAL_FILTER, CLOUD_FREE_FILTER,
+                    OPENROUTER_FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER
+                )
+                profile_map = {
+                    "free": FREE_FILTER,
+                    "local": LOCAL_FILTER,
+                    "cloud-free": CLOUD_FREE_FILTER,
+                    "openrouter-free": OPENROUTER_FREE_FILTER,
+                    "cheap": CHEAP_FILTER,
+                    "balanced": BALANCED_FILTER
+                }
+                model_filter = profile_map.get(profile)
+                if not model_filter:
+                    console.print(f"[red]Unknown profile: {profile}[/red]")
+                    console.print(f"Available profiles: {', '.join(profile_map.keys())}")
+                    raise typer.Exit(1)
+            else:
+                # Build custom filter
+                if provider:
+                    try:
+                        filter_params["provider"] = ModelProvider(provider.lower())
+                    except ValueError:
+                        console.print(f"[red]Unknown provider: {provider}[/red]")
+                        console.print("Available providers: openai, anthropic, openrouter, ollama")
+                        raise typer.Exit(1)
+                
+                if tier:
+                    try:
+                        filter_params["tier"] = ModelTier(tier.lower())
+                    except ValueError:
+                        console.print(f"[red]Unknown tier: {tier}[/red]")
+                        console.print("Available tiers: free, cheap, balanced, premium")
+                        raise typer.Exit(1)
+                
+                filter_params["local_only"] = local_only
+                filter_params["cloud_only"] = cloud_only
+                
+                model_filter = ModelFilter(**filter_params)
+            
+            # Select model
+            selector = ModelSelector(path)
+            model = selector.select_model(model_filter)
+            
+            if not model:
+                console.print("[red]No model found matching the criteria[/red]")
+                
+                # Show available models
+                console.print("\n[yellow]Available models:[/yellow]")
+                available = selector.list_models()
+                for m in available[:10]:  # Show first 10
+                    status = "✓" if m["has_api_key"] else "✗ (no API key)"
+                    console.print(f"  {status} {m['id']} [{m['provider']}][{m['tier']}]")
+                
+                raise typer.Exit(1)
+        
+        strategy_data = generate_strategy_with_fix(
+            project_path=path,
+            model=model,
+            sprints=sprints,
+            focus=focus
+        )
+        
+        # Save strategy
+        save_fixed_strategy(strategy_data, output)
         console.print(f"[green]Strategy saved to {output}[/green]")
-    except ImportError:
-        console.print("[red]planfile not installed. pip install planfile[/red]")
+        console.print(f"[dim]Used model: {model}[/dim]")
+        
+        # Show filter info if used
+        if not model and profile:
+            console.print(f"[dim]Profile: {profile}[/dim]")
+        elif not model and any([provider, tier, local_only, cloud_only]):
+            filter_desc = []
+            if provider:
+                filter_desc.append(f"provider={provider}")
+            if tier:
+                filter_desc.append(f"tier={tier}")
+            if local_only:
+                filter_desc.append("local only")
+            if cloud_only:
+                filter_desc.append("cloud only")
+            console.print(f"[dim]Filter: {', '.join(filter_desc)}[/dim]")
+            
+    except Exception as e:
+        console.print(f"[red]Error generating strategy: {e}[/red]")
         raise typer.Exit(1)
 
 @plan_app.command("review")
@@ -353,16 +532,16 @@ def plan_review(
 ) -> None:
     """Review progress against strategy quality gates."""
     try:
-        from planfile.runner import review_strategy
-        from planfile.loaders.yaml_loader import load_strategy_yaml
-        s = load_strategy_yaml(strategy)
-        results = review_strategy(s, path, backends={})
-        # Print gate results
-        for gate in results.get("quality_gates", []):
-            icon = "✓" if gate.get("passed") else "✗"
-            console.print(f"  {icon} {gate['name']}: {gate.get('value', '?')} {gate.get('operator', '')} {gate.get('threshold', '')}")
-    except ImportError:
-        console.print("[red]planfile not installed[/red]")
+        from llx.planfile import load_valid_strategy
+        s = load_valid_strategy(strategy)
+        console.print(f"[green]Strategy loaded: {s.name}[/green]")
+        console.print(f"  Sprints: {len(s.sprints)}")
+        console.print(f"  Quality gates: {len(s.quality_gates)}")
+        
+        # TODO: Implement actual review logic
+        console.print("[yellow]Review functionality not yet implemented[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Error reviewing strategy: {e}[/red]")
 
 
 def main() -> None:

@@ -1,0 +1,48 @@
+# Example LLX Planfile Configuration
+# Customize models, focus areas, and execution settings
+
+default_model: "claude-sonnet-4"
+
+model_tiers:
+  local: "ollama/llama2:7b"
+  cheap: "openai/gpt-4o-mini"
+  balanced: "claude-sonnet-4"
+  premium: "claude-opus-4"
+
+focus_areas:
+  complexity:
+    description: "Reduce cyclomatic complexity and improve maintainability"
+    default_sprints: 4
+    tasks:
+      - "Analyze cyclomatic complexity"
+      - "Identify complex functions"
+      - "Extract complex methods"
+      - "Reduce nesting depth"
+      - "Simplify conditional logic"
+      - "Add unit tests"
+      - "Performance testing"
+  
+  security:
+    description: "Improve security posture"
+    default_sprints: 3
+    tasks:
+      - "Security audit"
+      - "Fix vulnerabilities"
+      - "Add input validation"
+      - "Implement authentication"
+      - "Add security tests"
+  
+  performance:
+    description: "Optimize performance bottlenecks"
+    default_sprints: 2
+    tasks:
+      - "Profile application"
+      - "Identify bottlenecks"
+      - "Optimize queries"
+      - "Add caching"
+      - "Load testing"
+
+execution:
+  default_dry_run: true
+  parallel_execution: true
+  max_parallel_tasks: 5

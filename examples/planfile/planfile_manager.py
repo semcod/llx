@@ -10,6 +10,8 @@ import json
 import yaml
 import asyncio
 import subprocess
+import os
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
@@ -123,13 +125,12 @@ class PlanfileManager:
         strategy_file = output or self.planfile_dir / f"strategy-{focus}-{timestamp}.yaml"
         
         cmd = [
-            "llx", "plan", "generate",
-            str(self.project_root),
-            "--model", model,
-            "--sprints", str(sprints),
-            "--focus", focus.value,
-            "--output", str(strategy_file)
+            "python3", "generate_strategy.py"
         ]
+        
+        # Note: generate_strategy.py uses its own logic
+        # We'll rename the output file afterward
+        original_output = "generated_strategy.yaml"
         
         if custom_prompt:
             # Save custom prompt to temp file and reference it
@@ -144,11 +145,15 @@ class PlanfileManager:
         ) as progress:
             task = progress.add_task("Generating strategy...", total=None)
             
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd="/home/tom/github/semcod/llx/examples/planfile")
             
             if result.returncode != 0:
                 console.print(f"[red]Strategy generation failed: {result.stderr}[/red]")
                 raise RuntimeError(f"Strategy generation failed: {result.stderr}")
+            
+            # Rename the generated file if needed
+            if Path(original_output).exists() and str(strategy_file) != original_output:
+                Path(original_output).rename(strategy_file)
         
         console.print(f"[green]✓ Strategy generated: {strategy_file.name}[/green]")
         
@@ -314,13 +319,15 @@ class PlanfileManager:
     
     async def _analyze_project(self) -> Dict[str, Any]:
         """Analyze project metrics."""
-        cmd = [
-            "llx", "analyze", str(self.project_root),
-            "--toon-dir", str(self.metrics_dir)
-        ]
+        # Import directly from LLX
+        sys.path.insert(0, '/home/tom/github/semcod/llx')
+        from llx.analysis.collector import analyze_project
         
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        return {"output": result.stdout, "error": result.stderr}
+        try:
+            metrics = analyze_project(str(self.project_root), toon_dir=str(self.metrics_dir))
+            return {"output": f"Analysis complete: {metrics.total_files} files", "error": ""}
+        except Exception as e:
+            return {"output": "", "error": str(e)}
     
     async def _select_model_for_focus(self, focus: FocusArea) -> str:
         """Select optimal model based on focus area."""
