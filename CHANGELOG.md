@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.28] - 2026-03-26
+
+### Other
+- Update examples/python-api/api-strategy.yaml
+- Update examples/python-api/run.sh
+
 ## [0.1.27] - 2026-03-26
 
 ### Docs
