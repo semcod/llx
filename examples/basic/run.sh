@@ -21,7 +21,7 @@ echo -e "\n${BLUE}🔍 Analyzing project (using free tier limitation)...${NC}"
 llx analyze . --max-tier free
 
 echo -e "\n${BLUE}🤖 Quick model selection...${NC}"
-llx select . --max-tier free
+llx select .
 
 echo -e "\n${GREEN}✅ Example completed!${NC}"
 echo -e "${BLUE}💡 Next steps:${NC}"

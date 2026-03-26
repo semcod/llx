@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.26] - 2026-03-26
+
+### Other
+- Update examples/basic/run.sh
+- Update examples/cleanup.sh
+- Update examples/cloud-local/run.sh
+- Update examples/filtering/run.sh
+- Update examples/fullstack/run.sh
+- Update examples/hybrid/run.sh
+- Update examples/multi-provider/run.sh
+- Update examples/planfile/generate_strategy.py
+- Update examples/vscode-roocode/run.sh
+
 ## [0.1.25] - 2026-03-26
 
 ### Docs

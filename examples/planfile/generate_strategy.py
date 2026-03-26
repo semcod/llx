@@ -102,14 +102,14 @@ Return only valid YAML without code blocks.
     yaml_text = yaml_text.replace("-implementation:", "- implementation:")
     yaml_text = yaml_text.replace("-review:", "- review:")
     
-    # Fix line continuation issues - simplified approach
+    # Fix line continuation issues - targeted fixes only
     import re
-    # Fix the most common issue: missing newline after numeric values
-    yaml_text = re.sub(r'([0-9.]+)([a-zA-Z][a-zA-Z0-9_]*:)', r'\1\n\2', yaml_text)
-    # Fix specific pattern: "- number: X    field:" -> "- number: X\n    field:"
+    # Fix pattern: "- number: X    field:" -> "- number: X\n    field:"
     yaml_text = re.sub(r'^(- number:\s+\d+)\s{2,}([a-zA-Z_][a-zA-Z0-9_]*:)', r'\1\n  \2', yaml_text, flags=re.MULTILINE)
-    # Fix concatenated list items
-    yaml_text = re.sub(r'([a-zA-Z][a-zA-Z0-9\s]+)\s{2,}(- [a-zA-Z])', r'\1\n  \2', yaml_text)
+    # Fix pattern: "name: Valuefield:" -> "name: Value\nfield:"
+    yaml_text = re.sub(r'(name:\s+[a-zA-Z][a-zA-Z0-9_]*)([a-zA-Z][a-zA-Z0-9_]*:)', r'\1\n\2', yaml_text)
+    # Fix pattern: "- number: Xfield:" -> "- number: X\nfield:"
+    yaml_text = re.sub(r'^(- number:\s+\d+)([a-zA-Z][a-zA-Z0-9_]*:)', r'\1\n\2', yaml_text, flags=re.MULTILINE)
     
     # Ensure proper list formatting
     lines = yaml_text.split('\n')

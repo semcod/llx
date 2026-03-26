@@ -19,6 +19,6 @@ echo -e "\n${BLUE}🌐 Displaying models from multiple providers (filtering by O
 llx models --provider openrouter
 
 echo -e "\n${BLUE}🌐 Asking for a recommendation across all providers (free tier max)...${NC}"
-llx select . --max-tier free
+llx select .
 
 echo -e "\n${GREEN}✅ Example completed!${NC}"
