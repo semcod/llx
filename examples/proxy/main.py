@@ -3,112 +3,105 @@
 llx Proxy Integration Example
 
 This example demonstrates:
-1. Setting up the LiteLLM proxy server
-2. Configuring model routing and aliases
-3. IDE integration (Roo Code, Cline, etc.)
-4. Semantic caching and cost tracking
+1. Generating a LiteLLM proxy config from the current llx project settings
+2. Starting the proxy with the same auth key defined in llx.yaml
+3. Verifying the OpenAI-compatible API endpoints
+4. Showing IDE integration for Roo Code, Cline, Aider, and Claude Code
 
-The proxy provides an OpenAI-compatible API endpoint that IDEs and
-tools can use to access multiple LLM providers through a single interface.
+The proxy exposes an OpenAI-compatible API endpoint that IDEs and tools can
+use to access multiple LLM providers through a single interface.
 """
 
 import os
+import signal
 import sys
 import time
-import signal
 import requests
 from pathlib import Path
 
 # Add llx to path for development
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from llx.config import Config
-from llx.proxy.server import ProxyServer
-from llx.proxy.router import ProxyRouter
+from llx.config import LlxConfig
+from llx.integrations.proxy import check_proxy, start_proxy
 
 
 class ProxyExample:
     def __init__(self):
-        self.config = Config.from_env()
+        self.project_root = Path(__file__).resolve().parent.parent.parent
+        self.config = LlxConfig.load(self.project_root)
         self.server = None
-        self.router = None
-        
-    def setup_server(self):
-        """Initialize the proxy server"""
-        print("🔧 Setting up proxy server...")
-        
-        # Create router with model aliases
-        self.router = ProxyRouter(self.config)
-        
-        # Configure model aliases from environment
-        aliases = {
-            'cheap': os.getenv('LLX_ALIAS_CHEAP', 'openrouter/nvidia/nemotron-3-nano-30b-a3b:free'),
-            'balanced': os.getenv('LLX_ALIAS_BALANCED', 'openrouter/mistralai/mistral-7b-instruct-v0.1'),
-            'premium': os.getenv('LLX_ALIAS_PREMIUM', 'openrouter/anthropic/claude-3.5-sonnet'),
-            'free': os.getenv('LLX_ALIAS_FREE', 'openrouter/nvidia/nemotron-3-nano-30b-a3b:free')
+        self.base_url = f"http://localhost:{self.config.proxy.port}"
+        self.headers = {
+            "Authorization": f"Bearer {self.config.proxy.master_key}",
+            "Content-Type": "application/json",
         }
         
-        for alias, model in aliases.items():
-            self.router.add_alias(alias, model)
-            print(f"   ✓ {alias} → {model}")
-        
-        # Create server
-        self.server = ProxyServer(
-            config=self.config,
-            router=self.router,
-            host=os.getenv('AI_PROXY_HOST', '0.0.0.0'),
-            port=int(os.getenv('AI_PROXY_PORT', '4000'))
-        )
-        
-        print(f"   ✓ Server will run on http://{os.getenv('AI_PROXY_HOST', '0.0.0.0')}:{os.getenv('AI_PROXY_PORT', '4000')}")
+    def setup_server(self):
+        """Initialize the proxy config and show the current model tiers."""
+        print("🔧 Loading llx proxy configuration...")
+
+        print(f"   ✓ Project root: {self.project_root}")
+        print(f"   ✓ Proxy endpoint: {self.base_url}")
+        print(f"   ✓ Master key: {self.config.proxy.master_key}")
+        print(f"   ✓ Default tier: {self.config.default_tier}")
+
+        model_tiers = ", ".join(sorted(self.config.models.keys()))
+        print(f"   ✓ Model tiers: {model_tiers}")
+
+        return True
         
     def start_server(self):
-        """Start the proxy server"""
+        """Start the proxy server."""
         print("\n🚀 Starting proxy server...")
         
         try:
-            self.server.start()
-            print(f"✓ Proxy server started successfully!")
-            print(f"  Endpoint: http://{os.getenv('AI_PROXY_HOST', '0.0.0.0')}:{os.getenv('AI_PROXY_PORT', '4000')}")
-            print(f"  API Key: {os.getenv('AI_PROXY_MASTER_KEY', 'sk-proxy-local-dev')}")
+            self.server = start_proxy(self.config, background=True)
+            print("✓ Proxy server started successfully!")
+            print(f"  Endpoint: {self.base_url}")
+            print(f"  API Key: {self.config.proxy.master_key}")
             
             return True
         except Exception as e:
             print(f"❌ Failed to start server: {e}")
             return False
+
+    def wait_for_proxy(self, timeout: int = 15):
+        """Wait until the proxy health endpoint responds."""
+        print("\n⏳ Waiting for proxy health check...")
+
+        deadline = time.time() + timeout
+        while time.time() < deadline:
+            if check_proxy(self.base_url):
+                print("   ✓ Proxy health check passed")
+                return True
+            time.sleep(1)
+
+        print(f"   ❌ Proxy did not become ready within {timeout}s")
+        return False
     
     def test_proxy(self):
-        """Test the proxy with a simple request"""
+        """Test the proxy with simple OpenAI-compatible requests."""
         print("\n🧪 Testing proxy functionality...")
-        
-        # Wait a moment for server to be ready
-        time.sleep(2)
-        
-        # Test endpoint
-        base_url = f"http://{os.getenv('AI_PROXY_HOST', '0.0.0.0')}:{os.getenv('AI_PROXY_PORT', '4000')}"
-        headers = {
-            "Authorization": f"Bearer {os.getenv('AI_PROXY_MASTER_KEY', 'sk-proxy-local-dev')}",
-            "Content-Type": "application/json"
-        }
-        
-        # Test models endpoint
+
         try:
-            response = requests.get(f"{base_url}/v1/models", headers=headers, timeout=5)
-            if response.status_code == 200:
-                models = response.json()
-                print(f"   ✓ Available models: {len(models.get('data', []))}")
-                for model in models.get('data', [])[:3]:  # Show first 3
-                    print(f"     • {model.get('id', 'Unknown')}")
-            else:
-                print(f"   ❌ Models endpoint failed: {response.status_code}")
+            response = requests.get(f"{self.base_url}/v1/models", headers=self.headers, timeout=10)
+            response.raise_for_status()
+            models = response.json().get("data", [])
+            print(f"   ✓ Available models: {len(models)}")
+            for model in models[:5]:
+                print(f"     • {model.get('id', 'Unknown')}")
         except Exception as e:
             print(f"   ❌ Could not connect to proxy: {e}")
             return False
         
-        # Test chat completion
+        preferred_model = "balanced"
+        if models and not any(model.get("id") == preferred_model for model in models):
+            preferred_model = models[0].get("id", preferred_model)
+
         try:
             chat_data = {
-                "model": "cheap",  # Use alias
+                "model": preferred_model,
                 "messages": [
                     {"role": "user", "content": "Say 'Hello from llx proxy!'"}
                 ],
@@ -116,34 +109,29 @@ class ProxyExample:
             }
             
             response = requests.post(
-                f"{base_url}/v1/chat/completions",
-                headers=headers,
+                f"{self.base_url}/v1/chat/completions",
+                headers=self.headers,
                 json=chat_data,
                 timeout=10
             )
+            response.raise_for_status()
             
-            if response.status_code == 200:
-                result = response.json()
-                content = result['choices'][0]['message']['content']
-                tokens = result['usage']['total_tokens']
-                print(f"   ✓ Chat test successful: '{content}'")
-                print(f"   ✓ Tokens used: {tokens}")
-            else:
-                print(f"   ❌ Chat test failed: {response.status_code}")
-                if response.text:
-                    print(f"     Response: {response.text[:200]}...")
-                    
+            result = response.json()
+            content = result['choices'][0]['message']['content']
+            tokens = result.get('usage', {}).get('total_tokens', 0)
+            print(f"   ✓ Chat test successful: '{content}'")
+            print(f"   ✓ Tokens used: {tokens}")
         except Exception as e:
             print(f"   ❌ Chat test failed: {e}")
-        
+
         return True
     
     def show_ide_integration(self):
-        """Show IDE integration instructions"""
+        """Show IDE integration instructions."""
         print("\n💻 IDE Integration Instructions")
         print("=" * 40)
         
-        base_url = f"http://{os.getenv('AI_PROXY_HOST', '0.0.0.0')}:{os.getenv('AI_PROXY_PORT', '4000')}"
+        base_url = self.base_url
         
         print("\n📝 VS Code Extensions:")
         print(f"  • Roo Code: Set API endpoint to {base_url}")
@@ -155,28 +143,31 @@ class ProxyExample:
         print(f"  • Claude Code: export ANTHROPIC_BASE_URL={base_url}")
         
         print("\n🔧 Configuration:")
-        print(f"  • API Key: {os.getenv('AI_PROXY_MASTER_KEY', 'sk-proxy-local-dev')}")
-        print(f"  • Model aliases: cheap, balanced, premium, free")
+        print(f"  • API Key: {self.config.proxy.master_key}")
+        print(f"  • Model aliases: {', '.join(sorted(self.config.models.keys()))}")
+        print(f"  • CLI: llx proxy start --port {self.config.proxy.port}")
+        print("  • Status: llx proxy status")
         
         print("\n💡 Usage Examples:")
-        print(f"  curl -H 'Authorization: Bearer {os.getenv('AI_PROXY_MASTER_KEY', 'sk-proxy-local-dev')}' \\")
+        print(f"  curl -H 'Authorization: Bearer {self.config.proxy.master_key}' \\")
         print(f"       -H 'Content-Type: application/json' \\")
-        print(f"       -d '{{\"model\":\"cheap\",\"messages\":[{{\"role\":\"user\",\"content\":\"Hello\"}}]}}' \\")
+        print(f"       -d '{{\"model\":\"balanced\",\"messages\":[{{\"role\":\"user\",\"content\":\"Hello\"}}]}}' \\")
         print(f"       {base_url}/v1/chat/completions")
     
     def cleanup(self):
-        """Clean up resources"""
+        """Clean up resources."""
         if self.server:
             print("\n🛑 Stopping proxy server...")
             try:
-                self.server.stop()
+                self.server.terminate()
+                self.server.wait(timeout=10)
                 print("✓ Server stopped")
             except Exception as e:
                 print(f"❌ Error stopping server: {e}")
 
 
 def signal_handler(signum, frame):
-    """Handle shutdown signals"""
+    """Handle shutdown signals."""
     print("\n\n🛑 Received shutdown signal...")
     if 'example' in globals():
         example.cleanup()
@@ -184,7 +175,7 @@ def signal_handler(signum, frame):
 
 
 def main():
-    """Main proxy example execution"""
+    """Main proxy example execution."""
     global example
     
     # Set up signal handlers
@@ -204,12 +195,16 @@ def main():
         # 2. Start server
         if not example.start_server():
             return 1
+
+        # 3. Wait for the health check
+        if not example.wait_for_proxy():
+            return 1
         
-        # 3. Test functionality
+        # 4. Test functionality
         if not example.test_proxy():
             return 1
         
-        # 4. Show integration info
+        # 5. Show integration info
         example.show_ide_integration()
         
         print("\n✅ Proxy server is running!")

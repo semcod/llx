@@ -48,7 +48,7 @@ def generate_proxy_config(config: LlxConfig, output_path: Path | None = None) ->
             "set_verbose": config.verbose,
         },
         "general_settings": {
-            "master_key": "sk-codr-local",
+            "master_key": config.proxy.master_key,
         },
     }
 

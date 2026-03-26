@@ -154,7 +154,7 @@ with open('/sys/fs/cgroup/memory/memory.usage_in_bytes', 'r') as f:
 ./docker-manage.sh dev
 
 # Work in VS Code
-open http://localhost:8080
+xdg-open http://localhost:8080
 
 # Test changes
 cd examples/docker && ./run.sh
@@ -166,8 +166,8 @@ cd examples/docker && ./run.sh
 ./docker-manage.sh prod
 
 # Monitor services
-open http://localhost:3001  # Grafana
-open http://localhost:9090  # Prometheus
+xdg-open http://localhost:3001  # Grafana
+xdg-open http://localhost:9090  # Prometheus
 
 # Check logs
 ./docker-manage.sh logs prod

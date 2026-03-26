@@ -191,24 +191,21 @@ ollama pull llama3.1:8b-q4_0  # 4-bit quantization
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODELS=/usr/share/ollama/.ollama/models
 
-# llx configuration for local models
-LLX_LOCAL_MODELS=true
-LLX_LOCAL_MODEL_PATH=/path/to/ollama/models
+# llx configuration for local models is defined in llx.toml
+# via the standard tier-based model settings
 ```
 
 ### llx Configuration
 ```toml
 # llx.toml
-[local_models]
-enabled = true
-base_url = "http://localhost:11434"
-default_model = "qwen2.5-coder:7b"
-timeout = 30
+[models.local]
+provider = "ollama"
+model_id = "ollama/qwen2.5-coder:7b"
+max_context = 32000
 
-[local_models.aliases]
-coder = "qwen2.5-coder:7b"
-general = "llama3.1:8b"
-fast = "mistral:7b"
+[models.balanced]
+provider = "anthropic"
+model_id = "claude-sonnet-4-20250514"
 ```
 
 ## Using Local Models with llx
@@ -218,8 +215,8 @@ fast = "mistral:7b"
 # Force local model selection
 ../../.venv/bin/python -m llx analyze . --local
 
-# Specify local model
-../../.venv/bin/python -m llx analyze . --model ollama/qwen2.5-coder:7b
+# Inspect the selected local tier
+../../.venv/bin/python -m llx select . --local
 
 # Chat with local model
 ../../.venv/bin/python -m llx chat "Explain this code" --local
@@ -229,14 +226,12 @@ fast = "mistral:7b"
 ```python
 from llx import analyze_project, select_model, LlxConfig
 
-# Configure for local models
-config = LlxConfig.load()
-config.local_models.enabled = True
-config.local_models.base_url = "http://localhost:11434"
+# Load project configuration and force a local tier
+config = LlxConfig.load(".")
 
 # Analyze and select local model
 metrics = analyze_project(".")
-selection = select_model(metrics, config=config, local_only=True)
+selection = select_model(metrics, config=config, prefer_local=True)
 ```
 
 ## Model Management

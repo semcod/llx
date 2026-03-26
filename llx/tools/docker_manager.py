@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 import requests
 
+from ._utils import cli_main
+
 
 class DockerManager:
     """Manages Docker containers for llx ecosystem."""
@@ -476,13 +478,12 @@ class DockerManager:
 
 
 # CLI interface
-def main():
-    """CLI interface for Docker manager."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    
     parser = argparse.ArgumentParser(description="llx Docker Manager")
     parser.add_argument("command", choices=[
-        "start", "stop", "restart", "status", "logs", "build", "pull", 
+        "start", "stop", "restart", "status", "logs", "build", "pull",
         "cleanup", "backup", "restore", "health", "wait"
     ])
     parser.add_argument("--env", default="dev", choices=["dev", "prod", "full"])
@@ -491,66 +492,56 @@ def main():
     parser.add_argument("--timeout", type=int, default=60, help="Wait timeout")
     parser.add_argument("--backup-dir", help="Backup directory")
     parser.add_argument("--remove-volumes", action="store_true", help="Remove volumes on cleanup")
-    
-    args = parser.parse_args()
-    
-    manager = DockerManager()
-    
+    return parser
+
+
+def _dispatch(args, manager: DockerManager) -> bool:
     if args.command == "start":
         services = [args.service] if args.service else None
-        success = manager.start_environment(args.env, services)
-    
+        return manager.start_environment(args.env, services)
     elif args.command == "stop":
         services = [args.service] if args.service else None
-        success = manager.stop_environment(args.env, services)
-    
+        return manager.stop_environment(args.env, services)
     elif args.command == "restart":
-        success = manager.restart_service(args.env, args.service)
-    
+        return manager.restart_service(args.env, args.service)
     elif args.command == "status":
         manager.print_status_summary(args.env)
-        success = True
-    
+        return True
     elif args.command == "logs":
         logs = manager.get_service_logs(args.env, args.service, args.tail)
         print(logs)
-        success = True
-    
+        return True
     elif args.command == "build":
-        success = manager.build_images(args.env, args.service)
-    
+        return manager.build_images(args.env, args.service)
     elif args.command == "pull":
-        success = manager.pull_images(args.env, args.service)
-    
+        return manager.pull_images(args.env, args.service)
     elif args.command == "cleanup":
-        success = manager.cleanup_environment(args.env, args.remove_volumes)
-    
+        return manager.cleanup_environment(args.env, args.remove_volumes)
     elif args.command == "backup":
-        success = manager.backup_volumes(args.env, args.backup_dir)
-    
+        return manager.backup_volumes(args.env, args.backup_dir)
     elif args.command == "restore":
         if not args.backup_dir:
             print("❌ --backup-dir required for restore")
-            success = False
-        else:
-            success = manager.restore_volumes(args.backup_dir, args.env)
-    
+            return False
+        return manager.restore_volumes(args.backup_dir, args.env)
     elif args.command == "health":
         if args.service:
-            success = manager.check_service_health(args.service, args.env)
-            print(f"🏥 {args.service}: {'✅ Healthy' if success else '❌ Unhealthy'}")
-        else:
-            manager.print_status_summary(args.env)
-            success = True
-    
+            ok = manager.check_service_health(args.service, args.env)
+            print(f"🏥 {args.service}: {'✅ Healthy' if ok else '❌ Unhealthy'}")
+            return ok
+        manager.print_status_summary(args.env)
+        return True
     elif args.command == "wait":
         if not args.service:
             print("❌ --service required for wait")
-            success = False
-        else:
-            success = manager.wait_for_service(args.service, args.env, args.timeout)
-    
-    sys.exit(0 if success else 1)
+            return False
+        return manager.wait_for_service(args.service, args.env, args.timeout)
+    return False
+
+
+def main():
+    """CLI entry point for Docker manager."""
+    cli_main(_build_parser, _dispatch, DockerManager)
 
 
 if __name__ == "__main__":

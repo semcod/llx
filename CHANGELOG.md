@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-03-26
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update examples/README.md
+- Update examples/basic/README.md
+- Update examples/docker/README.md
+- Update examples/local/README.md
+- Update examples/multi-provider/README.md
+- Update examples/proxy/README.md
+- Update examples/vscode-roocode/README.md
+- Update project/README.md
+- ... and 1 more files
+
+### Test
+- Update tests/test_prellm_integration.py
+- Update tests/test_proxym_integration.py
+
+### Other
+- Update .gitignore
+- Update examples/basic/main.py
+- Update examples/docker/main.py
+- Update examples/local/main.py
+- Update examples/multi-provider/main.py
+- Update examples/multi-provider/run.sh
+- Update examples/proxy/main.py
+- Update examples/proxy/run.sh
+- Update examples/vscode-roocode/demo.py
+- Update llx/cli/app.py
+- ... and 67 more files
+
 ## [0.1.7] - 2026-03-25
 
 ### Docs

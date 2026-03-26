@@ -1,9 +1,14 @@
-# vallm batch | 101f | 47✓ 4⚠ 18✗ | 2026-03-26
+# vallm batch | 151f | 87✓ 7⚠ 28✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 101  passed: 47 (46.5%)  warnings: 4  errors: 18  unsupported: 36
+  scanned: 151  passed: 87 (57.6%)  warnings: 7  errors: 28  unsupported: 36
 
-WARNINGS[4]{path,score}:
+WARNINGS[7]{path,score}:
+  llx/orchestration/instance_manager.py,0.96
+    issues[3]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 31 (max: 15),739
+      complexity.maintainability,warning,Low maintainability index: 12.4 (threshold: 20),
+      complexity.lizard_cc,warning,main: CC=31 exceeds limit 15,739
   llx/orchestration/rate_limiter.py,0.96
     issues[3]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 29 (max: 15),561
@@ -17,21 +22,22 @@ WARNINGS[4]{path,score}:
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 20 (max: 15),518
       complexity.lizard_cc,warning,main: CC=20 exceeds limit 15,518
+  llx/tools/docker_manager.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 20 (max: 15),479
+      complexity.lizard_cc,warning,main: CC=19 exceeds limit 15,479
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
       complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,99
+  llx/prellm/trace.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[18]{path,score}:
+ERRORS[28]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  llx/orchestration/instance_manager.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: expected an indented block after 'if' statement on line 396,397
-  llx/tools/docker_manager.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: parameter without a default follows parameter with a default,374
   llx/orchestration/__init__.py,0.57
     issues[8]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'session_manager' not found,6
@@ -42,6 +48,10 @@ ERRORS[18]{path,score}:
       python.import.resolvable,error,Module 'vscode_orchestrator' not found,11
       python.import.resolvable,error,Module 'llm_orchestrator' not found,12
       python.import.resolvable,error,Module 'orchestrator_cli' not found,13
+  llx/prellm/utils/__init__.py,0.57
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'lazy_imports' not found,3
+      python.import.resolvable,error,Module 'lazy_loader' not found,4
   llx/tools/__init__.py,0.57
     issues[6]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,6
@@ -83,7 +93,26 @@ ERRORS[18]{path,score}:
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.server' not found,22
       python.import.resolvable,error,Module 'mcp.types' not found,23
-      python.import.resolvable,error,Module 'mcp.server.stdio' not found,60
+      python.import.resolvable,error,Module 'mcp.server.stdio' not found,68
+  llx/prellm/env_config.py,0.84
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'getv' not found,27
+      python.import.resolvable,error,Module 'getv.security' not found,28
+      python.import.resolvable,error,Module 'getv' not found,103
+      python.import.resolvable,error,Module 'getv.integrations.pydantic_env' not found,104
+  llx/prellm/logging_setup.py,0.84
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.configure' not found,19
+      python.import.resolvable,error,Module 'nfo.logger' not found,20
+      python.import.resolvable,error,Module 'nfo.sinks' not found,21
+      python.import.resolvable,error,Module 'nfo.terminal' not found,22
+  llx/prellm/server.py,0.88
+    issues[5]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'fastapi' not found,22
+      python.import.resolvable,error,Module 'nfo.decorators' not found,23
+      python.import.resolvable,error,Module 'fastapi.middleware.cors' not found,24
+      python.import.resolvable,error,Module 'fastapi.responses' not found,25
+      python.import.resolvable,error,Module 'starlette.middleware.base' not found,27
   llx/tools/health_checker.py,0.88
     issues[4]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
@@ -112,6 +141,19 @@ ERRORS[18]{path,score}:
       python.import.resolvable,error,Module 'session_manager' not found,20
       python.import.resolvable,error,Module 'rate_limiter' not found,21
       python.import.resolvable,error,Module 'routing_engine' not found,22
+  llx/prellm/llm_provider.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,14
+      python.import.resolvable,error,Module 'instructor' not found,160
+  llx/prellm/agents/executor.py,0.95
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,17
+  llx/prellm/agents/preprocessor.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,17
+  llx/prellm/context/user_memory.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'chromadb' not found,83
   llx/tools/ai_tools_manager.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
@@ -124,9 +166,21 @@ ERRORS[18]{path,score}:
   llx/tools/vscode_manager.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
+  llx/prellm/analyzers/context_engine.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'git' not found,182
+  llx/prellm/pipeline.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,18
   llx/mcp/tools.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.types' not found,11
+  llx/prellm/core.py,0.98
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,28
+  llx/prellm/cli.py,0.99
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'uvicorn' not found,433
 
 UNSUPPORTED[5]{bucket,count}:
   *.md,15

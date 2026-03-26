@@ -229,7 +229,14 @@ def demonstrate_container_metrics():
     
     # Show environment variables
     print("\n   🔧 Environment variables:")
-    docker_vars = ['DOCKER_HOST', 'CONTAINER_NAME', 'LLX_PROXY_HOST', 'REDIS_URL']
+    docker_vars = [
+        'DOCKER_HOST',
+        'CONTAINER_NAME',
+        'LLX_PROXY_HOST',
+        'LLX_PROXY_PORT',
+        'LLX_PROXY_MASTER_KEY',
+        'REDIS_URL',
+    ]
     for var in docker_vars:
         value = os.getenv(var, 'Not set')
         print(f"     • {var}: {value}")

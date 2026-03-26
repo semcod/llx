@@ -25,20 +25,25 @@ flowchart TD
     subgraph Core
         llx__config__LlxConfig__load["load"]
         llx__config___apply_yaml_models["_apply_yaml_models"]
-        llx__AIToolsManager__is_container_running["is_container_running"]
-        llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
-        llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
-        llx__AIToolsManager__restart_ai_tools["restart_ai_tools"]
-        llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
-        llx__AIToolsManager__execute_command["execute_command"]
-        llx__tools__ai_tools_manager__AIToolsManager__get_status["get_status"]
-        llx__AIToolsManager__test_connectivity["test_connectivity"]
-        llx__tools__ai_tools_manager__AIToolsManager__run_chat_test["run_chat_test"]
-        llx__AIToolsManager__get_available_models["get_available_models"]
-        llx__tools__ai_tools_manager__AIToolsManager__install_tool["install_tool"]
-        llx__tools__ai_tools_manager__AIToolsManager__update_tools["update_tools"]
-        llx__tools__ai_tools_manager__AIToolsManager__get_logs["get_logs"]
-        ...["+336 more"]
+        llx__prellm__env_config___parse_env_line["_parse_env_line"]
+        llx__prellm__env_config___load_env_file_manually["_load_env_file_manually"]
+        llx__prellm__env_config__load_dotenv_if_available["load_dotenv_if_available"]
+        llx__prellm__env_config__get_env_config("get_env_config CC=9")
+        llx__prellm__env_config__check_providers["check_providers"]
+        llx__prellm__env_config__check_providers_live["check_providers_live"]
+        llx__prellm__cli___init_logging["_init_logging"]
+        llx__prellm__cli___handle_query_options["_handle_query_options"]
+        llx__prellm__cli___show_debug_info["_show_debug_info"]
+        llx__prellm__cli___initialize_execution["_initialize_execution"]
+        llx__prellm__cli___execute_and_format_result["_execute_and_format_result"]
+        llx__prellm__cli__query["query"]
+        llx__prellm__cli__context["context"]
+        ...["+599 more"]
     end
 
-    class llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__AIToolsManager__is_container_running,llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools,llx__AIToolsManager__restart_ai_tools,llx__tools__ai_tools_manager__AIToolsManager__access_shell,llx__AIToolsManager__execute_command,llx__tools__ai_tools_manager__AIToolsManager__get_status,llx__AIToolsManager__test_connectivity entry
+    subgraph Exporters
+        llx__prellm__cli__session_export_cmd["session_export_cmd"]
+        llx__UserMemory__export_session["export_session"]
+    end
+
+    class llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__prellm__cli___init_logging,llx__prellm__cli___handle_query_options,llx__prellm__cli___show_debug_info,llx__prellm__cli___initialize_execution,llx__prellm__cli___execute_and_format_result,llx__prellm__cli__query,llx__prellm__cli__context,llx__prellm__cli__process entry

@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 import requests
 from .docker_manager import DockerManager
+from ._utils import cli_main
 
 
 class VSCodeManager:
@@ -674,10 +675,9 @@ class VSCodeManager:
 
 
 # CLI interface
-def main():
-    """CLI interface for VS Code manager."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    
     parser = argparse.ArgumentParser(description="llx VS Code Manager")
     parser.add_argument("command", choices=[
         "start", "stop", "restart", "status", "logs", "install-extensions",
@@ -688,73 +688,60 @@ def main():
     parser.add_argument("--extension", help="Specific extension")
     parser.add_argument("--backup-dir", help="Backup directory")
     parser.add_argument("--tail", type=int, default=50, help="Log tail lines")
-    
-    args = parser.parse_args()
-    
-    manager = VSCodeManager()
-    
+    return parser
+
+
+def _dispatch(args, manager: "VSCodeManager") -> bool:
     if args.command == "start":
-        success = manager.start_vscode()
-    
+        return manager.start_vscode()
     elif args.command == "stop":
-        success = manager.stop_vscode()
-    
+        return manager.stop_vscode()
     elif args.command == "restart":
-        success = manager.restart_vscode()
-    
+        return manager.restart_vscode()
     elif args.command == "status":
         manager.print_status_summary()
-        success = True
-    
+        return True
     elif args.command == "logs":
         logs = manager.get_vscode_logs(args.tail)
         print(logs)
-        success = True
-    
+        return True
     elif args.command == "install-extensions":
-        success = manager.install_extensions()
-    
+        return manager.install_extensions()
     elif args.command == "list-extensions":
         extensions = manager.list_installed_extensions()
         print(f"📦 Installed Extensions ({len(extensions)}):")
         for ext in extensions:
             print(f"  • {ext}")
-        success = True
-    
+        return True
     elif args.command == "uninstall-extension":
         if not args.extension:
             print("❌ --extension required for uninstall")
-            success = False
-        else:
-            success = manager.uninstall_extension(args.extension)
-    
+            return False
+        return manager.uninstall_extension(args.extension)
     elif args.command == "update-extensions":
-        success = manager.update_extensions()
-    
+        return manager.update_extensions()
     elif args.command == "configure-roocode":
-        success = manager.configure_roocode()
-    
+        return manager.configure_roocode()
     elif args.command == "create-tasks":
-        success = manager.create_workspace_tasks()
-    
+        return manager.create_workspace_tasks()
     elif args.command == "create-launch":
-        success = manager.create_launch_config()
-    
+        return manager.create_launch_config()
     elif args.command == "backup":
-        success = manager.backup_settings(args.backup_dir)
-    
+        return manager.backup_settings(args.backup_dir)
     elif args.command == "restore":
         if not args.backup_dir:
             print("❌ --backup-dir required for restore")
-            success = False
-        else:
-            success = manager.restore_settings(args.backup_dir)
-    
+            return False
+        return manager.restore_settings(args.backup_dir)
     elif args.command == "quick-start":
         manager.print_quick_start()
-        success = True
-    
-    sys.exit(0 if success else 1)
+        return True
+    return False
+
+
+def main():
+    """CLI entry point for VS Code manager."""
+    cli_main(_build_parser, _dispatch, VSCodeManager)
 
 
 if __name__ == "__main__":

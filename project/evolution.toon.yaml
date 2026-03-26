@@ -1,17 +1,17 @@
-# code2llm/evolution | 432 func | 28f | 2026-03-26
+# code2llm/evolution | 784 func | 58f | 2026-03-26
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           llx/orchestration/vscode_orchestrator.py
-      WHY: 944L, 6 classes, max CC=35
-      EFFORT: ~4h  IMPACT: 33040
-
-  [2] !! SPLIT           llx/orchestration/llm_orchestrator.py
+  [1] !! SPLIT           llx/orchestration/llm_orchestrator.py
       WHY: 1082L, 7 classes, max CC=24
       EFFORT: ~4h  IMPACT: 25968
 
-  [3] !! SPLIT           llx/orchestration/orchestrator_cli.py
+  [2] !! SPLIT           llx/orchestration/orchestrator_cli.py
       WHY: 1263L, 1 classes, max CC=19
       EFFORT: ~4h  IMPACT: 23997
+
+  [3] !! SPLIT           llx/prellm/cli.py
+      WHY: 1076L, 0 classes, max CC=13
+      EFFORT: ~4h  IMPACT: 13988
 
   [4] !! SPLIT-FUNC      main  CC=35  fan=27
       WHY: CC=35 exceeds 15
@@ -25,33 +25,33 @@ NEXT[10] (ranked by impact):
       WHY: CC=30 exceeds 15
       EFFORT: ~1h  IMPACT: 750
 
-  [7] !! SPLIT-FUNC      main  CC=29  fan=19
+  [7] !! SPLIT-FUNC      main  CC=31  fan=20
+      WHY: CC=31 exceeds 15
+      EFFORT: ~1h  IMPACT: 620
+
+  [8] !! SPLIT-FUNC      main  CC=29  fan=19
       WHY: CC=29 exceeds 15
       EFFORT: ~1h  IMPACT: 551
 
-  [8] !  SPLIT-FUNC      main  CC=22  fan=25
+  [9] !  SPLIT-FUNC      main  CC=22  fan=25
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 550
 
-  [9] !  SPLIT-FUNC      main  CC=24  fan=22
+  [10] !  SPLIT-FUNC      main  CC=24  fan=22
       WHY: CC=24 exceeds 15
       EFFORT: ~1h  IMPACT: 528
-
-  [10] !! SPLIT-FUNC      main  CC=27  fan=19
-      WHY: CC=27 exceeds 15
-      EFFORT: ~1h  IMPACT: 513
 
 
 RISKS[3]:
   ⚠ Splitting llx/orchestration/orchestrator_cli.py may break 22 import paths
   ⚠ Splitting llx/orchestration/llm_orchestrator.py may break 33 import paths
-  ⚠ Splitting llx/orchestration/vscode_orchestrator.py may break 32 import paths
+  ⚠ Splitting llx/prellm/cli.py may break 28 import paths
 
 METRICS-TARGET:
-  CC̄:          4.7 → ≤3.3
+  CC̄:          4.6 → ≤3.2
   max-CC:      35 → ≤17
-  god-modules: 15 → 0
-  high-CC(≥15): 20 → ≤10
+  god-modules: 19 → 0
+  high-CC(≥15): 23 → ≤11
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -79,4 +79,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.7 → now CC̄=4.7
+  prev CC̄=4.7 → now CC̄=4.6

@@ -10,14 +10,15 @@ flowchart TD
     llx_analysis["llx.analysis<br/>27 funcs"]
     llx_cli["llx.cli<br/>26 funcs"]
     llx_config["llx.config<br/>7 funcs"]
-    llx_integrations["llx.integrations<br/>3 funcs"]
+    llx_integrations["llx.integrations<br/>15 funcs"]
     llx_litellm_config["llx.litellm_config<br/>10 funcs"]
-    llx_mcp["llx.mcp<br/>11 funcs"]
-    llx_orchestration["llx.orchestration<br/>188 funcs"]
-    llx_routing["llx.routing<br/>18 funcs"]
-    llx_tools["llx.tools<br/>116 funcs"]
-    llx_tools ==>|478| docker_ai_tools
-    llx_orchestration ==>|364| docker_ai_tools
+    llx_mcp["llx.mcp<br/>15 funcs"]
+    llx_orchestration["llx.orchestration<br/>212 funcs"]
+    llx_prellm["llx.prellm<br/>292 funcs"]
+    llx_routing["llx.routing<br/>19 funcs"]
+    llx_tools["llx.tools<br/>135 funcs"]
+    llx_tools ==>|534| docker_ai_tools
+    llx_orchestration ==>|415| docker_ai_tools
     examples_ai_tools ==>|93| docker_ai_tools
     examples_local ==>|80| docker_ai_tools
     examples_vscode_roocode ==>|71| docker_ai_tools
@@ -28,19 +29,24 @@ flowchart TD
     llx_cli ==>|8| llx_config
     llx_mcp ==>|6| llx_analysis
     llx_cli ==>|5| llx_analysis
-    llx_mcp ==>|4| llx_config
+    llx_mcp ==>|5| llx_config
     llx_cli -->|3| llx_routing
     llx_cli -->|3| llx_integrations
     llx_mcp -->|3| llx_routing
+    llx_mcp -->|2| llx_prellm
+    llx_integrations -->|2| llx_routing
     llx_config -->|1| llx_litellm_config
     llx_mcp -->|1| llx_integrations
+    llx_routing -->|1| llx_integrations
+    llx_integrations -->|1| llx_config
+    llx_integrations -->|1| llx_analysis
     examples_docker -->|1| llx_analysis
     examples_docker -->|1| llx_config
+    examples_multi_provider -->|1| llx_config
+    examples_multi_provider -->|1| llx_routing
     examples_local -->|1| llx_config
     examples_local -->|1| llx_analysis
     examples_local -->|1| llx_routing
-    examples_multi_provider -->|1| llx_config
-    examples_multi_provider -->|1| llx_routing
     examples_basic -->|1| llx_config
     examples_basic -->|1| llx_analysis
     examples_basic -->|1| llx_routing

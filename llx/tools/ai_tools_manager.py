@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 import requests
 from .docker_manager import DockerManager
+from ._utils import cli_main
 
 
 class AIToolsManager:
@@ -513,10 +514,9 @@ class AIToolsManager:
 
 
 # CLI interface
-def main():
-    """CLI interface for AI tools manager."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    
     parser = argparse.ArgumentParser(description="llx AI Tools Manager")
     parser.add_argument("command", choices=[
         "start", "stop", "restart", "shell", "status", "logs", "test",
@@ -529,78 +529,65 @@ def main():
     parser.add_argument("--project", default="ai-project", help="Project name for workspace")
     parser.add_argument("--backup-dir", help="Backup directory")
     parser.add_argument("--tail", type=int, default=50, help="Log tail lines")
-    
-    args = parser.parse_args()
-    
-    manager = AIToolsManager()
-    
+    return parser
+
+
+def _dispatch(args, manager: AIToolsManager) -> bool:
     if args.command == "start":
-        success = manager.start_ai_tools()
-    
+        return manager.start_ai_tools()
     elif args.command == "stop":
-        success = manager.stop_ai_tools()
-    
+        return manager.stop_ai_tools()
     elif args.command == "restart":
-        success = manager.restart_ai_tools()
-    
+        return manager.restart_ai_tools()
     elif args.command == "shell":
-        success = manager.access_shell()
-    
+        return manager.access_shell()
     elif args.command == "status":
         manager.print_status_summary()
-        success = True
-    
+        return True
     elif args.command == "logs":
         logs = manager.get_logs(args.tail)
         print(logs)
-        success = True
-    
+        return True
     elif args.command == "test":
         results = manager.test_connectivity()
         print("🧪 Connectivity Test Results:")
         for test, passed in results.items():
             icon = "✅" if passed else "❌"
             print(f"  {icon} {test}")
-        success = all(results.values())
-    
+        return all(results.values())
     elif args.command == "chat":
-        success = manager.run_chat_test(args.model, args.message)
-    
+        return manager.run_chat_test(args.model, args.message)
     elif args.command == "models":
         models = manager.get_available_models()
         print(f"📦 Available Models ({len(models)}):")
         for model in models:
             print(f"  • {model}")
-        success = True
-    
+        return True
     elif args.command == "install":
         if not args.tool:
             print("❌ --tool required for install")
-            success = False
-        else:
-            success = manager.install_tool(args.tool)
-    
+            return False
+        return manager.install_tool(args.tool)
     elif args.command == "update":
-        success = manager.update_tools()
-    
+        return manager.update_tools()
     elif args.command == "backup":
-        success = manager.backup_configurations(args.backup_dir)
-    
+        return manager.backup_configurations(args.backup_dir)
     elif args.command == "restore":
         if not args.backup_dir:
             print("❌ --backup-dir required for restore")
-            success = False
-        else:
-            success = manager.restore_configurations(args.backup_dir)
-    
+            return False
+        return manager.restore_configurations(args.backup_dir)
     elif args.command == "workspace":
-        success = manager.create_workspace_example(args.project)
-    
+        return manager.create_workspace_example(args.project)
     elif args.command == "examples":
         manager.print_usage_examples()
-        success = True
-    
-    sys.exit(0 if success else 1)
+        return True
+    return False
+
+
+def main():
+    """CLI entry point for AI tools manager."""
+    cli_main(_build_parser, _dispatch, AIToolsManager)
 
 
 if __name__ == "__main__":

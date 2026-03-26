@@ -1,6 +1,6 @@
 # llx Examples
 
-This directory contains practical examples of using llx with different LLM providers and configurations.
+This directory contains practical examples of using llx with different LLM providers, proxy setups, Docker integrations, and local coding workflows.
 
 ## Available Examples
 
@@ -24,18 +24,36 @@ This directory contains practical examples of using llx with different LLM provi
 - **run.sh**: Local model setup and testing
 - **README.md**: Local model configuration and usage
 
+### 5. Docker Integration (`docker/`)
+- **main.py**: Docker service orchestration and monitoring
+- **run.sh**: Docker environment runner
+- **README.md**: Docker configuration and workflows
+
+### 6. AI Tools Integration (`ai-tools/`)
+- **main.py**: Shell-based AI tools integration through llx
+- **README.md**: Aider, Claude Code, and Cursor setup
+
+### 7. VS Code + RooCode (`vscode-roocode/`)
+- **demo.py**: RooCode demo and workflow walkthrough
+- **README.md**: VS Code / RooCode integration guide
+
 ## Environment Setup
 
-1. Copy the main `.env` file to the example directory:
+1. Copy the main `.env` file to the example directory you want to run:
    ```bash
-   cp ../.env .env
+   cp ../.env basic/.env   # replace `basic` with the example you want
    ```
 
 2. Ensure your API keys are properly configured in `.env`:
    - `ANTHROPIC_API_KEY` for Claude models
    - `OPENROUTER_API_KEY` for OpenRouter models
    - `OPENAI_API_KEY` for OpenAI models
-   - `GOOGLE_AI_KEY` for Gemini models
+   - `GEMINI_API_KEY` for Gemini models
+
+   For proxy-based examples, also ensure these are available:
+   - `LLX_PROXY_HOST` for the proxy listen address
+   - `LLX_PROXY_PORT` for the proxy port
+   - `LLX_PROXY_MASTER_KEY` for OpenAI-compatible clients
 
 3. Install dependencies:
    ```bash
@@ -45,7 +63,7 @@ This directory contains practical examples of using llx with different LLM provi
 
 ## Running Examples
 
-Each example can be run independently:
+Each example can be run independently from the repository root:
 ```bash
 cd examples/basic
 ./run.sh
@@ -54,7 +72,7 @@ cd examples/basic
 Or using Python directly:
 ```bash
 cd examples/basic
-python main.py
+../../.venv/bin/python main.py
 ```
 
 ## Security Notes

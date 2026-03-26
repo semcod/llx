@@ -13,6 +13,7 @@ from pathlib import Path
 import requests
 from .docker_manager import DockerManager
 from .model_manager import ModelManager
+from ._utils import cli_main
 from .vscode_manager import VSCodeManager
 from .ai_tools_manager import AIToolsManager
 
@@ -695,10 +696,9 @@ class HealthChecker:
 
 
 # CLI interface
-def main():
-    """CLI interface for health checker."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    
     parser = argparse.ArgumentParser(description="llx Health Checker")
     parser.add_argument("command", choices=[
         "check", "quick", "monitor", "service", "container", "system",
@@ -709,65 +709,56 @@ def main():
     parser.add_argument("--interval", type=int, default=30, help="Monitoring interval (seconds)")
     parser.add_argument("--duration", type=int, default=300, help="Monitoring duration (seconds)")
     parser.add_argument("--output", help="Output file for results")
-    
-    args = parser.parse_args()
-    
-    checker = HealthChecker()
-    
+    return parser
+
+
+def _dispatch(args, checker: "HealthChecker") -> bool:
     if args.command == "check":
         results = checker.run_comprehensive_health_check()
-        success = results["overall_status"] == "healthy"
-        
         if args.output:
             with open(args.output, 'w') as f:
                 json.dump(results, f, indent=2)
-    
+        return results["overall_status"] == "healthy"
     elif args.command == "quick":
-        success = checker.run_quick_health_check()
-    
+        return checker.run_quick_health_check()
     elif args.command == "monitor":
         results = checker.monitor_services(args.interval, args.duration)
-        
         if args.output:
             with open(args.output, 'w') as f:
                 json.dump(results, f, indent=2)
-        
-        success = True
-    
+        return True
     elif args.command == "service":
         if not args.service:
             print("❌ --service required for service check")
-            success = False
-        else:
-            results = checker.check_service_health(args.service)
-            print(json.dumps(results, indent=2))
-            success = results["status"] == "healthy"
-    
+            return False
+        results = checker.check_service_health(args.service)
+        print(json.dumps(results, indent=2))
+        return results["status"] == "healthy"
     elif args.command == "container":
         if not args.container:
             print("❌ --container required for container check")
-            success = False
-        else:
-            results = checker.check_container_health(args.container)
-            print(json.dumps(results, indent=2))
-            success = results["status"] == "running"
-    
+            return False
+        results = checker.check_container_health(args.container)
+        print(json.dumps(results, indent=2))
+        return results["status"] == "running"
     elif args.command == "system":
         results = checker.check_system_resources()
         print(json.dumps(results, indent=2))
-        success = True
-    
+        return True
     elif args.command == "filesystem":
         results = checker.check_filesystem_health()
         print(json.dumps(results, indent=2))
-        success = len(results.get("issues", [])) == 0
-    
+        return len(results.get("issues", [])) == 0
     elif args.command == "network":
         results = checker.check_network_connectivity()
         print(json.dumps(results, indent=2))
-        success = len(results.get("issues", [])) == 0
-    
-    sys.exit(0 if success else 1)
+        return len(results.get("issues", [])) == 0
+    return False
+
+
+def main():
+    """CLI entry point for health checker."""
+    cli_main(_build_parser, _dispatch, HealthChecker)
 
 
 if __name__ == "__main__":

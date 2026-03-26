@@ -1,4 +1,5 @@
 .idea
+litellm_config.yaml
 litellm-config.yaml
 .llm
 managed_components

@@ -16,6 +16,7 @@ from typing import Any, AsyncIterator, Iterator
 import httpx
 
 from llx.config import LlxConfig, ModelConfig
+from llx.analysis.collector import ProjectMetrics
 
 
 @dataclass
@@ -75,6 +76,7 @@ class LlxClient:
         temperature: float = 0.1,
         max_tokens: int = 4096,
         system: str | None = None,
+        metrics: ProjectMetrics | None = None,
     ) -> ChatResponse:
         """Send a chat completion request.
 
@@ -85,6 +87,7 @@ class LlxClient:
             temperature: Sampling temperature.
             max_tokens: Maximum response tokens.
             system: System prompt (prepended as system message).
+            metrics: Project metrics for proxym-aware routing (X-Task-Tier header).
 
         Returns:
             ChatResponse with content and usage stats.
@@ -94,9 +97,10 @@ class LlxClient:
             model = default.model_id if default else "anthropic/claude-sonnet-4-20250514"
 
         payload = self._build_payload(messages, model, temperature, max_tokens, system)
+        extra_headers = self._metrics_headers(metrics) if metrics else {}
 
         try:
-            response = self._http.post("/v1/chat/completions", json=payload)
+            response = self._http.post("/v1/chat/completions", json=payload, headers=extra_headers)
             response.raise_for_status()
             data = response.json()
             return self._parse_response(data, model)
@@ -187,6 +191,14 @@ class LlxClient:
                 f"{self.config.litellm_base_url} and litellm package not installed. "
                 "Install with: pip install codr[litellm]"
             )
+
+    @staticmethod
+    def _metrics_headers(metrics: ProjectMetrics) -> dict[str, str]:
+        """Build X-Llx-* headers for proxym metrics-aware routing."""
+        from llx.integrations.proxym import _build_llx_headers, _tier_to_proxym
+        from llx.routing.selector import select_model, ModelTier
+        result = select_model(metrics)
+        return _build_llx_headers(metrics, result.tier)
 
     def close(self) -> None:
         self._http.close()

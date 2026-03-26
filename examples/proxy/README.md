@@ -4,8 +4,8 @@ This example demonstrates how to set up and use the llx LiteLLM proxy server for
 
 ## What it does
 
-1. **Proxy Server Setup**: Configures a LiteLLM proxy server with model routing
-2. **Model Aliases**: Sets up convenient aliases (cheap, balanced, premium, free)
+1. **Proxy Server Setup**: Generates a LiteLLM proxy config from the current llx project settings
+2. **Model Tiers**: Exposes the llx model tiers directly (`cheap`, `balanced`, `premium`, `free`, `local`, `openrouter`)
 3. **IDE Integration**: Shows how to connect VS Code extensions and terminal tools
 4. **Semantic Caching**: Demonstrates caching for cost and performance optimization
 5. **Cost Tracking**: Monitors API usage across all connected tools
@@ -13,7 +13,7 @@ This example demonstrates how to set up and use the llx LiteLLM proxy server for
 ## Architecture
 
 ```
-IDE/Tool → llx Proxy (localhost:4001) → Multiple LLM Providers
+IDE/Tool → llx Proxy (localhost:4000) → Multiple LLM Providers
                                    ├─ Anthropic Claude
                                    ├─ OpenRouter (300+ models)  
                                    ├─ OpenAI GPT
@@ -25,7 +25,7 @@ IDE/Tool → llx Proxy (localhost:4001) → Multiple LLM Providers
 
 - llx installed in development mode
 - At least one LLM provider API key configured
-- Port 4001 available (or modify in script)
+- Port 4000 available, or set `LLX_PROXY_PORT` to override it
 
 ## Setup
 
@@ -36,15 +36,16 @@ IDE/Tool → llx Proxy (localhost:4001) → Multiple LLM Providers
 
 2. **Configure API keys** (edit `.env`):
    ```bash
-   # Required for proxy functionality
+   # Required for proxy functionality (configure the providers you use)
    ANTHROPIC_API_KEY=sk-ant-api03-...
    OPENROUTER_API_KEY=sk-or-v1-...
    OPENAI_API_KEY=sk-...
+   GEMINI_API_KEY=...
    
-   # Proxy configuration
-   AI_PROXY_HOST=0.0.0.0
-   AI_PROXY_PORT=4001
-   AI_PROXY_MASTER_KEY=sk-proxy-local-dev
+   # Proxy configuration (defaults already come from llx.yaml)
+   LLX_PROXY_HOST=0.0.0.0
+   LLX_PROXY_PORT=4000
+   LLX_PROXY_MASTER_KEY=sk-proxy-local-dev
    ```
 
 3. **Install dependencies:**
@@ -67,6 +68,11 @@ The proxy will start and run until you stop it with Ctrl+C.
 # Set environment variables
 export $(grep -v '^#' .env | xargs)
 
+# Map legacy names if your .env still uses AI_PROXY_*
+export LLX_PROXY_HOST="${LLX_PROXY_HOST:-${AI_PROXY_HOST:-0.0.0.0}}"
+export LLX_PROXY_PORT="${LLX_PROXY_PORT:-${AI_PROXY_PORT:-4000}}"
+export LLX_PROXY_MASTER_KEY="${LLX_PROXY_MASTER_KEY:-${AI_PROXY_MASTER_KEY:-sk-proxy-local-dev}}"
+
 # Start the proxy
 ../../.venv/bin/python main.py
 ```
@@ -77,66 +83,66 @@ export $(grep -v '^#' .env | xargs)
 
 **Roo Code:**
 1. Install Roo Code extension
-2. Set API endpoint: `http://localhost:4001`
+2. Set API endpoint: `http://localhost:4000`
 3. Set API key: `sk-proxy-local-dev`
-4. Use model aliases: `cheap`, `balanced`, `premium`, `free`
+4. Use model tiers: `cheap`, `balanced`, `premium`, `free`, `local`
 
 **Cline:**
 1. Install Cline extension  
-2. Set OpenAI API Base URL: `http://localhost:4001`
+2. Set OpenAI API Base URL: `http://localhost:4000`
 3. Set API key: `sk-proxy-local-dev`
 
 **Continue.dev:**
 1. Install Continue.dev extension
-2. Set API base URL: `http://localhost:4001`
+2. Set API base URL: `http://localhost:4000`
 3. Set API key: `sk-proxy-local-dev`
 
 ### Terminal Tools
 
 **Aider:**
 ```bash
-export OPENAI_API_BASE=http://localhost:4001
+export OPENAI_API_BASE=http://localhost:4000
 export OPENAI_API_KEY=sk-proxy-local-dev
 aider
 ```
 
 **Claude Code:**
 ```bash
-export ANTHROPIC_BASE_URL=http://localhost:4001
+export ANTHROPIC_BASE_URL=http://localhost:4000
 claude-code
 ```
 
 ## Model Aliases
 
-The proxy provides convenient aliases that map to optimal models:
+The proxy exposes the llx tiers as model names:
 
 - **`cheap`** → Fast, inexpensive models for simple tasks
 - **`balanced`** → Good performance-to-cost ratio for general work
 - **`premium`** → High-quality models for complex tasks
 - **`free`** → Free-tier models for testing and learning
 
-Configure aliases in `.env`:
-```bash
-PROXYM_ALIAS_CHEAP=openrouter/nvidia/nemotron-3-nano-30b-a3b:free
-PROXYM_ALIAS_BALANCED=openrouter/mistralai/mistral-7b-instruct-v0.1
-PROXYM_ALIAS_PREMIUM=openrouter/anthropic/claude-3.5-sonnet
-PROXYM_ALIAS_FREE=openrouter/nvidia/nemotron-3-nano-30b-a3b:free
-```
+Additional tiers available in the current project config:
+
+- **`local`** → Ollama-backed local models
+- **`openrouter`** → Fallback pool via OpenRouter
+
+The model list is generated from the current `llx.yaml`, so you usually do not
+need to maintain a separate alias file.
 
 ## Testing the Proxy
 
 ### Test Models Endpoint
 ```bash
 curl -H "Authorization: Bearer sk-proxy-local-dev" \
-     http://localhost:4001/v1/models
+     http://localhost:4000/v1/models
 ```
 
 ### Test Chat Completion
 ```bash
 curl -H "Authorization: Bearer sk-proxy-local-dev" \
      -H "Content-Type: application/json" \
-     -d '{"model":"cheap","messages":[{"role":"user","content":"Hello!"}]}' \
-     http://localhost:4001/v1/chat/completions
+     -d '{"model":"balanced","messages":[{"role":"user","content":"Hello!"}]}' \
+     http://localhost:4000/v1/chat/completions
 ```
 
 ## Features
@@ -170,10 +176,10 @@ Distribute load across providers:
 
 ### Proxy Settings
 ```bash
-AI_PROXY_HOST=0.0.0.0          # Listen address
-AI_PROXY_PORT=4001             # Port number
-AI_PROXY_MASTER_KEY=sk-proxy-local-dev  # Master API key
-AI_PROXY_LOG_LEVEL=info        # Logging level
+LLX_PROXY_HOST=0.0.0.0         # Listen address
+LLX_PROXY_PORT=4000            # Port number
+LLX_PROXY_MASTER_KEY=sk-proxy-local-dev  # Master API key
+LLX_VERBOSE=true               # Verbose logging
 ```
 
 ### Budget Limits
@@ -194,10 +200,10 @@ REDIS_URL=redis://localhost:6379/0  # Redis for caching
 ### Port Already in Use
 ```bash
 # Check what's using the port
-netstat -tuln | grep :4001
+netstat -tuln | grep :4000
 
 # Use a different port
-export AI_PROXY_PORT=4002
+export LLX_PROXY_PORT=4002
 ./run.sh
 ```
 
@@ -214,7 +220,7 @@ curl -H "Authorization: Bearer $ANTHROPIC_API_KEY" \
 ### Connection Refused
 ```bash
 # Check if proxy is running
-curl http://localhost:4001/health
+curl http://localhost:4000/health
 
 # Check logs for errors
 # The script outputs connection status during startup
@@ -235,8 +241,7 @@ For production use:
 1. **Use HTTPS:**
    ```bash
    # Configure SSL certificates
-   AI_PROXY_SSL_CERT=/path/to/cert.pem
-   AI_PROXY_SSL_KEY=/path/to/key.pem
+   # Use your reverse proxy or upstream TLS terminator
    ```
 
 2. **Set up Redis:**
@@ -252,10 +257,9 @@ For production use:
 3. **Configure Monitoring:**
    ```bash
    # Enable health checks
-   AI_PROXY_HEALTH_CHECK=true
+   LLX_VERBOSE=true
    
-   # Set up metrics collection
-   AI_PROXY_METRICS_ENABLED=true
+   # Set up metrics collection in your proxy / observability stack
    ```
 
 ## Next Steps

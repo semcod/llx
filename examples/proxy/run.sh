@@ -45,6 +45,11 @@ if [ -f ".env" ]; then
     source .env 2>/dev/null || true
 fi
 
+# Map legacy AI_PROXY_* variables to the current llx names when needed.
+export LLX_PROXY_HOST="${LLX_PROXY_HOST:-${AI_PROXY_HOST:-0.0.0.0}}"
+export LLX_PROXY_PORT="${LLX_PROXY_PORT:-${AI_PROXY_PORT:-4000}}"
+export LLX_PROXY_MASTER_KEY="${LLX_PROXY_MASTER_KEY:-${AI_PROXY_MASTER_KEY:-sk-proxy-local-dev}}"
+
 # Check for at least one provider key
 if [ -z "$ANTHROPIC_API_KEY" ] && [ -z "$OPENROUTER_API_KEY" ] && [ -z "$OPENAI_API_KEY" ]; then
     echo -e "${RED}❌ Error: No API keys found. Please configure at least one provider:${NC}"
@@ -61,14 +66,14 @@ echo -e "${BLUE}📋 Configured providers:${NC}"
 [ ! -z "$ANTHROPIC_API_KEY" ] && echo "   ✓ Anthropic Claude"
 [ ! -z "$OPENROUTER_API_KEY" ] && echo "   ✓ OpenRouter (300+ models)"
 [ ! -z "$OPENAI_API_KEY" ] && echo "   ✓ OpenAI GPT"
-[ ! -z "$GOOGLE_AI_KEY" ] && echo "   ✓ Google Gemini"
+[ ! -z "$GEMINI_API_KEY" ] && echo "   ✓ Google Gemini"
 [ ! -z "$DEEPSEEK_API_KEY" ] && echo "   ✓ DeepSeek"
 
 # Check proxy configuration
 echo -e "${BLUE}🔧 Proxy configuration:${NC}"
-PROXY_HOST=${AI_PROXY_HOST:-0.0.0.0}
-PROXY_PORT=${AI_PROXY_PORT:-4000}
-PROXY_KEY=${AI_PROXY_MASTER_KEY:-sk-proxy-local-dev}
+PROXY_HOST=$LLX_PROXY_HOST
+PROXY_PORT=$LLX_PROXY_PORT
+PROXY_KEY=$LLX_PROXY_MASTER_KEY
 
 echo "   ✓ Host: $PROXY_HOST"
 echo "   ✓ Port: $PROXY_PORT"

@@ -8,7 +8,7 @@ This example demonstrates:
 3. Provider-specific model selection
 4. Load balancing and failover strategies
 
-Shows how llx can work with Anthropic, OpenRouter, OpenAI, Google, and others
+Shows how llx can work with Anthropic, OpenRouter, OpenAI, Gemini, and others
 while maintaining cost control and reliability.
 """
 
@@ -45,10 +45,10 @@ def check_provider_keys():
             'models': ['gpt-4-turbo', 'gpt-4o', 'gpt-4o-mini']
         }
     
-    if os.getenv('GOOGLE_AI_KEY'):
-        providers['google'] = {
+    if os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY'):
+        providers['gemini'] = {
             'name': 'Google Gemini',
-            'models': ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-1.5-pro']
+            'models': ['gemini/gemini-2.5-pro', 'gemini/gemini-2.5-flash', 'gemini/gemini-1.5-pro']
         }
     
     if os.getenv('DEEPSEEK_API_KEY'):
@@ -58,6 +58,22 @@ def check_provider_keys():
         }
     
     return providers
+
+
+def build_mock_metrics(files: int, lines: int, complexity: float, fan_out: int | None = None) -> ProjectMetrics:
+    """Build realistic project metrics for the demo scenarios."""
+    metrics = ProjectMetrics()
+    metrics.total_files = files
+    metrics.total_lines = lines
+    metrics.total_functions = max(1, files * 4)
+    metrics.avg_cc = complexity
+    metrics.max_cc = max(3, int(complexity * 3))
+    metrics.critical_count = 1 if complexity >= 6 else 0
+    metrics.max_fan_out = fan_out if fan_out is not None else max(1, min(files * 2, 36))
+    metrics.languages = ["python"]
+    metrics.estimated_context_tokens = max(500, lines * 2)
+    metrics.task_scope = "project" if files > 1 else "single_file"
+    return metrics
 
 
 def compare_provider_costs():
@@ -82,10 +98,10 @@ def compare_provider_costs():
             'gpt-4o': {'input': 0.0025, 'output': 0.0100},
             'gpt-4o-mini': {'input': 0.00015, 'output': 0.0006}
         },
-        'google': {
-            'gemini-2.5-pro': {'input': 0.00125, 'output': 0.00375},
-            'gemini-2.5-flash': {'input': 0.000075, 'output': 0.00015},
-            'gemini-1.5-pro': {'input': 0.0025, 'output': 0.0075}
+        'gemini': {
+            'gemini/gemini-2.5-pro': {'input': 0.00125, 'output': 0.00375},
+            'gemini/gemini-2.5-flash': {'input': 0.000075, 'output': 0.00015},
+            'gemini/gemini-1.5-pro': {'input': 0.0025, 'output': 0.0075}
         },
         'deepseek': {
             'deepseek-chat': {'input': 0.00014, 'output': 0.00028},
@@ -140,8 +156,8 @@ def demonstrate_fallback_strategy():
         fallback_order.append(('openrouter', 'Secondary - Large model pool, good uptime'))
     if 'openai' in providers:
         fallback_order.append(('openai', 'Tertiary - Reliable, widely used'))
-    if 'google' in providers:
-        fallback_order.append(('google', 'Quaternary - Free tier available'))
+    if 'gemini' in providers:
+        fallback_order.append(('gemini', 'Quaternary - Free tier available'))
     if 'deepseek' in providers:
         fallback_order.append(('deepseek', 'Last resort - Cheapest option'))
     
@@ -190,22 +206,18 @@ def simulate_multi_provider_selection():
         print("❌ No providers available for demonstration")
         return
     
-    config = LlxConfig.load()
+    project_root = Path(__file__).parent.parent.parent
+    config = LlxConfig.load(project_root)
     
     for scenario_name, scenario_data in scenarios.items():
         print(f"\n📋 {scenario_data['description'].title()}:")
         print(f"   Files: {scenario_data['files']}, Lines: {scenario_data['lines']}, CC: {scenario_data['complexity']}")
         
-        # Create mock metrics (simplified)
-        class MockMetrics:
-            def __init__(self, files, lines, complexity):
-                self.total_files = files
-                self.total_lines = lines
-                self.complexity_score = complexity
-                self.scale_score = min(files * 0.3, 25)
-                self.coupling_score = 0.0
-        
-        metrics = MockMetrics(scenario_data['files'], scenario_data['lines'], scenario_data['complexity'])
+        metrics = build_mock_metrics(
+            scenario_data['files'],
+            scenario_data['lines'],
+            scenario_data['complexity'],
+        )
         
         try:
             selection = select_model(metrics, config=config)
@@ -234,7 +246,7 @@ def main():
         print("   ANTHROPIC_API_KEY=sk-ant-api03-...")
         print("   OPENROUTER_API_KEY=sk-or-v1-...")
         print("   OPENAI_API_KEY=sk-...")
-        print("   GOOGLE_AI_KEY=...")
+        print("   GEMINI_API_KEY=...")
         return 1
     
     print(f"✓ Found {len(providers)} configured providers:")

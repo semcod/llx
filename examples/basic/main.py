@@ -31,13 +31,14 @@ def main():
     
     # 1. Load configuration
     print("\n📋 Loading configuration...")
-    config = LlxConfig.load()
+    project_root = Path(__file__).resolve().parent.parent.parent
+    config = LlxConfig.load(project_root)
     print(f"   ✓ Default tier: {config.default_tier}")
     print(f"   ✓ LiteLLM URL: {config.litellm_base_url}")
     
     # 2. Analyze project
     print("\n🔍 Analyzing project...")
-    project_path = Path(__file__).parent.parent.parent  # llx root directory
+    project_path = project_root
     
     try:
         metrics = analyze_project(project_path)

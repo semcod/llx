@@ -9,14 +9,13 @@ This example demonstrates the core functionality of llx: intelligent LLM model s
    - Project size (files, lines of code)
    - Complexity (cyclomatic complexity)
    - Coupling (dependencies between modules)
-   - Budget constraints
-3. **LLM Interaction**: Tests the selected model with a simple prompt
-4. **Cost Tracking**: Monitors API usage and costs
+3. **Configuration Check**: Loads the current project config and prints the active tier
+4. **Provider Availability**: Reports which provider keys are configured
 
 ## Prerequisites
 
 - llx installed in development mode
-- At least one LLM provider API key configured
+- At least one LLM provider API key configured if you want to see provider availability checks
 - Python 3.10+
 
 ## Setup
@@ -67,35 +66,29 @@ export $(grep -v '^#' .env | xargs)
 ==================================================
 
 📋 Loading configuration...
-   ✓ Budget limit: $60/month
-   ✓ Max tier: premium
+   ✓ Default tier: balanced
+   ✓ LiteLLM URL: http://localhost:4000
 
 🔍 Analyzing project...
-   ✓ Files: 18
-   ✓ Lines: 2,093
-   ✓ Complexity: 2.1
-   ✓ Scale: 3.2
-   ✓ Coupling: 1.8
+   ✓ Files: 76
+   ✓ Lines: 25,721
+   ✓ Complexity: 4.6
+   ✓ Scale: 51.1
+   ✓ Coupling: 75.0
 
 🤖 Selecting optimal model...
-   ✓ Selected: claude-haiku-4-5-20251001
-   ✓ Tier: cheap
+   ✓ Selected: claude-opus-4-20250514
+   ✓ Tier: premium
    ✓ Provider: anthropic
    ✓ Context: 200,000 tokens
-   ✓ Cost: $0.0008/1K in, $0.0040/1K out
    ✓ Reasons:
-     • Medium project: 18 files (≥10)
-     • Small project: 18 files, 2,093 lines
+     • Large project: 76 files (≥50)
+     • Large codebase: 25,721 lines (≥20,000)
 
-💬 Testing LLM interaction...
-   ✓ Response: This project is llx, an intelligent LLM model router...
-   ✓ Tokens used: 85
-   ✓ Cost: $0.000342
-
-💰 Cost tracking...
-   ✓ Today's usage: $0.000342
-   ✓ Monthly usage: $0.000342
-   ✓ Remaining budget: $59.999658
+🔑 Provider availability...
+   ✓ Anthropic API key available
+   ✓ OpenRouter API key available
+   💡 API keys available - LLM interaction ready
 
 ✅ Example completed successfully!
 ```
@@ -115,11 +108,8 @@ The router balances capability with cost:
 - **Medium projects** → Balanced models
 - **Large/complex projects** → Premium models
 
-### 3. Budget Management
-Built-in cost tracking and budget limits prevent unexpected expenses:
-- Daily/monthly budget caps
-- Per-request cost limits
-- Real-time usage monitoring
+### 3. Configuration Awareness
+The example loads the current project config and checks which provider keys are present.
 
 ## Troubleshooting
 
@@ -130,13 +120,13 @@ Built-in cost tracking and budget limits prevent unexpected expenses:
 - Check if the project path is accessible
 
 **"Model selection failed" error**
-- Verify API keys are correctly set in `.env`
-- Check network connectivity to LLM providers
+- Verify the project root is correct and `llx.yaml` is readable
+- Check that your local `llx` environment is installed correctly
 
-**"LLM interaction failed" error**
-- API keys might be invalid or expired
-- Provider might be experiencing outages
-- Check rate limits and quotas
+**"Provider availability" warning**
+- API keys are optional for the analysis + selection demo
+- Configure provider keys in `.env` if you want to verify availability checks
+- Check rate limits and quotas if the provider-specific demo later fails
 
 ### Debug Mode
 

@@ -17,7 +17,7 @@ This example demonstrates how to configure and use multiple LLM providers with l
 | **Anthropic** | Claude Opus, Sonnet, Haiku | $0.0008-$0.075/1K | High quality, reliable |
 | **OpenRouter** | 300+ models | $0.0005-$0.015/1K | Variety, good uptime |
 | **OpenAI** | GPT-4, GPT-4o, GPT-4o-mini | $0.00015-$0.03/1K | Popular, reliable |
-| **Google** | Gemini 2.5 Pro/Flash | $0.000075-$0.00375/1K | Free tier available |
+| **Gemini** | Gemini 2.5 Pro/Flash | $0.000075-$0.00375/1K | Free tier available |
 | **DeepSeek** | DeepSeek Chat/Reasoning | $0.00014-$0.00219/1K | Cheapest option |
 | **Groq** | Llama, Mixtral | $0.00005-$0.0008/1K | Ultra-fast inference |
 | **Mistral** | Codestral, Mistral Large | $0.0003-$0.008/1K | Code specialization |
@@ -41,7 +41,7 @@ This example demonstrates how to configure and use multiple LLM providers with l
    ANTHROPIC_API_KEY=sk-ant-api03-...
    OPENROUTER_API_KEY=sk-or-v1-...
    OPENAI_API_KEY=sk-...
-   GOOGLE_AI_KEY=...
+   GEMINI_API_KEY=...
    DEEPSEEK_API_KEY=...
    GROQ_API_KEY=...
    MISTRAL_API_KEY=...
@@ -76,10 +76,11 @@ export $(grep -v '^#' .env | xargs)
 ==================================================
 
 🔑 Checking available providers...
-✓ Found 3 configured providers:
+✓ Found 4 configured providers:
    • Anthropic Claude
    • OpenRouter (300+ models)
    • OpenAI GPT
+   • Google Gemini
 
 💰 Provider Cost Comparison (per 1K tokens):
 ============================================================
@@ -96,7 +97,13 @@ export $(grep -v '^#' .env | xargs)
    • openai/gpt-4o
      Input: $0.0025 | Output: $0.0100
 
-🏆 Cheapest input cost: OpenRouter: meta-llama/llama-3.1-70b-instruct ($0.0005/1K)
+🔷 Google Gemini:
+   • gemini/gemini-2.5-pro
+     Input: $0.0013 | Output: $0.0038
+   • gemini/gemini-2.5-flash
+     Input: $0.0001 | Output: $0.0002
+
+🏆 Cheapest input cost: Google Gemini: gemini/gemini-2.5-flash ($0.0001/1K)
 
 🔄 Provider Fallback Strategy
 ========================================
@@ -104,6 +111,7 @@ Provider priority (for failover):
   1. Anthropic Claude - Primary - High quality, reliable
   2. OpenRouter (300+ models) - Secondary - Large model pool, good uptime
   3. OpenAI GPT - Tertiary - Reliable, widely used
+  4. Google Gemini - Quaternary - Free tier available
 
 ✅ Multi-provider example completed!
 ```
@@ -128,7 +136,7 @@ OPENROUTER_API_KEY=sk-or-v1-...
 # anthropic/claude-3.5-sonnet
 # openai/gpt-4o
 # meta-llama/llama-3.1-70b-instruct
-# google/gemini-pro
+# gemini/gemini-2.5-pro
 ```
 
 ### OpenAI
@@ -141,14 +149,14 @@ OPENAI_API_KEY=sk-...
 # gpt-4o-mini     # Cheap
 ```
 
-### Google AI
+### Gemini
 ```bash
-GOOGLE_AI_KEY=...
+GEMINI_API_KEY=...
 
 # Available models
-# gemini-2.5-pro  # Premium
-# gemini-2.5-flash # Cheap
-# gemini-1.5-pro  # Balanced
+# gemini/gemini-2.5-pro   # Premium
+# gemini/gemini-2.5-flash # Cheap
+# gemini/gemini-1.5-pro   # Balanced
 ```
 
 ## Fallback Strategy
@@ -158,7 +166,7 @@ The example demonstrates a robust fallback strategy:
 1. **Primary Provider**: Highest quality, most reliable (Anthropic)
 2. **Secondary**: Large model pool, good uptime (OpenRouter)
 3. **Tertiary**: Widely used, reliable (OpenAI)
-4. **Quaternary**: Free tier available (Google)
+4. **Quaternary**: Free tier available (Gemini)
 5. **Last Resort**: Cheapest option (DeepSeek)
 
 ### Fallback Logic
@@ -179,7 +187,7 @@ def select_provider_with_fallback(request):
 
 | Task Type | Recommended Provider | Model | Cost Strategy |
 |-----------|-------------------|-------|--------------|
-| **Simple Questions** | Google/DeepSeek | Gemini Flash/DeepSeek Chat | Cheapest |
+| **Simple Questions** | Gemini/DeepSeek | Gemini Flash/DeepSeek Chat | Cheapest |
 | **Code Generation** | Anthropic/OpenRouter | Claude Sonnet/Codellama | Quality-focused |
 | **Complex Reasoning** | Anthropic | Claude Opus | Premium quality |
 | **General Chat** | OpenRouter/OpenAI | Mix of models | Balanced |
@@ -209,7 +217,7 @@ provider_weights = {
     'anthropic': 0.4,    # 40% of requests
     'openrouter': 0.3,   # 30% of requests  
     'openai': 0.2,       # 20% of requests
-    'google': 0.1        # 10% of requests
+    'gemini': 0.1        # 10% of requests
 }
 ```
 
@@ -221,7 +229,7 @@ Create consistent model names across providers:
 MODEL_ALIAS_PREMIUM=anthropic/claude-opus-4-20250514
 MODEL_ALIAS_BALANCED=anthropic/claude-sonnet-4-20250514
 MODEL_ALIAS_CHEAP=anthropic/claude-haiku-4-5-20251001
-MODEL_ALIAS_FREE=google/gemini-2.5-flash
+MODEL_ALIAS_FREE=gemini/gemini-2.5-flash
 ```
 
 ### Provider-Specific Settings

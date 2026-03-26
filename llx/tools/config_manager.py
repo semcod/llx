@@ -588,11 +588,9 @@ class ConfigManager:
 
 
 # CLI interface
-def main():
-    """CLI interface for config manager."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    import time
-    
     parser = argparse.ArgumentParser(description="llx Config Manager")
     parser.add_argument("command", choices=[
         "load", "save", "create-env", "update-env", "get-env", "validate",
@@ -607,124 +605,92 @@ def main():
     parser.add_argument("--profile", help="Profile name")
     parser.add_argument("--backup-dir", help="Backup directory")
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files")
-    
-    args = parser.parse_args()
-    
-    manager = ConfigManager()
-    
+    return parser
+
+
+def _dispatch(args, manager: "ConfigManager") -> bool:
     if args.command == "load":
         if not args.type:
             print("❌ --type required for load")
-            success = False
-        else:
-            config = manager.load_config(args.type)
-            if config:
-                print(json.dumps(config, indent=2))
-                success = True
-            else:
-                success = False
-    
+            return False
+        config = manager.load_config(args.type)
+        if config:
+            print(json.dumps(config, indent=2))
+            return True
+        return False
     elif args.command == "save":
         if not args.type:
             print("❌ --type required for save")
-            success = False
-        else:
-            # Read config from stdin
-            try:
-                config_data = json.loads(sys.stdin.read())
-                success = manager.save_config(args.type, config_data)
-            except:
-                print("❌ Invalid JSON configuration")
-                success = False
-    
+            return False
+        try:
+            config_data = json.loads(sys.stdin.read())
+            return manager.save_config(args.type, config_data)
+        except Exception:
+            print("❌ Invalid JSON configuration")
+            return False
     elif args.command == "create-env":
-        success = manager.create_default_env(args.overwrite)
-    
+        return manager.create_default_env(args.overwrite)
     elif args.command == "update-env":
         if not args.key or not args.value:
             print("❌ --key and --value required for update-env")
-            success = False
-        else:
-            success = manager.update_env_var(args.key, args.value)
-    
+            return False
+        return manager.update_env_var(args.key, args.value)
     elif args.command == "get-env":
         if not args.key:
             print("❌ --key required for get-env")
-            success = False
-        else:
-            value = manager.get_env_var(args.key)
-            if value is not None:
-                print(value)
-                success = True
-            else:
-                print(f"❌ Environment variable {args.key} not found")
-                success = False
-    
+            return False
+        value = manager.get_env_var(args.key)
+        if value is not None:
+            print(value)
+            return True
+        print(f"❌ Environment variable {args.key} not found")
+        return False
     elif args.command == "validate":
         issues = manager.validate_env_config()
         docker_issues = manager.validate_docker_configs()
-        
-        all_issues = len(issues["missing"]) + len(issues["invalid"]) + len(issues["warnings"])
-        all_issues += len(docker_issues["missing"]) + len(docker_issues["invalid"]) + len(docker_issues["warnings"])
-        
-        if all_issues > 0:
-            print(f"❌ Found {all_issues} configuration issues")
-            success = False
-        else:
-            print("✅ Configuration is valid")
-            success = True
-    
+        total = sum(len(v) for v in issues.values()) + sum(len(v) for v in docker_issues.values())
+        if total > 0:
+            print(f"❌ Found {total} configuration issues")
+            return False
+        print("✅ Configuration is valid")
+        return True
     elif args.command == "list-models":
         manager.list_models()
-        success = True
-    
+        return True
     elif args.command == "add-model":
         if not args.tier:
             print("❌ --tier required for add-model")
-            success = False
-        else:
-            # Read model config from stdin
-            try:
-                model_config = json.loads(sys.stdin.read())
-                success = manager.add_model(args.tier, model_config)
-            except:
-                print("❌ Invalid model configuration")
-                success = False
-    
+            return False
+        try:
+            model_config = json.loads(sys.stdin.read())
+            return manager.add_model(args.tier, model_config)
+        except Exception:
+            print("❌ Invalid model configuration")
+            return False
     elif args.command == "remove-model":
         if not args.tier:
             print("❌ --tier required for remove-model")
-            success = False
-        else:
-            success = manager.remove_model(args.tier)
-    
+            return False
+        return manager.remove_model(args.tier)
     elif args.command == "backup":
-        success = manager.backup_configs(args.backup_dir)
-    
+        return manager.backup_configs(args.backup_dir)
     elif args.command == "restore":
         if not args.backup_dir:
             print("❌ --backup-dir required for restore")
-            success = False
-        else:
-            success = manager.restore_configs(args.backup_dir)
-    
+            return False
+        return manager.restore_configs(args.backup_dir)
     elif args.command == "docker-env":
-        success = manager.generate_docker_env_file(args.env)
-    
+        return manager.generate_docker_env_file(args.env)
     elif args.command == "create-profile":
         if not args.profile:
             print("❌ --profile required for create-profile")
-            success = False
-        else:
-            success = manager.create_profile(args.profile)
-    
+            return False
+        return manager.create_profile(args.profile)
     elif args.command == "load-profile":
         if not args.profile:
             print("❌ --profile required for load-profile")
-            success = False
-        else:
-            success = manager.load_profile(args.profile)
-    
+            return False
+        return manager.load_profile(args.profile)
     elif args.command == "list-profiles":
         profiles = manager.list_profiles()
         if profiles:
@@ -733,12 +699,19 @@ def main():
                 print(f"  • {profile}")
         else:
             print("No profiles found")
-        success = True
-    
+        return True
     elif args.command == "summary":
         manager.print_config_summary()
-        success = True
-    
+        return True
+    return False
+
+
+def main():
+    """CLI entry point for config manager."""
+    parser = _build_parser()
+    args = parser.parse_args()
+    manager = ConfigManager()
+    success = _dispatch(args, manager)
     sys.exit(0 if success else 1)
 
 

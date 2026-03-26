@@ -142,7 +142,8 @@ def demonstrate_local_model_selection():
     print("=" * 40)
     
     # Create a config that prefers local models
-    config = LlxConfig.load()
+    project_path = Path(__file__).resolve().parent.parent.parent
+    config = LlxConfig.load(project_path)
     
     # Check if we have local models available
     ollama_running, models = check_ollama_service()
@@ -154,7 +155,6 @@ def demonstrate_local_model_selection():
     
     # Analyze the current project
     try:
-        project_path = Path(__file__).parent.parent.parent
         metrics = analyze_project(project_path)
         
         print(f"\n📊 Project Analysis:")
@@ -164,7 +164,7 @@ def demonstrate_local_model_selection():
         
         # Try to select a model with local preference
         try:
-            selection = select_model(metrics, task_hint="explain", config=config)
+            selection = select_model(metrics, task_hint="explain", config=config, prefer_local=True)
             
             print(f"\n✓ Recommended model: {selection.model_id}")
             print(f"   Provider: {selection.model.provider}")

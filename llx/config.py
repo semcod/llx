@@ -127,6 +127,7 @@ class ProxyConfig:
 
     host: str = "0.0.0.0"
     port: int = 4000
+    master_key: str = "sk-proxy-local-dev"
     redis_url: str | None = None
     enable_cache: bool = True
     budget_limit: float | None = None
@@ -258,6 +259,9 @@ def _apply_yaml_proxy(config: LlxConfig, proxy: dict) -> None:
         server = proxy["server"]
         config.proxy.host = server.get("host", config.proxy.host)
         config.proxy.port = server.get("port", config.proxy.port)
+    if "auth" in proxy:
+        auth = proxy["auth"]
+        config.proxy.master_key = auth.get("master_key", config.proxy.master_key)
     if "cache" in proxy:
         cache = proxy["cache"]
         config.proxy.redis_url = cache.get("redis_url", config.proxy.redis_url)
@@ -312,8 +316,12 @@ def _apply_env(config: LlxConfig) -> LlxConfig:
         config.litellm_base_url = url
     if tier := os.environ.get("LLX_DEFAULT_TIER"):
         config.default_tier = tier
+    if host := os.environ.get("LLX_PROXY_HOST"):
+        config.proxy.host = host
     if port := os.environ.get("LLX_PROXY_PORT"):
         config.proxy.port = int(port)
+    if master_key := os.environ.get("LLX_PROXY_MASTER_KEY"):
+        config.proxy.master_key = master_key
     if os.environ.get("LLX_VERBOSE", "").lower() in ("1", "true", "yes"):
         config.verbose = True
     return config

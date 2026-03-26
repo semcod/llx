@@ -248,6 +248,126 @@ tool_vallm_validate = McpTool(
 )
 
 
+# ─── llx_preprocess ──────────────────────────────────────────
+
+async def _handle_llx_preprocess(args: dict) -> dict:
+    """Preprocess a query using preLLM's small→large LLM pipeline."""
+    from llx.prellm.core import preprocess_and_execute
+
+    query = args["query"]
+    small_llm = args.get("small_llm", "ollama/qwen2.5:3b")
+    large_llm = args.get("large_llm", "gpt-4o-mini")
+    strategy = args.get("strategy", "auto")
+    execute = args.get("execute", False)
+
+    result = await preprocess_and_execute(
+        query=query,
+        small_llm=small_llm,
+        large_llm=large_llm,
+        strategy=strategy,
+        skip_execution=not execute,
+    )
+
+    output = {
+        "content": result.content,
+        "model_used": result.model_used,
+        "small_model_used": result.small_model_used,
+    }
+    if result.decomposition:
+        output["decomposition"] = {
+            "strategy": result.decomposition.strategy.value,
+            "composed_prompt": result.decomposition.composed_prompt,
+            "sub_queries": result.decomposition.sub_queries,
+            "matched_rule": result.decomposition.matched_rule,
+        }
+        if result.decomposition.classification:
+            output["decomposition"]["classification"] = {
+                "intent": result.decomposition.classification.intent,
+                "confidence": result.decomposition.classification.confidence,
+                "domain": result.decomposition.classification.domain,
+            }
+    return output
+
+tool_llx_preprocess = McpTool(
+    definition=Tool(
+        name="llx_preprocess",
+        description="Preprocess a query using preLLM's two-agent pipeline: small LLM classifies/decomposes the query, optionally large LLM executes it. Returns decomposition details and optional response.",
+        inputSchema={
+            "type": "object",
+            "required": ["query"],
+            "properties": {
+                "query": {"type": "string", "description": "The query to preprocess"},
+                "small_llm": {"type": "string", "description": "Small LLM model (default: ollama/qwen2.5:3b)"},
+                "large_llm": {"type": "string", "description": "Large LLM model (default: gpt-4o-mini)"},
+                "strategy": {"type": "string", "enum": ["auto", "classify", "structure", "split", "enrich", "passthrough"], "default": "auto"},
+                "execute": {"type": "boolean", "description": "Also execute with large LLM (default: false, decompose only)", "default": False},
+            },
+        },
+    ),
+    handler=_handle_llx_preprocess,
+)
+
+
+# ─── llx_context ────────────────────────────────────────────
+
+async def _handle_llx_context(args: dict) -> dict:
+    """Gather preLLM context for a project (shell, codebase, sensitive filter)."""
+    from llx.prellm.context.shell_collector import ShellContextCollector
+    from llx.prellm.context.sensitive_filter import SensitiveDataFilter
+
+    sections = {}
+
+    # Shell context
+    collector = ShellContextCollector()
+    shell_ctx = collector.collect_all()
+    sections["shell"] = {
+        "env_vars_count": len(shell_ctx.env_vars),
+        "pid": shell_ctx.process.pid,
+        "cwd": shell_ctx.process.cwd,
+        "shell": shell_ctx.shell.name if shell_ctx.shell else "unknown",
+    }
+
+    # Codebase compression (if path provided)
+    path = args.get("path")
+    if path:
+        try:
+            from llx.prellm.context.folder_compressor import FolderCompressor
+            compressor = FolderCompressor()
+            compressed = compressor.compress(path)
+            sections["codebase"] = {
+                "total_files": compressed.total_files,
+                "total_lines": compressed.total_lines,
+                "estimated_tokens": compressed.estimated_tokens,
+                "languages": compressed.languages,
+            }
+        except Exception as e:
+            sections["codebase"] = {"error": str(e)}
+
+    # Sensitive data scan
+    sf = SensitiveDataFilter()
+    report = sf.scan_environment()
+    sections["sensitive"] = {
+        "masked_keys": report.masked_keys,
+        "blocked_keys": report.blocked_keys,
+    }
+
+    return sections
+
+tool_llx_context = McpTool(
+    definition=Tool(
+        name="llx_context",
+        description="Gather runtime context: shell environment, codebase structure, and sensitive data scan. Useful for understanding what context is available for LLM queries.",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "description": "Project path for codebase analysis (optional)"},
+            },
+        },
+    ),
+    handler=_handle_llx_context,
+)
+
+
 # ─── llx_proxy_status ────────────────────────────────────────
 
 async def _handle_llx_proxy_status(args: dict) -> dict:
@@ -272,4 +392,96 @@ tool_llx_proxy_status = McpTool(
         },
     ),
     handler=_handle_llx_proxy_status,
+)
+
+
+# ─── llx_proxym_status ──────────────────────────────────────
+
+async def _handle_llx_proxym_status(args: dict) -> dict:
+    """Get detailed proxym proxy status."""
+    from llx.integrations.proxym import ProxymClient
+    from llx.config import LlxConfig
+    config = LlxConfig.load(args.get("path", "."))
+    url = args.get("url", config.litellm_base_url)
+    client = ProxymClient(config, base_url=url)
+    try:
+        status = client.status()
+        result = {
+            "available": status.available,
+            "url": status.url,
+        }
+        if status.available:
+            result["version"] = status.version
+            result["models_count"] = status.models_count
+            if status.providers:
+                result["providers"] = status.providers
+            if status.daily_remaining is not None:
+                result["daily_remaining_usd"] = status.daily_remaining
+            if status.monthly_remaining is not None:
+                result["monthly_remaining_usd"] = status.monthly_remaining
+        else:
+            result["error"] = status.error
+        return result
+    finally:
+        client.close()
+
+tool_llx_proxym_status = McpTool(
+    definition=Tool(
+        name="llx_proxym_status",
+        description="Get detailed status of proxym intelligent AI proxy: availability, version, model count, providers, and budget remaining.",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "default": "."},
+                "url": {"type": "string", "description": "Proxym URL to check"},
+            },
+        },
+    ),
+    handler=_handle_llx_proxym_status,
+)
+
+
+# ─── llx_proxym_chat ────────────────────────────────────────
+
+async def _handle_llx_proxym_chat(args: dict) -> dict:
+    """Analyze project + route through proxym with metrics headers."""
+    from llx.integrations.proxym import ProxymClient
+
+    path = args.get("path", ".")
+    prompt = args["prompt"]
+
+    client = ProxymClient()
+    try:
+        response = client.chat_with_analysis(
+            prompt,
+            project_path=path,
+            toon_dir=args.get("toon_dir"),
+            task_hint=args.get("task"),
+            model=args.get("model"),
+        )
+        return {
+            "model": response.model,
+            "content": response.content,
+            "usage": response.usage,
+        }
+    finally:
+        client.close()
+
+tool_llx_proxym_chat = McpTool(
+    definition=Tool(
+        name="llx_proxym_chat",
+        description="Analyze project metrics, select optimal tier, and route through proxym with code-metrics-aware headers for intelligent model selection.",
+        inputSchema={
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string", "description": "The prompt to send"},
+                "path": {"type": "string", "default": "."},
+                "toon_dir": {"type": "string"},
+                "task": {"type": "string", "enum": ["refactor", "explain", "quick_fix", "review"]},
+                "model": {"type": "string", "description": "Override model selection"},
+            },
+        },
+    ),
+    handler=_handle_llx_proxym_chat,
 )

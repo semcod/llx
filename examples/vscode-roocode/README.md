@@ -31,7 +31,7 @@ VS Code (localhost:8080)
 ### 2. Access VS Code
 ```bash
 # Open VS Code in browser
-open http://localhost:8080
+xdg-open http://localhost:8080
 # Login with password: proxym-vscode
 ```
 
@@ -47,7 +47,7 @@ VS Code will automatically:
 - **Shortcut**: `Ctrl+Shift+R`
 - **Position**: Right panel (configurable)
 - **History**: Preserved conversations
-- **Models**: qwen2.5-coder:7b (default)
+- **Models**: `balanced` (default tier)
 
 ### Inline Suggestions
 - **Shortcut**: `Ctrl+Shift+I` (toggle)
@@ -70,7 +70,7 @@ VS Code will automatically:
 {
   "roocode.enable": true,
   "roocode.defaultProvider": "openai-compatible",
-  "roocode.model": "qwen2.5-coder:7b",
+  "roocode.model": "balanced",
   "roocode.apiKey": "sk-proxy-local-dev",
   "roocode.apiBaseUrl": "http://localhost:4000/v1",
   "roocode.fallbackProvider": "ollama",
@@ -79,10 +79,11 @@ VS Code will automatically:
 ```
 
 ### Available Models
-- **qwen2.5-coder:7b** - Primary model (6GB, code specialist)
-- **phi3:3.8b** - Fast model (2.2GB)
-- **llama3.2:3b** - Balanced model (2.0GB)
-- **deepseek-coder:1.3b** - Lightweight model (776MB)
+- **balanced** - Primary model tier for general work
+- **cheap** - Fast, inexpensive tier for simple tasks
+- **premium** - High-quality tier for complex tasks
+- **free** - Free-tier / low-cost tier for testing
+- **local** - Ollama-backed tier for offline usage
 
 ## 📋 Usage Examples
 
@@ -132,7 +133,7 @@ def factorial(n):
 ./docker-manage.sh dev
 
 # 2. Open VS Code
-# http://localhost:8080 (password: proxym-vscode)
+# xdg-open http://localhost:8080 (password: proxym-vscode)
 
 # 3. Start coding with AI assistance
 # - Use Ctrl+Shift+R for chat
@@ -191,10 +192,10 @@ RooCode automatically considers:
 ## 📊 Performance Tips
 
 ### Model Selection
-- **qwen2.5-coder:7b**: Best for complex code generation
-- **phi3:3.8b**: Fast for simple suggestions
-- **llama3.2:3b**: Good balance for daily coding
-- **deepseek-coder:1.3b**: Quick fixes and small edits
+- **balanced**: Best default for general coding tasks
+- **cheap**: Fast for simple suggestions
+- **premium**: Best for complex code generation
+- **free**: Good for low-cost experimentation
 
 ### Optimization
 ```json

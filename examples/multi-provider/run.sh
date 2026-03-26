@@ -65,8 +65,8 @@ if [ ! -z "$OPENAI_API_KEY" ]; then
     PROVIDER_COUNT=$((PROVIDER_COUNT + 1))
 fi
 
-if [ ! -z "$GOOGLE_AI_KEY" ]; then
-    echo "   ✓ Google AI API key"
+if [ ! -z "$GEMINI_API_KEY" ]; then
+    echo "   ✓ Gemini API key"
     PROVIDER_COUNT=$((PROVIDER_COUNT + 1))
 fi
 
@@ -92,7 +92,7 @@ if [ $PROVIDER_COUNT -eq 0 ]; then
     echo "  ANTHROPIC_API_KEY=sk-ant-api03-..."
     echo "  OPENROUTER_API_KEY=sk-or-v1-..."
     echo "  OPENAI_API_KEY=sk-..."
-    echo "  GOOGLE_AI_KEY=..."
+    echo "  GEMINI_API_KEY=..."
     echo "  DEEPSEEK_API_KEY=..."
     exit 1
 fi

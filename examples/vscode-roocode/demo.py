@@ -13,10 +13,11 @@ from typing import List, Dict, Optional
 class RooCodeDemo:
     """Demo class for RooCode AI assistant capabilities."""
     
-    def __init__(self, api_base: str = "http://localhost:4000/v1"):
-        self.api_base = api_base
-        self.api_key = "sk-proxy-local-dev"
-        self.model = "qwen2.5-coder:7b"
+    def __init__(self, api_base: str | None = None):
+        base_url = api_base or os.getenv("LLX_LITELLM_URL", "http://localhost:4000")
+        self.api_base = f"{base_url.rstrip('/')}/v1"
+        self.api_key = os.getenv("LLX_PROXY_MASTER_KEY", "sk-proxy-local-dev")
+        self.model = os.getenv("LLX_ROOCODE_MODEL", "balanced")
     
     def check_services(self) -> Dict[str, bool]:
         """Check if required services are running."""
@@ -350,7 +351,7 @@ Code:
         print("  • Documentation generation")
         print("")
         print("🚀 Try it yourself in VS Code:")
-        print("  1. Open http://localhost:8080")
+        print("  1. xdg-open http://localhost:8080")
         print("  2. Use Ctrl+Shift+R for RooCode chat")
         print("  3. Use Ctrl+Shift+G for code generation")
         print("  4. Use Ctrl+Shift+E for code explanation")

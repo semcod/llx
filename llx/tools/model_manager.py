@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 import requests
 from .docker_manager import DockerManager
+from ._utils import cli_main
 
 
 class ModelManager:
@@ -591,10 +592,9 @@ class ModelManager:
 
 
 # CLI interface
-def main():
-    """CLI interface for model manager."""
+
+def _build_parser() -> "argparse.ArgumentParser":
     import argparse
-    
     parser = argparse.ArgumentParser(description="llx Model Manager")
     parser.add_argument("command", choices=[
         "list", "pull", "remove", "test", "info", "recommend",
@@ -606,57 +606,47 @@ def main():
     parser.add_argument("--memory", type=int, help="Available memory in GB")
     parser.add_argument("--keep-recommended", action="store_true", help="Keep recommended models when cleaning")
     parser.add_argument("--timeout", type=int, default=300, help="Pull timeout in seconds")
-    
-    args = parser.parse_args()
-    
-    manager = ModelManager()
-    
+    return parser
+
+
+def _dispatch(args, manager: "ModelManager") -> bool:
     if args.command == "list":
         models = manager.get_ollama_models()
         print(f"📦 Available Models ({len(models)}):")
         for model in models:
             size_gb = model.get("size", 0) / (1024**3)
             print(f"  • {model['name']} ({size_gb:.1f}GB)")
-        success = True
-    
+        return True
     elif args.command == "pull":
         if not args.model:
             print("❌ --model required for pull")
-            success = False
-        else:
-            success = manager.pull_model(args.model, args.timeout)
-    
+            return False
+        return manager.pull_model(args.model, args.timeout)
     elif args.command == "remove":
         if not args.model:
             print("❌ --model required for remove")
-            success = False
-        else:
-            success = manager.remove_model(args.model)
-    
+            return False
+        return manager.remove_model(args.model)
     elif args.command == "test":
         if not args.model:
             print("❌ --model required for test")
-            success = False
-        else:
-            success = manager.test_model(args.model, args.prompt)
-    
+            return False
+        return manager.test_model(args.model, args.prompt)
     elif args.command == "info":
         if not args.model:
             print("❌ --model required for info")
-            success = False
-        else:
-            info = manager.get_model_info(args.model)
-            print(f"📊 Model Information: {args.model}")
-            print(f"  Available in Ollama: {'✅' if info['available_ollama'] else '❌'}")
-            print(f"  Available in llx: {'✅' if info['available_llx'] else '❌'}")
-            if info.get("size"):
-                size_gb = info["size"] / (1024**3)
-                print(f"  Size: {size_gb:.1f}GB")
-            if info.get("modified"):
-                print(f"  Modified: {info['modified']}")
-            print(f"  Recommended: {'✅' if info['recommended'] else '❌'}")
-            success = True
-    
+            return False
+        info = manager.get_model_info(args.model)
+        print(f"📊 Model Information: {args.model}")
+        print(f"  Available in Ollama: {'✅' if info['available_ollama'] else '❌'}")
+        print(f"  Available in llx: {'✅' if info['available_llx'] else '❌'}")
+        if info.get("size"):
+            size_gb = info["size"] / (1024**3)
+            print(f"  Size: {size_gb:.1f}GB")
+        if info.get("modified"):
+            print(f"  Modified: {info['modified']}")
+        print(f"  Recommended: {'✅' if info['recommended'] else '❌'}")
+        return True
     elif args.command == "recommend":
         recommendations = manager.list_recommended_models(args.category)
         print(f"🎯 Recommended Models ({args.category or 'all'}):")
@@ -665,45 +655,41 @@ def main():
             for model, info in models.items():
                 recommended = " ⭐" if info.get("recommended") else ""
                 print(f"  • {model} ({info['size']}){recommended} - {info['description']}")
-        success = True
-    
+        return True
     elif args.command == "profile":
         if not args.model:
             print("❌ --model required for profile")
-            success = False
-        else:
-            success = manager.create_model_profile(args.model)
-    
+            return False
+        return manager.create_model_profile(args.model)
     elif args.command == "benchmark":
         if not args.model:
             print("❌ --model required for benchmark")
-            success = False
-        else:
-            results = manager.benchmark_model(args.model)
-            success = all(results.values())
-    
+            return False
+        results = manager.benchmark_model(args.model)
+        return all(results.values())
     elif args.command == "cleanup":
-        success = manager.cleanup_unused_models(args.keep_recommended)
-    
+        return manager.cleanup_unused_models(args.keep_recommended)
     elif args.command == "summary":
         manager.print_model_summary()
-        success = True
-    
+        return True
     elif args.command == "requirements":
         if not args.model:
             print("❌ --model required for requirements")
-            success = False
-        else:
-            requirements = manager.estimate_model_requirements(args.model)
-            print(f"📊 Resource Requirements: {args.model}")
-            print(f"  Min RAM: {requirements['ram_min']}")
-            print(f"  Recommended RAM: {requirements['ram_recommended']}")
-            print(f"  Disk Space: {requirements['disk_space']}")
-            print(f"  GPU: {requirements['gpu_recommended']}")
-            print(f"  Performance: {requirements['performance']}")
-            success = True
-    
-    sys.exit(0 if success else 1)
+            return False
+        requirements = manager.estimate_model_requirements(args.model)
+        print(f"📊 Resource Requirements: {args.model}")
+        print(f"  Min RAM: {requirements['ram_min']}")
+        print(f"  Recommended RAM: {requirements['ram_recommended']}")
+        print(f"  Disk Space: {requirements['disk_space']}")
+        print(f"  GPU: {requirements['gpu_recommended']}")
+        print(f"  Performance: {requirements['performance']}")
+        return True
+    return False
+
+
+def main():
+    """CLI entry point for model manager."""
+    cli_main(_build_parser, _dispatch, ModelManager)
 
 
 if __name__ == "__main__":
