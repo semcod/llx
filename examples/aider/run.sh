@@ -3,8 +3,38 @@
 
 set -e
 
-echo "🤖 LLX + Aider Integration Demo"
-echo "================================"
+# Parse arguments
+RUN_TEST=false
+RUN_DEMO=true
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --test)
+            RUN_TEST=true
+            RUN_DEMO=false
+            shift
+            ;;
+        --demo)
+            RUN_DEMO=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [--test|--demo] [--help]"
+            echo "  --test    Run integration tests"
+            echo "  --demo    Run demo (default)"
+            echo "  --help    Show this help"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage"
+            exit 1
+            ;;
+    esac
+done
+
+echo "🤖 LLX + Aider Integration"
+echo "========================="
 echo
 
 # Check if we're in the right directory
@@ -50,17 +80,37 @@ else
 fi
 
 echo
-echo "🚀 Running demo..."
-echo "=================="
-echo
 
-# Run the demo
-python aider_demo.py
+# Run test or demo
+if [ "$RUN_TEST" = true ]; then
+    echo "🧪 Running integration tests..."
+    echo "==========================="
+    echo
+    
+    if [ -f "test_integration.py" ]; then
+        python test_integration.py
+    else
+        echo "❌ test_integration.py not found"
+        exit 1
+    fi
+    
+    echo
+    echo "✅ Tests completed!"
+else
+    echo "🚀 Running demo..."
+    echo "=================="
+    echo
+    
+    # Run the demo
+    python aider_demo.py
+    
+    echo
+    echo "✅ Demo completed!"
+fi
 
-echo
-echo "✅ Demo completed!"
 echo
 echo "📚 Learn more:"
 echo "   - Read README.md for more examples"
 echo "   - Check ../../docs/aider-integration.md"
 echo "   - Try MCP server: python -m llx.mcp.server"
+echo "   - Run tests: ./run.sh --test"

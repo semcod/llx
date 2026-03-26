@@ -498,8 +498,55 @@ async def _handle_aider(args: dict) -> dict:
     prompt = args.get("prompt", "")
     model = args.get("model", "ollama/qwen2.5-coder:7b")
     files = args.get("files", [])
+    use_docker = args.get("use_docker", False)
     
-    # Build aider command
+    # Try Docker first if requested or if local aider fails
+    if use_docker:
+        docker_cmd = [
+            "docker", "run", "--rm",
+            "-v", f"{path.absolute()}:/workspace",
+            "paulgauthier/aider",
+            "--model", model.replace("ollama/", "ollama_chat/"),
+            "--message", prompt
+        ]
+        
+        # Add specific files if provided
+        if files:
+            docker_cmd.extend([f"/workspace/{f}" for f in files])
+        
+        try:
+            result = subprocess.run(
+                docker_cmd,
+                capture_output=True,
+                text=True,
+                timeout=300
+            )
+            
+            return {
+                "success": result.returncode == 0,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "command": " ".join(docker_cmd),
+                "path": str(path),
+                "method": "docker"
+            }
+        except subprocess.TimeoutExpired:
+            return {
+                "success": False,
+                "error": "Aider Docker command timed out after 5 minutes",
+                "command": " ".join(docker_cmd)
+            }
+        except FileNotFoundError:
+            # Docker not found, fall back to local
+            pass
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e),
+                "command": " ".join(docker_cmd)
+            }
+    
+    # Build aider command for local execution
     cmd = ["aider", "--model", model, "--message", prompt]
     
     # Add specific files if provided
@@ -521,7 +568,8 @@ async def _handle_aider(args: dict) -> dict:
             "stdout": result.stdout,
             "stderr": result.stderr,
             "command": " ".join(cmd),
-            "path": str(path)
+            "path": str(path),
+            "method": "local"
         }
     except subprocess.TimeoutExpired:
         return {
@@ -532,7 +580,7 @@ async def _handle_aider(args: dict) -> dict:
     except FileNotFoundError:
         return {
             "success": False,
-            "error": "Aider not found. Install with: pip install aider-chat",
+            "error": "Aider not found. Install with: pip install aider-chat, or use Docker with use_docker=true",
             "command": " ".join(cmd)
         }
     except Exception as e:
@@ -545,7 +593,7 @@ async def _handle_aider(args: dict) -> dict:
 tool_aider = McpTool(
     definition=Tool(
         name="aider",
-        description="Run aider AI pair programming tool for code editing and refactoring. Works with local Ollama models.",
+        description="Run aider AI pair programming tool for code editing and refactoring. Works with local Ollama models or Docker.",
         inputSchema={
             "type": "object",
             "required": ["prompt"],
@@ -554,6 +602,7 @@ tool_aider = McpTool(
                 "path": {"type": "string", "default": ".", "description": "Project directory path"},
                 "model": {"type": "string", "default": "ollama/qwen2.5-coder:7b", "description": "Model to use (Ollama format)"},
                 "files": {"type": "array", "items": {"type": "string"}, "description": "Specific files to edit (optional)"},
+                "use_docker": {"type": "boolean", "default": False, "description": "Use Docker instead of local installation"},
             },
         },
     ),

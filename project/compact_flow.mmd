@@ -19,10 +19,10 @@ flowchart TD
     llx__litellm_config["llx.litellm_config<br/>10 funcs"]
     llx__mcp["llx.mcp<br/>18 funcs"]
     llx__orchestration["llx.orchestration<br/>271 funcs"]
-    llx__planfile["llx.planfile<br/>35 funcs"]
+    llx__planfile["llx.planfile<br/>39 funcs"]
     llx__prellm["llx.prellm<br/>300 funcs"]
     llx__routing["llx.routing<br/>19 funcs"]
-    llx__tools["llx.tools<br/>178 funcs"]
+    llx__tools["llx.tools<br/>193 funcs"]
     llx__tools ==>|493| docker__ai_tools
     llx__orchestration ==>|309| docker__ai_tools
     examples__ai_tools ==>|93| docker__ai_tools
@@ -47,8 +47,8 @@ flowchart TD
     llx__mcp ==>|5| llx__config
     llx__cli -->|3| llx__routing
     llx__cli -->|3| llx__integrations
-    llx__planfile -->|2| llx__config
     llx__cli -->|2| examples__planfile
+    llx__planfile -->|2| llx__config
     llx__mcp -->|2| llx__routing
     llx__mcp -->|2| llx__planfile
     llx__mcp -->|2| llx__prellm
@@ -60,12 +60,12 @@ flowchart TD
     llx__planfile -->|1| llx__analysis
     llx__orchestration -->|1| llx__prellm
     llx__orchestration -->|1| examples__proxy
-    llx__routing -->|1| llx__planfile
-    llx__routing -->|1| llx__integrations
     llx__integrations -->|1| llx__planfile
     llx__integrations -->|1| llx__config
     llx__integrations -->|1| llx__analysis
     llx__integrations -->|1| llx__routing
+    llx__routing -->|1| llx__planfile
+    llx__routing -->|1| llx__integrations
     llx__mcp -->|1| llx__integrations
     llx__mcp -->|1| examples__planfile
     examples__aider -->|1| llx__config
@@ -76,16 +76,16 @@ flowchart TD
     examples__docker -->|1| llx__analysis
     examples__docker -->|1| llx__config
     examples__fullstack -->|1| llx__config
+    examples__multi_provider -->|1| llx__config
+    examples__multi_provider -->|1| llx__planfile
     examples__local -->|1| llx__config
     examples__local -->|1| llx__analysis
     examples__local -->|1| llx__planfile
-    examples__multi_provider -->|1| llx__config
-    examples__multi_provider -->|1| llx__planfile
+    examples__filtering -->|1| llx__config
+    examples__filtering -->|1| llx__analysis
+    examples__filtering -->|1| llx__planfile
     examples__basic -->|1| llx__config
     examples__basic -->|1| llx__analysis
     examples__basic -->|1| llx__planfile
     examples__hybrid -->|1| llx__config
     examples__hybrid -->|1| llx__analysis
-    examples__filtering -->|1| llx__config
-    examples__filtering -->|1| llx__analysis
-    examples__filtering -->|1| llx__planfile

@@ -6,10 +6,10 @@
 - **Primary Language**: python
 - **Languages**: python: 135, shell: 20
 - **Analysis Mode**: static
-- **Total Functions**: 1169
+- **Total Functions**: 1188
 - **Total Classes**: 187
 - **Modules**: 155
-- **Entry Points**: 965
+- **Entry Points**: 984
 
 ## Architecture by Module
 
@@ -17,6 +17,11 @@
 - **Functions**: 43
 - **Classes**: 1
 - **File**: `config_manager.py`
+
+### llx.tools.vscode_manager
+- **Functions**: 40
+- **Classes**: 1
+- **File**: `vscode_manager.py`
 
 ### llx.orchestration.routing.engine
 - **Functions**: 38
@@ -37,11 +42,6 @@
 - **Functions**: 27
 - **Classes**: 1
 - **File**: `orchestrator.py`
-
-### llx.tools.vscode_manager
-- **Functions**: 25
-- **Classes**: 1
-- **File**: `vscode_manager.py`
 
 ### llx.orchestration.llm.orchestrator
 - **Functions**: 25
@@ -342,15 +342,15 @@ plan_models [llx.cli.app]
 - **Methods**: 20
 - **Key Methods**: llx.orchestration.session.manager.SessionManager.__init__, llx.orchestration.session.manager.SessionManager.load_sessions, llx.orchestration.session.manager.SessionManager.save_sessions, llx.orchestration.session.manager.SessionManager.create_session, llx.orchestration.session.manager.SessionManager.remove_session, llx.orchestration.session.manager.SessionManager.get_available_session, llx.orchestration.session.manager.SessionManager.request_session, llx.orchestration.session.manager.SessionManager.release_session, llx.orchestration.session.manager.SessionManager.get_session_status, llx.orchestration.session.manager.SessionManager.list_sessions
 
-### llx.tools.model_manager.ModelManager
-> Manages local Ollama models and llx configurations.
-- **Methods**: 19
-- **Key Methods**: llx.tools.model_manager.ModelManager.__init__, llx.tools.model_manager.ModelManager.check_ollama_running, llx.tools.model_manager.ModelManager.check_llx_running, llx.tools.model_manager.ModelManager.get_ollama_models, llx.tools.model_manager.ModelManager.get_llx_models, llx.tools.model_manager.ModelManager.pull_model, llx.tools.model_manager.ModelManager.remove_model, llx.tools.model_manager.ModelManager.test_model, llx.tools.model_manager.ModelManager.test_llx_model, llx.tools.model_manager.ModelManager.get_model_info
-
 ### llx.tools.ai_tools_manager.AIToolsManager
 > Manages AI tools container and operations.
 - **Methods**: 19
 - **Key Methods**: llx.tools.ai_tools_manager.AIToolsManager.__init__, llx.tools.ai_tools_manager.AIToolsManager.is_container_running, llx.tools.ai_tools_manager.AIToolsManager.start_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.stop_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.restart_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.access_shell, llx.tools.ai_tools_manager.AIToolsManager.execute_command, llx.tools.ai_tools_manager.AIToolsManager.get_status, llx.tools.ai_tools_manager.AIToolsManager.test_connectivity, llx.tools.ai_tools_manager.AIToolsManager.run_chat_test
+
+### llx.tools.model_manager.ModelManager
+> Manages local Ollama models and llx configurations.
+- **Methods**: 19
+- **Key Methods**: llx.tools.model_manager.ModelManager.__init__, llx.tools.model_manager.ModelManager.check_ollama_running, llx.tools.model_manager.ModelManager.check_llx_running, llx.tools.model_manager.ModelManager.get_ollama_models, llx.tools.model_manager.ModelManager.get_llx_models, llx.tools.model_manager.ModelManager.pull_model, llx.tools.model_manager.ModelManager.remove_model, llx.tools.model_manager.ModelManager.test_model, llx.tools.model_manager.ModelManager.test_llx_model, llx.tools.model_manager.ModelManager.get_model_info
 
 ### llx.prellm.pipeline.PromptPipeline
 > Generic pipeline — executes a sequence of LLM + algorithmic steps.
@@ -463,6 +463,21 @@ Args:
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
 
+### llx.prellm.core.preprocess_and_execute
+> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
+- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
+
+### llx.prellm.core.preprocess_and_execute_sync
+> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
+
+Usage:
+
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm.llm_provider.LLMProvider._parse_json
+> Best-effort JSON extraction from LLM output.
+- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
+
 ### llx.prellm.extractors.format_classification_context
 > Extract and format classification context from preprocessing result.
 - **Output to**: state.get, isinstance, state.get, classification.get, classification.get
@@ -479,21 +494,6 @@ Args:
 > Extract and format user context information.
 - **Output to**: extra_context.get, parts.append
 
-### llx.prellm.core.preprocess_and_execute
-> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
-- **Output to**: logger.info, llx.prellm.trace.get_current_trace, PreLLM._load_config, trace.step, pipeline_ops.execute_v3_pipeline
-
-### llx.prellm.core.preprocess_and_execute_sync
-> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
-
-Usage:
-
-- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm.llm_provider.LLMProvider._parse_json
-> Best-effort JSON extraction from LLM output.
-- **Output to**: text.strip, logger.warning, json.loads, text.split, text.find
-
 ### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
 > Format pipeline state into structured executor input.
 - **Output to**: inputs.get, state.get, state.get, isinstance, str
@@ -501,16 +501,6 @@ Usage:
 ### llx.prellm.cli_commands.process
 > Execute a DevOps process chain.
 - **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
-
-### llx.prellm.server._parse_model_pair
-> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
-
-Special cases
-- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
-
-### llx.prellm.server.batch_process
-> Process multiple queries in parallel.
-- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.analysis.collector._parse_map_stats_line
 > Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
@@ -524,7 +514,17 @@ Special cases
 > Parse: # hotspots[5]: _extract fan=45; ...
 - **Output to**: re.search, re.finditer, max, max, int
 
-### llx.tools.docker_manager._build_parser
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
+
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
+
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
+
+### llx.tools.ai_tools_manager._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ## Behavioral Patterns
@@ -534,15 +534,15 @@ Special cases
 - **Confidence**: 0.90
 - **Functions**: llx.prellm.trace._sanitize
 
-### state_machine_LlxClient
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response
-
 ### state_machine_ProxymClient
 - **Type**: state_machine
 - **Confidence**: 0.70
 - **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
+
+### state_machine_LlxClient
+- **Type**: state_machine
+- **Confidence**: 0.70
+- **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response
 
 ### state_machine_AsyncWebScraper
 - **Type**: state_machine
@@ -553,7 +553,7 @@ Special cases
 
 Functions exposed as public API (no underscore prefix):
 
-- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 78 calls
+- `examples.planfile.generate_strategy.generate_strategy_with_fix` - 87 calls
 - `examples.ai-tools.main.main` - 58 calls
 - `llx.cli.app.plan_generate` - 52 calls
 - `llx.prellm.cli_context.context` - 49 calls

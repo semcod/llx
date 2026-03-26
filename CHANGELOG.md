@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.21] - 2026-03-26
+
+### Docs
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Other
+- Update examples/aider/demo_project/calculator.py
+- Update examples/aider/run.sh
+- Update examples/aider/test_integration.py
+- Update examples/filtering/advanced_filters.py
+- Update examples/planfile/generate_strategy.py
+- Update examples/planfile/strategy_fixed.yaml
+- Update examples/planfile/strategy_v2.yaml
+- Update llx/cli/app.py
+- Update llx/mcp/tools.py
+- Update llx/prellm/core.py
+- ... and 19 more files
+
 ## [0.1.20] - 2026-03-26
 
 ### Docs

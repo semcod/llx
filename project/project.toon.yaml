@@ -1,24 +1,24 @@
-# llx | 941 func | 88f | 28096L | python | 2026-03-26
+# llx | 960 func | 88f | 28137L | python | 2026-03-26
 
 HEALTH:
-  CC̄=4.0  critical=59 (limit:10)  dup=5  cycles=0
+  CC̄=3.9  critical=56 (limit:10)  dup=5  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
   !!! high_fan_out     plan_generate = 23 (limit:10)
   !!! high_fan_out     _dispatch = 20 (limit:10)
   !!  cc_exceeded      _dispatch = 21 (limit:15)
-  !!  cc_exceeded      ModelFilter.matches = 21 (limit:15)
   !!  cc_exceeded      plan_generate = 20 (limit:15)
   !!  high_fan_out     _write_env_file = 18 (limit:10)
   !!  high_fan_out     context = 18 (limit:10)
   !!  high_fan_out     LlxConfig.load = 17 (limit:10)
-  !!  high_fan_out     _dispatch = 17 (limit:10)
+  !!  high_fan_out     chat_completions = 16 (limit:10)
+  !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
 
 MODULES[121] (top by size):
+  M[llx/tools/vscode_manager.py] 789L C:1 F:40 CC↑10 D:0 (python)
   M[llx/tools/config_manager.py] 779L C:1 F:43 CC↑17 D:0 (python)
   M[llx/tools/model_manager.py] 740L C:1 F:33 CC↑15 D:0 (python)
-  M[llx/tools/vscode_manager.py] 732L C:1 F:25 CC↑19 D:0 (python)
   M[llx/mcp/tools.py] 684L C:1 F:14 CC↑6 D:1 (python)
   M[llx/prellm/trace.py] 649L C:2 F:29 CC↑13 D:2 (python)
   M[llx/orchestration/routing/engine.py] 640L C:1 F:38 CC↑11 D:0 (python)
@@ -48,8 +48,8 @@ REFACTOR[15]:
   [1] H/H Split god module llx/tools/ai_tools_manager.py (582L, 1 classes)
   [2] H/H Split god module llx/cli/app.py (548L, 0 classes)
   [3] H/H Split god module llx/tools/docker_manager.py (548L, 1 classes)
-  [4] H/H Split god module llx/tools/vscode_manager.py (732L, 1 classes)
-  [5] H/H Split god module llx/tools/config_manager.py (779L, 1 classes)
+  [4] H/H Split god module llx/tools/config_manager.py (779L, 1 classes)
+  [5] H/H Split god module llx/tools/health_checker.py (543L, 1 classes)
 
 EVOLUTION:
-  2026-03-26 CC̄=4.0 crit=59 28096L // Automated analysis
+  2026-03-26 CC̄=3.9 crit=56 28137L // Automated analysis

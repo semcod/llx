@@ -63,70 +63,81 @@ class HealthChecker:
             "ai-tools": {"required": False, "container": "llx-ai-tools-dev"}
         }
     
-    def check_service_health(self, service_name: str) -> Dict[str, Any]:
-        """Check health of a specific service."""
-        if service_name not in self.endpoints:
-            return {"status": "unknown", "error": f"Unknown service: {service_name}"}
-        
-        endpoint = self.endpoints[service_name]
-        result = {
+    def _build_service_result(self, service_name: str) -> Dict[str, Any]:
+        return {
             "service": service_name,
             "status": "unhealthy",
             "response_time": None,
             "error": None,
             "details": {}
         }
+
+    def _check_redis_health(self, endpoint: Dict[str, Any], result: Dict[str, Any], start_time: float) -> None:
+        try:
+            subprocess.run(
+                ["redis-cli", "ping"],
+                capture_output=True,
+                text=True,
+                timeout=endpoint["timeout"]
+            )
+            result["status"] = "healthy"
+            result["response_time"] = (time.time() - start_time) * 1000
+        except subprocess.TimeoutExpired:
+            result["error"] = "Timeout"
+        except FileNotFoundError:
+            result["error"] = "Redis CLI not available"
+        except Exception as e:
+            result["error"] = str(e)
+
+    def _populate_service_details(self, service_name: str, endpoint: Dict[str, Any], result: Dict[str, Any]) -> None:
+        if "models" not in endpoint:
+            return
+
+        models_url = f"{endpoint['url']}{endpoint['models']}"
+        try:
+            models_response = requests.get(models_url, timeout=endpoint["timeout"])
+            if models_response.status_code != 200:
+                return
+
+            data = models_response.json()
+            if service_name == "ollama":
+                result["details"]["models"] = len(data.get("models", []))
+                result["details"]["total_size"] = sum(
+                    model.get("size", 0) for model in data.get("models", [])
+                )
+            elif service_name == "llx_api":
+                result["details"]["models"] = len(data.get("data", []))
+        except:
+            pass
+
+    def _check_http_health(self, service_name: str, endpoint: Dict[str, Any], result: Dict[str, Any], start_time: float) -> None:
+        health_url = f"{endpoint['url']}{endpoint.get('health', '/')}"
+        response = requests.get(health_url, timeout=endpoint["timeout"])
+
+        result["response_time"] = (time.time() - start_time) * 1000
+
+        if response.status_code == 200:
+            result["status"] = "healthy"
+            self._populate_service_details(service_name, endpoint, result)
+        else:
+            result["error"] = f"HTTP {response.status_code}"
+
+    def check_service_health(self, service_name: str) -> Dict[str, Any]:
+        """Check health of a specific service."""
+        if service_name not in self.endpoints:
+            return {"status": "unknown", "error": f"Unknown service: {service_name}"}
+        
+        endpoint = self.endpoints[service_name]
+        result = self._build_service_result(service_name)
         
         try:
             start_time = time.time()
             
             if service_name == "redis":
-                # Check Redis with redis-cli
-                try:
-                    subprocess.run(
-                        ["redis-cli", "ping"],
-                        capture_output=True,
-                        text=True,
-                        timeout=endpoint["timeout"]
-                    )
-                    result["status"] = "healthy"
-                    result["response_time"] = (time.time() - start_time) * 1000
-                except subprocess.TimeoutExpired:
-                    result["error"] = "Timeout"
-                except FileNotFoundError:
-                    result["error"] = "Redis CLI not available"
-                except Exception as e:
-                    result["error"] = str(e)
+                self._check_redis_health(endpoint, result, start_time)
             
             else:
-                # Check HTTP services
-                health_url = f"{endpoint['url']}{endpoint.get('health', '/')}"
-                response = requests.get(health_url, timeout=endpoint["timeout"])
-                
-                result["response_time"] = (time.time() - start_time) * 1000
-                
-                if response.status_code == 200:
-                    result["status"] = "healthy"
-                    
-                    # Get additional details
-                    if "models" in endpoint:
-                        models_url = f"{endpoint['url']}{endpoint['models']}"
-                        try:
-                            models_response = requests.get(models_url, timeout=endpoint["timeout"])
-                            if models_response.status_code == 200:
-                                if service_name == "ollama":
-                                    data = models_response.json()
-                                    result["details"]["models"] = len(data.get("models", []))
-                                    result["details"]["total_size"] = sum(
-                                        model.get("size", 0) for model in data.get("models", [])
-                                    )
-                                elif service_name == "llx_api":
-                                    data = models_response.json()
-                                    result["details"]["models"] = len(data.get("data", []))
-                        except:
-                            pass
-                else:
-                    result["error"] = f"HTTP {response.status_code}"
+                self._check_http_health(service_name, endpoint, result, start_time)
         
         except requests.exceptions.Timeout:
             result["error"] = "Timeout"
@@ -490,48 +501,84 @@ def _build_parser() -> "argparse.ArgumentParser":
     return parser
 
 
+def _write_json_output(output_path: str, data: Dict[str, Any]) -> None:
+    with open(output_path, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
+def _handle_check_command(args, checker: "HealthChecker") -> bool:
+    results = checker.run_comprehensive_health_check()
+    if args.output:
+        _write_json_output(args.output, results)
+    return results["overall_status"] == "healthy"
+
+
+def _handle_quick_command(args, checker: "HealthChecker") -> bool:
+    return checker.run_quick_health_check()
+
+
+def _handle_monitor_command(args, checker: "HealthChecker") -> bool:
+    results = checker.monitor_services(args.interval, args.duration)
+    if args.output:
+        _write_json_output(args.output, results)
+    return True
+
+
+def _handle_service_command(args, checker: "HealthChecker") -> bool:
+    if not args.service:
+        print("❌ --service required for service check")
+        return False
+
+    results = checker.check_service_health(args.service)
+    print(json.dumps(results, indent=2))
+    return results["status"] == "healthy"
+
+
+def _handle_container_command(args, checker: "HealthChecker") -> bool:
+    if not args.container:
+        print("❌ --container required for container check")
+        return False
+
+    results = checker.check_container_health(args.container)
+    print(json.dumps(results, indent=2))
+    return results["status"] == "running"
+
+
+def _handle_system_command(args, checker: "HealthChecker") -> bool:
+    results = checker.check_system_resources()
+    print(json.dumps(results, indent=2))
+    return True
+
+
+def _handle_filesystem_command(args, checker: "HealthChecker") -> bool:
+    results = checker.check_filesystem_health()
+    print(json.dumps(results, indent=2))
+    return len(results.get("issues", [])) == 0
+
+
+def _handle_network_command(args, checker: "HealthChecker") -> bool:
+    results = checker.check_network_connectivity()
+    print(json.dumps(results, indent=2))
+    return len(results.get("issues", [])) == 0
+
+
 def _dispatch(args, checker: "HealthChecker") -> bool:
-    if args.command == "check":
-        results = checker.run_comprehensive_health_check()
-        if args.output:
-            with open(args.output, 'w') as f:
-                json.dump(results, f, indent=2)
-        return results["overall_status"] == "healthy"
-    elif args.command == "quick":
-        return checker.run_quick_health_check()
-    elif args.command == "monitor":
-        results = checker.monitor_services(args.interval, args.duration)
-        if args.output:
-            with open(args.output, 'w') as f:
-                json.dump(results, f, indent=2)
-        return True
-    elif args.command == "service":
-        if not args.service:
-            print("❌ --service required for service check")
-            return False
-        results = checker.check_service_health(args.service)
-        print(json.dumps(results, indent=2))
-        return results["status"] == "healthy"
-    elif args.command == "container":
-        if not args.container:
-            print("❌ --container required for container check")
-            return False
-        results = checker.check_container_health(args.container)
-        print(json.dumps(results, indent=2))
-        return results["status"] == "running"
-    elif args.command == "system":
-        results = checker.check_system_resources()
-        print(json.dumps(results, indent=2))
-        return True
-    elif args.command == "filesystem":
-        results = checker.check_filesystem_health()
-        print(json.dumps(results, indent=2))
-        return len(results.get("issues", [])) == 0
-    elif args.command == "network":
-        results = checker.check_network_connectivity()
-        print(json.dumps(results, indent=2))
-        return len(results.get("issues", [])) == 0
-    return False
+    handlers = {
+        "check": _handle_check_command,
+        "quick": _handle_quick_command,
+        "monitor": _handle_monitor_command,
+        "service": _handle_service_command,
+        "container": _handle_container_command,
+        "system": _handle_system_command,
+        "filesystem": _handle_filesystem_command,
+        "network": _handle_network_command,
+    }
+
+    handler = handlers.get(args.command)
+    if not handler:
+        return False
+
+    return handler(args, checker)
 
 
 def main():

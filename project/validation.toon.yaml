@@ -1,7 +1,7 @@
-# vallm batch | 273f | 166✓ 11⚠ 51✗ | 2026-03-26
+# vallm batch | 276f | 168✓ 11⚠ 51✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 273  passed: 166 (60.8%)  warnings: 11  errors: 51  unsupported: 56
+  scanned: 276  passed: 168 (60.9%)  warnings: 11  errors: 51  unsupported: 57
 
 WARNINGS[11]{path,score}:
   examples/planfile/async_refactor_demo.py,0.93
@@ -228,11 +228,6 @@ ERRORS[51]{path,score}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
       python.import.resolvable,error,Module '_docker' not found,16
-  llx/tools/vscode_manager.py,0.89
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-      python.import.resolvable,error,Module '_docker' not found,16
   llx/orchestration/session/manager.py,0.90
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,14
@@ -241,6 +236,11 @@ ERRORS[51]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,10
       python.import.resolvable,error,Module 'config' not found,11
+  llx/tools/vscode_manager.py,0.90
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+      python.import.resolvable,error,Module '_docker' not found,16
   llx/planfile/runner.py,0.91
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,9
@@ -291,4 +291,4 @@ UNSUPPORTED[5]{bucket,count}:
   Dockerfile*,1
   *.txt,4
   *.yml,3
-  other,14
+  other,15

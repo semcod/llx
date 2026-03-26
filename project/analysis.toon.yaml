@@ -1,41 +1,38 @@
-# code2llm | 121f 26210L | python:114,shell:7 | 2026-03-26
-# CC̄=4.0 | critical:11/1169 | dups:0 | cycles:0
+# code2llm | 121f 26251L | python:114,shell:7 | 2026-03-26
+# CC̄=3.9 | critical:8/1188 | dups:0 | cycles:0
 
-HEALTH[13]:
+HEALTH[10]:
   🟡 CC    preprocess_and_execute CC=15 (limit:15)
-  🟡 CC    _dispatch CC=19 (limit:15)
-  🟡 CC    _dispatch CC=19 (limit:15)
-  🟡 CC    print_config_summary CC=17 (limit:15)
-  🟡 CC    check_service_health CC=16 (limit:15)
-  🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    _dispatch CC=21 (limit:15)
-  🟡 CC    _render_tiers_table CC=15 (limit:15)
-  🟡 CC    matches CC=21 (limit:15)
+  🟡 CC    _dispatch CC=19 (limit:15)
+  🟡 CC    print_model_summary CC=15 (limit:15)
+  🟡 CC    print_config_summary CC=17 (limit:15)
   🟡 CC    plan_generate CC=20 (limit:15)
+  🟡 CC    check_service_health CC=16 (limit:15)
   🟡 CC    get_status CC=15 (limit:15)
-  🟡 CC    generate_strategy_with_fix CC=39 (limit:15)
+  🟡 CC    generate_strategy_with_fix CC=43 (limit:15)
   🟡 CC    chat_with_constraints CC=20 (limit:15)
 
 REFACTOR[1]:
-  1. split 13 high-CC methods  (CC>15)
+  1. split 10 high-CC methods  (CC>15)
 
-PIPELINES[840]:
-  [1] Src [config_set_cmd]: config_set_cmd → config_set → resolve_alias
+PIPELINES[859]:
+  [1] Src [load]: load → _apply_env
       PURITY: 100% pure
-  [2] Src [config_get_cmd]: config_get_cmd → config_get → resolve_alias
+  [2] Src [_apply_yaml_models]: _apply_yaml_models
       PURITY: 100% pure
-  [3] Src [config_list_cmd]: config_list_cmd → config_list → _read_env_file
+  [3] Src [config_set_cmd]: config_set_cmd → config_set → resolve_alias
       PURITY: 100% pure
-  [4] Src [config_show_cmd]: config_show_cmd → get_env_config → load_dotenv_if_available → _load_getv_defaults
+  [4] Src [config_get_cmd]: config_get_cmd → config_get → resolve_alias
       PURITY: 100% pure
-  [5] Src [config_init_env]: config_init_env → _resolve_config_path
+  [5] Src [config_list_cmd]: config_list_cmd → config_list → _read_env_file
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=4.1    ←in:16  →out:0
+  llx/                            CC̄=4.0    ←in:16  →out:0
+  │ !! vscode_manager             789L  1C   40m  CC=10     ←0
   │ !! config_manager             779L  1C   43m  CC=17     ←0
   │ !! model_manager              740L  1C   33m  CC=15     ←0
-  │ !! vscode_manager             732L  1C   25m  CC=19     ←0
   │ !! tools                      684L  1C   14m  CC=6      ←1
   │ !! trace                      649L  2C   29m  CC=13     ←2
   │ !! engine                     640L  1C   38m  CC=11     ←0
@@ -58,10 +55,10 @@ LAYERS:
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
-  │ !! formatters                 338L  0C   12m  CC=15     ←1
   │ query_decomposer           330L  1C   10m  CC=9      ←0
   │ proxym                     330L  3C   12m  CC=8      ←1
   │ config                     327L  4C    7m  CC=13     ←14
+  │ formatters                 298L  0C   12m  CC=14     ←1
   │ cli                        280L  0C   13m  CC=3      ←0
   │ executor_simple            276L  1C    7m  CC=13     ←2
   │ process_chain              275L  1C   10m  CC=7      ←0
@@ -77,10 +74,10 @@ LAYERS:
   │ extractors                 229L  0C   11m  CC=7      ←1
   │ folder_compressor          224L  1C   10m  CC=11     ←0
   │ executors                  223L  0C    6m  CC=5      ←1
+  │ model_selector             217L  4C   12m  CC=5      ←8
   │ client                     215L  3C   10m  CC=6      ←0
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
-  │ !! model_selector             193L  4C    8m  CC=21     ←8
   │ cli                        193L  0C    6m  CC=8      ←0
   │ preprocessor               188L  2C    6m  CC=13     ←0
   │ cli_query                  186L  0C    5m  CC=9      ←2
@@ -176,13 +173,13 @@ COUPLING:
         llx.routing                                                                          ←3                  1                 ←2                                                        1                 ──                     hub
          llx.prellm                                    ←1                 ←1                                                       ←2                                                                                             ──
   CYCLES: none
-  HUB: llx.tools/ (fan-in=7)
+  HUB: llx.analysis/ (fan-in=13)
   HUB: llx.routing/ (fan-in=6)
   HUB: llx.integrations/ (fan-in=5)
-  HUB: llx.analysis/ (fan-in=13)
-  HUB: llx/ (fan-in=16)
+  HUB: llx.tools/ (fan-in=7)
   HUB: docker.ai-tools/ (fan-in=852)
   HUB: llx.planfile/ (fan-in=11)
+  HUB: llx/ (fan-in=16)
   SMELL: llx.orchestration/ fan-out=317 → split needed
   SMELL: llx.cli/ fan-out=50 → split needed
   SMELL: llx.tools/ fan-out=494 → split needed

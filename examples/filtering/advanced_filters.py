@@ -30,7 +30,80 @@ class SmartLLXClient:
         """Analyze project metrics."""
         from llx.analysis import analyze_project
         return analyze_project(str(self.project_path))
-    
+
+    def _apply_speed_priority(self, max_tier: Optional[ModelTier], speed_priority: bool) -> Optional[ModelTier]:
+        if speed_priority and not max_tier:
+            return ModelTier.BALANCED if self.metrics.total_files > 10 else ModelTier.CHEAP
+        return max_tier
+
+    def _select_model_with_constraints(
+        self,
+        max_tier: Optional[ModelTier],
+        prefer_local: bool,
+        task_hint: Optional[str],
+    ):
+        return select_model(
+            self.metrics,
+            self.config,
+            prefer_local=prefer_local,
+            max_tier=max_tier,
+            task_hint=task_hint,
+        )
+
+    def _apply_provider_filter(
+        self,
+        selection,
+        provider: Optional[str],
+        max_tier: Optional[ModelTier],
+    ):
+        if not provider or selection.model.provider == provider:
+            return selection
+
+        provider_models = [
+            m for m in self.config.models.values()
+            if m.provider == provider
+        ]
+        if not provider_models:
+            return selection
+
+        if max_tier:
+            tier_order = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP,
+                          ModelTier.BALANCED, ModelTier.PREMIUM]
+            max_index = tier_order.index(max_tier)
+            for model in provider_models:
+                if "premium" in model.name.lower() and tier_order.index(ModelTier.PREMIUM) <= max_index:
+                    selection.model = model
+                    break
+                if "balanced" in model.name.lower() and tier_order.index(ModelTier.BALANCED) <= max_index:
+                    selection.model = model
+                    break
+                if "cheap" in model.name.lower() and tier_order.index(ModelTier.CHEAP) <= max_index:
+                    selection.model = model
+                    break
+        else:
+            selection.model = provider_models[0]
+
+        return selection
+
+    def _is_over_budget(self, selection, cost_limit: Optional[float]) -> bool:
+        if not cost_limit:
+            return False
+
+        estimated_cost = (selection.model.cost_per_1k_input + selection.model.cost_per_1k_output) / 1000
+        return estimated_cost > cost_limit
+
+    def _print_selection(self, selection) -> None:
+        print(f"🎯 Selected: {selection.model.model_id} ({selection.model.provider})")
+        print(f"📊 Reason: {'; '.join(selection.reasons)}")
+
+    def _send_chat(self, prompt: str, selection) -> str:
+        with LlxClient(self.config) as client:
+            response = client.chat(
+                messages=[ChatMessage(role="user", content=prompt)],
+                model=selection.model.model_id
+            )
+            return response.content
+        
     def chat_with_constraints(
         self,
         prompt: str,
@@ -54,68 +127,24 @@ class SmartLLXClient:
             cost_limit: Maximum cost limit in USD
             speed_priority: Prioritize speed over quality
         """
-        # Apply speed priority by adjusting max tier
-        if speed_priority and not max_tier:
-            max_tier = ModelTier.BALANCED if self.metrics.total_files > 10 else ModelTier.CHEAP
-        
-        # Select model with constraints
-        selection = select_model(
-            self.metrics,
-            self.config,
-            prefer_local=prefer_local,
-            max_tier=max_tier,
-            task_hint=task_hint
-        )
-        
-        # Apply provider filter if specified
-        if provider and selection.model.provider != provider:
-            # Find best model from specified provider
-            provider_models = [
-                m for m in self.config.models.values() 
-                if m.provider == provider
-            ]
-            if provider_models:
-                # Choose the best one within tier limit
-                if max_tier:
-                    tier_order = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, 
-                                ModelTier.BALANCED, ModelTier.PREMIUM]
-                    max_index = tier_order.index(max_tier)
-                    for model in provider_models:
-                        # Simple heuristic: use model name to determine tier
-                        if "premium" in model.name.lower() and tier_order.index(ModelTier.PREMIUM) <= max_index:
-                            selection.model = model
-                            break
-                        elif "balanced" in model.name.lower() and tier_order.index(ModelTier.BALANCED) <= max_index:
-                            selection.model = model
-                            break
-                        elif "cheap" in model.name.lower() and tier_order.index(ModelTier.CHEAP) <= max_index:
-                            selection.model = model
-                            break
-                else:
-                    selection.model = provider_models[0]
-        
-        # Check cost limit
-        if cost_limit:
-            estimated_cost = (selection.model.cost_per_1k_input + selection.model.cost_per_1k_output) / 1000
-            if estimated_cost > cost_limit:
-                # Downgrade to cheaper model
-                if max_tier != ModelTier.FREE:
-                    return self.chat_with_constraints(
-                        prompt, max_tier=ModelTier.FREE, provider=provider,
-                        prefer_local=prefer_local, task_hint=task_hint,
-                        cost_limit=cost_limit, speed_priority=speed_priority
-                    )
-        
-        print(f"🎯 Selected: {selection.model.model_id} ({selection.model.provider})")
-        print(f"📊 Reason: {'; '.join(selection.reasons)}")
-        
-        # Send chat
-        with LlxClient(self.config) as client:
-            response = client.chat(
-                messages=[ChatMessage(role="user", content=prompt)],
-                model=selection.model.model_id
-            )
-            return response.content
+        max_tier = self._apply_speed_priority(max_tier, speed_priority)
+        selection = self._select_model_with_constraints(max_tier, prefer_local, task_hint)
+        selection = self._apply_provider_filter(selection, provider, max_tier)
+
+        if self._is_over_budget(selection, cost_limit):
+            if max_tier != ModelTier.FREE:
+                return self.chat_with_constraints(
+                    prompt,
+                    max_tier=ModelTier.FREE,
+                    provider=provider,
+                    prefer_local=prefer_local,
+                    task_hint=task_hint,
+                    cost_limit=cost_limit,
+                    speed_priority=speed_priority,
+                )
+
+        self._print_selection(selection)
+        return self._send_chat(prompt, selection)
 
 
 def demonstrate_filtering():

@@ -534,45 +534,40 @@ class ConfigManager:
         
         return summary
     
-    def print_config_summary(self):
-        """Print comprehensive configuration summary."""
-        summary = self.get_config_summary()
-        
-        print("⚙️  Configuration Summary")
-        print("=========================")
-        
-        # Configuration files
+    def _print_config_files_summary(self, files_summary: Dict[str, Any]) -> None:
         print("\n📁 Configuration Files:")
-        for config_type, info in summary["files"].items():
+        for config_type, info in files_summary.items():
             status = "✅" if info["exists"] else "❌"
             size_kb = info["size"] / 1024 if info["size"] > 0 else 0
             print(f"  {status} {config_type}: {info['path']} ({size_kb:.1f}KB)")
-        
-        # Environment variables
-        env_info = summary["env_vars"]
+
+    def _print_env_summary(self, env_info: Dict[str, Any]) -> None:
         print(f"\n🔧 Environment Variables:")
         print(f"  📊 Count: {env_info['count']}")
         print(f"  🔑 API Keys: {'✅' if env_info['has_api_keys'] else '❌'}")
         print(f"  🌐 Proxy Config: {'✅' if env_info['has_proxy_config'] else '❌'}")
         print(f"  🦙 Ollama Config: {'✅' if env_info['has_ollama_config'] else '❌'}")
-        
-        # Models
-        model_info = summary["models"]
+
+    def _print_model_summary(self, model_info: Dict[str, Any]) -> None:
         print(f"\n🤖 Models:")
         print(f"  📊 Count: {model_info['count']}")
         print(f"  🏷️  Tiers: {', '.join(model_info['tiers'])}")
         print(f"  🏠 Local Models: {'✅' if model_info['has_local'] else '❌'}")
-        
-        # Issues
-        all_issues = 0
-        for category, issues in summary["issues"].items():
-            for issue_type, issue_list in issues.items():
-                if issue_list:
-                    all_issues += len(issue_list)
-        
+
+    def _count_summary_issues(self, issues_summary: Dict[str, Dict[str, List[str]]]) -> int:
+        return sum(
+            len(issue_list)
+            for issues in issues_summary.values()
+            for issue_list in issues.values()
+            if issue_list
+        )
+
+    def _print_issue_summary(self, issues_summary: Dict[str, Dict[str, List[str]]]) -> None:
+        all_issues = self._count_summary_issues(issues_summary)
+
         if all_issues > 0:
             print(f"\n⚠️  Issues Found ({all_issues}):")
-            for category, issues in summary["issues"].items():
+            for category, issues in issues_summary.items():
                 for issue_type, issue_list in issues.items():
                     if issue_list:
                         print(f"  {category.upper()} {issue_type}:")
@@ -580,12 +575,28 @@ class ConfigManager:
                             print(f"    • {issue}")
         else:
             print(f"\n✅ No configuration issues found!")
-        
-        # Profiles
-        profiles = summary["profiles"]
+
+    def _print_profiles_summary(self, profiles: List[str]) -> None:
         if profiles:
             print(f"\n📋 Available Profiles: {', '.join(profiles)}")
+
+    def print_config_summary(self):
+        """Print comprehensive configuration summary."""
+        summary = self.get_config_summary()
         
+        print("⚙️  Configuration Summary")
+        print("=========================")
+        # Configuration files
+        self._print_config_files_summary(summary["files"])
+        # Environment variables
+        self._print_env_summary(summary["env_vars"])
+        # Models
+        self._print_model_summary(summary["models"])
+        # Issues
+        self._print_issue_summary(summary["issues"])
+        # Profiles
+        self._print_profiles_summary(summary["profiles"])
+
         print()
 
 

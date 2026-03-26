@@ -4,7 +4,7 @@ Test planfile generator using the new llx.planfile module
 """
 
 import sys
-import os
+import re
 sys.path.insert(0, '/home/tom/github/semcod/llx')
 
 from pathlib import Path
@@ -15,26 +15,8 @@ import yaml
 console = Console()
 
 
-def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
-    """Generate strategy using llx.planfile."""
-    
-    # Import llx.planfile modules
-    from llx.planfile import Strategy, Goal, Sprint, TaskPattern, TaskType, ModelHints
-    from llx.routing.client import LlxClient
-    from llx.config import LlxConfig
-    from llx import analyze_project
-    
-    console.print(f"[blue]Generating strategy for {project_path}...[/blue]")
-    console.print(f"  Model: {model}")
-    console.print(f"  Sprints: {sprints}")
-    console.print(f"  Focus: {focus}")
-    console.print(f"  Using OpenRouter free models")
-    
-    # 1. Collect metrics using llx
-    metrics = analyze_project(project_path)
-    
-    # 2. Build prompt manually for now
-    prompt = f"""
+def _build_strategy_prompt(metrics, focus, sprints):
+    return f"""
 Generate a refactoring strategy for this project:
 
 Project Metrics:
@@ -55,43 +37,17 @@ Please generate a YAML strategy with:
 
 Return only valid YAML without code blocks.
 """
-    
-    console.print(f"\n[yellow]Sending prompt to LLM...[/yellow]")
-    
-    # 3. Call LLM using llx client
-    import os
-    from dotenv import load_dotenv
-    load_dotenv('/home/tom/github/semcod/llx/.env')
-    
-    config = LlxConfig()
-    client = LlxClient(config)
-    
-    from llx.routing.client import ChatMessage
-    response = client.chat(
-        messages=[ChatMessage(role="user", content=prompt)],
-        model=model
-    )
-    
-    console.print(f"[green]Got response from LLM[/green]")
-    
-    # Debug: save full response
-    with open("/tmp/llm_response.txt", "w") as f:
-        f.write(response.content)
-    console.print(f"[dim]Full response saved to /tmp/llm_response.txt[/dim]")
-    
-    # 4. Parse with fixes
-    yaml_text = response.content
-    if "```yaml" in response.content:
-        yaml_text = response.content.split("```yaml")[1].split("```")[0]
-    elif "```" in response.content:
-        yaml_text = response.content.split("```")[1].split("```")[0]
-    
-    # Save extracted YAML
-    with open("/tmp/extracted_yaml.txt", "w") as f:
-        f.write(yaml_text)
-    console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
-    
-    # Fix common YAML formatting issues
+
+
+def _extract_yaml_text(content: str) -> str:
+    if "```yaml" in content:
+        return content.split("```yaml")[1].split("```")[0]
+    if "```" in content:
+        return content.split("```")[1].split("```")[0]
+    return content
+
+
+def _fix_yaml_text(yaml_text: str) -> str:
     yaml_text = yaml_text.replace("-id:", "- id:")
     yaml_text = yaml_text.replace("-name:", "- name:")
     yaml_text = yaml_text.replace("-task_type:", "- task_type:")
@@ -101,149 +57,184 @@ Return only valid YAML without code blocks.
     yaml_text = yaml_text.replace("-planning:", "- planning:")
     yaml_text = yaml_text.replace("-implementation:", "- implementation:")
     yaml_text = yaml_text.replace("-review:", "- review:")
-    
-    # Fix line continuation issues
-    import re
-    # Add newline after list items that don't have proper indentation
+
     yaml_text = re.sub(r'([a-zA-Z].{50,})\s{2,}([a-zA-Z])', r'\1\n  - \2', yaml_text)
-    # Fix specific case with >=
     yaml_text = re.sub(r'(coverage|percentage):\s*>=\s*([0-9]+%)', r'\1: >= \2', yaml_text)
-    
-    # Ensure proper list formatting
+
     lines = yaml_text.split('\n')
     fixed_lines = []
     for i, line in enumerate(lines):
         fixed_lines.append(line)
-        # If line ends with a list item without proper dash, add newline
         if line.strip().startswith('- ') and i < len(lines) - 1:
             next_line = lines[i + 1].strip()
             if next_line and not next_line.startswith('-') and not next_line.startswith(' '):
-                # Check if it looks like it should be a new list item
                 if any(word in next_line.lower() for word in ['add', 'run', 'enforce', 'introduce', 'apply']):
                     fixed_lines.append('')
-    
-    # Save fixed YAML
+
     yaml_text = '\n'.join(fixed_lines)
-    
-    # Additional fixes for common YAML issues
-    # Fix indentation problems
+
     lines = yaml_text.split('\n')
     corrected_lines = []
     for line in lines:
-        # Fix common indentation issues
         if line.startswith('name:') and not line.startswith('  name:'):
-            # Check if we're inside a block
             if corrected_lines and corrected_lines[-1].strip() and not corrected_lines[-1].startswith(' '):
-                # This might be a nested property, add proper indentation
                 corrected_lines.append('  ' + line)
             else:
                 corrected_lines.append(line)
         else:
             corrected_lines.append(line)
-    
-    yaml_text = '\n'.join(corrected_lines)
-    
-    with open("/tmp/fixed_yaml.txt", "w") as f:
-        f.write(yaml_text)
-    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
-    
-    console.print(f"\n[yellow]Parsing YAML response...[/yellow]")
-    
-    # Parse YAML with fallback
-    try:
-        data = yaml.safe_load(yaml_text)
-    except yaml.YAMLError as e:
-        console.print(f"[red]✗ YAML parsing failed: {e}[/red]")
-        console.print("[yellow]Creating fallback strategy...[/yellow]")
-        # Create a simple fallback strategy
-        data = {
-            'name': 'Refactoring Strategy',
-            'project_type': 'python',
-            'domain': 'software',
-            'goal': focus or 'improvement',
-            'sprints': [
-                {
-                    'id': 1,
-                    'name': 'Sprint 1',
-                    'objectives': ['Reduce complexity', 'Add tests'],
-                    'tasks': [
-                        {
-                            'name': 'Analyze Complexity',
-                            'description': 'Analyze code complexity',
-                            'type': 'feature',
-                            'model_hints': 'balanced'
-                        },
-                        {
-                            'name': 'Add Tests',
-                            'description': 'Add unit tests',
-                            'type': 'test',
-                            'model_hints': 'cheap'
-                        }
-                    ]
-                }
-            ],
-            'quality_gates': [
-                'Average CC < 5',
-                'Test coverage >= 80%'
-            ]
-        }
-    
-    # Fix the data to match expected schema
+
+    return '\n'.join(corrected_lines)
+
+
+def _fallback_strategy(focus):
+    return {
+        'name': 'Refactoring Strategy',
+        'project_type': 'python',
+        'domain': 'software',
+        'goal': focus or 'improvement',
+        'sprints': [
+            {
+                'id': 1,
+                'name': 'Sprint 1',
+                'objectives': ['Reduce complexity', 'Add tests'],
+                'tasks': [
+                    {
+                        'name': 'Analyze Complexity',
+                        'description': 'Analyze code complexity',
+                        'type': 'feature',
+                        'model_hints': 'balanced'
+                    },
+                    {
+                        'name': 'Add Tests',
+                        'description': 'Add unit tests',
+                        'type': 'test',
+                        'model_hints': 'cheap'
+                    }
+                ]
+            }
+        ],
+        'quality_gates': [
+            'Average CC < 5',
+            'Test coverage >= 80%'
+        ]
+    }
+
+
+def _normalize_strategy_data(data, focus):
+    if not isinstance(data, dict):
+        data = _fallback_strategy(focus)
+
     if 'sprints' in data:
         for i, sprint in enumerate(data['sprints']):
-            # Convert string ID to int if needed
             if isinstance(sprint.get('id'), str):
                 if sprint['id'].startswith('sprint-'):
                     sprint['id'] = int(sprint['id'].split('-')[1])
                 else:
                     sprint['id'] = i + 1
-            
-            # Convert task_patterns to embedded tasks (V2 format)
+
             if 'task_patterns' in data and 'tasks' not in sprint:
                 sprint['tasks'] = []
-                # Use task_patterns as list of task names
                 if isinstance(data['task_patterns'], list):
-                    for i, task_name in enumerate(data['task_patterns']):
+                    for task_name in data['task_patterns']:
                         sprint['tasks'].append({
                             'name': task_name,
                             'description': f"Execute {task_name.lower()}",
                             'type': 'tech_debt' if 'refactor' in task_name.lower() or 'extract' in task_name.lower() else 'feature',
                             'model_hints': 'balanced' if 'complex' in task_name.lower() else 'cheap'
                         })
-    
-    # Fix quality gates
+
     if 'quality_gates' in data:
         for gate in data['quality_gates']:
             if 'criteria' in gate and isinstance(gate['criteria'], str):
                 gate['criteria'] = [gate['criteria']]
-    
-    # Ensure required fields
+
     if 'name' not in data:
         data['name'] = f"Refactoring Strategy"
     if 'project_type' not in data:
         data['project_type'] = 'python'
     if 'domain' not in data:
         data['domain'] = 'software'
-    
-    # Fix goal to be a proper Goal object
-    if 'goal' not in data or isinstance(data.get('goal'), str):
-        goal_str = data.get('goal', focus or 'improvement')
-        data['goal'] = {
-            'short': f"Improve {goal_str}" if goal_str else "Improve codebase",
-            'quality': ['Reduce complexity', 'Improve maintainability'],
-            'delivery': ['Complete in sprints', 'Review changes'],
-            'metrics': ['Complexity reduction', 'Test coverage']
-        }
-    elif isinstance(data.get('goal'), dict):
-        # Ensure all required fields exist
-        goal = data['goal']
-        goal.setdefault('short', f"Improve {focus or 'codebase'}")
-        goal.setdefault('quality', ['Reduce complexity', 'Improve maintainability'])
-        goal.setdefault('delivery', ['Complete in sprints', 'Review changes'])
-        goal.setdefault('metrics', ['Complexity reduction', 'Test coverage'])
-    
+    if 'goal' not in data:
+        data['goal'] = focus or 'improvement'
+
+    return data
+
+
+def _write_debug_artifact(path: str, content: str) -> None:
+    with open(path, "w") as f:
+        f.write(content)
+
+
+def generate_strategy_with_fix(project_path, model="openrouter/nvidia/nemotron-3-super-120b-a12b:free", sprints=2, focus="complexity"):
+    """Generate strategy using llx.planfile."""
+
+    # Import llx.planfile modules
+    from llx.routing.client import LlxClient
+    from llx.config import LlxConfig
+    from llx import analyze_project
+
+    console.print(f"[blue]Generating strategy for {project_path}...[/blue]")
+    console.print(f"  Model: {model}")
+    console.print(f"  Sprints: {sprints}")
+    console.print(f"  Focus: {focus}")
+    console.print(f"  Using OpenRouter free models")
+
+    # 1. Collect metrics using llx
+    metrics = analyze_project(project_path)
+
+    # 2. Build prompt manually for now
+    prompt = _build_strategy_prompt(metrics, focus, sprints)
+
+    console.print(f"\n[yellow]Sending prompt to LLM...[/yellow]")
+
+    # 3. Call LLM using llx client
+    from dotenv import load_dotenv
+    load_dotenv('/home/tom/github/semcod/llx/.env')
+
+    config = LlxConfig()
+    client = LlxClient(config)
+
+    from llx.routing.client import ChatMessage
+    response = client.chat(
+        messages=[ChatMessage(role="user", content=prompt)],
+        model=model
+    )
+
+    console.print(f"[green]Got response from LLM[/green]")
+
+    # Debug: save full response
+    _write_debug_artifact("/tmp/llm_response.txt", response.content)
+    console.print(f"[dim]Full response saved to /tmp/llm_response.txt[/dim]")
+
+    # 4. Parse with fixes
+    yaml_text = _extract_yaml_text(response.content)
+
+    # Save extracted YAML
+    _write_debug_artifact("/tmp/extracted_yaml.txt", yaml_text)
+    console.print(f"[dim]Extracted YAML saved to /tmp/extracted_yaml.txt[/dim]")
+
+    # Fix common YAML formatting issues
+    yaml_text = _fix_yaml_text(yaml_text)
+
+    # Save fixed YAML
+    _write_debug_artifact("/tmp/fixed_yaml.txt", yaml_text)
+    console.print(f"[dim]Fixed YAML saved to /tmp/fixed_yaml.txt[/dim]")
+
+    console.print(f"\n[yellow]Parsing YAML response...[/yellow]")
+
+    # Parse YAML with fallback
+    try:
+        data = yaml.safe_load(yaml_text)
+    except yaml.YAMLError as e:
+        console.print(f"[red]✗ YAML parsing failed: {e}[/red]")
+        console.print("[yellow]Creating fallback strategy...[/yellow]")
+        data = _fallback_strategy(focus)
+
+    data = _normalize_strategy_data(data, focus)
+
     console.print(f"[green]✓ Strategy parsed and fixed[/green]")
-    
+
     return data
 
 

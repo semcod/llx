@@ -4,11 +4,6 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
-        llx__cli__strategy_commands__create_strategy["create_strategy"]
-        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
-        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
-        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
-        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
         llx__cli__formatters__output_rich["output_rich"]
         llx__cli__formatters__output_json["output_json"]
         llx__cli__formatters___filter_models["_filter_models"]
@@ -19,10 +14,17 @@ flowchart TD
         llx__cli__formatters___render_tools_table["_render_tools_table"]
         llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__formatters___render_agents_table["_render_agents_table"]
+        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
         ...["+20 more"]
     end
 
     subgraph Core
+        llx__config__LlxConfig__load["load"]
+        llx__config___apply_yaml_models["_apply_yaml_models"]
         llx__prellm__cli_config__config_set_cmd["config_set_cmd"]
         llx__prellm__cli_config__config_get_cmd["config_get_cmd"]
         llx__prellm__cli_config___format_config_sections["_format_config_sections"]
@@ -36,9 +38,7 @@ flowchart TD
         llx__prellm__cli__init["init"]
         llx__prellm__cli__serve["serve"]
         llx__prellm__cli__doctor["doctor"]
-        llx__prellm__cli__budget["budget"]
-        llx__prellm__cli__models["models"]
-        ...["+721 more"]
+        ...["+740 more"]
     end
 
     subgraph Exporters
@@ -46,4 +46,4 @@ flowchart TD
         llx__prellm__context__user_memory__UserMemory__export_session["export_session"]
     end
 
-    class llx__prellm__cli_config__config_set_cmd,llx__prellm__cli_config__config_get_cmd,llx__prellm__cli_config___format_config_sections,llx__prellm__cli_config__config_list_cmd,llx__prellm__cli_config__config_show_cmd,llx__prellm__cli_config__config_init_env,llx__prellm__cli__query,llx__prellm__cli__context,llx__prellm__cli__process,llx__prellm__cli__decompose entry
+    class llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__prellm__cli_config__config_set_cmd,llx__prellm__cli_config__config_get_cmd,llx__prellm__cli_config___format_config_sections,llx__prellm__cli_config__config_list_cmd,llx__prellm__cli_config__config_show_cmd,llx__prellm__cli_config__config_init_env,llx__prellm__cli__query,llx__prellm__cli__context entry
