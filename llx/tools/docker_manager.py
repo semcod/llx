@@ -371,7 +371,7 @@ class DockerManager:
             print(f"❌ Error backing up volumes: {e}")
             return False
     
-    def restore_volumes(self, env: str = "dev", backup_dir: str) -> bool:
+    def restore_volumes(self, backup_dir: str, env: str = "dev") -> bool:
         """Restore Docker volumes from backup."""
         try:
             backup_path = Path(backup_dir)
@@ -533,7 +533,7 @@ def main():
             print("❌ --backup-dir required for restore")
             success = False
         else:
-            success = manager.restore_volumes(args.env, args.backup_dir)
+            success = manager.restore_volumes(args.backup_dir, args.env)
     
     elif args.command == "health":
         if args.service:

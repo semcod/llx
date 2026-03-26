@@ -1,393 +1,136 @@
-# vallm batch | 104f | 47✓ 57✗
+# vallm batch | 101f | 47✓ 4⚠ 18✗ | 2026-03-26
 
 SUMMARY:
-  total: 104
-  passed: 47
-  failed: 57
-  success: 45.2%
+  scanned: 101  passed: 47 (46.5%)  warnings: 4  errors: 18  unsupported: 36
 
-FILES:
-  [yaml]
-    ✓ goal.yaml
-      verdict: pass
-      score: 1.00
-    ✓ llx.yaml
-      verdict: pass
-      score: 1.00
-    ✗ project/duplication.toon.yaml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
-    ✗ project/validation.toon.yaml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
-    ✗ project/map.toon.yaml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 13 parse error(s) in yaml
-    ✗ project/evolution.toon.yaml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
-    ✗ project/analysis.toon.yaml
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 1 parse error(s) in yaml
-  [bash]
-    ✓ ai-tools-manage.sh
-      verdict: pass
-      score: 1.00
-    ✓ docker-manage.sh
-      verdict: pass
-      score: 1.00
-    ✓ project.sh
-      verdict: pass
-      score: 1.00
-    ✓ docker/ollama/entrypoint.sh
-      verdict: pass
-      score: 1.00
-    ✓ docker/vscode/install-extensions.sh
-      verdict: pass
-      score: 1.00
-    ✓ docker/ai-tools/entrypoint.sh
-      verdict: pass
-      score: 1.00
-    ✓ docker/ai-tools/install-tools.sh
-      verdict: pass
-      score: 1.00
-    ✓ examples/proxy/run.sh
-      verdict: pass
-      score: 1.00
-    ✓ examples/docker/run.sh
-      verdict: pass
-      score: 1.00
-    ✓ examples/multi-provider/run.sh
-      verdict: pass
-      score: 1.00
-    ✓ examples/local/run.sh
-      verdict: pass
-      score: 1.00
-    ✓ examples/basic/run.sh
-      verdict: pass
-      score: 1.00
-  [python]
-    ✓ test-local-chat.py
-      verdict: pass
-      score: 0.97
-      issues: 2
-        [warning] complexity.cyclomatic: main has cyclomatic complexity 19 (max: 15)@99
-        [warning] complexity.lizard_cc: main: CC=17 exceeds limit 15@99
-    ✓ tests/test_mcp.py
-      verdict: pass
-      score: 1.00
-    ✓ tests/test_core.py
-      verdict: pass
-      score: 1.00
-    ✓ tests/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/litellm_config.py
-      verdict: pass
-      score: 1.00
-    ✗ llx/config.py
-      verdict: fail
-      score: 0.92
-      issues: 2
-        [error] python.import.resolvable: Module 'litellm_config' not found@32
-        [error] python.import.resolvable: Module 'tomli' not found@28
-    ✓ llx/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/__main__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/analysis/runner.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/analysis/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/analysis/collector.py
-      verdict: pass
-      score: 1.00
-    ✗ llx/tools/ai_tools_manager.py
-      verdict: fail
-      score: 0.96
-      issues: 1
-        [error] python.import.resolvable: Module 'docker_manager' not found@14
-    ✗ llx/tools/docker_manager.py
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.parse: SyntaxError: parameter without a default follows parameter with a default@374
-    ✗ llx/tools/cli.py
-      verdict: fail
-      score: 0.77
-      issues: 6
-        [error] python.import.resolvable: Module 'docker_manager' not found@13
-        [error] python.import.resolvable: Module 'ai_tools_manager' not found@14
-        [error] python.import.resolvable: Module 'vscode_manager' not found@15
-        [error] python.import.resolvable: Module 'model_manager' not found@16
-        [error] python.import.resolvable: Module 'config_manager' not found@17
-        [error] python.import.resolvable: Module 'health_checker' not found@18
-    ✗ llx/tools/vscode_manager.py
-      verdict: fail
-      score: 0.96
-      issues: 1
-        [error] python.import.resolvable: Module 'docker_manager' not found@14
-    ✗ llx/tools/config_manager.py
-      verdict: fail
-      score: 0.96
-      issues: 1
-        [error] python.import.resolvable: Module 'toml' not found@9
-    ✗ llx/tools/__init__.py
-      verdict: fail
-      score: 0.57
-      issues: 6
-        [error] python.import.resolvable: Module 'docker_manager' not found@6
-        [error] python.import.resolvable: Module 'ai_tools_manager' not found@7
-        [error] python.import.resolvable: Module 'vscode_manager' not found@8
-        [error] python.import.resolvable: Module 'model_manager' not found@9
-        [error] python.import.resolvable: Module 'config_manager' not found@10
-        [error] python.import.resolvable: Module 'health_checker' not found@11
-    ✗ llx/tools/health_checker.py
-      verdict: fail
-      score: 0.88
-      issues: 4
-        [error] python.import.resolvable: Module 'docker_manager' not found@14
-        [error] python.import.resolvable: Module 'model_manager' not found@15
-        [error] python.import.resolvable: Module 'vscode_manager' not found@16
-        [error] python.import.resolvable: Module 'ai_tools_manager' not found@17
-    ✗ llx/tools/model_manager.py
-      verdict: fail
-      score: 0.96
-      issues: 1
-        [error] python.import.resolvable: Module 'docker_manager' not found@14
-    ✓ llx/cli/app.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/cli/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/cli/formatters.py
-      verdict: pass
-      score: 1.00
-    ✗ llx/orchestration/llm_orchestrator.py
-      verdict: fail
-      score: 0.92
-      issues: 3
-        [error] python.import.resolvable: Module 'session_manager' not found@20
-        [error] python.import.resolvable: Module 'rate_limiter' not found@21
-        [error] python.import.resolvable: Module 'routing_engine' not found@22
-    ✗ llx/orchestration/routing_engine.py
-      verdict: fail
-      score: 0.90
-      issues: 4
-        [error] python.import.resolvable: Module 'session_manager' not found@19
-        [error] python.import.resolvable: Module 'instance_manager' not found@20
-        [error] python.import.resolvable: Module 'rate_limiter' not found@21
-        [error] python.import.resolvable: Module 'queue_manager' not found@22
-    ✗ llx/orchestration/instance_manager.py
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.parse: SyntaxError: expected an indented block after 'if' statement on line 396@397
-    ✗ llx/orchestration/__init__.py
-      verdict: fail
-      score: 0.57
-      issues: 8
-        [error] python.import.resolvable: Module 'session_manager' not found@6
-        [error] python.import.resolvable: Module 'instance_manager' not found@7
-        [error] python.import.resolvable: Module 'rate_limiter' not found@8
-        [error] python.import.resolvable: Module 'queue_manager' not found@9
-        [error] python.import.resolvable: Module 'routing_engine' not found@10
-        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@11
-        [error] python.import.resolvable: Module 'llm_orchestrator' not found@12
-        [error] python.import.resolvable: Module 'orchestrator_cli' not found@13
-    ✓ llx/orchestration/rate_limiter.py
-      verdict: pass
-      score: 0.96
-      issues: 3
-        [warning] complexity.cyclomatic: main has cyclomatic complexity 29 (max: 15)@561
-        [warning] complexity.maintainability: Low maintainability index: 16.5 (threshold: 20)
-        [warning] complexity.lizard_cc: main: CC=29 exceeds limit 15@561
-    ✗ llx/orchestration/orchestrator_cli.py
-      verdict: fail
-      score: 0.72
-      issues: 19
-        [error] python.import.resolvable: Module 'session_manager' not found@15
-        [error] python.import.resolvable: Module 'instance_manager' not found@16
-        [error] python.import.resolvable: Module 'rate_limiter' not found@17
-        [error] python.import.resolvable: Module 'queue_manager' not found@18
-        [error] python.import.resolvable: Module 'routing_engine' not found@19
-        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@20
-        [error] python.import.resolvable: Module 'llm_orchestrator' not found@21
-        [error] python.import.resolvable: Module 'routing_engine' not found@904
-        [error] python.import.resolvable: Module 'routing_engine' not found@1171
-        [error] python.import.resolvable: Module 'rate_limiter' not found@1199
-        [error] python.import.resolvable: Module 'queue_manager' not found@1220
-        [error] python.import.resolvable: Module 'session_manager' not found@994
-        [error] python.import.resolvable: Module 'instance_manager' not found@1032
-        [error] python.import.resolvable: Module 'llm_orchestrator' not found@843
-        [error] python.import.resolvable: Module 'rate_limiter' not found@976
-        [error] python.import.resolvable: Module 'session_manager' not found@1005
-        [error] python.import.resolvable: Module 'instance_manager' not found@1043
-        [error] python.import.resolvable: Module 'llm_orchestrator' not found@867
-        [error] python.import.resolvable: Module 'vscode_orchestrator' not found@809
-    ✗ llx/orchestration/vscode_orchestrator.py
-      verdict: fail
-      score: 0.90
-      issues: 5
-        [error] python.import.resolvable: Module 'instance_manager' not found@21
-        [error] python.import.resolvable: Module 'session_manager' not found@22
-        [error] python.import.resolvable: Module 'rate_limiter' not found@23
-        [error] python.import.resolvable: Module 'routing_engine' not found@24
-        [error] python.import.resolvable: Module 'instance_manager' not found@415
-    ✓ llx/orchestration/session_manager.py
-      verdict: pass
-      score: 0.97
-      issues: 2
-        [warning] complexity.cyclomatic: main has cyclomatic complexity 20 (max: 15)@518
-        [warning] complexity.lizard_cc: main: CC=20 exceeds limit 15@518
-    ✓ llx/orchestration/queue_manager.py
-      verdict: pass
-      score: 0.97
-      issues: 2
-        [warning] complexity.cyclomatic: main has cyclomatic complexity 27 (max: 15)@616
-        [warning] complexity.lizard_cc: main: CC=28 exceeds limit 15@616
-    ✗ llx/mcp/tools.py
-      verdict: fail
-      score: 0.98
-      issues: 1
-        [error] python.import.resolvable: Module 'mcp.types' not found@11
-    ✗ llx/mcp/server.py
-      verdict: fail
-      score: 0.82
-      issues: 3
-        [error] python.import.resolvable: Module 'mcp.server' not found@22
-        [error] python.import.resolvable: Module 'mcp.types' not found@23
-        [error] python.import.resolvable: Module 'mcp.server.stdio' not found@60
-    ✓ llx/mcp/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/mcp/__main__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/integrations/proxy.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/integrations/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/integrations/context_builder.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/routing/__init__.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/routing/client.py
-      verdict: pass
-      score: 1.00
-    ✓ llx/routing/selector.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/proxy/main.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/docker/main.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/multi-provider/main.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/local/main.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/vscode-roocode/demo.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/ai-tools/main.py
-      verdict: pass
-      score: 1.00
-    ✓ examples/basic/main.py
-      verdict: pass
-      score: 1.00
-  [toml]
-    ✓ pyproject.toml
-      verdict: pass
-      score: 1.00
-  [sql]
-    ✗ docker/postgres/init.sql
-      verdict: fail
-      score: 0.00
-      issues: 1
-        [error] syntax.tree_sitter: tree-sitter found 7 parse error(s) in sql
-  [json]
-    ✓ docker/vscode/settings.json
-      verdict: pass
-      score: 1.00
+WARNINGS[4]{path,score}:
+  llx/orchestration/rate_limiter.py,0.96
+    issues[3]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 29 (max: 15),561
+      complexity.maintainability,warning,Low maintainability index: 16.5 (threshold: 20),
+      complexity.lizard_cc,warning,main: CC=29 exceeds limit 15,561
+  llx/orchestration/queue_manager.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 27 (max: 15),616
+      complexity.lizard_cc,warning,main: CC=28 exceeds limit 15,616
+  llx/orchestration/session_manager.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 20 (max: 15),518
+      complexity.lizard_cc,warning,main: CC=20 exceeds limit 15,518
+  test-local-chat.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
+      complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,99
 
-FAILED:
-  ✗ requirements-dev.txt: Unsupported file type
-  ✗ .env.backup: Unsupported file type
-  ✗ .env.new: Unsupported file type
-  ✗ Makefile: Unsupported file type
-  ✗ docker-compose.yml: Unsupported file type
-  ✗ llx-orchestrator: Unsupported file type
-  ✗ VERSION: Unsupported file type
-  ✗ requirements.txt: Unsupported file type
-  ✗ LICENSE: Unsupported file type
-  ✗ llx-tools: Unsupported file type
-  ✗ docker-compose-prod.yml: Unsupported file type
-  ✗ CHANGELOG.md: Unsupported file type
-  ✗ Dockerfile: Unsupported file type
-  ✗ docker-compose-dev.yml: Unsupported file type
-  ✗ README.md: Unsupported file type
-  ✗ docs/llx-tools.md: Unsupported file type
-  ✗ docs/README.md: Unsupported file type
-  ✗ examples/README.md: Unsupported file type
-  ✗ project/compact_flow.mmd: Unsupported file type
-  ✗ project/calls.mmd: Unsupported file type
-  ✗ project/index.html: Unsupported file type
-  ✗ project/duplication.toon.yaml: Validation fail
-  ✗ project/context.md: Unsupported file type
-  ✗ project/validation.toon.yaml: Validation fail
-  ✗ project/map.toon.yaml: Validation fail
-  ✗ project/flow.mmd: Unsupported file type
-  ✗ project/evolution.toon.yaml: Validation fail
-  ✗ project/README.md: Unsupported file type
-  ✗ project/analysis.toon.yaml: Validation fail
-  ✗ llx/config.py: Validation fail
-  ✗ llx/tools/ai_tools_manager.py: Validation fail
-  ✗ llx/tools/docker_manager.py: Validation fail
-  ✗ llx/tools/cli.py: Validation fail
-  ✗ llx/tools/vscode_manager.py: Validation fail
-  ✗ llx/tools/config_manager.py: Validation fail
-  ✗ llx/tools/__init__.py: Validation fail
-  ✗ llx/tools/health_checker.py: Validation fail
-  ✗ llx/tools/model_manager.py: Validation fail
-  ✗ llx/orchestration/llm_orchestrator.py: Validation fail
-  ✗ llx/orchestration/routing_engine.py: Validation fail
-  ✗ llx/orchestration/instance_manager.py: Validation fail
-  ✗ llx/orchestration/__init__.py: Validation fail
-  ✗ llx/orchestration/orchestrator_cli.py: Validation fail
-  ✗ llx/orchestration/vscode_orchestrator.py: Validation fail
-  ✗ llx/mcp/tools.py: Validation fail
-  ✗ llx/mcp/server.py: Validation fail
-  ✗ docker/nginx/nginx.conf: Unsupported file type
-  ✗ docker/postgres/init.sql: Validation fail
-  ✗ docker/redis/redis.conf: Unsupported file type
-  ✗ docker/nginx/conf.d/llx.conf: Unsupported file type
-  ✗ examples/proxy/README.md: Unsupported file type
-  ✗ examples/docker/README.md: Unsupported file type
-  ✗ examples/multi-provider/README.md: Unsupported file type
-  ✗ examples/local/README.md: Unsupported file type
-  ✗ examples/vscode-roocode/README.md: Unsupported file type
-  ✗ examples/ai-tools/README.md: Unsupported file type
-  ✗ examples/basic/README.md: Unsupported file type
+ERRORS[18]{path,score}:
+  docker/postgres/init.sql,0.00
+    issues[1]{rule,severity,message,line}:
+      syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
+  llx/orchestration/instance_manager.py,0.00
+    issues[1]{rule,severity,message,line}:
+      syntax.parse,error,SyntaxError: expected an indented block after 'if' statement on line 396,397
+  llx/tools/docker_manager.py,0.00
+    issues[1]{rule,severity,message,line}:
+      syntax.parse,error,SyntaxError: parameter without a default follows parameter with a default,374
+  llx/orchestration/__init__.py,0.57
+    issues[8]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'session_manager' not found,6
+      python.import.resolvable,error,Module 'instance_manager' not found,7
+      python.import.resolvable,error,Module 'rate_limiter' not found,8
+      python.import.resolvable,error,Module 'queue_manager' not found,9
+      python.import.resolvable,error,Module 'routing_engine' not found,10
+      python.import.resolvable,error,Module 'vscode_orchestrator' not found,11
+      python.import.resolvable,error,Module 'llm_orchestrator' not found,12
+      python.import.resolvable,error,Module 'orchestrator_cli' not found,13
+  llx/tools/__init__.py,0.57
+    issues[6]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,6
+      python.import.resolvable,error,Module 'ai_tools_manager' not found,7
+      python.import.resolvable,error,Module 'vscode_manager' not found,8
+      python.import.resolvable,error,Module 'model_manager' not found,9
+      python.import.resolvable,error,Module 'config_manager' not found,10
+      python.import.resolvable,error,Module 'health_checker' not found,11
+  llx/orchestration/orchestrator_cli.py,0.72
+    issues[19]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'session_manager' not found,15
+      python.import.resolvable,error,Module 'instance_manager' not found,16
+      python.import.resolvable,error,Module 'rate_limiter' not found,17
+      python.import.resolvable,error,Module 'queue_manager' not found,18
+      python.import.resolvable,error,Module 'routing_engine' not found,19
+      python.import.resolvable,error,Module 'vscode_orchestrator' not found,20
+      python.import.resolvable,error,Module 'llm_orchestrator' not found,21
+      python.import.resolvable,error,Module 'routing_engine' not found,904
+      python.import.resolvable,error,Module 'routing_engine' not found,1171
+      python.import.resolvable,error,Module 'rate_limiter' not found,1199
+      python.import.resolvable,error,Module 'queue_manager' not found,1220
+      python.import.resolvable,error,Module 'session_manager' not found,994
+      python.import.resolvable,error,Module 'instance_manager' not found,1032
+      python.import.resolvable,error,Module 'llm_orchestrator' not found,843
+      python.import.resolvable,error,Module 'rate_limiter' not found,976
+      python.import.resolvable,error,Module 'session_manager' not found,1005
+      python.import.resolvable,error,Module 'instance_manager' not found,1043
+      python.import.resolvable,error,Module 'llm_orchestrator' not found,867
+      python.import.resolvable,error,Module 'vscode_orchestrator' not found,809
+  llx/tools/cli.py,0.77
+    issues[6]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,13
+      python.import.resolvable,error,Module 'ai_tools_manager' not found,14
+      python.import.resolvable,error,Module 'vscode_manager' not found,15
+      python.import.resolvable,error,Module 'model_manager' not found,16
+      python.import.resolvable,error,Module 'config_manager' not found,17
+      python.import.resolvable,error,Module 'health_checker' not found,18
+  llx/mcp/server.py,0.82
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'mcp.server' not found,22
+      python.import.resolvable,error,Module 'mcp.types' not found,23
+      python.import.resolvable,error,Module 'mcp.server.stdio' not found,60
+  llx/tools/health_checker.py,0.88
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module 'model_manager' not found,15
+      python.import.resolvable,error,Module 'vscode_manager' not found,16
+      python.import.resolvable,error,Module 'ai_tools_manager' not found,17
+  llx/orchestration/routing_engine.py,0.90
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'session_manager' not found,19
+      python.import.resolvable,error,Module 'instance_manager' not found,20
+      python.import.resolvable,error,Module 'rate_limiter' not found,21
+      python.import.resolvable,error,Module 'queue_manager' not found,22
+  llx/orchestration/vscode_orchestrator.py,0.90
+    issues[5]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'instance_manager' not found,21
+      python.import.resolvable,error,Module 'session_manager' not found,22
+      python.import.resolvable,error,Module 'rate_limiter' not found,23
+      python.import.resolvable,error,Module 'routing_engine' not found,24
+      python.import.resolvable,error,Module 'instance_manager' not found,415
+  llx/config.py,0.92
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'litellm_config' not found,32
+      python.import.resolvable,error,Module 'tomli' not found,28
+  llx/orchestration/llm_orchestrator.py,0.92
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'session_manager' not found,20
+      python.import.resolvable,error,Module 'rate_limiter' not found,21
+      python.import.resolvable,error,Module 'routing_engine' not found,22
+  llx/tools/ai_tools_manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+  llx/tools/config_manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'toml' not found,9
+  llx/tools/model_manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+  llx/tools/vscode_manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+  llx/mcp/tools.py,0.98
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'mcp.types' not found,11
+
+UNSUPPORTED[5]{bucket,count}:
+  *.md,15
+  Dockerfile*,1
+  *.txt,3
+  *.yml,3
+  other,14

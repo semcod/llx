@@ -1,0 +1,161 @@
+# preLLM — Pipeline Definitions
+# Each pipeline is a sequence of steps (LLM or algorithmic).
+# Steps reference prompts from configs/prompts.yaml by name.
+
+pipelines:
+  classify:
+    description: "Classify intent, match domain rule, compose prompt"
+    steps:
+      - name: classify
+        prompt: classify
+        output: classification
+      - name: match_rule
+        type: domain_rule_matcher
+        input: classification
+        output: matched_rule
+      - name: enrich_if_needed
+        prompt: enrich
+        condition: "matched_rule.get('action') == 'enrich'"
+        input: [query, classification, matched_rule]
+        output: enriched_query
+      - name: compose
+        prompt: compose
+        input: [query, classification, matched_rule, context]
+        output: composed_prompt
+
+  structure:
+    description: "Full structural decomposition"
+    steps:
+      - name: classify
+        prompt: classify
+        output: classification
+      - name: extract_fields
+        prompt: structure
+        output: fields
+      - name: check_missing
+        type: field_validator
+        input: [fields, matched_rule]
+        output: missing_fields
+      - name: compose
+        prompt: compose
+        input: [query, classification, fields, missing_fields, context]
+        output: composed_prompt
+
+  split:
+    description: "Split complex query into sub-questions"
+    steps:
+      - name: classify
+        prompt: classify
+        output: classification
+      - name: split
+        prompt: split
+        output: sub_queries
+      - name: compose_splits
+        prompt: compose
+        input: [query, sub_queries, context]
+        output: composed_prompt
+
+  enrich:
+    description: "Enrich query with missing context"
+    steps:
+      - name: classify
+        prompt: classify
+        output: classification
+      - name: enrich
+        prompt: enrich
+        input: [query, classification, context]
+        output: composed_prompt
+
+  passthrough:
+    description: "No preprocessing, forward query as-is"
+    steps: []
+
+  context_aware:
+    description: "Full context collection + auto strategy + persistent memory"
+    steps:
+      - name: collect_runtime
+        type: runtime_collector
+        output: runtime_context
+      - name: inject_session
+        type: session_injector
+        input: [query, runtime_context]
+        output: session_context
+      - name: classify_with_context
+        prompt: auto_strategy
+        input: [query, runtime_context, session_context]
+        output: selected_strategy
+      - name: decompose
+        prompt: classify
+        input: [query, runtime_context, session_context]
+        output: classification
+      - name: compose
+        prompt: compose
+        input: [query, classification, runtime_context, session_context]
+        output: composed_prompt
+      - name: sanitize
+        type: sensitive_filter
+        input: [composed_prompt]
+        output: sanitized_prompt
+
+  dual_agent_full:
+    description: "Full two-agent pipeline — 4 preprocessing steps"
+    steps:
+      - name: context_analyze
+        prompt: context_analyze
+        input: [user_history, env_data]
+        output: context_enrichment
+      - name: intent_decompose
+        prompt: split
+        input: [query, context_enrichment]
+        output: subtasks
+        config:
+          max_subtasks: 3
+      - name: quality_optimize
+        prompt: compose
+        input: [query, subtasks, context_enrichment]
+        output: meta_prompt
+      - name: format_structure
+        type: yaml_formatter
+        input: meta_prompt
+        output: executor_input
+
+  auto:
+    description: "Auto-select strategy using small LLM with context schema"
+    steps:
+      - name: classify
+        prompt: classify
+        output: classification
+      - name: match_rule
+        type: domain_rule_matcher
+        input: classification
+        output: matched_rule
+      - name: compose
+        prompt: compose
+        input: [query, classification, matched_rule, context]
+        output: composed_prompt
+
+  full_context_aware:
+    description: "Full context collection + auto strategy + sanitized execution"
+    steps:
+      - name: gather_shell
+        type: shell_context_collector
+        output: shell_context
+      - name: compress_folder
+        type: folder_compressor
+        output: compressed_folder
+      - name: generate_schema
+        type: context_schema_generator
+        input: [shell_context, compressed_folder]
+        output: context_schema
+      - name: classify
+        prompt: classify
+        input: [query, context_schema]
+        output: classification
+      - name: compose
+        prompt: compose
+        input: [query, classification, context_schema]
+        output: composed_prompt
+      - name: sanitize
+        type: sensitive_filter
+        input: [composed_prompt]
+        output: sanitized_prompt

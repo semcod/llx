@@ -46,6 +46,23 @@ code2llm = ["code2llm>=0.9"]
 redup = ["redup>=0.4"]
 vallm = ["vallm>=0.1"]
 ollama = ["ollama>=0.3"]
+prellm = [
+    "litellm>=1.40",
+    "jinja2>=3.1",
+    "nfo>=0.1",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+prellm-full = [
+    "litellm>=1.40",
+    "jinja2>=3.1",
+    "nfo>=0.1",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+    "chromadb>=0.4",
+    "tree-sitter>=0.21",
+    "instructor>=1.0",
+]
 all = [
     "litellm>=1.40",
     "code2llm>=0.9",
@@ -53,6 +70,10 @@ all = [
     "vallm>=0.1",
     "ollama>=0.3",
     "mcp>=1.0",
+    "jinja2>=3.1",
+    "nfo>=0.1",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
 ]
 dev = [
     "pytest>=8.0",
@@ -68,6 +89,9 @@ Repository = "https://github.com/wronai/llx"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["llx*"]
+
+[tool.setuptools.package-data]
+"llx" = ["configs/**/*.yaml"]
 
 [tool.ruff]
 line-length = 100

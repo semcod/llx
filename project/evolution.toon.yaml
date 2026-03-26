@@ -1,4 +1,4 @@
-# code2llm/evolution | 410 func | 27f | 2026-03-25
+# code2llm/evolution | 432 func | 28f | 2026-03-26
 
 NEXT[10] (ranked by impact):
   [1] !! SPLIT           llx/orchestration/vscode_orchestrator.py
@@ -9,9 +9,9 @@ NEXT[10] (ranked by impact):
       WHY: 1082L, 7 classes, max CC=24
       EFFORT: ~4h  IMPACT: 25968
 
-  [3] !! SPLIT           llx/orchestration/routing_engine.py
-      WHY: 940L, 6 classes, max CC=11
-      EFFORT: ~4h  IMPACT: 10340
+  [3] !! SPLIT           llx/orchestration/orchestrator_cli.py
+      WHY: 1263L, 1 classes, max CC=19
+      EFFORT: ~4h  IMPACT: 23997
 
   [4] !! SPLIT-FUNC      main  CC=35  fan=27
       WHY: CC=35 exceeds 15
@@ -43,15 +43,15 @@ NEXT[10] (ranked by impact):
 
 
 RISKS[3]:
+  ⚠ Splitting llx/orchestration/orchestrator_cli.py may break 22 import paths
   ⚠ Splitting llx/orchestration/llm_orchestrator.py may break 33 import paths
   ⚠ Splitting llx/orchestration/vscode_orchestrator.py may break 32 import paths
-  ⚠ Splitting llx/orchestration/routing_engine.py may break 39 import paths
 
 METRICS-TARGET:
-  CC̄:          4.6 → ≤3.2
+  CC̄:          4.7 → ≤3.3
   max-CC:      35 → ≤17
-  god-modules: 14 → 0
-  high-CC(≥15): 16 → ≤8
+  god-modules: 15 → 0
+  high-CC(≥15): 20 → ≤10
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -79,4 +79,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=5.0 → now CC̄=4.6
+  prev CC̄=4.7 → now CC̄=4.7

@@ -1,4 +1,4 @@
-# redup/duplication | 4 groups | 32f 15280L | 2026-03-25
+# redup/duplication | 4 groups | 32f 15280L | 2026-03-26
 
 SUMMARY:
   files_scanned: 32
@@ -6,7 +6,7 @@ SUMMARY:
   dup_groups:    4
   dup_fragments: 9
   saved_lines:   82
-  scan_ms:       2133
+  scan_ms:       2324
 
 DUPLICATES[4] (ranked by impact):
   [dc09cc756f598570] ! STRU  demonstrate_aider  L=27 N=3 saved=54 sim=1.00

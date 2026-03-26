@@ -1,38 +1,38 @@
-# code2llm | 40f 13772L | python:33,shell:7 | 2026-03-25
-# CC̄=4.6 | critical:16/460 | dups:0 | cycles:0
+# code2llm | 41f 15036L | python:34,shell:7 | 2026-03-26
+# CC̄=4.7 | critical:20/482 | dups:0 | cycles:0
 
 HEALTH[20]:
   🔴 GOD   llx/orchestration/rate_limiter.py = 659L, 4 classes, 18m, max CC=29
-  🔴 GOD   llx/orchestration/vscode_orchestrator.py = 944L, 6 classes, 32m, max CC=35
   🔴 GOD   llx/orchestration/llm_orchestrator.py = 1082L, 7 classes, 33m, max CC=24
   🔴 GOD   llx/orchestration/routing_engine.py = 940L, 6 classes, 39m, max CC=11
-  🔴 GOD   llx/orchestration/queue_manager.py = 734L, 6 classes, 23m, max CC=27
+  🔴 GOD   llx/orchestration/vscode_orchestrator.py = 944L, 6 classes, 32m, max CC=35
   🔴 GOD   llx/orchestration/session_manager.py = 602L, 5 classes, 21m, max CC=20
+  🔴 GOD   llx/orchestration/queue_manager.py = 734L, 6 classes, 23m, max CC=27
   🟡 CC    main CC=22 (limit:15)
   🟡 CC    main CC=20 (limit:15)
   🟡 CC    print_config_summary CC=17 (limit:15)
   🟡 CC    main CC=35 (limit:15)
   🟡 CC    print_model_summary CC=15 (limit:15)
   🟡 CC    main CC=30 (limit:15)
+  🟡 CC    _render_tiers_table CC=15 (limit:15)
   🟡 CC    check_service_health CC=16 (limit:15)
   🟡 CC    run_comprehensive_health_check CC=16 (limit:15)
-  🟡 CC    _render_tiers_table CC=15 (limit:15)
   🟡 CC    get_status CC=15 (limit:15)
   🟡 CC    print_status_summary CC=15 (limit:15)
   🟡 CC    main CC=29 (limit:15)
-  🟡 CC    main CC=35 (limit:15)
-  🟡 CC    main CC=24 (limit:15)
+  🟡 CC    run_command CC=18 (limit:15)
+  🟡 CC    _handle_vscode CC=17 (limit:15)
 
 REFACTOR[7]:
   1. split llx/orchestration/rate_limiter.py  (god module)
-  2. split llx/orchestration/vscode_orchestrator.py  (god module)
-  3. split llx/orchestration/llm_orchestrator.py  (god module)
-  4. split llx/orchestration/routing_engine.py  (god module)
-  5. split llx/orchestration/queue_manager.py  (god module)
-  6. split llx/orchestration/session_manager.py  (god module)
+  2. split llx/orchestration/llm_orchestrator.py  (god module)
+  3. split llx/orchestration/routing_engine.py  (god module)
+  4. split llx/orchestration/vscode_orchestrator.py  (god module)
+  5. split llx/orchestration/session_manager.py  (god module)
+  6. split llx/orchestration/queue_manager.py  (god module)
   7. split 14 high-CC methods  (CC>15)
 
-PIPELINES[339]:
+PIPELINES[361]:
   [1] Src [load]: load → _apply_env
       PURITY: 100% pure
   [2] Src [_apply_yaml_models]: _apply_yaml_models
@@ -45,7 +45,8 @@ PIPELINES[339]:
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=4.9    ←in:12  →out:0
+  llx/                            CC̄=5.0    ←in:12  →out:0
+  │ !! orchestrator_cli          1263L  1C   22m  CC=19     ←0
   │ !! llm_orchestrator          1082L  7C   33m  CC=24     ←0
   │ !! vscode_orchestrator        944L  6C   32m  CC=35     ←0
   │ !! routing_engine             940L  6C   39m  CC=11     ←0
@@ -60,7 +61,7 @@ LAYERS:
   │ !! session_manager            602L  5C   21m  CC=20     ←0
   │ collector                  441L  1C   21m  CC=10     ←5
   │ !! formatters                 338L  0C   12m  CC=15     ←1
-  │ config                     318L  4C    7m  CC=13     ←6
+  │ config                     319L  4C    7m  CC=13     ←6
   │ app                        299L  0C   14m  CC=5      ←0
   │ tools                      275L  1C    7m  CC=4      ←0
   │ selector                   274L  2C    9m  CC=8      ←5
@@ -88,15 +89,15 @@ LAYERS:
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
   │ install-tools.sh           369L  0C    0m  CC=0.0    ←0
-  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←19
+  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←20
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
 
 COUPLING:
                        docker.ai-tools          llx.tools  llx.orchestration            llx.cli            llx.mcp                llx       llx.analysis        llx.routing   llx.integrations
-    docker.ai-tools                 ──               ←478               ←243                                                                                                                    hub
+    docker.ai-tools                 ──               ←478               ←364                                                                                                                    hub
           llx.tools                478                 ──                                                                                                                                       !! fan-out
-  llx.orchestration                243                                    ──                                                                                                                    !! fan-out
+  llx.orchestration                364                                    ──                                                                                                                    !! fan-out
             llx.cli                                                                          ──                                     8                  5                  3                  3  !! fan-out
             llx.mcp                                                                                             ──                  4                  6                  3                  1  !! fan-out
                 llx                                                                          ←8                 ←4                 ──                                                           hub
@@ -104,14 +105,14 @@ COUPLING:
         llx.routing                                                                          ←3                 ←3                                                       ──                     hub
    llx.integrations                                                                          ←3                 ←1                                                                          ──
   CYCLES: none
-  HUB: docker.ai-tools/ (fan-in=721)
-  HUB: llx/ (fan-in=12)
+  HUB: docker.ai-tools/ (fan-in=842)
   HUB: llx.analysis/ (fan-in=11)
   HUB: llx.routing/ (fan-in=6)
-  SMELL: llx.orchestration/ fan-out=243 → split needed
-  SMELL: llx.mcp/ fan-out=14 → split needed
+  HUB: llx/ (fan-in=12)
+  SMELL: llx.orchestration/ fan-out=364 → split needed
   SMELL: llx.cli/ fan-out=19 → split needed
   SMELL: llx.tools/ fan-out=478 → split needed
+  SMELL: llx.mcp/ fan-out=14 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

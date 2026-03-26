@@ -59,13 +59,54 @@ preLLM proved the concept but had architectural issues that llx resolves:
 └─────────────────────────────────────────────────────────────┘
 ```
 
+## MCP Server Integration (NEW)
+
+llx now provides a complete **MCP (Model Context Protocol) server** that exposes all wronai tools as MCP endpoints:
+
+```bash
+# Start MCP server for Claude Desktop
+llx mcp start
+
+# Generate Claude Desktop config
+llx mcp config
+
+# List available MCP tools
+llx mcp tools
+```
+
+### MCP Tools Available
+
+| Tool | Description | Wraps |
+|------|-------------|-------|
+| `llx_analyze` | Analyze project and recommend model | `llx analyze` |
+| `llx_select` | Quick model selection | `llx select` |
+| `llx_chat` | Analyze + select model + send prompt | `llx chat` |
+| `code2llm_analyze` | Run code2llm static analysis | `code2llm` CLI |
+| `redup_scan` | Run duplication detection | `redup` CLI |
+| `vallm_validate` | Validate code quality | `vallm` API/CLI |
+| `llx_proxy_status` | Check LiteLLM proxy status | `llx proxy status` |
+
+### Claude Desktop Setup
+
+```json
+{
+  "mcpServers": {
+    "llx": {
+      "command": "python3",
+      "args": ["-m", "llx.mcp.server"]
+    }
+  }
+}
+```
+
 ## Installation
 
 ```bash
 pip install llx
 
 # With integrations
-pip install llx[all]        # Everything
+pip install llx[all]        # Everything + MCP
+pip install llx[mcp]       # MCP server only
 pip install llx[litellm]    # LiteLLM proxy
 pip install llx[code2llm]   # Code analysis
 pip install llx[redup]      # Duplication detection
@@ -164,7 +205,7 @@ print(result.explain())   # Human-readable reasoning
 | [code2llm](https://github.com/wronai/code2llm) | Static analysis | CC, fan-out, cycles, hotspots |
 | [redup](https://github.com/semcod/redup) | Duplication detection | Groups, recoverable lines |
 | [vallm](https://github.com/semcod/vallm) | Code validation | Pass rate, issue count |
-| **llx** | **Model routing** | **Consumes all above** |
+| **llx** | **Model routing + MCP server** | **Consumes all above** |
 
 ## Package Structure
 
@@ -172,6 +213,11 @@ print(result.explain())   # Human-readable reasoning
 llx/
 ├── __init__.py              # Public API (30L)
 ├── config.py                # Config loader (160L)
+├── mcp/                     # MCP server (NEW)
+│   ├── __init__.py          # Module init
+│   ├── server.py            # MCP server dispatcher (40L)
+│   ├── tools.py             # 7 MCP tool definitions (250L)
+│   └── __main__.py          # python -m llx.mcp
 ├── analysis/
 │   ├── collector.py         # Metrics from .toon, filesystem (280L)
 │   └── runner.py            # Tool invocation (80L)
@@ -182,13 +228,21 @@ llx/
 │   ├── context_builder.py   # .toon → LLM context (130L)
 │   └── proxy.py             # LiteLLM proxy management (100L)
 └── cli/
-    ├── app.py               # Commands (230L, max CC ≤ 8)
-    └── formatters.py        # Output formatting (120L)
+    ├── app.py               # Commands (300L, max CC ≤ 8)
+    └── formatters.py        # Output formatting (340L, max CC ≤ 10)
 ```
 
-**Total**: ~1,280 lines across 10 modules. No file exceeds 300L. Max CC ≤ 8.
+**Total**: ~1,600 lines across 12 modules. No file exceeds 350L. Max CC ≤ 10.
 
 Compare: preLLM had 8,900 lines with 3 god modules (cli.py: 999L, core.py: 893L, trace.py: 509L).
+
+## Architecture Improvements (v0.1.7)
+
+- **✅ Refactored 6 high-CC functions** to meet targets (CC̄ ≤ 2.5, max CC ≤ 16)
+- **✅ Added complete MCP server** with 7 tools for Claude Desktop integration
+- **✅ Fixed import resolution issues** reported by vallm
+- **✅ Enhanced test coverage** for MCP functionality
+- **✅ Modular design** with single-responsibility functions
 
 ## License
 

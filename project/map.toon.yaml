@@ -1,10 +1,10 @@
-# llx | 40f 13772L | python:33,shell:7 | 2026-03-25
-# stats: 410 func | 0 cls | 40 mod | CC̄=4.6 | critical:16 | cycles:0
-# alerts[5]: CC main=35; CC main=35; CC main=30; fan-out LLXToolsCLI.create_parser=30; CC main=29
-# hotspots[5]: LLXToolsCLI.create_parser fan=30; main fan=27; main fan=25; main fan=25; main fan=22
-# evolution: CC̄ 5.0→4.6 (improved -0.4)
+# llx | 41f 15036L | python:34,shell:7 | 2026-03-26
+# stats: 432 func | 0 cls | 41 mod | CC̄=4.7 | critical:20 | cycles:0
+# alerts[5]: fan-out OrchestratorCLI.create_parser=36; CC main=35; CC main=35; CC main=30; fan-out LLXToolsCLI.create_parser=30
+# hotspots[5]: OrchestratorCLI.create_parser fan=36; LLXToolsCLI.create_parser fan=30; main fan=27; main fan=25; main fan=25
+# evolution: CC̄ 4.7→4.7 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[40]:
+M[41]:
   ai-tools-manage.sh,351
   docker-manage.sh,406
   docker/ai-tools/entrypoint.sh,175
@@ -19,7 +19,7 @@ M[40]:
   llx/cli/__init__.py,5
   llx/cli/app.py,299
   llx/cli/formatters.py,338
-  llx/config.py,318
+  llx/config.py,319
   llx/integrations/__init__.py,1
   llx/integrations/proxy.py,131
   llx/litellm_config.py,151
@@ -29,6 +29,7 @@ M[40]:
   llx/mcp/tools.py,275
   llx/orchestration/__init__.py,26
   llx/orchestration/llm_orchestrator.py,1082
+  llx/orchestration/orchestrator_cli.py,1263
   llx/orchestration/queue_manager.py,734
   llx/orchestration/rate_limiter.py,659
   llx/orchestration/routing_engine.py,940
@@ -104,6 +105,10 @@ D:
     SessionConfig:  # Configuration for a session...
     SessionState:  # Current state of a session...
     SessionManager: __init__(1),load_sessions(0),save_sessions(0),create_session(1),remove_session(1),get_available_session(4),request_session(2),release_session(3),get_session_status(1),list_sessions(2),get_queue_status(0),_is_rate_limited(2),_should_rate_limit(1),_get_utilization(1),_get_time_until_available(1),_get_next_available_time(0),_cleanup_worker(0),_cleanup_expired_limits(0),_update_session_stats(0),print_status_summary(0)  # Manages multiple LLM and VS Code sessions with intelligent r...
+    main()
+  llx/orchestration/orchestrator_cli.py:
+    e: OrchestratorCLI,main
+    OrchestratorCLI: __init__(1),create_parser(0),run_command(1),_handle_start(1),_handle_stop(1),_handle_restart(1),_handle_status(1),_handle_health(1),_handle_monitor(1),_handle_vscode(1),_handle_llm(1),_handle_route(1),_handle_queue(1),_handle_rate_limit(1),_handle_session(1),_handle_instance(1),_handle_config(1),_handle_utils(1),_benchmark_routing(1),_benchmark_rate_limiting(1),_benchmark_queue(1)  # Unified CLI for llx orchestration system...
     main()
   llx/tools/health_checker.py:
     e: HealthChecker,main
@@ -244,8 +249,8 @@ Ever...
     call_tool(name;arguments)
     main()
     main_sync()
-  llx/__init__.py:
   llx/__main__.py:
+  llx/__init__.py:
   llx/analysis/__init__.py:
   llx/tools/__init__.py:
   llx/cli/__init__.py:
@@ -271,6 +276,8 @@ Ever...
     restart()
     quick_chat()
     help()
+  project.sh:
+  docker/ollama/entrypoint.sh:
   docker-manage.sh:
     e: print_header,print_status,print_warning,print_error,check_docker,check_compose,get_compose_cmd
     print_header()
@@ -280,15 +287,13 @@ Ever...
     check_docker()
     check_compose()
     get_compose_cmd()
-  project.sh:
-  docker/ollama/entrypoint.sh:
-  docker/vscode/install-extensions.sh:
-    e: is_extension_installed,install_extension
-    is_extension_installed()
-    install_extension()
   docker/ai-tools/entrypoint.sh:
     e: hello_world,print,hello_world
     hello_world()
     print()
     hello_world()
+  docker/vscode/install-extensions.sh:
+    e: is_extension_installed,install_extension
+    is_extension_installed()
+    install_extension()
   docker/ai-tools/install-tools.sh:

@@ -394,7 +394,7 @@ class InstanceManager:
                 if state.started_at:
                     uptime = datetime.now() - state.started_at
                     if uptime.total_seconds() > config.max_uptime_hours * 3600:
-                    continue
+                        continue
                 
                 available_instances.append((instance_id, state.last_used))
             

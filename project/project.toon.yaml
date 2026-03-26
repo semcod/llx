@@ -1,0 +1,51 @@
+# llx | 432 func | 28f | 17067L | python | 2026-03-26
+
+HEALTH:
+  CC̄=4.7  critical=43 (limit:10)  dup=0  cycles=0
+
+ALERTS[20]:
+  !!! high_fan_out     OrchestratorCLI.create_parser = 36 (limit:10)
+  !!! cc_exceeded      main = 35 (limit:15)
+  !!! cc_exceeded      main = 35 (limit:15)
+  !!! cc_exceeded      main = 30 (limit:15)
+  !!! high_fan_out     LLXToolsCLI.create_parser = 30 (limit:10)
+  !!! cc_exceeded      main = 29 (limit:15)
+  !!! cc_exceeded      main = 27 (limit:15)
+  !!! high_fan_out     main = 27 (limit:10)
+  !!! high_fan_out     main = 25 (limit:10)
+  !!! high_fan_out     main = 25 (limit:10)
+
+MODULES[41] (top by size):
+  M[llx/orchestration/orchestrator_cli.py] 1263L C:1 F:22 CC↑19 D:0 (python)
+  M[llx/orchestration/llm_orchestrator.py] 1082L C:7 F:33 CC↑24 D:0 (python)
+  M[llx/orchestration/vscode_orchestrator.py] 944L C:6 F:32 CC↑35 D:0 (python)
+  M[llx/orchestration/routing_engine.py] 940L C:6 F:39 CC↑11 D:0 (python)
+  M[llx/tools/cli.py] 783L C:1 F:15 CC↑14 D:0 (python)
+  M[llx/tools/health_checker.py] 774L C:1 F:13 CC↑16 D:0 (python)
+  M[llx/tools/vscode_manager.py] 761L C:1 F:23 CC↑20 D:0 (python)
+  M[llx/tools/config_manager.py] 746L C:1 F:25 CC↑35 D:0 (python)
+  M[llx/orchestration/queue_manager.py] 734L C:6 F:23 CC↑27 D:0 (python)
+  M[llx/tools/model_manager.py] 710L C:1 F:20 CC↑30 D:0 (python)
+  M[llx/orchestration/rate_limiter.py] 659L C:4 F:18 CC↑29 D:0 (python)
+  M[llx/tools/ai_tools_manager.py] 607L C:1 F:20 CC↑22 D:0 (python)
+  M[llx/orchestration/session_manager.py] 602L C:5 F:21 CC↑20 D:0 (python)
+  M[llx/analysis/collector.py] 441L C:1 F:21 CC↑10 D:5 (python)
+  M[docker/vscode/install-extensions.sh] 409L C:0 F:2 CC↑0 D:0 (shell)
+  LANGS: python:34/shell:7
+
+HOTSPOTS[10]:
+  ★ OrchestratorCLI.create_parser fan=36  // Create argument parser for CLI.
+  ★ LLXToolsCLI.create_parser fan=30  // Create argument parser for CLI.
+  ★ main fan=27  // CLI interface for config manager.
+  ★ main fan=25  // CLI interface for AI tools manager.
+  ★ main fan=25  // CLI interface for model manager.
+
+REFACTOR[15]:
+  [1] H/L Split main (CC=35 → target CC<10)
+  [2] H/L Split main (CC=30 → target CC<10)
+  [3] H/L Split main (CC=29 → target CC<10)
+  [4] H/L Split main (CC=35 → target CC<10)
+  [5] H/L Split main (CC=27 → target CC<10)
+
+EVOLUTION:
+  2026-03-26 CC̄=4.7 crit=43 17067L // Automated analysis

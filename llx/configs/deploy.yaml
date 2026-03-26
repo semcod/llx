@@ -1,0 +1,52 @@
+# preLLM Process Chain: Production Deployment
+# Each step is decomposed via small LLM before execution
+
+process: deploy-production
+description: "Full production deployment with preLLM decomposition at each step"
+
+context_sources:
+  - env: [CLUSTER, NAMESPACE, GIT_SHA, APP_VERSION]
+  - git: [branch, short_sha, last_commit_msg]
+
+steps:
+  - name: pre-check
+    prompt: "Check readiness of cluster {CLUSTER} for deploying version {GIT_SHA}"
+    policy: strict
+    approval: auto
+    strategy: structure
+    timeout: 60
+
+  - name: db-migration
+    prompt: "Generate and validate database migration for namespace {NAMESPACE}, version {APP_VERSION}"
+    policy: strict
+    approval: manual
+    strategy: enrich
+    rollback: true
+    timeout: 300
+    depends_on: [pre-check]
+
+  - name: deploy-canary
+    prompt: "Execute canary deploy (10% traffic) on {CLUSTER}/{NAMESPACE} version {GIT_SHA}"
+    policy: strict
+    approval: manual
+    strategy: structure
+    rollback: true
+    timeout: 600
+    depends_on: [db-migration]
+
+  - name: deploy-full
+    prompt: "Execute full rolling deploy on {CLUSTER}/{NAMESPACE} version {GIT_SHA}"
+    policy: strict
+    approval: manual
+    strategy: structure
+    rollback: true
+    timeout: 900
+    depends_on: [deploy-canary]
+
+  - name: post-verify
+    prompt: "Verify health-check after deploy of {GIT_SHA} on {CLUSTER}"
+    policy: lenient
+    approval: auto
+    strategy: classify
+    timeout: 120
+    depends_on: [deploy-full]

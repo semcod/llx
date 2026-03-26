@@ -2,219 +2,205 @@ flowchart LR
     subgraph docker_ai_tools
         docker__ai_tools__entrypoint__print["print"]
     end
-    subgraph examples_docker
-        examples__docker__main__demonstrate_docker_integration["demonstrate_docker_integration"]
-        examples__docker__main__check_service_health["check_service_health"]
-        examples__docker__main__check_ollama_connection["check_ollama_connection"]
-        examples__docker__main__check_redis_connection["check_redis_connection"]
-    end
-    subgraph examples_proxy
-        examples__proxy__main__main["main"]
-        examples__proxy__main__ProxyExample__start_server["start_server"]
-        examples__proxy__main__ProxyExample__test_proxy["test_proxy"]
-        examples__proxy__main__ProxyExample__cleanup["cleanup"]
-        examples__proxy__main__signal_handler["signal_handler"]
-        examples__proxy__main__ProxyExample__show_ide_integration["show_ide_integration"]
-        examples__proxy__main__ProxyExample__setup_server["setup_server"]
-    end
     subgraph llx_analysis
-        llx__analysis__runner___run_tool["_run_tool"]
-        llx__analysis__runner__check_tool["check_tool"]
-        llx__analysis__collector___load_file["_load_file"]
-        llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
-        llx__analysis__collector___parse_map_hotspots_line["_parse_map_hotspots_line"]
-        llx__analysis__collector__analyze_project["analyze_project"]
-        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
-        llx__analysis__runner__run_vallm["run_vallm"]
-        llx__analysis__collector___count_map_modules["_count_map_modules"]
-        llx__analysis__collector___apply_map_text["_apply_map_text"]
-        llx__analysis__collector___extract_metrics_target["_extract_metrics_target"]
-        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
-        llx__analysis__collector___extract_evolution_actions["_extract_evolution_actions"]
-        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
-        llx__analysis__collector___extract_evolution_stats["_extract_evolution_stats"]
-        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
-        llx__analysis__collector___parse_map_stats_line["_parse_map_stats_line"]
-        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
-        llx__analysis__runner__run_code2llm["run_code2llm"]
-        llx__analysis__runner__run_all_tools["run_all_tools"]
-        llx__analysis__collector___parse_map_alerts_line["_parse_map_alerts_line"]
-        llx__analysis__runner__run_redup["run_redup"]
         llx__analysis__collector___collect_filesystem_metrics["_collect_filesystem_metrics"]
         llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
+        llx__analysis__collector___parse_map_hotspots_line["_parse_map_hotspots_line"]
+        llx__analysis__collector___load_file["_load_file"]
+        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
+        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
+        llx__analysis__runner__run_redup["run_redup"]
+        llx__analysis__collector___parse_map_stats_line["_parse_map_stats_line"]
+        llx__analysis__runner__run_code2llm["run_code2llm"]
+        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___count_map_modules["_count_map_modules"]
+        llx__analysis__collector___extract_evolution_stats["_extract_evolution_stats"]
+        llx__analysis__collector___parse_map_alerts_line["_parse_map_alerts_line"]
+        llx__analysis__collector___extract_evolution_actions["_extract_evolution_actions"]
+        llx__analysis__runner___run_tool["_run_tool"]
         llx__analysis__collector___classify_scope["_classify_scope"]
+        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
+        llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
+        llx__analysis__collector___apply_map_text["_apply_map_text"]
+        llx__analysis__runner__run_all_tools["run_all_tools"]
+        llx__analysis__runner__check_tool["check_tool"]
+        llx__analysis__runner__run_vallm["run_vallm"]
+        llx__analysis__collector___extract_metrics_target["_extract_metrics_target"]
     end
     subgraph llx_cli
-        llx__cli__formatters___render_agents_table["_render_agents_table"]
-        llx__cli__formatters___render_tools_table["_render_tools_table"]
-        llx__cli__formatters__print_models_table["print_models_table"]
-        llx__cli__app__chat["chat"]
-        llx__cli__app__proxy_config["proxy_config"]
-        llx__cli__formatters___build_model_row["_build_model_row"]
-        llx__cli__formatters___filter_models["_filter_models"]
         llx__cli__app___run_analysis_tools["_run_analysis_tools"]
         llx__cli__formatters___build_title["_build_title"]
-        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__app__select["select"]
-        llx__cli__app__proxy_start["proxy_start"]
+        llx__cli__formatters___render_tools_table["_render_tools_table"]
+        llx__cli__formatters__print_models_table["print_models_table"]
         llx__cli__formatters___render_models_table["_render_models_table"]
-        llx__cli__app__models["models"]
         llx__cli__formatters___render_tags_legend["_render_tags_legend"]
+        llx__cli__app__proxy_config["proxy_config"]
+        llx__cli__formatters___filter_models["_filter_models"]
+        llx__cli__formatters___build_model_row["_build_model_row"]
+        llx__cli__app__proxy_start["proxy_start"]
+        llx__cli__app__models["models"]
+        llx__cli__formatters___render_agents_table["_render_agents_table"]
         llx__cli__app__info["info"]
-        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__app__chat["chat"]
     end
     subgraph llx_config
-        llx__config___apply_yaml_thresholds["_apply_yaml_thresholds"]
-        llx__config___apply_yaml["_apply_yaml"]
-        llx__config___apply_env["_apply_env"]
         llx__config___apply_yaml_proxy["_apply_yaml_proxy"]
+        llx__config___apply_env["_apply_env"]
+        llx__config___apply_yaml["_apply_yaml"]
         llx__config__LlxConfig__load["load"]
+        llx__config___apply_yaml_thresholds["_apply_yaml_thresholds"]
     end
     subgraph llx_integrations
         llx__integrations__proxy__start_proxy["start_proxy"]
-        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
         llx__integrations__proxy__check_proxy["check_proxy"]
+        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
     end
     subgraph llx_litellm_config
         llx__litellm_config__LiteLLMConfig__load["load"]
         llx__litellm_config__load_litellm_config["load_litellm_config"]
     end
     subgraph llx_mcp
-        llx__mcp__tools___handle_llx_select["_handle_llx_select"]
-        llx__mcp__tools___handle_llx_analyze["_handle_llx_analyze"]
-        llx__mcp__server__main["main"]
-        llx__mcp__tools___handle_vallm_validate["_handle_vallm_validate"]
-        llx__mcp__tools___handle_llx_proxy_status["_handle_llx_proxy_status"]
         llx__mcp__server__main_sync["main_sync"]
-        llx__mcp__tools___handle_llx_chat["_handle_llx_chat"]
-        llx__mcp__tools___handle_redup_scan["_handle_redup_scan"]
-        llx__mcp__tools___handle_code2llm_analyze["_handle_code2llm_analyze"]
+        llx__mcp__server__main["main"]
+        llx__mcp__tools___handle_llx_analyze["_handle_llx_analyze"]
     end
     subgraph llx_orchestration
-        llx__LLMOrchestrator__cancel_request["cancel_request"]
-        llx__LLMOrchestrator__load_config["load_config"]
-        llx__LLMOrchestrator___create_default_config["_create_default_config"]
-        llx__QueueManager__remove_queue["remove_queue"]
-        llx__RateLimiter___apply_penalty["_apply_penalty"]
-        llx__VSCodeOrchestrator__start["start"]
-        llx__VSCodeOrchestrator___session_cleanup_worker["_session_cleanup_worker"]
-        llx__VSCodeOrchestrator__create_instance["create_instance"]
-        llx__orchestration__queue_manager__QueueManager__stop["stop"]
-        llx__QueueManager__enqueue_request["enqueue_request"]
-        llx__VSCodeOrchestrator__stop["stop"]
-        llx__RoutingEngine__load_config["load_config"]
-        llx__orchestration__llm_orchestrator__LLMOrchestrator__stop["stop"]
-        llx__VSCodeOrchestrator__load_config["load_config"]
-        llx__VSCodeOrchestrator__remove_account["remove_account"]
-        llx__QueueManager___worker_loop["_worker_loop"]
-        llx__orchestration__rate_limiter__RateLimiter__add_limit["add_limit"]
-        llx__RoutingEngine__print_status_summary["print_status_summary"]
-        llx__VSCodeOrchestrator__add_account["add_account"]
-        llx__VSCodeOrchestrator__end_session["end_session"]
-        llx__orchestration__llm_orchestrator__LLMOrchestrator__start["start"]
-        llx__QueueManager__print_status_summary["print_status_summary"]
-        llx__RoutingEngine___metrics_worker["_metrics_worker"]
-        llx__LLMOrchestrator__add_provider["add_provider"]
-        llx__QueueManager__complete_request["complete_request"]
-        llx__VSCodeOrchestrator___create_default_config["_create_default_config"]
-        llx__LLMOrchestrator__save_config["save_config"]
-        llx__VSCodeOrchestrator__print_status_summary["print_status_summary"]
-        llx__orchestration__rate_limiter__RateLimiter__remove_limit["remove_limit"]
-        llx__RoutingEngine__save_config["save_config"]
-        llx__VSCodeOrchestrator__save_config["save_config"]
-        llx__RoutingEngine__route_request["route_request"]
-        llx__RoutingEngine___optimization_worker["_optimization_worker"]
-        llx__LLMOrchestrator__complete_request["complete_request"]
-        llx__LLMOrchestrator__add_model["add_model"]
-        llx__orchestration__queue_manager__QueueManager__save_queues["save_queues"]
-        llx__orchestration__queue_manager__QueueManager__load_queues["load_queues"]
-        llx__LLMOrchestrator__remove_provider["remove_provider"]
-        llx__QueueManager___retry_request["_retry_request"]
-        llx__VSCodeOrchestrator__remove_instance["remove_instance"]
         llx__VSCodeOrchestrator__start_instance["start_instance"]
-        llx__VSCodeOrchestrator___start_browser_for_instance["_start_browser_for_instance"]
-        llx__RateLimiter___cleanup_worker["_cleanup_worker"]
-        llx__LLMOrchestrator__print_status_summary["print_status_summary"]
         llx__LLMOrchestrator___health_check_worker["_health_check_worker"]
-        llx__VSCodeOrchestrator___config_save_worker["_config_save_worker"]
-        llx__orchestration__rate_limiter__RateLimiter__save_limits["save_limits"]
-        llx__orchestration__queue_manager__QueueManager__add_queue["add_queue"]
-        llx__RoutingEngine___optimize_routing["_optimize_routing"]
-        llx__LLMOrchestrator___config_save_worker["_config_save_worker"]
-        llx__RateLimiter__print_status_summary["print_status_summary"]
-        llx__orchestration__queue_manager__QueueManager__start["start"]
-        llx__LLMOrchestrator___perform_health_checks["_perform_health_checks"]
+        llx__LLMOrchestrator___create_default_config["_create_default_config"]
+        llx__OrchestratorCLI___handle_restart["_handle_restart"]
+        llx__RoutingEngine___optimization_worker["_optimization_worker"]
+        llx__orchestration__llm_orchestrator__LLMOrchestrator__start["start"]
+        llx__OrchestratorCLI___benchmark_queue["_benchmark_queue"]
+        llx__LLMOrchestrator__add_provider["add_provider"]
+        llx__OrchestratorCLI__run_command["run_command"]
         llx__orchestration__rate_limiter__RateLimiter__load_limits["load_limits"]
+        llx__OrchestratorCLI___handle_stop["_handle_stop"]
+        llx__OrchestratorCLI___handle_utils["_handle_utils"]
+        llx__OrchestratorCLI___handle_start["_handle_start"]
+        llx__OrchestratorCLI___handle_instance["_handle_instance"]
+        llx__RoutingEngine___optimize_routing["_optimize_routing"]
+        llx__VSCodeOrchestrator__remove_instance["remove_instance"]
+        llx__VSCodeOrchestrator__create_instance["create_instance"]
+        llx__VSCodeOrchestrator__remove_account["remove_account"]
+        llx__RateLimiter__print_status_summary["print_status_summary"]
+        llx__OrchestratorCLI___handle_queue["_handle_queue"]
+        llx__RateLimiter___apply_penalty["_apply_penalty"]
+        llx__RateLimiter___cleanup_worker["_cleanup_worker"]
+        llx__orchestration__rate_limiter__RateLimiter__save_limits["save_limits"]
+        llx__RoutingEngine__print_status_summary["print_status_summary"]
+        llx__OrchestratorCLI___handle_config["_handle_config"]
+        llx__VSCodeOrchestrator__start["start"]
+        llx__RoutingEngine__save_config["save_config"]
+        llx__OrchestratorCLI___benchmark_routing["_benchmark_routing"]
+        llx__VSCodeOrchestrator__print_status_summary["print_status_summary"]
+        llx__OrchestratorCLI___handle_rate_limit["_handle_rate_limit"]
+        llx__OrchestratorCLI___handle_route["_handle_route"]
+        llx__LLMOrchestrator__add_model["add_model"]
+        llx__LLMOrchestrator___perform_health_checks["_perform_health_checks"]
+        llx__orchestration__llm_orchestrator__LLMOrchestrator__stop["stop"]
+        llx__RoutingEngine__load_config["load_config"]
+        llx__VSCodeOrchestrator__load_config["load_config"]
+        llx__VSCodeOrchestrator___start_browser_for_instance["_start_browser_for_instance"]
+        llx__VSCodeOrchestrator__add_account["add_account"]
+        llx__VSCodeOrchestrator___create_default_config["_create_default_config"]
+        llx__VSCodeOrchestrator___session_cleanup_worker["_session_cleanup_worker"]
+        llx__VSCodeOrchestrator___config_save_worker["_config_save_worker"]
+        llx__VSCodeOrchestrator__stop["stop"]
+        llx__OrchestratorCLI___handle_vscode["_handle_vscode"]
+        llx__VSCodeOrchestrator__end_session["end_session"]
+        llx__LLMOrchestrator__complete_request["complete_request"]
+        llx__LLMOrchestrator__print_status_summary["print_status_summary"]
         llx__RateLimiter___cleanup_expired_penalties["_cleanup_expired_penalties"]
+        llx__OrchestratorCLI___handle_status["_handle_status"]
+        llx__VSCodeOrchestrator__save_config["save_config"]
+        llx__LLMOrchestrator__load_config["load_config"]
+        llx__LLMOrchestrator__remove_provider["remove_provider"]
+        llx__OrchestratorCLI___handle_health["_handle_health"]
+        llx__OrchestratorCLI___benchmark_rate_limiting["_benchmark_rate_limiting"]
+        llx__orchestration__rate_limiter__RateLimiter__add_limit["add_limit"]
+        llx__RoutingEngine__route_request["route_request"]
+        llx__RoutingEngine___metrics_worker["_metrics_worker"]
+        llx__LLMOrchestrator__save_config["save_config"]
+        llx__OrchestratorCLI___handle_llm["_handle_llm"]
+        llx__LLMOrchestrator__cancel_request["cancel_request"]
+        llx__orchestration__rate_limiter__RateLimiter__remove_limit["remove_limit"]
+        llx__OrchestratorCLI___handle_monitor["_handle_monitor"]
+        llx__LLMOrchestrator___config_save_worker["_config_save_worker"]
+        llx__OrchestratorCLI___handle_session["_handle_session"]
     end
     subgraph llx_routing
-        llx__routing__selector__select_with_context_check["select_with_context_check"]
         llx__routing__selector__select_model["select_model"]
     end
     subgraph llx_tools
-        llx__AIToolsManager__print_usage_examples["print_usage_examples"]
-        llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
-        llx__tools__vscode_manager__VSCodeManager__update_extensions["update_extensions"]
-        llx__tools__config_manager__ConfigManager__remove_model["remove_model"]
-        llx__VSCodeManager__print_status_summary["print_status_summary"]
-        llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
-        llx__AIToolsManager__backup_configurations["backup_configurations"]
-        llx__VSCodeManager__install_extensions["install_extensions"]
-        llx__tools__cli__LLXToolsCLI___handle_start["_handle_start"]
-        llx__tools__model_manager__ModelManager__print_model_summary["print_model_summary"]
-        llx__tools__vscode_manager__VSCodeManager__backup_settings["backup_settings"]
-        llx__tools__model_manager__ModelManager__test_model["test_model"]
-        llx__tools__vscode_manager__VSCodeManager__restore_settings["restore_settings"]
-        llx__tools__vscode_manager__VSCodeManager__configure_roocode["configure_roocode"]
-        llx__tools__config_manager__ConfigManager__save_config["save_config"]
-        llx__tools__cli__LLXToolsCLI___handle_ai_tools["_handle_ai_tools"]
-        llx__tools__cli__LLXToolsCLI___handle_health["_handle_health"]
-        llx__tools__cli__LLXToolsCLI___handle_status["_handle_status"]
-        llx__tools__health_checker__HealthChecker__monitor_services["monitor_services"]
-        llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
-        llx__tools__config_manager__ConfigManager__load_config["load_config"]
-        llx__ModelManager__cleanup_unused_models["cleanup_unused_models"]
-        llx__tools__ai_tools_manager__AIToolsManager__run_chat_test["run_chat_test"]
-        llx__HealthChecker__run_quick_health_check["run_quick_health_check"]
-        llx__tools__vscode_manager__VSCodeManager__start_vscode["start_vscode"]
-        llx__AIToolsManager__create_workspace_example["create_workspace_example"]
-        llx__ConfigManager__generate_docker_env_file["generate_docker_env_file"]
-        llx__ConfigManager__create_default_env["create_default_env"]
-        llx__tools__config_manager__ConfigManager__list_models["list_models"]
-        llx__tools__model_manager__ModelManager__remove_model["remove_model"]
-        llx__tools__vscode_manager__VSCodeManager__print_quick_start["print_quick_start"]
-        llx__VSCodeManager__wait_for_vscode_ready["wait_for_vscode_ready"]
-        llx__tools__cli__LLXToolsCLI___handle_models["_handle_models"]
-        llx__tools__ai_tools_manager__AIToolsManager__install_tool["install_tool"]
-        llx__tools__cli__LLXToolsCLI__run_command["run_command"]
-        llx__ModelManager__create_model_profile["create_model_profile"]
-        llx__tools__vscode_manager__VSCodeManager__restart_vscode["restart_vscode"]
-        llx__tools__model_manager__ModelManager__test_llx_model["test_llx_model"]
-        llx__tools__model_manager__ModelManager__benchmark_model["benchmark_model"]
-        llx__AIToolsManager__restart_ai_tools["restart_ai_tools"]
-        llx__tools__config_manager__ConfigManager__restore_configs["restore_configs"]
-        llx__VSCodeManager__create_launch_config["create_launch_config"]
-        llx__tools__config_manager__ConfigManager__create_profile["create_profile"]
-        llx__tools__cli__LLXToolsCLI___handle_stop["_handle_stop"]
-        llx__AIToolsManager__print_status_summary["print_status_summary"]
-        llx__tools__vscode_manager__VSCodeManager__stop_vscode["stop_vscode"]
-        llx__HealthChecker__run_comprehensive_health_check["run_comprehensive_health_check"]
-        llx__tools__cli__LLXToolsCLI___handle_restart["_handle_restart"]
-        llx__tools__cli__LLXToolsCLI___handle_docker["_handle_docker"]
-        llx__tools__cli__LLXToolsCLI___handle_vscode["_handle_vscode"]
-        llx__ConfigManager__print_config_summary["print_config_summary"]
-        llx__tools__cli__LLXToolsCLI___handle_utils["_handle_utils"]
-        llx__VSCodeManager__uninstall_extension["uninstall_extension"]
         llx__tools__model_manager__ModelManager__pull_model["pull_model"]
-        llx__VSCodeManager__create_workspace_tasks["create_workspace_tasks"]
-        llx__ModelManager__get_system_resources["get_system_resources"]
-        llx__tools__cli__LLXToolsCLI___handle_config["_handle_config"]
-        llx__AIToolsManager__restore_configurations["restore_configurations"]
-        llx__tools__config_manager__ConfigManager__load_profile["load_profile"]
+        llx__tools__model_manager__ModelManager__benchmark_model["benchmark_model"]
+        llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
+        llx__tools__config_manager__ConfigManager__load_config["load_config"]
+        llx__tools__cli__LLXToolsCLI___handle_restart["_handle_restart"]
+        llx__HealthChecker__run_quick_health_check["run_quick_health_check"]
+        llx__AIToolsManager__restart_ai_tools["restart_ai_tools"]
+        llx__tools__vscode_manager__VSCodeManager__start_vscode["start_vscode"]
+        llx__tools__config_manager__ConfigManager__create_profile["create_profile"]
+        llx__tools__cli__LLXToolsCLI___handle_status["_handle_status"]
+        llx__tools__vscode_manager__VSCodeManager__backup_settings["backup_settings"]
+        llx__tools__model_manager__ModelManager__print_model_summary["print_model_summary"]
+        llx__tools__vscode_manager__VSCodeManager__restart_vscode["restart_vscode"]
+        llx__ConfigManager__generate_docker_env_file["generate_docker_env_file"]
+        llx__AIToolsManager__print_status_summary["print_status_summary"]
+        llx__tools__cli__LLXToolsCLI__run_command["run_command"]
+        llx__tools__vscode_manager__VSCodeManager__stop_vscode["stop_vscode"]
+        llx__tools__cli__LLXToolsCLI___handle_health["_handle_health"]
         llx__tools__ai_tools_manager__AIToolsManager__update_tools["update_tools"]
-        llx__tools__config_manager__ConfigManager__backup_configs["backup_configs"]
+        llx__VSCodeManager__create_launch_config["create_launch_config"]
+        llx__tools__model_manager__ModelManager__test_model["test_model"]
+        llx__tools__config_manager__ConfigManager__restore_configs["restore_configs"]
+        llx__tools__cli__LLXToolsCLI___handle_utils["_handle_utils"]
+        llx__AIToolsManager__print_usage_examples["print_usage_examples"]
+        llx__AIToolsManager__backup_configurations["backup_configurations"]
+        llx__tools__config_manager__ConfigManager__save_config["save_config"]
+        llx__tools__model_manager__ModelManager__test_llx_model["test_llx_model"]
+        llx__tools__cli__LLXToolsCLI___handle_stop["_handle_stop"]
+        llx__ConfigManager__print_config_summary["print_config_summary"]
+        llx__tools__vscode_manager__VSCodeManager__print_quick_start["print_quick_start"]
+        llx__tools__ai_tools_manager__AIToolsManager__run_chat_test["run_chat_test"]
+        llx__tools__cli__LLXToolsCLI___handle_docker["_handle_docker"]
+        llx__tools__model_manager__ModelManager__remove_model["remove_model"]
+        llx__ModelManager__cleanup_unused_models["cleanup_unused_models"]
+        llx__tools__cli__LLXToolsCLI___handle_ai_tools["_handle_ai_tools"]
+        llx__tools__config_manager__ConfigManager__list_models["list_models"]
+        llx__VSCodeManager__create_workspace_tasks["create_workspace_tasks"]
+        llx__AIToolsManager__restore_configurations["restore_configurations"]
+        llx__tools__cli__LLXToolsCLI___handle_models["_handle_models"]
+        llx__AIToolsManager__create_workspace_example["create_workspace_example"]
+        llx__tools__vscode_manager__VSCodeManager__configure_roocode["configure_roocode"]
+        llx__ModelManager__get_system_resources["get_system_resources"]
+        llx__tools__config_manager__ConfigManager__remove_model["remove_model"]
         llx__HealthChecker___print_health_summary["_print_health_summary"]
+        llx__ConfigManager__create_default_env["create_default_env"]
+        llx__VSCodeManager__print_status_summary["print_status_summary"]
+        llx__tools__health_checker__HealthChecker__monitor_services["monitor_services"]
+        llx__HealthChecker__run_comprehensive_health_check["run_comprehensive_health_check"]
+        llx__tools__ai_tools_manager__AIToolsManager__install_tool["install_tool"]
+        llx__tools__cli__LLXToolsCLI___handle_start["_handle_start"]
+        llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
+        llx__VSCodeManager__uninstall_extension["uninstall_extension"]
+        llx__VSCodeManager__wait_for_vscode_ready["wait_for_vscode_ready"]
+        llx__VSCodeManager__install_extensions["install_extensions"]
+        llx__tools__cli__LLXToolsCLI___handle_vscode["_handle_vscode"]
+        llx__tools__config_manager__ConfigManager__load_profile["load_profile"]
+        llx__tools__vscode_manager__VSCodeManager__restore_settings["restore_settings"]
+        llx__tools__config_manager__ConfigManager__backup_configs["backup_configs"]
+        llx__tools__vscode_manager__VSCodeManager__update_extensions["update_extensions"]
+        llx__tools__cli__LLXToolsCLI___handle_config["_handle_config"]
+        llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
+        llx__ModelManager__create_model_profile["create_model_profile"]
     end
     llx__config__LlxConfig__load --> llx__litellm_config__LiteLLMConfig__load
     llx__config__LlxConfig__load --> llx__config___apply_env
@@ -301,10 +287,6 @@ flowchart LR
     llx__tools__model_manager__ModelManager__benchmark_model --> docker__ai_tools__entrypoint__print
     llx__ModelManager__cleanup_unused_models --> docker__ai_tools__entrypoint__print
     llx__tools__model_manager__ModelManager__print_model_summary --> docker__ai_tools__entrypoint__print
-    llx__HealthChecker__run_comprehensive_health_check --> docker__ai_tools__entrypoint__print
-    llx__HealthChecker___print_health_summary --> docker__ai_tools__entrypoint__print
-    llx__HealthChecker__run_quick_health_check --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker__HealthChecker__monitor_services --> docker__ai_tools__entrypoint__print
     llx__cli__formatters__print_models_table --> llx__cli__formatters___filter_models
     llx__cli__formatters__print_models_table --> llx__cli__formatters___build_title
     llx__cli__formatters__print_models_table --> llx__cli__formatters___render_models_table
@@ -314,6 +296,10 @@ flowchart LR
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tiers_table
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tags_legend
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_agents_table
+    llx__HealthChecker__run_comprehensive_health_check --> docker__ai_tools__entrypoint__print
+    llx__HealthChecker___print_health_summary --> docker__ai_tools__entrypoint__print
+    llx__HealthChecker__run_quick_health_check --> docker__ai_tools__entrypoint__print
+    llx__tools__health_checker__HealthChecker__monitor_services --> docker__ai_tools__entrypoint__print
     llx__litellm_config__load_litellm_config --> llx__litellm_config__LiteLLMConfig__load
     llx__orchestration__rate_limiter__RateLimiter__load_limits --> docker__ai_tools__entrypoint__print
     llx__orchestration__rate_limiter__RateLimiter__save_limits --> docker__ai_tools__entrypoint__print
@@ -323,6 +309,25 @@ flowchart LR
     llx__RateLimiter___cleanup_worker --> docker__ai_tools__entrypoint__print
     llx__RateLimiter___cleanup_expired_penalties --> docker__ai_tools__entrypoint__print
     llx__RateLimiter__print_status_summary --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI__run_command --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_start --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_stop --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_restart --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_status --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_health --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_monitor --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_vscode --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_llm --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_route --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_queue --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_rate_limit --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_session --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_instance --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_config --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___handle_utils --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___benchmark_routing --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___benchmark_rate_limiting --> docker__ai_tools__entrypoint__print
+    llx__OrchestratorCLI___benchmark_queue --> docker__ai_tools__entrypoint__print
     llx__cli__app__select --> llx__config__LlxConfig__load
     llx__cli__app__select --> llx__analysis__collector__analyze_project
     llx__cli__app__select --> llx__routing__selector__select_model
@@ -339,6 +344,27 @@ flowchart LR
     llx__cli__app__info --> llx__cli__formatters__print_info_tables
     llx__cli__app__info --> llx__config__LlxConfig__load
     llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
+    llx__LLMOrchestrator__load_config --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__save_config --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator___create_default_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm_orchestrator__LLMOrchestrator__start --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm_orchestrator__LLMOrchestrator__stop --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__add_provider --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__remove_provider --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__add_model --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__complete_request --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__cancel_request --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator___health_check_worker --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator___config_save_worker --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator___perform_health_checks --> docker__ai_tools__entrypoint__print
+    llx__LLMOrchestrator__print_status_summary --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine__load_config --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine__save_config --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine__route_request --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine___metrics_worker --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine___optimization_worker --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine___optimize_routing --> docker__ai_tools__entrypoint__print
+    llx__RoutingEngine__print_status_summary --> docker__ai_tools__entrypoint__print
     llx__VSCodeOrchestrator__load_config --> docker__ai_tools__entrypoint__print
     llx__VSCodeOrchestrator__save_config --> docker__ai_tools__entrypoint__print
     llx__VSCodeOrchestrator___create_default_config --> docker__ai_tools__entrypoint__print
@@ -354,62 +380,6 @@ flowchart LR
     llx__VSCodeOrchestrator___session_cleanup_worker --> docker__ai_tools__entrypoint__print
     llx__VSCodeOrchestrator___config_save_worker --> docker__ai_tools__entrypoint__print
     llx__VSCodeOrchestrator__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__load_config --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__save_config --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator___create_default_config --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm_orchestrator__LLMOrchestrator__start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm_orchestrator__LLMOrchestrator__stop --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__add_provider --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__remove_provider --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__add_model --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__complete_request --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__cancel_request --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator___health_check_worker --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator___config_save_worker --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator___perform_health_checks --> docker__ai_tools__entrypoint__print
-    llx__LLMOrchestrator__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__mcp__tools___handle_llx_analyze --> llx__config__LlxConfig__load
-    llx__mcp__tools___handle_llx_analyze --> llx__analysis__collector__analyze_project
-    llx__mcp__tools___handle_llx_analyze --> llx__routing__selector__select_with_context_check
-    llx__mcp__tools___handle_llx_select --> llx__config__LlxConfig__load
-    llx__mcp__tools___handle_llx_select --> llx__analysis__collector__analyze_project
-    llx__mcp__tools___handle_llx_select --> llx__routing__selector__select_model
-    llx__mcp__tools___handle_llx_chat --> llx__config__LlxConfig__load
-    llx__mcp__tools___handle_llx_chat --> llx__analysis__collector__analyze_project
-    llx__mcp__tools___handle_llx_chat --> llx__routing__selector__select_with_context_check
-    llx__mcp__tools___handle_code2llm_analyze --> llx__analysis__runner__run_code2llm
-    llx__mcp__tools___handle_redup_scan --> llx__analysis__runner__run_redup
-    llx__mcp__tools___handle_vallm_validate --> llx__analysis__runner__run_vallm
-    llx__mcp__tools___handle_llx_proxy_status --> llx__config__LlxConfig__load
-    llx__mcp__tools___handle_llx_proxy_status --> llx__integrations__proxy__check_proxy
     llx__mcp__server__main_sync --> llx__mcp__server__main
-    llx__RoutingEngine__load_config --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine__save_config --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine__route_request --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine___metrics_worker --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine___optimization_worker --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine___optimize_routing --> docker__ai_tools__entrypoint__print
-    llx__RoutingEngine__print_status_summary --> docker__ai_tools__entrypoint__print
     llx__integrations__proxy__start_proxy --> llx__integrations__proxy__generate_proxy_config
-    llx__orchestration__queue_manager__QueueManager__load_queues --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue_manager__QueueManager__save_queues --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue_manager__QueueManager__start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue_manager__QueueManager__stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue_manager__QueueManager__add_queue --> docker__ai_tools__entrypoint__print
-    llx__QueueManager__remove_queue --> docker__ai_tools__entrypoint__print
-    llx__QueueManager__enqueue_request --> docker__ai_tools__entrypoint__print
-    llx__QueueManager__complete_request --> docker__ai_tools__entrypoint__print
-    llx__QueueManager___worker_loop --> docker__ai_tools__entrypoint__print
-    llx__QueueManager___retry_request --> docker__ai_tools__entrypoint__print
-    llx__QueueManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__ProxyExample__setup_server --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__ProxyExample__start_server --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__ProxyExample__test_proxy --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__ProxyExample__show_ide_integration --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__ProxyExample__cleanup --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__signal_handler --> docker__ai_tools__entrypoint__print
-    examples__proxy__main__main --> docker__ai_tools__entrypoint__print
-    examples__docker__main__check_service_health --> docker__ai_tools__entrypoint__print
-    examples__docker__main__check_redis_connection --> docker__ai_tools__entrypoint__print
-    examples__docker__main__check_ollama_connection --> docker__ai_tools__entrypoint__print
-    examples__docker__main__demonstrate_docker_integration --> docker__ai_tools__entrypoint__print
+    llx__mcp__tools___handle_llx_analyze --> llx__config__LlxConfig__load
