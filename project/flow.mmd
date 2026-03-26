@@ -4,6 +4,11 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
+        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
         llx__cli__formatters__output_rich["output_rich"]
         llx__cli__formatters__output_json["output_json"]
         llx__cli__formatters___filter_models["_filter_models"]
@@ -14,31 +19,26 @@ flowchart TD
         llx__cli__formatters___render_tools_table["_render_tools_table"]
         llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__formatters___render_agents_table["_render_agents_table"]
-        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
-        llx__cli__formatters__print_info_tables["print_info_tables"]
-        llx__cli__app__analyze["analyze"]
-        llx__cli__app__select["select"]
-        llx__cli__app__chat["chat"]
-        ...["+11 more"]
+        ...["+19 more"]
     end
 
     subgraph Core
+        llx__strategy__examples__example_create_strategy["example_create_strategy"]
+        llx__strategy__examples__example_validate_strategy["example_validate_strategy"]
+        llx__strategy__examples__example_run_strategy["example_run_strategy"]
+        llx__strategy__examples__example_verify_strategy["example_verify_strategy"]
+        llx__strategy__examples__example_programmatic_strategy["example_programmatic_strategy"]
         llx__config__LlxConfig__load["load"]
         llx__config___apply_yaml_models["_apply_yaml_models"]
-        llx__prellm__env_config___parse_env_line["_parse_env_line"]
-        llx__prellm__env_config___load_env_file_manually["_load_env_file_manually"]
-        llx__prellm__env_config__load_dotenv_if_available["load_dotenv_if_available"]
-        llx__prellm__env_config__get_env_config("get_env_config CC=9")
-        llx__prellm__env_config__check_providers["check_providers"]
-        llx__prellm__env_config__check_providers_live["check_providers_live"]
-        llx__prellm__cli___init_logging["_init_logging"]
-        llx__prellm__cli___handle_query_options["_handle_query_options"]
-        llx__prellm__cli___show_debug_info["_show_debug_info"]
-        llx__prellm__cli___initialize_execution["_initialize_execution"]
-        llx__prellm__cli___execute_and_format_result["_execute_and_format_result"]
+        llx__prellm__cli_config__config_set_cmd["config_set_cmd"]
+        llx__prellm__cli_config__config_get_cmd["config_get_cmd"]
+        llx__prellm__cli_config___format_config_sections["_format_config_sections"]
+        llx__prellm__cli_config__config_list_cmd["config_list_cmd"]
+        llx__prellm__cli_config__config_show_cmd["config_show_cmd"]
+        llx__prellm__cli_config__config_init_env["config_init_env"]
         llx__prellm__cli__query["query"]
         llx__prellm__cli__context["context"]
-        ...["+685 more"]
+        ...["+711 more"]
     end
 
     subgraph Exporters
@@ -46,4 +46,4 @@ flowchart TD
         llx__prellm__context__user_memory__UserMemory__export_session["export_session"]
     end
 
-    class llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__prellm__cli___init_logging,llx__prellm__cli___handle_query_options,llx__prellm__cli___show_debug_info,llx__prellm__cli___initialize_execution,llx__prellm__cli___execute_and_format_result,llx__prellm__cli__query,llx__prellm__cli__context,llx__prellm__cli__process entry
+    class llx__strategy__examples__example_create_strategy,llx__strategy__examples__example_validate_strategy,llx__strategy__examples__example_run_strategy,llx__strategy__examples__example_verify_strategy,llx__strategy__examples__example_programmatic_strategy,llx__config__LlxConfig__load,llx__config___apply_yaml_models,llx__prellm__cli_config__config_set_cmd,llx__prellm__cli_config__config_get_cmd,llx__prellm__cli_config___format_config_sections entry

@@ -1,19 +1,19 @@
-# vallm batch | 196f | 113✓ 8⚠ 42✗ | 2026-03-26
+# vallm batch | 223f | 129✓ 6⚠ 49✗ | 2026-03-26
 
 SUMMARY:
-  scanned: 196  passed: 113 (57.7%)  warnings: 8  errors: 42  unsupported: 41
+  scanned: 223  passed: 129 (57.8%)  warnings: 6  errors: 49  unsupported: 45
 
-WARNINGS[8]{path,score}:
+WARNINGS[6]{path,score}:
   examples/cli-tools/quick_cli.sh,0.97
     issues[1]{rule,severity,message,line}:
-      complexity.lizard_length,warning,generate_tool: 118 lines exceeds limit 100,74
+      complexity.lizard_length,warning,generate_tool: 120 lines exceeds limit 100,74
   examples/filtering/advanced_filters.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,chat_with_constraints has cyclomatic complexity 20 (max: 15),34
       complexity.lizard_cc,warning,chat_with_constraints: CC=20 exceeds limit 15,34
   examples/fullstack/generate.sh,0.97
     issues[1]{rule,severity,message,line}:
-      complexity.lizard_length,warning,generate_app: 173 lines exceeds limit 100,31
+      complexity.lizard_length,warning,generate_app: 177 lines exceeds limit 100,31
   examples/hybrid/hybrid_dev.sh,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_cc,warning,execute_task: CC=17 exceeds limit 15,157
@@ -21,17 +21,11 @@ WARNINGS[8]{path,score}:
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
       complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,99
-  llx/prellm/cli.py,0.98
-    issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 10.4 (threshold: 20),
   llx/prellm/trace.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
-  llx/tools/health_runner.py,0.98
-    issues[1]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,run_comprehensive has cyclomatic complexity 16 (max: 15),17
 
-ERRORS[42]{path,score}:
+ERRORS[49]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
@@ -68,10 +62,18 @@ ERRORS[42]{path,score}:
       python.import.resolvable,error,Module 'models' not found,3
       python.import.resolvable,error,Module 'orchestrator' not found,4
       python.import.resolvable,error,Module 'ports' not found,5
+  llx/planfile/__init__.py,0.57
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'executor' not found,3
   llx/prellm/utils/__init__.py,0.57
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'lazy_imports' not found,3
       python.import.resolvable,error,Module 'lazy_loader' not found,4
+  llx/strategy/__init__.py,0.57
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,4
+      python.import.resolvable,error,Module 'builder' not found,5
+      python.import.resolvable,error,Module 'runner' not found,6
   llx/tools/__init__.py,0.57
     issues[6]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,6
@@ -144,15 +146,16 @@ ERRORS[42]{path,score}:
       python.import.resolvable,error,Module '_utils' not found,7
       python.import.resolvable,error,Module 'models' not found,9
       python.import.resolvable,error,Module 'manager' not found,10
-  llx/orchestration/vscode/orchestrator.py,0.81
-    issues[7]{rule,severity,message,line}:
+  llx/orchestration/vscode/orchestrator.py,0.80
+    issues[8]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,16
       python.import.resolvable,error,Module 'ports' not found,17
-      python.import.resolvable,error,Module 'instances.manager' not found,18
-      python.import.resolvable,error,Module 'instances.models' not found,19
-      python.import.resolvable,error,Module 'session.manager' not found,20
-      python.import.resolvable,error,Module 'ratelimit.limiter' not found,21
-      python.import.resolvable,error,Module 'routing.engine' not found,22
+      python.import.resolvable,error,Module '_utils' not found,18
+      python.import.resolvable,error,Module 'instances.manager' not found,19
+      python.import.resolvable,error,Module 'instances.models' not found,20
+      python.import.resolvable,error,Module 'session.manager' not found,21
+      python.import.resolvable,error,Module 'ratelimit.limiter' not found,22
+      python.import.resolvable,error,Module 'routing.engine' not found,23
   llx/prellm/_nfo_compat.py,0.82
     issues[5]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'nfo.configure' not found,18
@@ -185,25 +188,50 @@ ERRORS[42]{path,score}:
       python.import.resolvable,error,Module 'instances' not found,88
       python.import.resolvable,error,Module 'session' not found,105
       python.import.resolvable,error,Module 'instances' not found,106
+  llx/orchestration/instances/manager.py,0.88
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,15
+      python.import.resolvable,error,Module 'ports' not found,16
+      python.import.resolvable,error,Module '_utils' not found,17
+  llx/strategy/builder.py,0.88
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,10
+      python.import.resolvable,error,Module 'models' not found,304
+  llx/cli/strategy_commands.py,0.89
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'strategy' not found,8
   llx/orchestration/instances/ports.py,0.89
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,7
-  llx/orchestration/instances/manager.py,0.91
+  llx/orchestration/ratelimit/limiter.py,0.89
     issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,15
-      python.import.resolvable,error,Module 'ports' not found,16
+      python.import.resolvable,error,Module 'models' not found,13
+      python.import.resolvable,error,Module '_utils' not found,14
+  llx/tools/ai_tools_manager.py,0.89
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+      python.import.resolvable,error,Module '_docker' not found,16
+  llx/tools/vscode_manager.py,0.89
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'docker_manager' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+      python.import.resolvable,error,Module '_docker' not found,16
+  llx/orchestration/session/manager.py,0.90
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,14
+      python.import.resolvable,error,Module '_utils' not found,15
+  llx/strategy/runner.py,0.91
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'models' not found,9
   llx/config.py,0.92
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'litellm_config' not found,32
       python.import.resolvable,error,Module 'tomli' not found,28
-  llx/tools/ai_tools_manager.py,0.92
+  llx/orchestration/queue/manager.py,0.92
     issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-  llx/tools/vscode_manager.py,0.92
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
+      python.import.resolvable,error,Module 'models' not found,16
+      python.import.resolvable,error,Module '_utils' not found,17
   llx/tools/config_manager.py,0.93
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'toml' not found,9
@@ -212,15 +240,12 @@ ERRORS[42]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
-  llx/orchestration/ratelimit/limiter.py,0.94
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,13
-  llx/orchestration/session/manager.py,0.95
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,14
-  llx/orchestration/queue/manager.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,16
+  llx/cli/app.py,0.94
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'planfile.llm.generator' not found,340
+      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,341
+      python.import.resolvable,error,Module 'planfile.runner' not found,356
+      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,357
   llx/prellm/context/user_memory.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'chromadb' not found,83
@@ -233,9 +258,13 @@ ERRORS[42]{path,score}:
   llx/prellm/analyzers/context_engine.py,0.97
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'git' not found,182
+  llx/mcp/tools.py,0.98
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'planfile.llm.generator' not found,569
+      python.import.resolvable,error,Module 'planfile.loaders.yaml_loader' not found,570
 
 UNSUPPORTED[5]{bucket,count}:
-  *.md,20
+  *.md,24
   Dockerfile*,1
   *.txt,3
   *.yml,3

@@ -1,17 +1,17 @@
-# code2llm/evolution | 878 func | 76f | 2026-03-26
+# code2llm/evolution | 926 func | 86f | 2026-03-26
 
 NEXT[10] (ranked by impact):
   [1] !! SPLIT           llx/tools/vscode_manager.py
-      WHY: 748L, 1 classes, max CC=19
-      EFFORT: ~4h  IMPACT: 14212
+      WHY: 732L, 1 classes, max CC=19
+      EFFORT: ~4h  IMPACT: 13908
 
-  [2] !! SPLIT           llx/prellm/cli.py
-      WHY: 1076L, 0 classes, max CC=13
-      EFFORT: ~4h  IMPACT: 13988
-
-  [3] !! SPLIT           llx/tools/config_manager.py
+  [2] !! SPLIT           llx/tools/config_manager.py
       WHY: 779L, 1 classes, max CC=17
       EFFORT: ~4h  IMPACT: 13243
+
+  [3] !! SPLIT           llx/tools/model_manager.py
+      WHY: 740L, 1 classes, max CC=15
+      EFFORT: ~4h  IMPACT: 11100
 
   [4] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
       WHY: CC=21 exceeds 15
@@ -21,37 +21,37 @@ NEXT[10] (ranked by impact):
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 323
 
-  [6] !  SPLIT-FUNC      HealthCheckRunner.run_comprehensive  CC=16  fan=17
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 272
-
-  [7] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
+  [6] !  SPLIT-FUNC      _dispatch  CC=19  fan=13
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 247
 
-  [8] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
+  [7] !  SPLIT-FUNC      ModelManager.print_model_summary  CC=15  fan=12
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 180
 
-  [9] !  SPLIT-FUNC      preprocess_and_execute  CC=15  fan=11
+  [8] !  SPLIT-FUNC      preprocess_and_execute  CC=15  fan=11
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 165
 
-  [10] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
+  [9] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 165
+
+  [10] !  SPLIT-FUNC      HealthChecker.check_service_health  CC=16  fan=10
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 160
 
 
 RISKS[3]:
-  ⚠ Splitting llx/prellm/cli.py may break 28 import paths
   ⚠ Splitting llx/tools/config_manager.py may break 43 import paths
+  ⚠ Splitting llx/tools/model_manager.py may break 33 import paths
   ⚠ Splitting llx/tools/vscode_manager.py may break 25 import paths
 
 METRICS-TARGET:
-  CC̄:          4.0 → ≤2.8
+  CC̄:          3.9 → ≤2.7
   max-CC:      21 → ≤10
   god-modules: 14 → 0
-  high-CC(≥15): 10 → ≤5
+  high-CC(≥15): 9 → ≤4
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -79,4 +79,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.1 → now CC̄=4.0
+  prev CC̄=3.9 → now CC̄=3.9
