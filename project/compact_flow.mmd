@@ -9,7 +9,7 @@ flowchart TD
     llx__mcp["llx.mcp<br/>18 funcs"]
     llx__orchestration["llx.orchestration<br/>267 funcs"]
     llx__planfile["llx.planfile<br/>58 funcs"]
-    llx__prellm["llx.prellm<br/>280 funcs"]
+    llx__prellm["llx.prellm<br/>297 funcs"]
     llx__routing["llx.routing<br/>19 funcs"]
     llx__tools["llx.tools<br/>219 funcs"]
     llx__utils["llx.utils<br/>1 funcs"]
@@ -26,8 +26,8 @@ flowchart TD
     llx__tools ==>|6| llx__utils
     llx__mcp ==>|6| llx__analysis
     llx__cli ==>|5| llx__analysis
-    llx__cli ==>|5| llx__routing
     llx__mcp ==>|5| llx__config
+    llx__cli ==>|5| llx__routing
     llx__cli -->|3| llx__integrations
     simple_generate -->|2| llx__planfile
     llx__planfile -->|2| llx__config
@@ -35,9 +35,8 @@ flowchart TD
     llx__mcp -->|2| llx__routing
     llx__mcp -->|2| llx__prellm
     trace -->|1| llx__planfile
-    llx__examples -->|1| llx__config
     llx__config -->|1| llx__litellm_config
-    llx__cli -->|1| llx__examples
+    llx__examples -->|1| llx__config
     llx__utils -->|1| llx__prellm
     llx__mcp -->|1| llx__examples
     llx__mcp -->|1| llx__integrations
@@ -48,3 +47,4 @@ flowchart TD
     llx__integrations -->|1| llx__routing
     llx__routing -->|1| llx__examples
     llx__routing -->|1| llx__integrations
+    llx__cli -->|1| llx__examples

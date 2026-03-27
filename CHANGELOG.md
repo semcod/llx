@@ -381,6 +381,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.39] - 2026-03-27
+
+### Docs
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update test-api-qwen/__init__.py
+- Update test_api_qwen
+
+### Other
+- Update my-api/__init__.py
+- Update my_api
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- Update project/duplication.toon.yaml
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- ... and 6 more files
+
 ## [0.1.38] - 2026-03-27
 
 ### Docs

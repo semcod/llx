@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 123, shell: 30
+- **Languages**: python: 129, shell: 30
 - **Analysis Mode**: static
-- **Total Functions**: 1048
-- **Total Classes**: 162
-- **Modules**: 153
-- **Entry Points**: 867
+- **Total Functions**: 1090
+- **Total Classes**: 177
+- **Modules**: 159
+- **Entry Points**: 906
 
 ## Architecture by Module
 
@@ -101,14 +101,14 @@
 - **Classes**: 1
 - **File**: `limiter.py`
 
+### ai-tools-manage
+- **Functions**: 15
+- **File**: `ai-tools-manage.sh`
+
 ### llx.prellm.context.user_memory
 - **Functions**: 15
 - **Classes**: 1
 - **File**: `user_memory.py`
-
-### ai-tools-manage
-- **Functions**: 15
-- **File**: `ai-tools-manage.sh`
 
 ## Key Entry Points
 
@@ -118,13 +118,13 @@ Main execution flows into the system:
 > Complete workflow: generate strategy, code, and optionally run.
 - **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
 
-### llx.cli.app.plan_monitor
-> Monitor a running application: health check + quality gates summary.
-- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, strat.get, os.getenv, open, _yaml.safe_load
-
 ### llx.orchestration.instances.manager.InstanceManager.load_instances
 > Load instances from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, InstanceConfig
+
+### llx.cli.app.plan_monitor
+> Monitor a running application: health check + quality gates summary.
+- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, strat.get, os.getenv, open, _yaml.safe_load
 
 ### llx.tools.vscode_manager.VSCodeManager.print_quick_start
 > Print quick start guide.
@@ -142,13 +142,13 @@ Main execution flows into the system:
 > Generate a complete strategy using the fixed generator.
 - **Calls**: console.print, Path, Panel, llx.planfile.generate_strategy.generate_strategy_with_fix, llx.planfile.generate_strategy.save_fixed_strategy, console.print, console.print, console.print
 
-### llx.cli.app.plan_models
-> List available models.
-- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
-
 ### llx.orchestration.session.manager.SessionManager.load_sessions
 > Load sessions from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, SessionConfig
+
+### llx.cli.app.plan_models
+> List available models.
+- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
 
 ### llx.orchestration.queue.manager.QueueManager.load_queues
 > Load queues from configuration file.
@@ -209,7 +209,7 @@ v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
 
 Example:
     prellm config show
-- **Calls**: config_app.command, get_env_config, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo
+- **Calls**: config_app.command, llx.prellm.env_config.get_env_config, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo, typer.echo
 
 ### llx.prellm.cli_query._show_debug_info
 > Show schema and blocked sensitive fields if requested.
@@ -226,7 +226,7 @@ Example:
     prellm budget
     prellm budget --json
     prellm budget --reset
-- **Calls**: typer.Option, typer.Option, get_env_config, llx.prellm.budget.get_budget_tracker, tracker.summary, typer.echo, typer.echo, typer.echo
+- **Calls**: typer.Option, typer.Option, llx.prellm.env_config.get_env_config, llx.prellm.budget.get_budget_tracker, tracker.summary, typer.echo, typer.echo, typer.echo
 
 ### llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary
 > Print comprehensive status summary.
@@ -253,16 +253,16 @@ Key execution flows identified:
 plan_all [llx.cli.app]
 ```
 
-### Flow 2: plan_monitor
-```
-plan_monitor [llx.cli.app]
-```
-
-### Flow 3: load_instances
+### Flow 2: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
+```
+
+### Flow 3: plan_monitor
+```
+plan_monitor [llx.cli.app]
 ```
 
 ### Flow 4: print_quick_start
@@ -294,16 +294,16 @@ main [llx.planfile.generate_strategy]
   └─> save_fixed_strategy
 ```
 
-### Flow 8: plan_models
-```
-plan_models [llx.cli.app]
-```
-
-### Flow 9: load_sessions
+### Flow 8: load_sessions
 ```
 load_sessions [llx.orchestration.session.manager.SessionManager]
   └─ →> print
   └─ →> print
+```
+
+### Flow 9: plan_models
+```
+plan_models [llx.cli.app]
 ```
 
 ### Flow 10: load_queues
@@ -434,13 +434,13 @@ Supports 5 strategies:
 
 Key functions that process and transform data:
 
-### llx.prellm.cli_config._format_config_sections
-> Group config entries into categorized sections for display.
-- **Output to**: entries.items, None.append, None.append, var.startswith, None.append
-
 ### llx.examples.utils.TaskQueue.process
 > Process all tasks in queue.
 - **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
+
+### llx.prellm.cli_config._format_config_sections
+> Group config entries into categorized sections for display.
+- **Output to**: entries.items, None.append, None.append, var.startswith, None.append
 
 ### llx.prellm.cli.process
 > Execute a DevOps process chain.
@@ -449,6 +449,16 @@ Key functions that process and transform data:
 ### llx.prellm.trace._format_tree_value
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
+
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
+
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
+
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.prellm._get_process_chain
 
@@ -478,16 +488,6 @@ Args:
     data: Initial data to validate.
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
-
-### llx.prellm.server._parse_model_pair
-> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
-
-Special cases
-- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
-
-### llx.prellm.server.batch_process
-> Process multiple queries in parallel.
-- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.prellm.core._trace_preprocess_configuration
 - **Output to**: trace.step, str
@@ -529,16 +529,15 @@ Usage:
 ### llx.tools.cli._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, start_p.add_argument, start_p.add_argument
 
+### llx.tools.docker_manager._build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
 ### llx.tools.vscode_manager._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
 
 ### llx.tools.config_manager.ConfigManager.validate_env_config
 > Validate environment configuration.
 - **Output to**: self.load_config, env_vars.get, env_vars.get, env_vars.get, None.append
-
-### llx.tools.config_manager.ConfigManager.validate_docker_configs
-> Validate Docker configuration files.
-- **Output to**: self.load_config, file_path.exists, None.append, config.get, None.append
 
 ## Behavioral Patterns
 
@@ -563,14 +562,14 @@ Functions exposed as public API (no underscore prefix):
 
 - `llx.cli.app.plan_all` - 57 calls
 - `llx.prellm.cli_context.context` - 49 calls
-- `llx.cli.app.plan_monitor` - 43 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
+- `llx.cli.app.plan_monitor` - 43 calls
 - `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
 - `llx.planfile.generate_strategy.main` - 35 calls
-- `llx.cli.app.plan_models` - 34 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
+- `llx.cli.app.plan_models` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
 - `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
@@ -586,12 +585,13 @@ Functions exposed as public API (no underscore prefix):
 - `llx.prellm.cli_config.config_show_cmd` - 25 calls
 - `llx.prellm.cli_commands.budget` - 25 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
+- `llx.prellm.env_config.get_env_config` - 24 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
 - `llx.config.LlxConfig.load` - 23 calls
 - `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
 - `llx.planfile.runner.run_strategy` - 23 calls
-- `llx.cli.app.plan_generate` - 23 calls
 - `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
+- `llx.cli.app.plan_generate` - 23 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
 - `llx.prellm.server.chat_completions` - 22 calls
 - `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
@@ -600,7 +600,6 @@ Functions exposed as public API (no underscore prefix):
 - `llx.litellm_config.LiteLLMConfig.load` - 21 calls
 - `llx.prellm.cli_commands.serve` - 21 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.access_shell` - 21 calls
-- `llx.tools.ai_tools_manager.AIToolsManager.print_status_summary` - 21 calls
 
 ## System Interactions
 
@@ -611,13 +610,13 @@ graph TD
     plan_all --> command
     plan_all --> Argument
     plan_all --> Option
+    load_instances --> exists
+    load_instances --> get
+    load_instances --> print
     plan_monitor --> command
     plan_monitor --> Argument
     plan_monitor --> Option
     plan_monitor --> get
-    load_instances --> exists
-    load_instances --> get
-    load_instances --> print
     print_quick_start --> print
     load_config --> exists
     load_config --> update
@@ -631,11 +630,11 @@ graph TD
     main --> Panel
     main --> generate_strategy_wi
     main --> save_fixed_strategy
-    plan_models --> command
-    plan_models --> Option
     load_sessions --> exists
     load_sessions --> get
     load_sessions --> print
+    plan_models --> command
+    plan_models --> Option
     load_queues --> exists
     load_queues --> get
 ```

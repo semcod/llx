@@ -1,18 +1,18 @@
-# vallm batch | 336f | 149✓ 2⚠ 68✗ | 2026-03-27
+# vallm batch | 341f | 153✓ 2⚠ 69✗ | 2026-03-27
 
 SUMMARY:
-  scanned: 336  passed: 149 (44.3%)  warnings: 2  errors: 68  unsupported: 119
+  scanned: 341  passed: 153 (44.9%)  warnings: 2  errors: 69  unsupported: 119
 
 WARNINGS[2]{path,score}:
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),99
-      complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,99
+      complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),101
+      complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,101
   llx/prellm/trace.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[68]{path,score}:
+ERRORS[69]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
@@ -207,6 +207,13 @@ ERRORS[68]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'fastapi' not found,1
       python.import.resolvable,error,Module 'uvicorn' not found,4
+  llx/prellm/_nfo_compat.py,0.84
+    issues[5]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo' not found,20
+      python.import.resolvable,error,Module 'nfo' not found,21
+      python.import.resolvable,error,Module 'nfo' not found,22
+      python.import.resolvable,error,Module 'nfo' not found,23
+      python.import.resolvable,error,Module 'nfo' not found,24
   llx/tools/health_checker.py,0.84
     issues[6]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
@@ -251,6 +258,10 @@ ERRORS[68]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,13
       python.import.resolvable,error,Module '_utils' not found,14
+  llx/prellm/llm_provider.py,0.89
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'litellm' not found,23
+      python.import.resolvable,error,Module 'litellm' not found,24
   llx/tools/ai_tools_manager.py,0.89
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
@@ -280,9 +291,6 @@ ERRORS[68]{path,score}:
       python.import.resolvable,error,Module 'docker_manager' not found,14
       python.import.resolvable,error,Module '_utils' not found,15
       python.import.resolvable,error,Module 'utils._cmd_uninstall_extension' not found,16
-  llx/orchestration/_utils.py,0.91
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'utils.cli_main' not found,40
   llx/planfile/runner.py,0.91
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,9
@@ -303,12 +311,12 @@ ERRORS[68]{path,score}:
   tests/test_detection.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
+  llx/prellm/budget.py,0.95
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'litellm' not found,113
   llx/prellm/logging_setup.py,0.95
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'litellm' not found,74
-  llx/prellm/budget.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'litellm' not found,116
   llx/prellm/context/user_memory.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'chromadb' not found,83
@@ -321,15 +329,15 @@ ERRORS[68]{path,score}:
   llx/prellm/analyzers/context_engine.py,0.97
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'git' not found,182
+  llx/prellm/core.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'nfo.decorators' not found,28
   llx/planfile/generate_strategy.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'litellm' not found,267
   llx/prellm/cli_commands.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'uvicorn' not found,145
-  llx/prellm/core.py,0.98
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'nfo.decorators' not found,32
   tests/test_prellm_integration.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,7
