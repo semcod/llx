@@ -152,21 +152,19 @@ run_example() {
 
 # Check dependencies and setup llx alias
 check_dependencies() {
-    if ! command -v llx &> /dev/null; then
-        LLX_REPO_VENV="$SCRIPT_DIR/../.venv/bin/llx"
-        if [ -x "$LLX_REPO_VENV" ]; then
-            shopt -s expand_aliases
-            alias llx="$LLX_REPO_VENV"
-            export LLX_CMD="$LLX_REPO_VENV"
-            echo -e "${BLUE}Found llx in repo venv: $LLX_REPO_VENV${NC}"
-        else
-            echo -e "${RED}Error: llx command not found and no local venv found.${NC}"
-            echo -e "${CYAN}Please install with: pip install -e .${NC}"
-            exit 1
-        fi
-    else
-        export LLX_CMD="llx"
+    # Set PYTHONPATH to include llx source (repo root)
+    LLX_REPO_ROOT="$SCRIPT_DIR/.."
+    export PYTHONPATH="$LLX_REPO_ROOT:$PYTHONPATH"
+    
+    # Check if we can import llx
+    if ! python3 -c "import llx" 2>/dev/null; then
+        echo -e "${RED}Error: Cannot import llx module.${NC}"
+        echo -e "${CYAN}Make sure you're running from the examples directory.${NC}"
+        exit 1
     fi
+    
+    export LLX_CMD="python3 -m llx"
+    echo -e "${BLUE}Using llx from source: $LLX_REPO_ROOT${NC}"
 }
 
 # Parse arguments

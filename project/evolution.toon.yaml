@@ -1,37 +1,41 @@
-# code2llm/evolution | 1007 func | 96f | 2026-03-26
+# code2llm/evolution | 1001 func | 95f | 2026-03-27
 
-NEXT[5] (ranked by impact):
-  [1] !! SPLIT           llx/tools/config_manager.py
+NEXT[6] (ranked by impact):
+  [1] !! SPLIT           llx/cli/app.py
+      WHY: 1087L, 0 classes, max CC=19
+      EFFORT: ~4h  IMPACT: 20653
+
+  [2] !! SPLIT           llx/tools/config_manager.py
       WHY: 795L, 1 classes, max CC=12
       EFFORT: ~4h  IMPACT: 9540
 
-  [2] !! SPLIT           llx/tools/vscode_manager.py
+  [3] !! SPLIT           llx/tools/vscode_manager.py
       WHY: 792L, 1 classes, max CC=10
       EFFORT: ~4h  IMPACT: 7920
 
-  [3] !! SPLIT           llx/tools/model_manager.py
-      WHY: 758L, 1 classes, max CC=8
-      EFFORT: ~4h  IMPACT: 6064
+  [4] !  SPLIT-FUNC      _plan_code_impl  CC=19  fan=36
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 684
 
-  [4] !  SPLIT-FUNC      _dispatch  CC=21  fan=20
-      WHY: CC=21 exceeds 15
-      EFFORT: ~1h  IMPACT: 420
+  [5] !  SPLIT-FUNC      plan_all  CC=16  fan=20
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 320
 
-  [5] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
+  [6] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 165
 
 
 RISKS[3]:
+  ⚠ Splitting llx/cli/app.py may break 28 import paths
   ⚠ Splitting llx/tools/config_manager.py may break 45 import paths
   ⚠ Splitting llx/tools/vscode_manager.py may break 38 import paths
-  ⚠ Splitting llx/tools/model_manager.py may break 36 import paths
 
 METRICS-TARGET:
   CC̄:          3.8 → ≤2.7
-  max-CC:      21 → ≤10
-  god-modules: 15 → 0
-  high-CC(≥15): 2 → ≤1
+  max-CC:      19 → ≤9
+  god-modules: 14 → 0
+  high-CC(≥15): 5 → ≤2
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

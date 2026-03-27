@@ -57,6 +57,7 @@ def select_model(
     *,
     prefer_local: bool = False,
     max_tier: ModelTier | None = None,
+    force_tier: ModelTier | None = None,
     task_hint: str | None = None,
 ) -> SelectionResult:
     """Select the best model tier based on project metrics.
@@ -95,8 +96,13 @@ def select_model(
             scores=scores,
         )
 
-    # Determine tier from metrics
-    tier = _compute_tier(metrics, thresholds, reasons, task_hint)
+    # Force specific tier if requested
+    if force_tier:
+        tier = force_tier
+        reasons.append(f"Forced to use {tier.value} tier")
+    else:
+        # Determine tier from metrics
+        tier = _compute_tier(metrics, thresholds, reasons, task_hint)
 
     # Apply max_tier ceiling
     tier_order = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, ModelTier.BALANCED, ModelTier.PREMIUM]

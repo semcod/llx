@@ -529,56 +529,66 @@ def _build_parser() -> "argparse.ArgumentParser":
 
 
 def _dispatch(args, manager: AIToolsManager) -> bool:
-    if args.command == "start":
-        return manager.start_ai_tools()
-    elif args.command == "stop":
-        return manager.stop_ai_tools()
-    elif args.command == "restart":
-        return manager.restart_ai_tools()
-    elif args.command == "shell":
-        return manager.access_shell()
-    elif args.command == "status":
-        manager.print_status_summary()
-        return True
-    elif args.command == "logs":
-        logs = manager.get_logs(args.tail)
-        print(logs)
-        return True
-    elif args.command == "test":
-        results = manager.test_connectivity()
-        print("🧪 Connectivity Test Results:")
-        for test, passed in results.items():
-            icon = "✅" if passed else "❌"
-            print(f"  {icon} {test}")
-        return all(results.values())
-    elif args.command == "chat":
-        return manager.run_chat_test(args.model, args.message)
-    elif args.command == "models":
-        models = manager.get_available_models()
-        print(f"📦 Available Models ({len(models)}):")
-        for model in models:
-            print(f"  • {model}")
-        return True
-    elif args.command == "install":
-        if not args.tool:
-            print("❌ --tool required for install")
-            return False
-        return manager.install_tool(args.tool)
-    elif args.command == "update":
-        return manager.update_tools()
-    elif args.command == "backup":
-        return manager.backup_configurations(args.backup_dir)
-    elif args.command == "restore":
-        if not args.backup_dir:
-            print("❌ --backup-dir required for restore")
-            return False
-        return manager.restore_configurations(args.backup_dir)
-    elif args.command == "workspace":
-        return manager.create_workspace_example(args.project)
-    elif args.command == "examples":
-        manager.print_usage_examples()
-        return True
-    return False
+    """Dispatch command to appropriate handler."""
+    handlers = {
+        "start": lambda: manager.start_ai_tools(),
+        "stop": lambda: manager.stop_ai_tools(),
+        "restart": lambda: manager.restart_ai_tools(),
+        "shell": lambda: manager.access_shell(),
+        "status": lambda: (manager.print_status_summary(), True)[1],
+        "logs": lambda: (print(manager.get_logs(args.tail)), True)[1],
+        "test": lambda: _handle_test(manager),
+        "chat": lambda: manager.run_chat_test(args.model, args.message),
+        "models": lambda: _handle_models(manager),
+        "install": lambda: _handle_install(manager, args),
+        "update": lambda: manager.update_tools(),
+        "backup": lambda: manager.backup_configurations(args.backup_dir),
+        "restore": lambda: _handle_restore(manager, args),
+        "workspace": lambda: manager.create_workspace_example(args.project),
+        "examples": lambda: (manager.print_usage_examples(), True)[1],
+    }
+    
+    handler = handlers.get(args.command)
+    if not handler:
+        print(f"❌ Unknown command: {args.command}")
+        return False
+    
+    return handler()
+
+
+def _handle_test(manager: AIToolsManager) -> bool:
+    """Handle test command."""
+    results = manager.test_connectivity()
+    print("🧪 Connectivity Test Results:")
+    for test, passed in results.items():
+        icon = "✅" if passed else "❌"
+        print(f"  {icon} {test}")
+    return all(results.values())
+
+
+def _handle_models(manager: AIToolsManager) -> bool:
+    """Handle models command."""
+    models = manager.get_available_models()
+    print(f"📦 Available Models ({len(models)}):")
+    for model in models:
+        print(f"  • {model}")
+    return True
+
+
+def _handle_install(manager: AIToolsManager, args) -> bool:
+    """Handle install command."""
+    if not args.tool:
+        print("❌ --tool required for install")
+        return False
+    return manager.install_tool(args.tool)
+
+
+def _handle_restore(manager: AIToolsManager, args) -> bool:
+    """Handle restore command."""
+    if not args.backup_dir:
+        print("❌ --backup-dir required for restore")
+        return False
+    return manager.restore_configurations(args.backup_dir)
 
 
 def main():

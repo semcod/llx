@@ -52,6 +52,82 @@ strategy:
       5. Testing and deployment
       6. Performance optimization
 
+      YAML Structure Required:
+      project_name: "Name based on description"
+      project_type: "Web Application"
+      domain: "software"
+      goal:
+        title: "Short title"
+        description: "{description}"
+      goals:
+        - "Goal 1 derived from description"
+      sprints:
+        - number: 1
+          name: "Sprint 1"
+          objectives:
+            - "Objective 1"
+          tasks:
+            - name: "Task 1"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 2
+          name: "Sprint 2"
+          objectives:
+            - "Objective 2"
+          tasks:
+            - name: "Task 2"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 3
+          name: "Sprint 3"
+          objectives:
+            - "Objective 3"
+          tasks:
+            - name: "Task 3"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 4
+          name: "Sprint 4"
+          objectives:
+            - "Objective 4"
+          tasks:
+            - name: "Task 4"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 5
+          name: "Sprint 5"
+          objectives:
+            - "Objective 5"
+          tasks:
+            - name: "Task 5"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 6
+          name: "Sprint 6"
+          objectives:
+            - "Objective 6"
+          tasks:
+            - name: "Task 6"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+      task_patterns:
+        - pattern: "Pattern 1"
+          description: "Description"
+      quality_gates:
+        - gate: "Gate 1"
+          condition: "Condition"
+          criteria:
+            - "Criteria 1"
+          required: true
+
+      IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
+
     cli: |
       Generate a refactoring strategy for this CLI tool.
       YOU MUST RESPOND WITH VALID YAML ONLY. NO CODE BLOCKS. NO EXPLANATIONS.
@@ -72,6 +148,64 @@ strategy:
       2. CLI interface and commands
       3. Testing and validation
       4. Packaging and distribution
+
+      YAML Structure Required:
+      project_name: "Name based on description"
+      project_type: "CLI Tool"
+      domain: "software"
+      goal:
+        title: "Short title"
+        description: "{description}"
+      goals:
+        - "Goal 1 derived from description"
+      sprints:
+        - number: 1
+          name: "Sprint 1"
+          objectives:
+            - "Objective 1"
+          tasks:
+            - name: "Task 1"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 2
+          name: "Sprint 2"
+          objectives:
+            - "Objective 2"
+          tasks:
+            - name: "Task 2"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 3
+          name: "Sprint 3"
+          objectives:
+            - "Objective 3"
+          tasks:
+            - name: "Task 3"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 4
+          name: "Sprint 4"
+          objectives:
+            - "Objective 4"
+          tasks:
+            - name: "Task 4"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+      task_patterns:
+        - pattern: "Pattern 1"
+          description: "Description"
+      quality_gates:
+        - gate: "Gate 1"
+          condition: "Condition"
+          criteria:
+            - "Criteria 1"
+          required: true
+
+      IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
 
     data: |
       Generate a refactoring strategy for this data processing project.
@@ -95,6 +229,82 @@ strategy:
       4. Monitoring and logging
       5. Testing and quality
       6. Deployment and optimization
+
+      YAML Structure Required:
+      project_name: "Name based on description"
+      project_type: "Data Processing"
+      domain: "software"
+      goal:
+        title: "Short title"
+        description: "{description}"
+      goals:
+        - "Goal 1 derived from description"
+      sprints:
+        - number: 1
+          name: "Sprint 1"
+          objectives:
+            - "Objective 1"
+          tasks:
+            - name: "Task 1"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 2
+          name: "Sprint 2"
+          objectives:
+            - "Objective 2"
+          tasks:
+            - name: "Task 2"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 3
+          name: "Sprint 3"
+          objectives:
+            - "Objective 3"
+          tasks:
+            - name: "Task 3"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 4
+          name: "Sprint 4"
+          objectives:
+            - "Objective 4"
+          tasks:
+            - name: "Task 4"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 5
+          name: "Sprint 5"
+          objectives:
+            - "Objective 5"
+          tasks:
+            - name: "Task 5"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 6
+          name: "Sprint 6"
+          objectives:
+            - "Objective 6"
+          tasks:
+            - name: "Task 6"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+      task_patterns:
+        - pattern: "Pattern 1"
+          description: "Description"
+      quality_gates:
+        - gate: "Gate 1"
+          condition: "Condition"
+          criteria:
+            - "Criteria 1"
+          required: true
+
+      IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
 
     ml: |
       Generate a refactoring strategy for this machine learning project.
@@ -120,6 +330,100 @@ strategy:
       6. Deployment pipeline
       7. Monitoring and observability
       8. Documentation and maintenance
+
+      YAML Structure Required:
+      project_name: "Name based on description"
+      project_type: "Machine Learning"
+      domain: "software"
+      goal:
+        title: "Short title"
+        description: "{description}"
+      goals:
+        - "Goal 1 derived from description"
+      sprints:
+        - number: 1
+          name: "Sprint 1"
+          objectives:
+            - "Objective 1"
+          tasks:
+            - name: "Task 1"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 2
+          name: "Sprint 2"
+          objectives:
+            - "Objective 2"
+          tasks:
+            - name: "Task 2"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 3
+          name: "Sprint 3"
+          objectives:
+            - "Objective 3"
+          tasks:
+            - name: "Task 3"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 4
+          name: "Sprint 4"
+          objectives:
+            - "Objective 4"
+          tasks:
+            - name: "Task 4"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 5
+          name: "Sprint 5"
+          objectives:
+            - "Objective 5"
+          tasks:
+            - name: "Task 5"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 6
+          name: "Sprint 6"
+          objectives:
+            - "Objective 6"
+          tasks:
+            - name: "Task 6"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 7
+          name: "Sprint 7"
+          objectives:
+            - "Objective 7"
+          tasks:
+            - name: "Task 7"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+        - number: 8
+          name: "Sprint 8"
+          objectives:
+            - "Objective 8"
+          tasks:
+            - name: "Task 8"
+              description: "Description"
+              type: "feature"
+              model_hints: "balanced"
+      task_patterns:
+        - pattern: "Pattern 1"
+          description: "Description"
+      quality_gates:
+        - gate: "Gate 1"
+          condition: "Condition"
+          criteria:
+            - "Criteria 1"
+          required: true
+
+      IMPORTANT: Ensure there is EXACTLY ONE space after every colon. Ensure every list item starts on a new line with a dash.
 
       YAML Structure Required:
       project_name: "Name based on description"

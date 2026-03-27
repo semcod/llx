@@ -1,7 +1,8 @@
 flowchart TD
     docker__ai_tools["docker.ai-tools<br/>2 funcs"]
+    examples__basic["examples.basic<br/>1 funcs"]
     llx__analysis["llx.analysis<br/>27 funcs"]
-    llx__cli["llx.cli<br/>39 funcs"]
+    llx__cli["llx.cli<br/>45 funcs"]
     llx__config["llx.config<br/>7 funcs"]
     llx__examples["llx.examples<br/>13 funcs"]
     llx__integrations["llx.integrations<br/>15 funcs"]
@@ -9,13 +10,13 @@ flowchart TD
     llx__mcp["llx.mcp<br/>18 funcs"]
     llx__orchestration["llx.orchestration<br/>267 funcs"]
     llx__planfile["llx.planfile<br/>58 funcs"]
-    llx__prellm["llx.prellm<br/>303 funcs"]
+    llx__prellm["llx.prellm<br/>280 funcs"]
     llx__routing["llx.routing<br/>19 funcs"]
-    llx__tools["llx.tools<br/>215 funcs"]
+    llx__tools["llx.tools<br/>219 funcs"]
     llx__utils["llx.utils<br/>1 funcs"]
     simple_generate["simple_generate<br/>1 funcs"]
     trace["trace<br/>1 funcs"]
-    llx__tools ==>|486| docker__ai_tools
+    llx__tools ==>|487| docker__ai_tools
     llx__orchestration ==>|309| docker__ai_tools
     llx__planfile ==>|26| docker__ai_tools
     llx__cli ==>|24| docker__ai_tools
@@ -30,17 +31,14 @@ flowchart TD
     llx__cli ==>|4| llx__routing
     llx__cli -->|3| llx__integrations
     simple_generate -->|2| llx__planfile
-    llx__planfile -->|2| llx__analysis
     llx__planfile -->|2| llx__config
+    llx__planfile -->|2| llx__analysis
     llx__mcp -->|2| llx__routing
     llx__mcp -->|2| llx__prellm
     trace -->|1| llx__planfile
     llx__examples -->|1| llx__config
     llx__config -->|1| llx__litellm_config
-    llx__cli -->|1| llx__examples
     llx__utils -->|1| llx__prellm
-    llx__routing -->|1| llx__examples
-    llx__routing -->|1| llx__integrations
     llx__integrations -->|1| llx__examples
     llx__integrations -->|1| llx__config
     llx__integrations -->|1| llx__analysis
@@ -48,3 +46,7 @@ flowchart TD
     llx__mcp -->|1| llx__examples
     llx__mcp -->|1| llx__integrations
     llx__mcp -->|1| llx__planfile
+    llx__routing -->|1| llx__examples
+    llx__routing -->|1| llx__integrations
+    llx__cli -->|1| llx__examples
+    llx__cli -->|1| examples__basic

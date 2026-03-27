@@ -1,147 +1,159 @@
-# redup/duplication | 20 groups | 96f 25593L | 2026-03-26
+# redup/duplication | 21 groups | 96f 25913L | 2026-03-27
 
 SUMMARY:
   files_scanned: 96
-  total_lines:   25593
-  dup_groups:    20
-  dup_fragments: 50
-  saved_lines:   177
-  scan_ms:       2535
+  total_lines:   25913
+  dup_groups:    21
+  dup_fragments: 58
+  saved_lines:   287
+  scan_ms:       5223
 
-DUPLICATES[20] (ranked by impact):
-  [1a649459fc7d0cdf]   STRU  _dispatch  L=9 N=3 saved=18 sim=1.00
-      llx/tools/vscode_manager.py:775-783  (_dispatch)
-      llx/tools/model_manager.py:744-749  (_dispatch)
-      llx/tools/config_manager.py:778-786  (_dispatch)
-  [1672acfebc28f71e]   STRU  main  L=3 N=6 saved=15 sim=1.00
-      llx/tools/ai_tools_manager.py:584-586  (main)
-      llx/tools/vscode_manager.py:786-788  (main)
-      llx/tools/health_checker.py:584-586  (main)
-      llx/tools/docker_manager.py:547-549  (main)
-      llx/tools/model_manager.py:752-754  (main)
-      llx/tools/config_manager.py:789-791  (main)
-  [1ec11e24fdd1f2fa]   STRU  _dispatch  L=15 N=2 saved=15 sim=1.00
-      llx/orchestration/queue/cli.py:40-54  (_dispatch)
-      llx/orchestration/ratelimit/cli.py:33-47  (_dispatch)
-  [f9317e882fb3b531]   STRU  _cmd_status  L=3 N=5 saved=12 sim=1.00
-      llx/tools/vscode_manager.py:682-684  (_cmd_status)
-      llx/tools/vscode_manager.py:741-743  (_cmd_quick_start)
-      llx/tools/model_manager.py:697-699  (_cmd_summary)
-      llx/tools/config_manager.py:670-672  (_cmd_list_models)
-      llx/tools/config_manager.py:738-740  (_cmd_summary)
-  [0ae1b657261c796c]   STRU  _cmd_health  L=4 N=4 saved=12 sim=1.00
-      llx/orchestration/instances/cli.py:132-135  (_cmd_health)
-      llx/orchestration/session/cli.py:96-99  (_cmd_queue)
-      llx/orchestration/llm/cli.py:140-143  (_cmd_usage)
-      llx/orchestration/routing/cli.py:89-92  (_cmd_status)
-  [6a3aad3970abbd84]   EXAC  _is_port_available  L=10 N=2 saved=10 sim=1.00
-      llx/orchestration/vscode/ports.py:34-43  (_is_port_available)
-      llx/orchestration/instances/ports.py:42-51  (_is_port_available)
-  [722801289404389a]   STRU  _cmd_metrics  L=10 N=2 saved=10 sim=1.00
-      llx/orchestration/instances/cli.py:120-129  (_cmd_metrics)
-      llx/orchestration/queue/cli.py:126-135  (_cmd_metrics)
-  [94be79af432be6e8]   STRU  _cmd_save  L=10 N=2 saved=10 sim=1.00
-      llx/tools/config_manager.py:624-633  (_cmd_save)
-      llx/tools/config_manager.py:675-684  (_cmd_add_model)
-  [b310f0194cf48e13]   STRU  context  L=9 N=2 saved=9 sim=1.00
-      llx/prellm/cli.py:89-97  (context)
-      llx/prellm/cli_context.py:87-101  (context_show_cmd)
-  [e26e831161f2f1d2]   EXAC  _config_save_worker  L=8 N=2 saved=8 sim=1.00
-      llx/orchestration/llm/orchestrator.py:590-597  (_config_save_worker)
-      llx/orchestration/vscode/orchestrator.py:547-553  (_config_save_worker)
-  [6a27b617f25faae8]   STRU  _handle_service_command  L=8 N=2 saved=8 sim=1.00
-      llx/tools/health_checker.py:527-534  (_handle_service_command)
-      llx/tools/health_checker.py:537-544  (_handle_container_command)
-  [d8242f6e07e6e94f]   STRU  _cmd_start  L=8 N=2 saved=8 sim=1.00
-      llx/orchestration/instances/cli.py:73-80  (_cmd_start)
-      llx/orchestration/instances/cli.py:83-90  (_cmd_stop)
-  [0bca74b973934669]   STRU  _handle_code2llm_analyze  L=8 N=2 saved=8 sim=1.00
-      llx/mcp/tools.py:154-161  (_handle_code2llm_analyze)
-      llx/mcp/tools.py:182-189  (_handle_redup_scan)
-  [b0d59b7862226346]   EXAC  release_port  L=7 N=2 saved=7 sim=1.00
-      llx/orchestration/vscode/ports.py:26-32  (release_port)
-      llx/orchestration/instances/ports.py:34-40  (release_port)
-  [79fe80a8189db279]   STRU  _handle_start  L=6 N=2 saved=6 sim=1.00
-      llx/tools/cli.py:82-87  (_handle_start)
-      llx/tools/cli.py:90-95  (_handle_stop)
-  [00a5d2f41670cbca]   STRU  _cmd_pull  L=5 N=2 saved=5 sim=1.00
-      llx/tools/model_manager.py:627-631  (_cmd_pull)
-      llx/tools/model_manager.py:642-646  (_cmd_test)
-  [f2d4c66197c58dd0]   STRU  _cmd_cleanup  L=5 N=2 saved=5 sim=1.00
-      llx/orchestration/session/cli.py:102-106  (_cmd_cleanup)
-      llx/orchestration/ratelimit/cli.py:124-128  (_cmd_cleanup)
-  [d98325d3be45b0e4]   STRU  _handle_filesystem_command  L=4 N=2 saved=4 sim=1.00
-      llx/tools/health_checker.py:553-556  (_handle_filesystem_command)
-      llx/tools/health_checker.py:559-562  (_handle_network_command)
-  [1a6400cb703606d1]   STRU  _get_user_memory_class  L=4 N=2 saved=4 sim=1.00
-      llx/prellm/agents/preprocessor.py:32-35  (_get_user_memory_class)
-      llx/prellm/agents/preprocessor.py:38-41  (_get_codebase_indexer_class)
-  [4b8e87d6ad476a90]   STRU  _cmd_status  L=3 N=2 saved=3 sim=1.00
-      llx/orchestration/llm/cli.py:135-137  (_cmd_status)
-      llx/orchestration/routing/cli.py:95-97  (_cmd_metrics)
+DUPLICATES[21] (ranked by impact):
+  [1672acfebc28f71e]   STRU  main  L=6 N=6 saved=30 sim=1.00
+      llx/tools/health_checker.py:0-5  (main)
+      llx/tools/vscode_manager.py:0-5  (main)
+      llx/tools/config_manager.py:0-5  (main)
+      llx/tools/ai_tools_manager.py:0-5  (main)
+      llx/tools/docker_manager.py:0-5  (main)
+      llx/tools/model_manager.py:0-5  (main)
+  [8cd5c918a65f6cc0]   STRU  prompt_tokens  L=5 N=6 saved=25 sim=1.00
+      llx/integrations/proxym.py:0-4  (prompt_tokens)
+      llx/integrations/proxym.py:0-4  (completion_tokens)
+      llx/integrations/proxym.py:0-4  (total_tokens)
+      llx/routing/client.py:0-4  (prompt_tokens)
+      llx/routing/client.py:0-4  (completion_tokens)
+      llx/routing/client.py:0-4  (total_tokens)
+  [1a649459fc7d0cdf]   STRU  _dispatch  L=12 N=3 saved=24 sim=1.00
+      llx/tools/vscode_manager.py:0-11  (_dispatch)
+      llx/tools/config_manager.py:0-11  (_dispatch)
+      llx/tools/model_manager.py:0-8  (_dispatch)
+  [0ae1b657261c796c]   STRU  _cmd_queue  L=7 N=4 saved=21 sim=1.00
+      llx/orchestration/session/cli.py:0-6  (_cmd_queue)
+      llx/orchestration/instances/cli.py:0-6  (_cmd_health)
+      llx/orchestration/llm/cli.py:0-6  (_cmd_usage)
+      llx/orchestration/routing/cli.py:0-6  (_cmd_status)
+  [38574ffe101cc713]   STRU  _cmd_backup  L=5 N=5 saved=20 sim=1.00
+      llx/tools/vscode_manager.py:0-4  (_cmd_backup)
+      llx/tools/config_manager.py:0-4  (_cmd_create_env)
+      llx/tools/config_manager.py:0-4  (_cmd_backup)
+      llx/tools/config_manager.py:0-4  (_cmd_docker_env)
+      llx/tools/model_manager.py:0-4  (_cmd_cleanup)
+  [1ec11e24fdd1f2fa]   STRU  _dispatch  L=18 N=2 saved=18 sim=1.00
+      llx/orchestration/queue/cli.py:0-17  (_dispatch)
+      llx/orchestration/ratelimit/cli.py:0-17  (_dispatch)
+  [eac2598332149038]   STRU  stop_vscode  L=17 N=2 saved=17 sim=1.00
+      llx/tools/vscode_manager.py:0-16  (stop_vscode)
+      llx/tools/ai_tools_manager.py:0-16  (stop_ai_tools)
+  [1c79781f2e0c5bbf]   STRU  main  L=5 N=4 saved=15 sim=1.00
+      llx/orchestration/session/cli.py:0-4  (main)
+      llx/orchestration/instances/cli.py:0-4  (main)
+      llx/orchestration/ratelimit/cli.py:0-4  (main)
+      llx/orchestration/routing/cli.py:0-4  (main)
+  [0e97f45c71b9b5b8]   STRU  list_sessions  L=15 N=2 saved=15 sim=1.00
+      llx/orchestration/session/manager.py:0-14  (list_sessions)
+      llx/orchestration/instances/manager.py:0-14  (list_instances)
+  [722801289404389a]   STRU  _cmd_metrics  L=13 N=2 saved=13 sim=1.00
+      llx/orchestration/instances/cli.py:0-12  (_cmd_metrics)
+      llx/orchestration/queue/cli.py:0-12  (_cmd_metrics)
+  [92f4cefa554b6917]   STRU  _cleanup_worker  L=13 N=2 saved=13 sim=1.00
+      llx/orchestration/session/manager.py:0-12  (_cleanup_worker)
+      llx/orchestration/ratelimit/limiter.py:0-12  (_cleanup_worker)
+  [6a3aad3970abbd84]   EXAC  _is_port_available  L=12 N=2 saved=12 sim=1.00
+      llx/orchestration/vscode/ports.py:0-11  (_is_port_available)
+      llx/orchestration/instances/ports.py:0-11  (_is_port_available)
+  [6c533dac7554f903]   STRU  restart_vscode  L=11 N=2 saved=11 sim=1.00
+      llx/tools/vscode_manager.py:0-10  (restart_vscode)
+      llx/tools/ai_tools_manager.py:0-10  (restart_ai_tools)
+  [b0d59b7862226346]   EXAC  release_port  L=9 N=2 saved=9 sim=1.00
+      llx/orchestration/vscode/ports.py:0-8  (release_port)
+      llx/orchestration/instances/ports.py:0-8  (release_port)
+  [e26e831161f2f1d2]   EXAC  _config_save_worker  L=9 N=2 saved=9 sim=1.00
+      llx/orchestration/vscode/orchestrator.py:0-8  (_config_save_worker)
+      llx/orchestration/llm/orchestrator.py:0-9  (_config_save_worker)
+  [f2d4c66197c58dd0]   STRU  _cmd_cleanup  L=8 N=2 saved=8 sim=1.00
+      llx/orchestration/session/cli.py:0-7  (_cmd_cleanup)
+      llx/orchestration/ratelimit/cli.py:0-7  (_cmd_cleanup)
+  [27f0ca21d769f327]   STRU  list_prompts  L=6 N=2 saved=6 sim=1.00
+      llx/prellm/prompt_registry.py:0-5  (list_prompts)
+      llx/prellm/validators.py:0-5  (list_schemas)
+  [e5d54927a0f1da25]   STRU  _update_session_stats  L=6 N=2 saved=6 sim=1.00
+      llx/orchestration/session/manager.py:0-5  (_update_session_stats)
+      llx/orchestration/ratelimit/limiter.py:0-5  (_save_state_if_needed)
+  [4b8e87d6ad476a90]   STRU  _cmd_status  L=6 N=2 saved=6 sim=1.00
+      llx/orchestration/llm/cli.py:0-5  (_cmd_status)
+      llx/orchestration/routing/cli.py:0-5  (_cmd_metrics)
+  [86daf84bdccd07de]   STRU  main  L=5 N=2 saved=5 sim=1.00
+      llx/orchestration/vscode/cli.py:0-4  (main)
+      llx/orchestration/queue/cli.py:0-4  (main)
+  [08f9bfc897f4bd64]   EXAC  close  L=4 N=2 saved=4 sim=1.00
+      llx/integrations/proxym.py:0-3  (close)
+      llx/routing/client.py:0-3  (close)
 
-REFACTOR[20] (ranked by priority):
-  [1] ○ extract_function   → llx/tools/utils/_dispatch.py
-      WHY: 3 occurrences of 9-line block across 3 files — saves 18 lines
-      FILES: llx/tools/config_manager.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [2] ○ extract_function   → llx/tools/utils/main.py
-      WHY: 6 occurrences of 3-line block across 6 files — saves 15 lines
+REFACTOR[21] (ranked by priority):
+  [1] ○ extract_function   → llx/tools/utils/main.py
+      WHY: 6 occurrences of 6-line block across 6 files — saves 30 lines
       FILES: llx/tools/ai_tools_manager.py, llx/tools/config_manager.py, llx/tools/docker_manager.py, llx/tools/health_checker.py, llx/tools/model_manager.py +1 more
-  [3] ○ extract_function   → llx/orchestration/utils/_dispatch.py
-      WHY: 2 occurrences of 15-line block across 2 files — saves 15 lines
-      FILES: llx/orchestration/queue/cli.py, llx/orchestration/ratelimit/cli.py
-  [4] ○ extract_function   → llx/tools/utils/_cmd_status.py
-      WHY: 5 occurrences of 3-line block across 3 files — saves 12 lines
+  [2] ○ extract_function   → llx/utils/prompt_tokens.py
+      WHY: 6 occurrences of 5-line block across 2 files — saves 25 lines
+      FILES: llx/integrations/proxym.py, llx/routing/client.py
+  [3] ○ extract_function   → llx/tools/utils/_dispatch.py
+      WHY: 3 occurrences of 12-line block across 3 files — saves 24 lines
       FILES: llx/tools/config_manager.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [5] ○ extract_function   → llx/orchestration/utils/_cmd_health.py
-      WHY: 4 occurrences of 4-line block across 4 files — saves 12 lines
+  [4] ○ extract_function   → llx/orchestration/utils/_cmd_queue.py
+      WHY: 4 occurrences of 7-line block across 4 files — saves 21 lines
       FILES: llx/orchestration/instances/cli.py, llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py, llx/orchestration/session/cli.py
-  [6] ○ extract_function   → llx/orchestration/utils/_is_port_available.py
-      WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
-      FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [7] ○ extract_function   → llx/orchestration/utils/_cmd_metrics.py
-      WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
+  [5] ○ extract_function   → llx/tools/utils/_cmd_backup.py
+      WHY: 5 occurrences of 5-line block across 3 files — saves 20 lines
+      FILES: llx/tools/config_manager.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py
+  [6] ○ extract_function   → llx/orchestration/utils/_dispatch.py
+      WHY: 2 occurrences of 18-line block across 2 files — saves 18 lines
+      FILES: llx/orchestration/queue/cli.py, llx/orchestration/ratelimit/cli.py
+  [7] ○ extract_function   → llx/tools/utils/stop_vscode.py
+      WHY: 2 occurrences of 17-line block across 2 files — saves 17 lines
+      FILES: llx/tools/ai_tools_manager.py, llx/tools/vscode_manager.py
+  [8] ○ extract_function   → llx/orchestration/utils/main.py
+      WHY: 4 occurrences of 5-line block across 4 files — saves 15 lines
+      FILES: llx/orchestration/instances/cli.py, llx/orchestration/ratelimit/cli.py, llx/orchestration/routing/cli.py, llx/orchestration/session/cli.py
+  [9] ○ extract_function   → llx/orchestration/utils/list_sessions.py
+      WHY: 2 occurrences of 15-line block across 2 files — saves 15 lines
+      FILES: llx/orchestration/instances/manager.py, llx/orchestration/session/manager.py
+  [10] ○ extract_function   → llx/orchestration/utils/_cmd_metrics.py
+      WHY: 2 occurrences of 13-line block across 2 files — saves 13 lines
       FILES: llx/orchestration/instances/cli.py, llx/orchestration/queue/cli.py
-  [8] ○ extract_function   → llx/tools/utils/_cmd_save.py
-      WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
-      FILES: llx/tools/config_manager.py
-  [9] ○ extract_function   → llx/prellm/utils/context.py
-      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
-      FILES: llx/prellm/cli.py, llx/prellm/cli_context.py
-  [10] ○ extract_function   → llx/orchestration/utils/_config_save_worker.py
-      WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
-      FILES: llx/orchestration/llm/orchestrator.py, llx/orchestration/vscode/orchestrator.py
-  [11] ○ extract_function   → llx/tools/utils/_handle_service_command.py
-      WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
-      FILES: llx/tools/health_checker.py
-  [12] ○ extract_function   → llx/orchestration/instances/utils/_cmd_start.py
-      WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
-      FILES: llx/orchestration/instances/cli.py
-  [13] ○ extract_function   → llx/mcp/utils/_handle_code2llm_analyze.py
-      WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
-      FILES: llx/mcp/tools.py
-  [14] ○ extract_function   → llx/orchestration/utils/release_port.py
-      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+  [11] ○ extract_function   → llx/orchestration/utils/_cleanup_worker.py
+      WHY: 2 occurrences of 13-line block across 2 files — saves 13 lines
+      FILES: llx/orchestration/ratelimit/limiter.py, llx/orchestration/session/manager.py
+  [12] ○ extract_function   → llx/orchestration/utils/_is_port_available.py
+      WHY: 2 occurrences of 12-line block across 2 files — saves 12 lines
       FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [15] ○ extract_function   → llx/tools/utils/_handle_start.py
-      WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
-      FILES: llx/tools/cli.py
-  [16] ○ extract_function   → llx/tools/utils/_cmd_pull.py
-      WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
-      FILES: llx/tools/model_manager.py
-  [17] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
-      WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
+  [13] ○ extract_function   → llx/tools/utils/restart_vscode.py
+      WHY: 2 occurrences of 11-line block across 2 files — saves 11 lines
+      FILES: llx/tools/ai_tools_manager.py, llx/tools/vscode_manager.py
+  [14] ○ extract_function   → llx/orchestration/utils/release_port.py
+      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
+      FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
+  [15] ○ extract_function   → llx/orchestration/utils/_config_save_worker.py
+      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
+      FILES: llx/orchestration/llm/orchestrator.py, llx/orchestration/vscode/orchestrator.py
+  [16] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
+      WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
       FILES: llx/orchestration/ratelimit/cli.py, llx/orchestration/session/cli.py
-  [18] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
-      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
-      FILES: llx/tools/health_checker.py
-  [19] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
-      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
-      FILES: llx/prellm/agents/preprocessor.py
-  [20] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
-      WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
+  [17] ○ extract_function   → llx/prellm/utils/list_prompts.py
+      WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
+      FILES: llx/prellm/prompt_registry.py, llx/prellm/validators.py
+  [18] ○ extract_function   → llx/orchestration/utils/_update_session_stats.py
+      WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
+      FILES: llx/orchestration/ratelimit/limiter.py, llx/orchestration/session/manager.py
+  [19] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
+      WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py
+  [20] ○ extract_function   → llx/orchestration/utils/main.py
+      WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
+      FILES: llx/orchestration/queue/cli.py, llx/orchestration/vscode/cli.py
+  [21] ○ extract_function   → llx/utils/close.py
+      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
+      FILES: llx/integrations/proxym.py, llx/routing/client.py
 
 METRICS-TARGET:
-  dup_groups:  20 → 0
-  saved_lines: 177 lines recoverable
+  dup_groups:  21 → 0
+  saved_lines: 287 lines recoverable

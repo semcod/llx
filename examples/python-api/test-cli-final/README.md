@@ -1,6 +1,6 @@
-# My Project
+# File Manager CLI
 
-Improve code quality
+CLI tool for file management
 
 ## Run
 ```bash

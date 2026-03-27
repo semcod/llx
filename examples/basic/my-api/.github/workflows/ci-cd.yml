@@ -1,0 +1,67 @@
+name: My Project CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run tests
+        run: |
+          npm run test
+
+      - name: Docker build
+        run: |
+          docker build -t my-project .
+
+      - name: Docker push
+        run: |
+          docker tag my-project:latest $GITHUB_ACTOR/my-project:latest
+          docker push $GITHUB_ACTOR/my-project:latest
+
+      - name: Security scanning
+        uses: aquasec/security-scanner@v1
+        with:
+          image: $GITHUB_ACTOR/my-project:latest
+
+      - name: Deploy to staging
+        uses: appleboy/ssh-action@v0
+        with:
+          host: $STAGING_HOST
+          username: $STAGING_USERNAME
+          password: $STAGING_PASSWORD
+          script: |
+            docker pull $GITHUB_ACTOR/my-project:latest
+            docker stop my-project-staging
+            docker rm my-project-staging
+            docker run -d -p 80:80 --name my-project-staging $GITHUB_ACTOR/my-project:latest
+
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v0
+        with:
+          host: $PRODUCTION_HOST
+          username: $PRODUCTION_USERNAME
+          password: $PRODUCTION_PASSWORD
+          script: |
+            docker pull $GITHUB_ACTOR/my-project:latest
+            docker stop my-project-production
+            docker rm my-project-production
+            docker run -d -p 80:80 --name my-project-production $GITHUB_ACTOR/my-project:latest
+
+Note: You will need to replace the placeholders with your actual values:
+
+* `$STAGING_HOST`, `$STAGING_USERNAME`, `$STAGING_PASSWORD` for staging deployment
+* `$PRODUCTION_HOST`, `$PRODUCTION_USERNAME`, `$PRODUCTION_PASSWORD` for production deployment
+* `$GITHUB_ACTOR` is the GitHub username or organization name
+
+Also, make sure to update the `Dockerfile` and `package.json` files to match your project's requirements.

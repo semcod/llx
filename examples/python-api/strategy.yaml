@@ -1,36 +1,80 @@
+domain: software
 goal:
-  description: Improve code quality
-  title: Project Refactoring
-goals: []
-metadata:
-  created_at: '2026-03-26T19:42:47.461125'
-  version: '1.0'
-project_name: My Project
-project_type: Web Service
-quality_gates: []
+  description: CLI tool for file management
+  title: Efficient File Management
+goals:
+- Implement core file management logic
+- Develop user-friendly CLI interface
+- Ensure robust testing and validation
+- Package and distribute the tool
+project_name: File Manager CLI
+project_type: CLI Tool
+quality_gates:
+- condition: Code complexity < 10
+  criteria:
+  - Code coverage > 80%
+  gate: Code quality
+  required: true
+- condition: All tests pass
+  criteria:
+  - No critical issues
+  gate: Testing
+  required: true
 sprints:
-- deliverables:
-  - State management implemented
-  - Data flow established
-  description: Implement state management and data flow
-  name: Project Setup and Architecture
+- name: Project Setup and Core Logic
   number: 1
-  objectives: []
+  objectives:
+  - Establish project structure and dependencies
   tasks:
-  - Choose state management library (e.g. Redux, MobX)
-  - Set up store and actions
-  - Implement data fetching and caching
-  - Integrate state management with core components
-- deliverables:
-  - Performance optimized
-  - Code optimized
-  - Caching and lazy loading implemented
-  description: Optimize performance
-  name: UI/UX Implementation
+  - description: Create project directory and install dependencies
+    model_hints: balanced
+    name: 'Task 1: Set up project skeleton'
+    type: feature
+  - description: Develop file management algorithms and data structures
+    model_hints: balanced
+    name: 'Task 2: Implement core file management logic'
+    type: feature
+- name: CLI Interface and Commands
   number: 2
-  objectives: []
+  objectives:
+  - Design and implement CLI interface
   tasks:
-  - Analyze performance using tools (e.g. Webpack Bundle Analyzer)
-  - Optimize code and reduce bundle size
-  - Implement caching and lazy loading
-  - Optimize images and assets
+  - description: Develop user-friendly CLI interface using Click
+    model_hints: balanced
+    name: 'Task 1: Design CLI interface'
+    type: feature
+  - description: Develop and test CLI commands for file management
+    model_hints: balanced
+    name: 'Task 2: Implement CLI commands'
+    type: feature
+- name: Testing and Validation
+  number: 3
+  objectives:
+  - Implement testing and validation framework
+  tasks:
+  - description: Implement unit tests and integration tests
+    model_hints: balanced
+    name: 'Task 1: Develop testing framework'
+    type: feature
+  - description: Test and validate file management algorithms
+    model_hints: balanced
+    name: 'Task 2: Validate file management logic'
+    type: feature
+- name: Packaging and Distribution
+  number: 4
+  objectives:
+  - Package and distribute the tool
+  tasks:
+  - description: Create a distributable package for the tool
+    model_hints: balanced
+    name: 'Task 1: Package the tool'
+    type: feature
+  - description: Publish the tool on a package manager
+    model_hints: balanced
+    name: 'Task 2: Distribute the tool'
+    type: feature
+task_patterns:
+- description: Develop new features and functionality
+  pattern: Feature development
+- description: Fix bugs and resolve issues
+  pattern: Bug fixing

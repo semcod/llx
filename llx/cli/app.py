@@ -105,12 +105,19 @@ def chat(
     task: Optional[str] = typer.Option(None, "--task"),
     model_override: Optional[str] = typer.Option(None, "--model", "-m"),
     local: bool = typer.Option(False, "--local", "-l"),
+    free: bool = typer.Option(False, "--free", "-f", help="Force free-tier model"),
 ) -> None:
     """Analyze project, select model, and send a prompt."""
     project_path = Path(path).resolve()
     config = LlxConfig.load(project_path)
     metrics = analyze_project(project_path, toon_dir=toon_dir)
-    result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task)
+    
+    # If --free flag is set, force free tier selection
+    if free:
+        from llx.routing.selector import ModelTier
+        result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task, force_tier=ModelTier.FREE)
+    else:
+        result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task)
 
     model_id = model_override or result.model_id
     
@@ -325,12 +332,16 @@ def plan_apply(
     dry_run: bool = typer.Option(False, "--dry-run"),
 ) -> None:
     """Apply a planfile strategy to the project."""
-    from llx.planfile import execute_strategy
-    results = execute_strategy(strategy, path, sprint_filter=sprint, dry_run=dry_run,
-                               on_progress=lambda msg: console.print(f"  {msg}"))
-    for r in results:
-        icon = "✓" if r.status == "success" else "○" if r.status == "dry_run" else "✗"
-        console.print(f"  {icon} {r.task_name} → {r.model_used}")
+    import subprocess
+    import sys
+    
+    cmd = [sys.executable, "-m", "planfile", "apply", strategy, path]
+    if sprint:
+        cmd.extend(["--sprint", sprint])
+    if dry_run:
+        cmd.append("--dry-run")
+    
+    subprocess.run(cmd)
 
 @plan_app.command("models")
 def plan_models(
@@ -601,8 +612,31 @@ def plan_generate(
     local_only: bool = typer.Option(False, "--local"),
     cloud_only: bool = typer.Option(False, "--cloud"),
 ) -> None:
-    """Generate strategy.yaml using built-in generator."""
-    _plan_generate_impl(path, output, model, sprints, focus, description, profile, provider, tier, local_only, cloud_only)
+    """Generate strategy.yaml using planfile."""
+    import subprocess
+    import sys
+    
+    cmd = [sys.executable, "-m", "planfile", "generate", path, "--output", output]
+    if model:
+        cmd.extend(["--model", model])
+    if sprints:
+        cmd.extend(["--sprints", str(sprints)])
+    if focus:
+        cmd.extend(["--focus", focus])
+    if description:
+        cmd.extend(["--description", description])
+    if profile:
+        cmd.extend(["--profile", profile])
+    if provider:
+        cmd.extend(["--provider", provider])
+    if tier:
+        cmd.extend(["--tier", tier])
+    if local_only:
+        cmd.append("--local")
+    if cloud_only:
+        cmd.append("--cloud")
+    
+    subprocess.run(cmd)
 
 def _plan_generate_impl(
     path: str, output: str, model: Optional[str], sprints: Optional[int], 
@@ -715,18 +749,11 @@ def plan_review(
     path: str = typer.Argument("."),
 ) -> None:
     """Review progress against strategy quality gates."""
-    try:
-        from llx.planfile import load_valid_strategy
-        s = load_valid_strategy(strategy)
-        console.print(f"[green]Strategy loaded: {s.name}[/green]")
-        console.print(f"  Sprints: {len(s.sprints)}")
-        console.print(f"  Quality gates: {len(s.quality_gates)}")
-
-        console.print("\n[bold]Quality Gates:[/bold]")
-        for gate in s.quality_gates:
-            console.print(f"  [cyan]•[/cyan] {gate.name}: {', '.join(gate.criteria)}")
-    except Exception as e:
-        console.print(f"[red]Error reviewing strategy: {e}[/red]")
+    import subprocess
+    import sys
+    
+    cmd = [sys.executable, "-m", "planfile", "review", strategy, path]
+    subprocess.run(cmd)
 
 
 @plan_app.command("code")

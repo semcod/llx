@@ -1,17 +1,20 @@
-# code2llm | 131f 27533L | python:123,shell:8 | 2026-03-26
-# CC̄=3.8 | critical:2/1056 | dups:0 | cycles:0
+# code2llm | 130f 27297L | python:122,shell:8 | 2026-03-27
+# CC̄=3.8 | critical:5/1049 | dups:0 | cycles:0
 
-HEALTH[2]:
-  🟡 CC    _dispatch CC=21 (limit:15)
+HEALTH[5]:
+  🟡 CC    _build_model_registry CC=15 (limit:15)
+  🟡 CC    detect_from_files CC=15 (limit:15)
+  🟡 CC    plan_all CC=16 (limit:15)
+  🟡 CC    _plan_code_impl CC=19 (limit:15)
   🟡 CC    get_status CC=15 (limit:15)
 
 REFACTOR[1]:
-  1. split 2 high-CC methods  (CC>15)
+  1. split 5 high-CC methods  (CC>15)
 
-PIPELINES[770]:
-  [1] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
+PIPELINES[775]:
+  [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
       PURITY: 100% pure
-  [2] Src [test]: test → _normalize_strategy_data → _normalize_sprints → _normalize_single_sprint → ...(1 more)
+  [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
       PURITY: 100% pure
   [3] Src [ensure_venv]: ensure_venv → print
       PURITY: 100% pure
@@ -22,48 +25,46 @@ PIPELINES[770]:
 
 LAYERS:
   llx/                            CC̄=3.9    ←in:17  →out:0
+  │ !! app                       1080L  0C   28m  CC=19     ←0
   │ !! config_manager             795L  1C   45m  CC=12     ←0
   │ !! vscode_manager             792L  1C   38m  CC=10     ←0
   │ !! model_manager              758L  1C   36m  CC=8      ←0
-  │ !! tools                      747L  1C   14m  CC=13     ←0
-  │ !! app                        736L  0C   22m  CC=11     ←0
+  │ !! tools                      748L  1C   14m  CC=13     ←0
   │ !! trace                      649L  2C   29m  CC=13     ←2
   │ !! orchestrator               643L  1C   28m  CC=10     ←0
   │ !! engine                     640L  1C   38m  CC=11     ←0
+  │ !! ai_tools_manager           600L  1C   29m  CC=12     ←0
   │ !! orchestrator               595L  1C   27m  CC=12     ←0
-  │ !! ai_tools_manager           590L  1C   25m  CC=21     ←0
   │ !! health_checker             590L  1C   27m  CC=10     ←0
   │ !! manager                    556L  1C   18m  CC=12     ←0
   │ !! docker_manager             553L  1C   24m  CC=10     ←0
-  │ !! env_config                 528L  1C   17m  CC=14     ←4
   │ !! limiter                    508L  1C   17m  CC=15     ←0
   │ manager                    495L  1C   21m  CC=9      ←0
   │ pipeline                   483L  5C   18m  CC=9      ←1
-  │ core                       464L  1C   11m  CC=10     ←4
+  │ core                       472L  1C   11m  CC=10     ←4
+  │ generate_strategy          470L  0C   19m  CC=9      ←3
   │ server                     447L  10C    9m  CC=12     ←2
   │ manager                    445L  1C   20m  CC=14     ←0
   │ collector                  441L  1C   21m  CC=10     ←5
   │ models                     434L  33C    2m  CC=1      ←1
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
-  │ generate_strategy          396L  0C   19m  CC=9      ←3
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
+  │ config                     333L  4C    7m  CC=13     ←6
   │ query_decomposer           330L  1C   10m  CC=9      ←0
   │ proxym                     330L  3C   12m  CC=8      ←1
-  │ config                     327L  4C    7m  CC=13     ←6
   │ formatters                 314L  0C   12m  CC=14     ←1
   │ cli                        280L  0C   13m  CC=3      ←0
-  │ executor_simple            276L  1C    7m  CC=13     ←2
+  │ !! model_selector             279L  4C   12m  CC=15     ←0
+  │ executor_simple            276L  1C    7m  CC=13     ←1
   │ process_chain              275L  1C   10m  CC=7      ←0
   │ selector                   274L  2C    9m  CC=8      ←3
   │ health_runner              266L  1C   10m  CC=10     ←0
-  │ runner                     263L  0C    5m  CC=12     ←3
+  │ runner                     263L  0C    5m  CC=12     ←2
   │ sensitive_filter           262L  1C   14m  CC=7      ←0
-  │ model_selector             258L  4C   12m  CC=13     ←0
   │ pipeline_ops               257L  0C    5m  CC=12     ←1
   │ context_engine             248L  1C   13m  CC=13     ←0
-  │ llm_provider               236L  1C    6m  CC=13     ←0
-  │ budget                     236L  3C   11m  CC=6      ←3
+  │ budget                     236L  3C   11m  CC=6      ←2
   │ cli_config                 232L  0C    6m  CC=9      ←0
   │ extractors                 229L  0C   11m  CC=7      ←1
   │ folder_compressor          224L  1C   10m  CC=11     ←0
@@ -92,12 +93,13 @@ LAYERS:
   │ config                     124L  1C    5m  CC=5      ←0
   │ __init__                   121L  0C    1m  CC=1      ←0
   │ cli                        117L  0C    7m  CC=6      ←0
-  │ _nfo_compat                115L  0C    0m  CC=0.0    ←0
   │ cli                        114L  0C    7m  CC=7      ←0
   │ strategy_commands          110L  0C    5m  CC=6      ←0
+  │ !! detector                   105L  1C    7m  CC=15     ←0
   │ logging_setup              103L  0C    3m  CC=5      ←1
   │ cli_context                101L  0C    2m  CC=9      ←0
   │ models                     101L  6C    0m  CC=0.0    ←0
+  │ __init__                    89L  0C    0m  CC=0.0    ←0
   │ server                      83L  0C    4m  CC=3      ←0
   │ runner                      80L  1C    6m  CC=6      ←3
   │ model_catalog               78L  0C    2m  CC=8      ←1
@@ -120,7 +122,6 @@ LAYERS:
   │ __init__                    29L  0C    0m  CC=0.0    ←0
   │ __init__                    25L  0C    0m  CC=0.0    ←0
   │ _cmd_cleanup                24L  0C    1m  CC=1      ←0
-  │ __init__                    23L  0C    0m  CC=0.0    ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
   │ lazy_imports                21L  0C    1m  CC=2      ←1
   │ __init__                    21L  0C    0m  CC=0.0    ←0
@@ -134,6 +135,7 @@ LAYERS:
   │ __init__                    11L  0C    0m  CC=0.0    ←0
   │ _utils                       6L  0C    0m  CC=0.0    ←0
   │ __init__                     6L  0C    0m  CC=0.0    ←0
+  │ __init__                     5L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
   │ __main__                     4L  0C    0m  CC=0.0    ←0
   │ __main__                     4L  0C    0m  CC=0.0    ←0
@@ -150,7 +152,7 @@ LAYERS:
   │ simple_generate             73L  0C    1m  CC=4      ←0
   │ trace                       49L  0C    1m  CC=11     ←0
   │ generate.sh                 28L  0C    0m  CC=0.0    ←0
-  │ project.sh                  21L  0C    0m  CC=0.0    ←0
+  │ project.sh                  24L  0C    0m  CC=0.0    ←0
   │
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
@@ -163,8 +165,8 @@ LAYERS:
 
 COUPLING:
                        docker.ai-tools          llx.tools  llx.orchestration            llx.cli       llx.planfile                llx            llx.mcp       llx.analysis          llx.utils   llx.integrations        llx.routing         llx.prellm    simple_generate              trace
-    docker.ai-tools                 ──               ←486               ←309                ←24                ←26                                                                                                                                                                             hub
-          llx.tools                486                 ──                                                                                                                                    6                                                                                                 !! fan-out
+    docker.ai-tools                 ──               ←487               ←309                ←24                ←26                                                                                                                                                                             hub
+          llx.tools                487                 ──                                                                                                                                    6                                                                                                 !! fan-out
   llx.orchestration                309                                    ──                                                                                                                 7                                                                                                 !! fan-out
             llx.cli                 24                                                       ──                  8                  9                                     5                                     3                  4                                                           !! fan-out
        llx.planfile                 26                                                       ←8                 ──                  2                 ←1                  2                                                                                             ←2                 ←1  hub
@@ -178,18 +180,18 @@ COUPLING:
     simple_generate                                                                                              2                                                                                                                                                      ──                   
               trace                                                                                              1                                                                                                                                                                         ──
   CYCLES: none
-  HUB: llx.planfile/ (fan-in=12)
-  HUB: llx.analysis/ (fan-in=14)
-  HUB: llx.routing/ (fan-in=7)
-  HUB: llx.integrations/ (fan-in=5)
-  HUB: docker.ai-tools/ (fan-in=845)
   HUB: llx.utils/ (fan-in=13)
   HUB: llx/ (fan-in=17)
-  SMELL: llx.planfile/ fan-out=30 → split needed
-  SMELL: llx.mcp/ fan-out=17 → split needed
-  SMELL: llx.tools/ fan-out=492 → split needed
+  HUB: docker.ai-tools/ (fan-in=846)
+  HUB: llx.routing/ (fan-in=7)
+  HUB: llx.analysis/ (fan-in=14)
+  HUB: llx.planfile/ (fan-in=12)
+  HUB: llx.integrations/ (fan-in=5)
+  SMELL: llx.tools/ fan-out=493 → split needed
   SMELL: llx.cli/ fan-out=53 → split needed
   SMELL: llx.orchestration/ fan-out=316 → split needed
+  SMELL: llx.mcp/ fan-out=17 → split needed
+  SMELL: llx.planfile/ fan-out=30 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -1,7 +1,7 @@
 """
 Simple test for LLX strategy integration.
 """
-from llx.strategy.models import Strategy, Goal, Sprint, TaskPattern, TaskType, ModelHints
+from llx.planfile.models import Strategy, Goal, Sprint, TaskPattern, TaskType, ModelHints
 import tempfile
 import yaml
 

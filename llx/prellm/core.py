@@ -27,10 +27,18 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from llx.prellm._nfo_compat import catch, log_call
+
+try:
+    from nfo.decorators import catch, log_call
+except ImportError:
+    # Fallback decorators when nfo is not available
+    def catch(func):
+        return func
+    def log_call(func):
+        return func
 
 from llx.prellm.analyzers.context_engine import ContextEngine
-from llx.prellm.llm_provider import LLMProvider
+from llx.routing.client import LlxClient as LLMProvider
 from llx.prellm.models import (
     AuditEntry,
     DecompositionPrompts,
