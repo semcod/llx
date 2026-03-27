@@ -3,14 +3,12 @@
 Simple strategy generator - just works!
 """
 
-import os
 import sys
-from pathlib import Path
 from rich.console import Console
 
 console = Console()
 
-def generate_simple_strategy(project_path=".", output="strategy.yaml"):
+def generate_simple_strategy(project_path=".", output="strategy.yaml") -> bool:
     """Generate strategy with minimal configuration."""
     
     # Load environment

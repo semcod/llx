@@ -4,29 +4,33 @@ Moved from examples/* to minimize code duplication.
 """
 
 import os
-import sys
 import json
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Optional, Any
 from datetime import datetime
 
 from llx.config import LlxConfig
 from llx.routing.client import LlxClient, ChatMessage
 
 
+# Constants for Ollama checks
+OLLAMA_TIMEOUT_SECONDS = 2
+OLLAMA_STATUS_OK = 200
+
+
 class ExampleHelper:
     """Helper class for common example operations."""
     
     @staticmethod
-    def ensure_venv():
+    def ensure_venv() -> None:
         """Ensure virtual environment is activated."""
         if not os.environ.get("VIRTUAL_ENV"):
             print("⚠️  Warning: No virtual environment detected")
             print("   Consider activating: source .venv/bin/activate")
     
     @staticmethod
-    def check_dependencies():
+    def check_dependencies() -> Any:
         """Check required dependencies."""
         deps = {
             "llx": "LLX CLI",
@@ -45,12 +49,12 @@ class ExampleHelper:
         return available
     
     @staticmethod
-    def check_ollama():
+    def check_ollama() -> bool:
         """Check if Ollama is running."""
         try:
             import requests
-            response = requests.get('http://localhost:11434/api/tags', timeout=2)
-            if response.status_code == 200:
+            response = requests.get('http://localhost:11434/api/tags', timeout=OLLAMA_TIMEOUT_SECONDS)
+            if response.status_code == OLLAMA_STATUS_OK:
                 models = response.json().get('models', [])
                 print(f"✅ Ollama running with {len(models)} models")
                 return True

@@ -1,4 +1,6 @@
-Here is a complete FastAPI main.py for the 'Smoketest project v3' based on the requirements:
+"""
+FastAPI main.py for the API.
+"""
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -99,13 +101,7 @@ async def delete_product(product_id: int):
             return {"message": "Product deleted"}
     raise HTTPException(status_code=404, detail="Product not found")
 
-This code includes the following features:
 
-*   In-memory storage for users and products
-*   CRUD endpoints for users and products
-*   Health endpoint to check the status of the API
-*   Proper error handling for 404 errors
-*   Use of Pydantic models for data validation
-*   Use of FastAPI's built-in support for JSON serialization and deserialization
-
-Note that this is a basic implementation and you may want to add additional features such as authentication, authorization, and error handling as per your requirements.
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

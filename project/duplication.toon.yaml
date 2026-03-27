@@ -1,35 +1,35 @@
-# redup/duplication | 21 groups | 96f 25913L | 2026-03-27
+# redup/duplication | 21 groups | 98f 26145L | 2026-03-27
 
 SUMMARY:
-  files_scanned: 96
-  total_lines:   25913
+  files_scanned: 98
+  total_lines:   26145
   dup_groups:    21
   dup_fragments: 58
   saved_lines:   287
-  scan_ms:       5223
+  scan_ms:       5163
 
 DUPLICATES[21] (ranked by impact):
   [1672acfebc28f71e]   STRU  main  L=6 N=6 saved=30 sim=1.00
-      llx/tools/health_checker.py:0-5  (main)
-      llx/tools/vscode_manager.py:0-5  (main)
-      llx/tools/config_manager.py:0-5  (main)
-      llx/tools/ai_tools_manager.py:0-5  (main)
       llx/tools/docker_manager.py:0-5  (main)
+      llx/tools/vscode_manager.py:0-5  (main)
+      llx/tools/ai_tools_manager.py:0-5  (main)
+      llx/tools/config_manager.py:0-5  (main)
+      llx/tools/health_checker.py:0-5  (main)
       llx/tools/model_manager.py:0-5  (main)
   [8cd5c918a65f6cc0]   STRU  prompt_tokens  L=5 N=6 saved=25 sim=1.00
-      llx/integrations/proxym.py:0-4  (prompt_tokens)
-      llx/integrations/proxym.py:0-4  (completion_tokens)
-      llx/integrations/proxym.py:0-4  (total_tokens)
       llx/routing/client.py:0-4  (prompt_tokens)
       llx/routing/client.py:0-4  (completion_tokens)
       llx/routing/client.py:0-4  (total_tokens)
+      llx/integrations/proxym.py:0-4  (prompt_tokens)
+      llx/integrations/proxym.py:0-4  (completion_tokens)
+      llx/integrations/proxym.py:0-4  (total_tokens)
   [1a649459fc7d0cdf]   STRU  _dispatch  L=12 N=3 saved=24 sim=1.00
       llx/tools/vscode_manager.py:0-11  (_dispatch)
       llx/tools/config_manager.py:0-11  (_dispatch)
       llx/tools/model_manager.py:0-8  (_dispatch)
-  [0ae1b657261c796c]   STRU  _cmd_queue  L=7 N=4 saved=21 sim=1.00
-      llx/orchestration/session/cli.py:0-6  (_cmd_queue)
+  [0ae1b657261c796c]   STRU  _cmd_health  L=7 N=4 saved=21 sim=1.00
       llx/orchestration/instances/cli.py:0-6  (_cmd_health)
+      llx/orchestration/session/cli.py:0-6  (_cmd_queue)
       llx/orchestration/llm/cli.py:0-6  (_cmd_usage)
       llx/orchestration/routing/cli.py:0-6  (_cmd_status)
   [38574ffe101cc713]   STRU  _cmd_backup  L=5 N=5 saved=20 sim=1.00
@@ -45,8 +45,8 @@ DUPLICATES[21] (ranked by impact):
       llx/tools/vscode_manager.py:0-16  (stop_vscode)
       llx/tools/ai_tools_manager.py:0-16  (stop_ai_tools)
   [1c79781f2e0c5bbf]   STRU  main  L=5 N=4 saved=15 sim=1.00
-      llx/orchestration/session/cli.py:0-4  (main)
       llx/orchestration/instances/cli.py:0-4  (main)
+      llx/orchestration/session/cli.py:0-4  (main)
       llx/orchestration/ratelimit/cli.py:0-4  (main)
       llx/orchestration/routing/cli.py:0-4  (main)
   [0e97f45c71b9b5b8]   STRU  list_sessions  L=15 N=2 saved=15 sim=1.00
@@ -59,14 +59,14 @@ DUPLICATES[21] (ranked by impact):
       llx/orchestration/session/manager.py:0-12  (_cleanup_worker)
       llx/orchestration/ratelimit/limiter.py:0-12  (_cleanup_worker)
   [6a3aad3970abbd84]   EXAC  _is_port_available  L=12 N=2 saved=12 sim=1.00
-      llx/orchestration/vscode/ports.py:0-11  (_is_port_available)
       llx/orchestration/instances/ports.py:0-11  (_is_port_available)
+      llx/orchestration/vscode/ports.py:0-11  (_is_port_available)
   [6c533dac7554f903]   STRU  restart_vscode  L=11 N=2 saved=11 sim=1.00
       llx/tools/vscode_manager.py:0-10  (restart_vscode)
       llx/tools/ai_tools_manager.py:0-10  (restart_ai_tools)
   [b0d59b7862226346]   EXAC  release_port  L=9 N=2 saved=9 sim=1.00
-      llx/orchestration/vscode/ports.py:0-8  (release_port)
       llx/orchestration/instances/ports.py:0-8  (release_port)
+      llx/orchestration/vscode/ports.py:0-8  (release_port)
   [e26e831161f2f1d2]   EXAC  _config_save_worker  L=9 N=2 saved=9 sim=1.00
       llx/orchestration/vscode/orchestrator.py:0-8  (_config_save_worker)
       llx/orchestration/llm/orchestrator.py:0-9  (_config_save_worker)
@@ -83,11 +83,11 @@ DUPLICATES[21] (ranked by impact):
       llx/orchestration/llm/cli.py:0-5  (_cmd_status)
       llx/orchestration/routing/cli.py:0-5  (_cmd_metrics)
   [86daf84bdccd07de]   STRU  main  L=5 N=2 saved=5 sim=1.00
-      llx/orchestration/vscode/cli.py:0-4  (main)
       llx/orchestration/queue/cli.py:0-4  (main)
+      llx/orchestration/vscode/cli.py:0-4  (main)
   [08f9bfc897f4bd64]   EXAC  close  L=4 N=2 saved=4 sim=1.00
-      llx/integrations/proxym.py:0-3  (close)
       llx/routing/client.py:0-3  (close)
+      llx/integrations/proxym.py:0-3  (close)
 
 REFACTOR[21] (ranked by priority):
   [1] ○ extract_function   → llx/tools/utils/main.py
@@ -99,7 +99,7 @@ REFACTOR[21] (ranked by priority):
   [3] ○ extract_function   → llx/tools/utils/_dispatch.py
       WHY: 3 occurrences of 12-line block across 3 files — saves 24 lines
       FILES: llx/tools/config_manager.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [4] ○ extract_function   → llx/orchestration/utils/_cmd_queue.py
+  [4] ○ extract_function   → llx/orchestration/utils/_cmd_health.py
       WHY: 4 occurrences of 7-line block across 4 files — saves 21 lines
       FILES: llx/orchestration/instances/cli.py, llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py, llx/orchestration/session/cli.py
   [5] ○ extract_function   → llx/tools/utils/_cmd_backup.py

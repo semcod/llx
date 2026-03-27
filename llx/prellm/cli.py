@@ -7,10 +7,8 @@ Usage:
     prellm "Refaktoryzuj kod" --strategy structure --json
 """
 
-from __future__ import annotations
-
-from pathlib import Path
 from typing import Optional
+from pathlib import Path
 
 import typer
 
@@ -61,7 +59,7 @@ def query(
     trace: bool = typer.Option(False, "--trace", "-t", help="Generate markdown execution trace (.prellm/)"),
     trace_dir: Optional[Path] = typer.Option(None, "--trace-dir", help="Trace output directory (default: .prellm)"),
     env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file (default: .env)"),
-):
+) -> None:
     """Preprocess a query with small LLM, then execute with large LLM."""
     _init_logging()
     _query_cmd(
@@ -91,7 +89,7 @@ def context(
     schema: bool = typer.Option(False, "--schema", help="Show generated context schema"),
     blocked: bool = typer.Option(False, "--blocked", help="Show blocked sensitive data"),
     folder: Optional[Path] = typer.Option(None, "--folder", "-f", help="Folder to compress for context"),
-):
+) -> None:
     """Show collected environment context, schema, and blocked sensitive data."""
     from llx.prellm.cli_context import context as _context_cmd
     _context_cmd(json_output=json_output, schema=schema, blocked=blocked, folder=folder)
@@ -104,7 +102,7 @@ def process(
     dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Analyze steps without calling LLM"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
     env: Optional[str] = typer.Option(None, "--env", "-e", help="Environment override (e.g., production)"),
-):
+) -> None:
     """Execute a DevOps process chain."""
     _process_cmd(config=config, guard_config=guard_config, dry_run=dry_run, json_output=json_output, env=env)
 
@@ -115,7 +113,7 @@ def decompose(
     config: Path = typer.Option("configs/prellm_config.yaml", "--config", "-c", help="Path to preLLM v0.2 YAML config"),
     strategy: str = typer.Option("classify", "--strategy", "-s", help="Decomposition strategy"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
-):
+) -> None:
     """[v0.2] Decompose a query using small LLM without calling the large model."""
     _decompose_cmd(query=query, config=config, strategy=strategy, json_output=json_output)
 
@@ -124,7 +122,7 @@ def decompose(
 def init(
     output: Path = typer.Option("prellm_config.yaml", "--output", "-o", help="Output path for config"),
     devops: bool = typer.Option(False, "--devops", help="Include DevOps-specific domain rules and context sources"),
-):
+) -> None:
     """Generate a starter preLLM config file."""
     _init_cmd(output=output, devops=devops)
 
@@ -139,7 +137,7 @@ def serve(
     config: Optional[Path] = typer.Option(None, "--config", "-c", help="YAML config file"),
     env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file (default: .env)"),
     reload: bool = typer.Option(False, "--reload", help="Auto-reload on code changes (dev mode)"),
-):
+) -> None:
     """Start the OpenAI-compatible API server."""
     _serve_cmd(host=host, port=port, small=small, large=large, strategy=strategy, config=config, env_file=env_file, reload=reload)
 
@@ -148,7 +146,7 @@ def serve(
 def doctor(
     env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file"),
     live: bool = typer.Option(False, "--live", help="Test live connectivity to providers"),
-):
+) -> None:
     """Check configuration and provider connectivity."""
     _doctor_cmd(env_file=env_file, live=live)
 
@@ -157,7 +155,7 @@ def doctor(
 def budget(
     reset: bool = typer.Option(False, "--reset", help="Reset current month's budget"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
-):
+) -> None:
     """Show LLM API spend tracking and budget status."""
     _budget_cmd(reset=reset, json_output=json_output)
 
@@ -166,7 +164,7 @@ def budget(
 def models(
     provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider"),
     search: Optional[str] = typer.Option(None, "--search", "-s", help="Search model name"),
-):
+) -> None:
     """List popular model pairs and provider examples."""
     _models_cmd(provider=provider, search=search)
 

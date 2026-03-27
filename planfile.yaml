@@ -4671,3 +4671,107 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-1293cd69
+    name: Fix duplicate-imports issues
+    description: Resolve 33 duplicate-imports issues in my-api/test_api.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - my-api/test_api.py
+    rule_id: duplicate-imports
+    count: 33
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-15b24652
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in my-api/test_api.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - my-api/test_api.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5f0df07f
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in my-api/test_api.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - my-api/test_api.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-84e2a747
+    name: Fix smart-return-type issues
+    description: Resolve 9 smart-return-type issues in my-api/monitoring.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - my-api/monitoring.py
+    rule_id: smart-return-type
+    count: 9
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e21afb08
+    name: Fix unused-imports issues
+    description: Resolve 8 unused-imports issues in my-api/monitoring.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - my-api/monitoring.py
+    rule_id: unused-imports
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ef0da84a
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in my-api/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - my-api/main.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f3b9618f
+    name: Fix magic-numbers issues
+    description: Resolve 8 magic-numbers issues in my-api/main.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - my-api/main.py
+    rule_id: magic-numbers
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a32e906c
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in my-api/main.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - my-api/main.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced

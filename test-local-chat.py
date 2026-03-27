@@ -5,27 +5,29 @@ Tests chat functionality with local Ollama models through llx proxy
 """
 
 import requests
-import json
 import time
 import sys
+from typing import Any
 
-def test_llx_health():
+HTTP_OK = 200
+
+def test_llx_health() -> bool:
     """Test if llx API is running"""
     try:
         response = requests.get("http://localhost:4000/health", timeout=5)
-        return response.status_code == 200
+        return response.status_code == HTTP_OK
     except:
         return False
 
-def test_ollama_health():
+def test_ollama_health() -> bool:
     """Test if Ollama is running"""
     try:
         response = requests.get("http://localhost:11434/api/tags", timeout=5)
-        return response.status_code == 200
+        return response.status_code == HTTP_OK
     except:
         return False
 
-def get_available_models():
+def get_available_models() -> list[str]:
     """Get available Ollama models"""
     try:
         response = requests.get("http://localhost:11434/api/tags", timeout=5)
@@ -36,7 +38,7 @@ def get_available_models():
         pass
     return []
 
-def test_llx_models():
+def test_llx_models() -> list[str]:
     """Test models available through llx API"""
     try:
         response = requests.get("http://localhost:4000/v1/models", timeout=5)

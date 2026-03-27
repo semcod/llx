@@ -6,16 +6,57 @@ Lesson from preLLM: _prepare_context() had CC=21 because it mixed file loading,
 parsing, and aggregation. Here each step is a focused function (CC ≤ 5).
 """
 
-from __future__ import annotations
-
 import json
 import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import yaml
+
+
+# Scoring weights and limits for complexity calculation
+CC_AVG_WEIGHT = 5
+CC_AVG_CAP = 30
+CC_MAX_WEIGHT = 0.5
+CC_MAX_CAP = 20
+CRITICAL_WEIGHT = 2
+CRITICAL_CAP = 20
+GOD_MODULES_WEIGHT = 5
+GOD_MODULES_CAP = 15
+CYCLES_WEIGHT = 5
+CYCLES_CAP = 15
+
+# Scale scoring weights
+FILES_WEIGHT = 0.3
+FILES_CAP = 25
+LINES_DIVISOR = 500
+LINES_CAP = 25
+FUNCTIONS_DIVISOR = 50
+FUNCTIONS_CAP = 25
+FAN_OUT_WEIGHT = 1.5
+FAN_OUT_CAP = 25
+
+# Coupling weights
+FAN_OUT_COUPLING_WEIGHT = 2
+FAN_OUT_COUPLING_CAP = 30
+FAN_IN_COUPLING_WEIGHT = 2
+FAN_IN_COUPLING_CAP = 30
+CYCLES_COUPLING_WEIGHT = 10
+CYCLES_COUPLING_CAP = 20
+HOTSPOT_WEIGHT = 3
+HOTSPOT_CAP = 20
+
+# Token estimation constants
+AVG_CHARS_PER_LINE = 40
+OVERHEAD_FACTOR = 1.1
+TOKEN_DIVISOR = 4
+
+# Scope classification limits
+SINGLE_FILE_LIMIT = 1
+MULTI_FILE_LIMIT = 5
+MAX_FAN_OUT_LIMIT = 3
+CROSS_MODULE_FAN_OUT = 10
 
 
 @dataclass
@@ -61,31 +102,31 @@ class ProjectMetrics:
     def complexity_score(self) -> float:
         """Weighted complexity indicator (0-100)."""
         s = 0.0
-        s += min(self.avg_cc * 5, 30)
-        s += min(self.max_cc * 0.5, 20)
-        s += min(self.critical_count * 2, 20)
-        s += min(self.god_modules * 5, 15)
-        s += min(self.dependency_cycles * 5, 15)
+        s += min(self.avg_cc * CC_AVG_WEIGHT, CC_AVG_CAP)
+        s += min(self.max_cc * CC_MAX_WEIGHT, CC_MAX_CAP)
+        s += min(self.critical_count * CRITICAL_WEIGHT, CRITICAL_CAP)
+        s += min(self.god_modules * GOD_MODULES_WEIGHT, GOD_MODULES_CAP)
+        s += min(self.dependency_cycles * CYCLES_WEIGHT, CYCLES_CAP)
         return min(s, 100)
 
     @property
     def scale_score(self) -> float:
         """Project scale indicator (0-100)."""
         s = 0.0
-        s += min(self.total_files * 0.3, 25)
-        s += min(self.total_lines / 500, 25)
-        s += min(self.total_functions / 50, 25)
-        s += min(self.max_fan_out * 1.5, 25)
+        s += min(self.total_files * FILES_WEIGHT, FILES_CAP)
+        s += min(self.total_lines / LINES_DIVISOR, LINES_CAP)
+        s += min(self.total_functions / FUNCTIONS_DIVISOR, FUNCTIONS_CAP)
+        s += min(self.max_fan_out * FAN_OUT_WEIGHT, FAN_OUT_CAP)
         return min(s, 100)
 
     @property
     def coupling_score(self) -> float:
         """Inter-module coupling indicator (0-100)."""
         s = 0.0
-        s += min(self.max_fan_out * 2, 30)
-        s += min(self.max_fan_in * 2, 30)
-        s += min(self.dependency_cycles * 10, 20)
-        s += min(self.hotspot_count * 3, 20)
+        s += min(self.max_fan_out * FAN_OUT_COUPLING_WEIGHT, FAN_OUT_COUPLING_CAP)
+        s += min(self.max_fan_in * FAN_IN_COUPLING_WEIGHT, FAN_IN_COUPLING_CAP)
+        s += min(self.dependency_cycles * CYCLES_COUPLING_WEIGHT, CYCLES_COUPLING_CAP)
+        s += min(self.hotspot_count * HOTSPOT_WEIGHT, HOTSPOT_CAP)
         return min(s, 100)
 
 
@@ -426,16 +467,16 @@ def _extract_cc_value(msg: str) -> int | None:
 
 def _estimate_context_tokens(m: ProjectMetrics) -> int:
     """Rough estimate: ~4 chars/token, analysis ~10% of source."""
-    source_chars = m.total_lines * 40
-    return int(source_chars * 1.1 / 4)
+    source_chars = m.total_lines * AVG_CHARS_PER_LINE
+    return int(source_chars * OVERHEAD_FACTOR / TOKEN_DIVISOR)
 
 
 def _classify_scope(m: ProjectMetrics) -> str:
     """Classify task scope based on project structure."""
-    if m.total_files <= 1:
+    if m.total_files <= SINGLE_FILE_LIMIT:
         return "single_file"
-    if m.total_files <= 5 and m.max_fan_out <= 3:
+    if m.total_files <= MULTI_FILE_LIMIT and m.max_fan_out <= MAX_FAN_OUT_LIMIT:
         return "multi_file"
-    if m.max_fan_out > 10 or m.dependency_cycles > 0:
+    if m.max_fan_out > CROSS_MODULE_FAN_OUT or m.dependency_cycles > 0:
         return "project_wide"
     return "cross_module"

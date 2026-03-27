@@ -4,8 +4,6 @@ Lesson from preLLM: to_stdout() had CC=28 because it mixed formatting,
 coloring, and data extraction. Here each format is a dedicated function.
 """
 
-from __future__ import annotations
-
 import json
 from rich.console import Console
 from rich.panel import Panel
@@ -13,6 +11,10 @@ from rich.table import Table
 
 from llx.analysis.collector import ProjectMetrics
 from llx.routing.selector import SelectionResult
+
+# Constants for display formatting
+MAX_DISPLAY_NAME_LENGTH = 18
+MAX_DISPLAY_NAME_TRUNCATION = 15
 
 console = Console()
 
@@ -103,16 +105,16 @@ def _build_model_row(model: any) -> dict[str, str]:
     """Extract display fields from a single model config."""
     # Shorten model names for display
     display_name = model.model_id
-    if len(display_name) > 18:
+    if len(display_name) > MAX_DISPLAY_NAME_LENGTH:
         # Split on first slash or dash to get shorter name
         if '/' in display_name:
             parts = display_name.split('/')
             if len(parts) > 1:
                 display_name = parts[-1]  # Take last part
-        if '-' in display_name and len(display_name) > 18:
+        if '-' in display_name and len(display_name) > MAX_DISPLAY_NAME_LENGTH:
             display_name = display_name.split('-')[0]
-        if len(display_name) > 18:
-            display_name = display_name[:15] + "..."
+        if len(display_name) > MAX_DISPLAY_NAME_LENGTH:
+            display_name = display_name[:MAX_DISPLAY_NAME_TRUNCATION] + "..."
     
     # Color code tags for better readability
     colored_tags = []
@@ -144,8 +146,6 @@ def _build_model_row(model: any) -> dict[str, str]:
 
 def _render_models_table(rows: list[dict[str, str]], title: str) -> None:
     """Render Rich table from pre-built rows."""
-    from rich.table import Table
-    
     model_table = Table(title=title, show_header=True)
     model_table.add_column("Tier", style="bold", width=10)
     model_table.add_column("Model", width=20)
@@ -233,8 +233,6 @@ def _render_tools_table() -> None:
 
 def _render_tiers_table(config) -> None:
     """Render model tiers from config."""
-    from rich.table import Table
-    
     model_table = Table(title="Model Tiers", show_header=True)
     model_table.add_column("Tier", style="bold", width=10)
     model_table.add_column("Model", width=20)

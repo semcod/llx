@@ -18,11 +18,7 @@ The old `prellm` class is kept for backward compatibility with v0.1 code.
 Refactored v0.4: context_ops, pipeline_ops, extractors modules extracted.
 """
 
-from __future__ import annotations
-
 import logging
-import time
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 

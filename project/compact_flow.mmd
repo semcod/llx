@@ -1,6 +1,5 @@
 flowchart TD
     docker__ai_tools["docker.ai-tools<br/>2 funcs"]
-    examples__basic["examples.basic<br/>1 funcs"]
     llx__analysis["llx.analysis<br/>27 funcs"]
     llx__cli["llx.cli<br/>45 funcs"]
     llx__config["llx.config<br/>7 funcs"]
@@ -27,8 +26,8 @@ flowchart TD
     llx__tools ==>|6| llx__utils
     llx__mcp ==>|6| llx__analysis
     llx__cli ==>|5| llx__analysis
+    llx__cli ==>|5| llx__routing
     llx__mcp ==>|5| llx__config
-    llx__cli ==>|4| llx__routing
     llx__cli -->|3| llx__integrations
     simple_generate -->|2| llx__planfile
     llx__planfile -->|2| llx__config
@@ -38,15 +37,14 @@ flowchart TD
     trace -->|1| llx__planfile
     llx__examples -->|1| llx__config
     llx__config -->|1| llx__litellm_config
+    llx__cli -->|1| llx__examples
     llx__utils -->|1| llx__prellm
+    llx__mcp -->|1| llx__examples
+    llx__mcp -->|1| llx__integrations
+    llx__mcp -->|1| llx__planfile
     llx__integrations -->|1| llx__examples
     llx__integrations -->|1| llx__config
     llx__integrations -->|1| llx__analysis
     llx__integrations -->|1| llx__routing
-    llx__mcp -->|1| llx__examples
-    llx__mcp -->|1| llx__integrations
-    llx__mcp -->|1| llx__planfile
     llx__routing -->|1| llx__examples
     llx__routing -->|1| llx__integrations
-    llx__cli -->|1| llx__examples
-    llx__cli -->|1| examples__basic

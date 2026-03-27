@@ -1,7 +1,7 @@
-# vallm batch | 351f | 147✓ 2⚠ 84✗ | 2026-03-27
+# vallm batch | 336f | 149✓ 2⚠ 68✗ | 2026-03-27
 
 SUMMARY:
-  scanned: 351  passed: 147 (41.9%)  warnings: 2  errors: 84  unsupported: 120
+  scanned: 336  passed: 149 (44.3%)  warnings: 2  errors: 68  unsupported: 119
 
 WARNINGS[2]{path,score}:
   test-local-chat.py,0.97
@@ -12,58 +12,10 @@ WARNINGS[2]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
 
-ERRORS[84]{path,score}:
+ERRORS[68]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  examples/basic/my-api/main.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 72),72
-  examples/basic/my-api/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 42),42
-  examples/basic/my-api/monitoring.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  examples/python-api/test-cli-debug/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  examples/python-api/test-cli-final/main.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,54
-  examples/python-api/test-cli-final/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 1),1
-  examples/python-api/test-cli-final/test_api.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  examples/python-api/test-cli-v2/main.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 74),74
-  examples/python-api/test-cli-v2/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  examples/python-api/test-cli-v2/test_api.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  examples/python-api/test-webapp/main.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 70),70
-  examples/python-api/test-webapp/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 49),49
-  my-api/main.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 109),109
-  my-api/models.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
-  my-api/monitoring.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: unterminated string literal (detected at line 1),1
-  my-api/test_api.py,0.00
-    issues[1]{rule,severity,message,line}:
-      syntax.parse,error,SyntaxError: invalid syntax,1
   llx/detection/__init__.py,0.57
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'detector' not found,3
@@ -112,6 +64,23 @@ ERRORS[84]{path,score}:
   llx/tools/_utils.py,0.57
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'utils.cli_main' not found,6
+  my-api/test_api.py,0.57
+    issues[15]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,2
+      python.import.resolvable,error,Module 'fastapi.testclient' not found,3
+      python.import.resolvable,error,Module 'main' not found,4
+      python.import.resolvable,error,Module 'pytest' not found,11
+      python.import.resolvable,error,Module 'tests.conftest' not found,12
+      python.import.resolvable,error,Module 'pytest' not found,46
+      python.import.resolvable,error,Module 'tests.conftest' not found,47
+      python.import.resolvable,error,Module 'pytest' not found,56
+      python.import.resolvable,error,Module 'tests.conftest' not found,57
+      python.import.resolvable,error,Module 'pytest' not found,67
+      python.import.resolvable,error,Module 'tests.conftest' not found,68
+      python.import.resolvable,error,Module 'pytest' not found,78
+      python.import.resolvable,error,Module 'tests.conftest' not found,79
+      python.import.resolvable,error,Module 'pytest' not found,90
+      python.import.resolvable,error,Module 'tests.conftest' not found,91
   my-api/tests/test_my_api.py,0.57
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'my_api' not found,11
@@ -206,9 +175,19 @@ ERRORS[84]{path,score}:
       python.import.resolvable,error,Module 'instances.models' not found,25
       python.import.resolvable,error,Module 'ratelimit.limiter' not found,26
       python.import.resolvable,error,Module 'ratelimit.models' not found,27
+  my-api/monitoring.py,0.76
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'prometheus_client' not found,6
+      python.import.resolvable,error,Module 'prometheus_client' not found,7
+      python.import.resolvable,error,Module 'flask' not found,10
+      python.import.resolvable,error,Module 'flask_healthcheck' not found,11
   llx/orchestration/utils/_cmd_remove.py,0.79
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'cli_utils' not found,4
+  my-api/main.py,0.79
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'fastapi' not found,5
+      python.import.resolvable,error,Module 'uvicorn' not found,106
   llx/orchestration/vscode/orchestrator.py,0.80
     issues[8]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,16
@@ -245,20 +224,11 @@ ERRORS[84]{path,score}:
   tests/test_mcp.py,0.86
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
-  examples/python-api/test-cli/test_api.py,0.87
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'pytest' not found,7
-      python.import.resolvable,error,Module 'fastapi' not found,8
-      python.import.resolvable,error,Module 'fastapi.testclient' not found,9
   llx/orchestration/cli.py,0.87
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'instances' not found,88
       python.import.resolvable,error,Module 'session' not found,105
       python.import.resolvable,error,Module 'instances' not found,106
-  examples/python-api/test-cli/main.py,0.88
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'fastapi' not found,1
-      python.import.resolvable,error,Module 'fastapi.responses' not found,2
   llx/orchestration/instances/manager.py,0.88
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'models' not found,15
@@ -333,9 +303,6 @@ ERRORS[84]{path,score}:
   tests/test_detection.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
-  examples/python-api/test-cli/monitoring.py,0.95
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'prometheus_client' not found,7
   llx/prellm/logging_setup.py,0.95
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'litellm' not found,74
@@ -377,9 +344,9 @@ ERRORS[84]{path,score}:
       python.import.resolvable,error,Module 'mcp.types' not found,11
 
 UNSUPPORTED[6]{bucket,count}:
-  *.md,60
+  *.md,61
   Dockerfile*,13
-  *.txt,17
+  *.txt,18
   *.yml,9
   *.example,1
-  other,20
+  other,17

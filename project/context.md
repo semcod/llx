@@ -6,7 +6,7 @@
 - **Primary Language**: python
 - **Languages**: python: 123, shell: 30
 - **Analysis Mode**: static
-- **Total Functions**: 1049
+- **Total Functions**: 1048
 - **Total Classes**: 162
 - **Modules**: 153
 - **Entry Points**: 867
@@ -434,13 +434,13 @@ Supports 5 strategies:
 
 Key functions that process and transform data:
 
-### llx.examples.utils.TaskQueue.process
-> Process all tasks in queue.
-- **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
-
 ### llx.prellm.cli_config._format_config_sections
 > Group config entries into categorized sections for display.
 - **Output to**: entries.items, None.append, None.append, var.startswith, None.append
+
+### llx.examples.utils.TaskQueue.process
+> Process all tasks in queue.
+- **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
 
 ### llx.prellm.cli.process
 > Execute a DevOps process chain.
@@ -464,22 +464,6 @@ Key functions that process and transform data:
 > Execute the query and format output.
 - **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute, recorder.stop, typer.echo, recorder.save
 
-### llx.prellm.extractors.format_classification_context
-> Extract and format classification context from preprocessing result.
-- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
-
-### llx.prellm.extractors.format_context_schema
-> Extract and format context schema information.
-- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
-
-### llx.prellm.extractors.format_runtime_context
-> Extract and format runtime context information.
-- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
-
-### llx.prellm.extractors.format_user_context
-> Extract and format user context information.
-- **Output to**: extra_context.get, parts.append
-
 ### llx.prellm.validators.ResponseValidator.validate
 > Validate a dict against a named schema.
 
@@ -494,6 +478,16 @@ Args:
     data: Initial data to validate.
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
+
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
+
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
+
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
 ### llx.prellm.core._trace_preprocess_configuration
 - **Output to**: trace.step, str
@@ -517,16 +511,6 @@ Usage:
 > Execute a DevOps process chain.
 - **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
 
-### llx.prellm.server._parse_model_pair
-> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
-
-Special cases
-- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
-
-### llx.prellm.server.batch_process
-> Process multiple queries in parallel.
-- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
-
 ### llx.analysis.collector._parse_map_stats_line
 > Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
 - **Output to**: line.split, part.strip, re.search, re.search, re.search
@@ -539,8 +523,22 @@ Special cases
 > Parse: # hotspots[5]: _extract fan=45; ...
 - **Output to**: re.search, re.finditer, max, max, int
 
+### llx.tools.ai_tools_manager._build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
 ### llx.tools.cli._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, start_p.add_argument, start_p.add_argument
+
+### llx.tools.vscode_manager._build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
+### llx.tools.config_manager.ConfigManager.validate_env_config
+> Validate environment configuration.
+- **Output to**: self.load_config, env_vars.get, env_vars.get, env_vars.get, None.append
+
+### llx.tools.config_manager.ConfigManager.validate_docker_configs
+> Validate Docker configuration files.
+- **Output to**: self.load_config, file_path.exists, None.append, config.get, None.append
 
 ## Behavioral Patterns
 
@@ -595,14 +593,14 @@ Functions exposed as public API (no underscore prefix):
 - `llx.cli.app.plan_generate` - 23 calls
 - `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
-- `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
 - `llx.prellm.server.chat_completions` - 22 calls
+- `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
+- `llx.cli.app.chat` - 22 calls
 - `llx.cli.app.plan_run` - 22 calls
 - `llx.litellm_config.LiteLLMConfig.load` - 21 calls
 - `llx.prellm.cli_commands.serve` - 21 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.access_shell` - 21 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_status_summary` - 21 calls
-- `llx.tools.config_manager.ConfigManager.backup_configs` - 21 calls
 
 ## System Interactions
 

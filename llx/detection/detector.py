@@ -1,10 +1,9 @@
 """Project type detection for LLX."""
 
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 import re
 import yaml
-import os
 
 
 class ProjectTypeDetector:

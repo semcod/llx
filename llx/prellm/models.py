@@ -4,8 +4,6 @@ v0.2 replaces hardcoded regex pipeline with small LLM decomposition.
 Old v0.1 models (BiasPattern, GuardConfig, GuardResponse) kept for backward compat.
 """
 
-from __future__ import annotations
-
 import enum
 from datetime import datetime
 from typing import Any

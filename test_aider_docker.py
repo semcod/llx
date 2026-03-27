@@ -2,7 +2,6 @@
 """Test aider MCP tool integration with Docker."""
 
 import asyncio
-import json
 from pathlib import Path
 
 async def test_aider_tool():

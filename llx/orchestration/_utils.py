@@ -4,9 +4,8 @@ Eliminates repeated JSON I/O and CLI boilerplate.
 """
 
 import json
-import sys
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Dict, Optional
 
 
 # ── JSON config I/O ─────────────────────────────────────
@@ -36,5 +35,3 @@ def save_json(path: Path, data: Dict[str, Any], label: str = "config") -> bool:
 
 
 # ── CLI boilerplate ──────────────────────────────────────
-
-from ..utils.cli_main import cli_main

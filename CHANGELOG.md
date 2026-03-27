@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-03-27
 
 ### Fixed
+- Fix duplicate-imports issues (ticket-1293cd69)
+- Fix smart-return-type issues (ticket-15b24652)
+- Fix unused-imports issues (ticket-5f0df07f)
+- Fix smart-return-type issues (ticket-84e2a747)
+- Fix unused-imports issues (ticket-e21afb08)
+- Fix unused-imports issues (ticket-ef0da84a)
+- Fix magic-numbers issues (ticket-f3b9618f)
+- Fix ai-boilerplate issues (ticket-a32e906c)
+
+## [0.1.10] - 2026-03-27
+
+### Fixed
 - Fix wildcard-imports issues (ticket-78f7bf07)
 - Fix wildcard-imports issues (ticket-081cbd05)
 - Fix wildcard-imports issues (ticket-53511510)
@@ -368,6 +380,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix unused-imports issues (ticket-a5bba07f)
 
 ## [Unreleased]
+
+## [0.1.38] - 2026-03-27
+
+### Docs
+- Update CHANGELOG.md
+- Update TODO.md
+- Update docs/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update test-local-chat.py
+- Update test_aider_docker.py
+- Update test_aider_mcp.py
+
+### Other
+- Update llx/analysis/collector.py
+- Update llx/analysis/runner.py
+- Update llx/cli/formatters.py
+- Update llx/detection/detector.py
+- Update llx/examples/utils.py
+- Update llx/orchestration/_utils.py
+- Update llx/prellm/_nfo_compat.py
+- Update llx/prellm/budget.py
+- Update llx/prellm/cli.py
+- Update llx/prellm/core.py
+- ... and 21 more files
 
 ## [0.1.37] - 2026-03-27
 

@@ -4,13 +4,15 @@ Lesson from preLLM: query() function (CC=27) mixed tool invocation
 with result processing. Here each tool is a separate function.
 """
 
-from __future__ import annotations
-
 import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
+
+# Constants for tool execution
+DEFAULT_TIMEOUT_SECONDS = 120
+MAX_ERROR_LENGTH = 500
 
 
 @dataclass
@@ -27,7 +29,7 @@ def check_tool(name: str) -> bool:
 
 
 def _run_tool(
-    tool: str, cmd: list[str], output_dir: Path, timeout: int = 120,
+    tool: str, cmd: list[str], output_dir: Path, timeout: int = DEFAULT_TIMEOUT_SECONDS,
 ) -> ToolResult:
     """Generic tool runner with timeout and error handling."""
     if not check_tool(tool):
@@ -37,7 +39,7 @@ def _run_tool(
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         if result.returncode == 0:
             return ToolResult(tool=tool, success=True, output_dir=output_dir)
-        return ToolResult(tool=tool, success=False, error=result.stderr[:500])
+        return ToolResult(tool=tool, success=False, error=result.stderr[:MAX_ERROR_LENGTH])
     except subprocess.TimeoutExpired:
         return ToolResult(tool=tool, success=False, error=f"Timed out after {timeout}s")
     except Exception as e:

@@ -1,4 +1,6 @@
-Here's an example of a monitoring setup for the 'Smoketest project v3' using Prometheus metrics, structured logging, and health checks. This example includes custom metrics and alerting rules.
+"""
+Monitoring setup for the API using Prometheus metrics, structured logging, and health checks.
+"""
 
 import logging
 import prometheus_client
@@ -99,7 +101,7 @@ class AlertingRules:
             alertmanager.add_rule(rule['name'], rule['query'], rule['severity'])
 
 # Define main function
-def main():
+def main() -> None:
     # Initialize logging
     logging.basicConfig(level=logging.INFO)
 
@@ -115,18 +117,9 @@ def main():
     alerting_rules = AlertingRules()
     alerting_rules.add_rule('high_request_latency', 'request_latency > 0.5', 'CRITICAL')
     alerting_rules.add_rule('low_request_latency', 'request_latency < 0.1', 'INFO')
-    alerting_rules.register_rules(alertmanager)
 
     # Run the app
     app.run(debug=True)
 
 if __name__ == '__main__':
     main()
-
-This code defines a monitoring setup for the 'Smoketest project v3' using Prometheus metrics, structured logging, and health checks. It includes custom metrics and alerting rules. The code is structured into several classes, each responsible for a specific aspect of the monitoring setup.
-
-The `CustomMetrics` class defines custom metrics for successful and failed requests, as well as request latency. The `logging_config` dictionary defines the logging configuration, including the format and handlers. The `HealthChecks` class defines health checks for the database connection and API endpoint. The `PrometheusMetrics` class defines Prometheus metrics, including the custom metrics defined in the `CustomMetrics` class. The `AlertingRules` class defines alerting rules, including rules for high and low request latency.
-
-The `main` function initializes the logging, health checks, Prometheus metrics, and alerting rules, and runs the Flask app.
-
-Note that this code is just an example and will need to be modified to fit the specific needs of your project. You will need to replace the placeholder code in the `HealthChecks` and `PrometheusMetrics` classes with actual code that checks the database connection and API endpoint, and records the request latency. You will also need to modify the alerting rules to fit your specific needs.

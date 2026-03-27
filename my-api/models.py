@@ -1,4 +1,6 @@
-Here is the Python code for the Pydantic models based on the provided specifications:
+"""
+Pydantic models for the API.
+"""
 
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -38,5 +40,3 @@ class SmoketestDBSchemaResponse(BaseModel):
     description: Optional[str] = Field(None, description="Description of the database schema response")
     created_at: datetime = Field(..., description="Timestamp when the database schema response was created")
     updated_at: datetime = Field(..., description="Timestamp when the database schema response was last updated")
-
-This code defines the Pydantic models for the 'Smoketest project v3' based on the provided specifications. Each model represents a different entity in the project, including the request and response models, as well as the database schema models. The models include fields for the unique identifier, name, description, created at, and updated at timestamps. The `Field` function is used to specify the data type and description for each field.
