@@ -1,3 +1,6 @@
+.idea/llx.iml
+my-api/.env.example
+test-api-qwen/.env.example
 .idea
 litellm_config.yaml
 litellm-config.yaml

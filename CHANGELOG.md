@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-03-27
 
 ### Fixed
+- Fix unused-imports issues (ticket-11d4376c)
+- Fix unused-imports issues (ticket-27b6352d)
+- Fix llm-generated-code issues (ticket-70a0bedb)
+- Fix string-concat issues (ticket-39a4738e)
+- Fix unused-imports issues (ticket-ea1354b8)
+- Fix magic-numbers issues (ticket-65349f70)
+
+## [0.1.10] - 2026-03-27
+
+### Fixed
 - Fix duplicate-imports issues (ticket-1293cd69)
 - Fix smart-return-type issues (ticket-15b24652)
 - Fix unused-imports issues (ticket-5f0df07f)
@@ -380,6 +390,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix unused-imports issues (ticket-a5bba07f)
 
 ## [Unreleased]
+
+## [0.1.40] - 2026-03-29
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+
+### Test
+- Update test-api-qwen/.env.example
+- Update test-api-qwen/.gitignore
+
+### Other
+- Update .idea/llx.iml
+- Update .pyqual/coverage.json
+- Update .pyqual/errors.json
+- Update my-api/.env.example
+- Update my-api/.gitignore
+- Update planfile.yaml
+- Update pyqual.yaml
 
 ## [0.1.39] - 2026-03-27
 

@@ -4775,3 +4775,81 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-11d4376c
+    name: Fix unused-imports issues
+    description: Resolve 14 unused-imports issues in llx/prellm/_nfo_compat.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - llx/prellm/_nfo_compat.py
+    rule_id: unused-imports
+    count: 14
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-27b6352d
+    name: Fix unused-imports issues
+    description: Resolve 6 unused-imports issues in llx/prellm/env_config.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - llx/prellm/env_config.py
+    rule_id: unused-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-70a0bedb
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in llx/prellm/env_config.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/prellm/env_config.py
+    rule_id: llm-generated-code
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-39a4738e
+    name: Fix string-concat issues
+    description: Resolve 3 string-concat issues in llx/prellm/llm_provider.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/prellm/llm_provider.py
+    rule_id: string-concat
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ea1354b8
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/prellm/llm_provider.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - llx/prellm/llm_provider.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-65349f70
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/prellm/llm_provider.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/prellm/llm_provider.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
