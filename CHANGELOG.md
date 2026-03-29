@@ -397,6 +397,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.43] - 2026-03-29
+
+### Docs
+- Update docs/PYQUAL_INTEGRATION.md
+
+### Other
+- Update examples/pyqual-llx-demo.sh
+- Update examples/pyqual-llx.yaml
+- Update llx/cli/app.py
+- Update llx/commands/__init__.py
+- Update llx/commands/fix.py
+
 ## [0.1.42] - 2026-03-29
 
 ### Docs

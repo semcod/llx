@@ -198,6 +198,20 @@ def info() -> None:
 
 
 @app.command()
+def fix(
+    workdir: str = typer.Argument(".", help="Working directory"),
+    errors: str = typer.Option(None, "--errors", "-e", help="Path to errors JSON file"),
+    apply: bool = typer.Option(False, "--apply", help="Apply fixes automatically"),
+    model: str = typer.Option(None, "--model", "-m", help="Force specific model"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be done"),
+    verbose: bool = typer.Option(False, "--verbose", "-v"),
+) -> None:
+    """Fix code issues using LLX-driven model selection (pyqual integration)."""
+    from llx.commands.fix import fix as fix_cmd
+    fix_cmd(workdir, errors, apply, model, dry_run, verbose)
+
+
+@app.command()
 def init(path: str = typer.Argument(".", help="Project path")) -> None:
     """Initialize llx.toml configuration file."""
     config_path = Path(path).resolve() / "llx.toml"
