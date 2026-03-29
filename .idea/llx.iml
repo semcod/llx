@@ -5,6 +5,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/my-api/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/test-api-qwen/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/my_api/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/test_api_qwen/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
