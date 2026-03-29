@@ -155,7 +155,7 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 
 ```
 llx/
-├── my-api/    ├── monitoring├── trace├── simple_generate    ├── config├── llx/    ├── __main__        ├── utils        ├── env_config        ├── cli_config        ├── cli        ├── trace    ├── litellm_config        ├── cli_context        ├── model_catalog        ├── logging_setup    ├── models    ├── prellm/        ├── query_decomposer        ├── context_ops    ├── main        ├── pipeline_ops        ├── prompt_registry        ├── server        ├── cli_query        ├── validators        ├── llm_provider        ├── core        ├── models        ├── _nfo_compat        ├── pipeline        ├── cli_commands    ├── analysis/        ├── extractors        ├── ai_tools_manager        ├── collector        ├── runner        ├── cli        ├── _utils        ├── docker_manager    ├── tools/        ├── vscode_manager        ├── budget        ├── _docker        ├── config_manager        ├── health_runner    ├── cli/        ├── formatters        ├── model_manager        ├── strategy_commands        ├── config        ├── app        ├── health_checker        ├── executor_simple    ├── planfile/        ├── model_selector        ├── examples        ├── detector    ├── detection/        ├── models        ├── _utils    ├── orchestration/        ├── cli        ├── cli_main        ├── cli_utils        ├── server    ├── mcp/        ├── __main__        ├── proxy    ├── integrations/        ├── proxym    ├── routing/        ├── tools        ├── runner            ├── cli        ├── client        ├── session/            ├── manager            ├── cli        ├── selector            ├── ports        ├── instances/            ├── manager            ├── models            ├── ports        ├── vscode/            ├── cli        ├── generate_strategy            ├── orchestrator        ├── llm/            ├── health            ├── cli            ├── models            ├── executors            ├── cli            ├── models        ├── queue/            ├── orchestrator            ├── _cmd_cleanup            ├── _cmd_remove            ├── _cmd_status            ├── models            ├── models            ├── manager        ├── ratelimit/            ├── cli            ├── cli        ├── routing/            ├── models            ├── _cmd_uninstall_extension        ├── chains/            ├── limiter        ├── utils/            ├── lazy_imports            ├── lazy_loader            ├── models            ├── process_chain            ├── shell_collector            ├── engine        ├── context/            ├── folder_compressor            ├── sensitive_filter        ├── analyzers/            ├── user_memory            ├── codebase_indexer            ├── preprocessor        ├── agents/├── ai-tools-manage├── docker-manage├── generate├── project    ├── cleanup    ├── run        ├── entrypoint        ├── install-extensions        ├── entrypoint            ├── schema_generator        ├── install-tools        ├── run        ├── run        ├── run        ├── run            ├── context_engine        ├── docker        ├── run        ├── generate_simple        ├── run        ├── run        ├── run        ├── run        ├── run        ├── run            ├── executor        ├── setup-aliases        ├── run        ├── run        ├── filtering        ├── run        ├── run        ├── hybrid```
+├── trace├── simple_generate├── my-api/    ├── monitoring    ├── config├── llx/    ├── __main__        ├── utils        ├── env_config        ├── cli_config        ├── cli        ├── trace    ├── litellm_config        ├── cli_context        ├── model_catalog    ├── models    ├── main    ├── prellm/        ├── query_decomposer        ├── server        ├── context_ops        ├── pipeline_ops        ├── prompt_registry        ├── cli_query        ├── validators        ├── core        ├── extractors        ├── models        ├── llm_provider        ├── _nfo_compat        ├── pipeline        ├── runner    ├── analysis/        ├── cli_commands        ├── ai_tools_manager        ├── docker_manager        ├── cli        ├── collector        ├── _utils        ├── budget    ├── tools/        ├── vscode_manager        ├── config_manager        ├── _docker        ├── health_checker        ├── health_runner    ├── cli/        ├── model_manager        ├── strategy_commands        ├── formatters        ├── config        ├── examples        ├── runner        ├── executor_simple    ├── planfile/        ├── model_selector        ├── models        ├── detector    ├── detection/        ├── cli        ├── _utils    ├── orchestration/        ├── cli_utils        ├── cli_main        ├── tools        ├── server    ├── mcp/        ├── __main__        ├── proxy    ├── integrations/        ├── proxym    ├── routing/        ├── client        ├── selector            ├── cli            ├── manager        ├── session/            ├── models            ├── cli            ├── manager            ├── ports        ├── instances/            ├── models            ├── cli            ├── ports        ├── vscode/            ├── orchestrator            ├── models            ├── cli        ├── llm/            ├── health            ├── executors            ├── orchestrator            ├── models            ├── cli            ├── manager        ├── queue/            ├── models            ├── _cmd_cleanup            ├── _cmd_remove            ├── _cmd_status            ├── limiter            ├── cli        ├── ratelimit/            ├── models            ├── engine            ├── cli        ├── routing/            ├── models            ├── _cmd_uninstall_extension        ├── chains/            ├── process_chain        ├── utils/            ├── lazy_imports            ├── lazy_loader            ├── folder_compressor            ├── shell_collector            ├── user_memory            ├── sensitive_filter        ├── context/            ├── codebase_indexer            ├── schema_generator        ├── analyzers/            ├── context_engine            ├── preprocessor        ├── agents/            ├── executor├── ai-tools-manage├── docker-manage├── generate├── project    ├── cleanup    ├── run        ├── entrypoint        ├── install-extensions        ├── entrypoint        ├── install-tools        ├── run        ├── run        ├── run        ├── run        ├── docker        ├── run        ├── run        ├── generate_simple        ├── run        ├── run        ├── run        ├── run        ├── filtering        ├── run        ├── run        ├── setup-aliases        ├── run        ├── hybrid        ├── run        ├── run        ├── logging_setup        ├── app        ├── generate_strategy```
 
 ## API Overview
 
@@ -181,13 +181,9 @@ llx/
 - **`SmoketestDBSchema`** — —
 - **`SmoketestDBSchemaRequest`** — —
 - **`SmoketestDBSchemaResponse`** — —
-- **`QueryDecomposer`** — Decomposes user queries using a small LLM before routing to a large model.
 - **`User`** — —
 - **`Product`** — —
-- **`PromptNotFoundError`** — Raised when a prompt name is not found in the registry.
-- **`PromptRenderError`** — Raised when a prompt template fails to render.
-- **`PromptEntry`** — Single prompt entry with template, max_tokens, and temperature.
-- **`PromptRegistry`** — Loads prompts from YAML, caches, validates placeholders.
+- **`QueryDecomposer`** — Decomposes user queries using a small LLM before routing to a large model.
 - **`ChatMessage`** — —
 - **`PreLLMExtras`** — preLLM-specific extensions in the request body.
 - **`ChatCompletionRequest`** — —
@@ -198,10 +194,13 @@ llx/
 - **`BatchItem`** — —
 - **`HealthResponse`** — —
 - **`AuthMiddleware`** — Bearer token auth using LITELLM_MASTER_KEY. Skips auth if key is not set.
+- **`PromptNotFoundError`** — Raised when a prompt name is not found in the registry.
+- **`PromptRenderError`** — Raised when a prompt template fails to render.
+- **`PromptEntry`** — Single prompt entry with template, max_tokens, and temperature.
+- **`PromptRegistry`** — Loads prompts from YAML, caches, validates placeholders.
 - **`ValidationResult`** — Result of validating data against a schema.
 - **`SchemaDefinition`** — Parsed schema definition from YAML.
 - **`ResponseValidator`** — Validates LLM responses against YAML-defined schemas.
-- **`LLMProvider`** — LiteLLM wrapper with retry and fallback support.
 - **`PreLLM`** — preLLM v0.2/v0.3 — small LLM decomposition before large LLM routing.
 - **`SensitivityLevel`** — —
 - **`ProcessInfo`** — —
@@ -236,30 +235,30 @@ llx/
 - **`StepResult`** — Result of a single process chain step.
 - **`ProcessResult`** — Result of a full process chain execution.
 - **`AuditEntry`** — Single audit log entry for traceability.
+- **`LLMProvider`** — LiteLLM wrapper with retry and fallback support.
 - **`PipelineStep`** — Configuration for a single pipeline step.
 - **`PipelineConfig`** — Configuration for a complete pipeline.
 - **`StepExecutionResult`** — Result of executing a single pipeline step.
 - **`PipelineResult`** — Result of executing a full pipeline.
 - **`PromptPipeline`** — Generic pipeline — executes a sequence of LLM + algorithmic steps.
-- **`AIToolsManager`** — Manages AI tools container and operations.
-- **`ProjectMetrics`** — Aggregated project metrics that drive model selection.
 - **`ToolResult`** — —
+- **`AIToolsManager`** — Manages AI tools container and operations.
 - **`DockerManager`** — Manages Docker containers for llx ecosystem.
-- **`VSCodeManager`** — Manages VS Code server with AI extensions.
+- **`ProjectMetrics`** — Aggregated project metrics that drive model selection.
 - **`BudgetExceededError`** — Raised when the monthly budget limit has been reached.
 - **`UsageEntry`** — Single API call cost record.
 - **`BudgetTracker`** — Tracks LLM API spend against a monthly budget.
+- **`VSCodeManager`** — Manages VS Code server with AI extensions.
 - **`ConfigManager`** — Manages llx configuration files and settings.
+- **`HealthChecker`** — Comprehensive health monitoring for llx ecosystem.
 - **`HealthCheckRunner`** — Runs comprehensive health checks and generates reports.
 - **`ModelManager`** — Manages local Ollama models and llx configurations.
 - **`PlanfileConfig`** — Configuration for planfile generation and execution.
-- **`HealthChecker`** — Comprehensive health monitoring for llx ecosystem.
 - **`TaskResult`** — Result of executing a task.
 - **`ModelProvider`** — Available model providers.
 - **`ModelTier`** — Model pricing tiers.
 - **`ModelFilter`** — Filter criteria for model selection.
 - **`ModelSelector`** — Select models based on filters and preferences.
-- **`ProjectTypeDetector`** — Detects project type from directory name and files.
 - **`TaskType`** — Type of task in the strategy.
 - **`ModelTier`** — Model tier for different phases of work.
 - **`ModelHints`** — AI model hints for different phases of task execution.
@@ -268,50 +267,51 @@ llx/
 - **`Goal`** — Project goal definition.
 - **`QualityGate`** — Quality gate definition.
 - **`Strategy`** — Main strategy configuration.
+- **`ProjectTypeDetector`** — Detects project type from directory name and files.
+- **`McpTool`** — —
 - **`ProxymStatus`** — Status of the proxym proxy server.
 - **`ProxymResponse`** — Response from proxym chat completion.
 - **`ProxymClient`** — Client for proxym intelligent AI proxy.
-- **`McpTool`** — —
 - **`ChatMessage`** — A single chat message.
 - **`ChatResponse`** — Response from LLM completion.
 - **`LlxClient`** — LLM client that routes through LiteLLM proxy or calls directly.
-- **`SessionManager`** — Manages multiple sessions with intelligent scheduling and rate limiting.
 - **`ModelTier`** — LLM model tiers ranked by capability and cost.
 - **`SelectionResult`** — Result of model selection with explanation.
-- **`PortAllocator`** — Manages port allocation for instances.
-- **`InstanceManager`** — Manages multiple Docker instances with intelligent allocation and monitoring.
+- **`SessionManager`** — Manages multiple sessions with intelligent scheduling and rate limiting.
 - **`SessionType`** — Types of sessions.
 - **`SessionStatus`** — Session status.
 - **`SessionConfig`** — Configuration for a session.
 - **`SessionState`** — Current state of a session.
-- **`VSCodePortAllocator`** — Manages port allocation for VS Code instances.
-- **`VSCodeOrchestrator`** — Orchestrates multiple VS Code instances with intelligent management.
+- **`InstanceManager`** — Manages multiple Docker instances with intelligent allocation and monitoring.
+- **`PortAllocator`** — Manages port allocation for instances.
 - **`InstanceType`** — Types of instances.
 - **`InstanceStatus`** — Instance status.
 - **`InstanceConfig`** — Configuration for an instance.
 - **`InstanceState`** — Current state of an instance.
+- **`VSCodePortAllocator`** — Manages port allocation for VS Code instances.
+- **`VSCodeOrchestrator`** — Orchestrates multiple VS Code instances with intelligent management.
+- **`VSCodeAccountType`** — Types of VS Code accounts.
+- **`VSCodeAccount`** — VS Code account configuration.
+- **`VSCodeInstanceConfig`** — Configuration for a VS Code instance.
+- **`VSCodeSession`** — Active VS Code session.
+- **`LLMOrchestrator`** — Orchestrates multiple LLM providers and models with intelligent routing.
 - **`LLMProviderType`** — Types of LLM providers.
 - **`ModelCapability`** — Model capabilities.
 - **`LLMModel`** — LLM model configuration.
 - **`LLMProvider`** — LLM provider configuration.
 - **`LLMRequest`** — LLM request.
 - **`LLMResponse`** — LLM response.
-- **`LLMOrchestrator`** — Orchestrates multiple LLM providers and models with intelligent routing.
-- **`VSCodeAccountType`** — Types of VS Code accounts.
-- **`VSCodeAccount`** — VS Code account configuration.
-- **`VSCodeInstanceConfig`** — Configuration for a VS Code instance.
-- **`VSCodeSession`** — Active VS Code session.
+- **`QueueManager`** — Manages multiple request queues with intelligent prioritization.
 - **`QueueStatus`** — Queue status.
 - **`RequestPriority`** — Request priority levels.
 - **`QueueRequest`** — A request in the queue.
 - **`QueueConfig`** — Configuration for a queue.
 - **`QueueState`** — Current state of a queue.
-- **`QueueManager`** — Manages multiple request queues with intelligent prioritization.
+- **`RateLimiter`** — Manages rate limiting for multiple providers and accounts.
 - **`LimitType`** — Types of rate limits.
 - **`RateLimitConfig`** — Configuration for rate limiting.
 - **`RateLimitState`** — Current state of rate limiting.
-- **`RateLimiter`** — Manages rate limiting for multiple providers and accounts.
-- **`LazyLoader`** — Base class for components that need lazy loading of resources.
+- **`RoutingEngine`** — Intelligent routing engine for LLM and VS Code requests.
 - **`RoutingStrategy`** — Routing strategies.
 - **`ResourceType`** — Types of resources to route to.
 - **`RequestPriority`** — Request priority levels (mirrors queue.models).
@@ -319,27 +319,27 @@ llx/
 - **`RoutingDecision`** — A routing decision.
 - **`RoutingMetrics`** — Metrics for routing performance.
 - **`ProcessChain`** — Execute multi-step DevOps workflows with preLLM validation at each step.
-- **`ShellContextCollector`** — Collects full shell environment context for LLM prompt enrichment.
-- **`RoutingEngine`** — Intelligent routing engine for LLM and VS Code requests.
+- **`LazyLoader`** — Base class for components that need lazy loading of resources.
 - **`FolderCompressor`** — Compresses a project folder into a lightweight representation for LLM context.
-- **`SensitiveDataFilter`** — Classifies and filters sensitive data from context before LLM calls.
+- **`ShellContextCollector`** — Collects full shell environment context for LLM prompt enrichment.
 - **`UserMemory`** — Stores user query history and learned preferences.
+- **`SensitiveDataFilter`** — Classifies and filters sensitive data from context before LLM calls.
 - **`CodeSymbol`** — A code symbol extracted from source.
 - **`FileIndex`** — Index of a single source file.
 - **`CodebaseIndex`** — Full codebase index.
 - **`CodebaseIndexer`** — Index a codebase using tree-sitter for AST-based symbol extraction.
-- **`PreprocessResult`** — Output of the PreprocessorAgent — structured input for the ExecutorAgent.
-- **`PreprocessorAgent`** — Agent preprocessing — small LLM (≤24B) analyzes and structures queries.
 - **`ContextSchemaGenerator`** — Generates a structured context schema from available context sources.
 - **`ContextEngine`** — Collects context from environment, git, and system for prompt enrichment.
+- **`PreprocessResult`** — Output of the PreprocessorAgent — structured input for the ExecutorAgent.
+- **`PreprocessorAgent`** — Agent preprocessing — small LLM (≤24B) analyzes and structures queries.
 - **`ExecutorResult`** — Output of the ExecutorAgent.
 - **`ExecutorAgent`** — Agent execution — large LLM (>24B) executes structured tasks.
 
 ### Functions
 
-- `main()` — —
 - `test()` — —
 - `generate_simple_strategy(project_path, output)` — Generate strategy with minimal configuration.
+- `main()` — —
 - `get_env_config(env_path, small_model, large_model)` — Load preLLM configuration from environment.
 - `config_set_cmd(key, value, global_)` — Set a config value persistently.
 - `config_get_cmd(key, raw)` — Get a config value.
@@ -366,16 +366,6 @@ llx/
 - `context_show_cmd(json_output, schema, blocked, folder)` — Show collected runtime context.
 - `list_model_pairs(provider, search)` — Filter model pairs by provider and/or search term. Pure function — no IO.
 - `list_openrouter_models(provider, search)` — Filter OpenRouter models by provider and/or search term. Pure function — no IO.
-- `setup_logging(level, markdown_file, terminal_format)` — Initialize nfo logging for the entire preLLM project.
-- `get_logger(name)` — Get or create the nfo logger.
-- `collect_user_context(user_context)` — Process and normalize user context.
-- `collect_environment_context(collect_env)` — Collect shell and runtime context if requested.
-- `compress_codebase_folder(compress_folder, codebase_path)` — Compress codebase folder if requested.
-- `generate_context_schema(collect_env, compress_folder, shell_ctx, compressed)` — Generate context schema if environment collection or compression is enabled.
-- `build_sensitive_filter(sanitize, sensitive_rules, extra_context)` — Build and apply sensitive data filter if sanitization is enabled.
-- `initialize_context_components(memory_path, codebase_path)` — Initialize optional context enrichment components.
-- `prepare_context(user_context, domain_rules, collect_env, compress_folder)` — Gather all context: env, codebase, schema, sensitive filter, memory, indexer.
-- `build_pipeline_context(extra_context)` — Build compact context for small LLM pipeline — strips raw blobs.
 - `health()` — —
 - `read_users()` — —
 - `read_user(user_id)` — —
@@ -387,27 +377,26 @@ llx/
 - `create_product(product)` — —
 - `update_product(product_id, product)` — —
 - `delete_product(product_id)` — —
-- `execute_v3_pipeline(query, small_llm, large_llm, pipeline)` — Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
-- `run_preprocessing(preprocessor, query, extra_context, pipeline)` — Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
-- `run_execution(executor, executor_input, system_prompt)` — Run the large-LLM execution step. Returns (exec_result, duration_ms).
-- `persist_session(user_memory, query, exec_result)` — Persist interaction to UserMemory if available.
-- `record_trace(trace, pipeline, small_llm, large_llm)` — Record preprocessing and execution steps to trace.
 - `health()` — —
 - `list_models()` — List available model pairs.
 - `chat_completions(req)` — OpenAI-compatible chat completions with preLLM preprocessing.
 - `batch_process(items)` — Process multiple queries in parallel.
 - `create_app(small_model, large_model, strategy, config_path)` — Factory function to create a configured preLLM API server.
+- `collect_user_context(user_context)` — Process and normalize user context.
+- `collect_environment_context(collect_env)` — Collect shell and runtime context if requested.
+- `compress_codebase_folder(compress_folder, codebase_path)` — Compress codebase folder if requested.
+- `generate_context_schema(collect_env, compress_folder, shell_ctx, compressed)` — Generate context schema if environment collection or compression is enabled.
+- `build_sensitive_filter(sanitize, sensitive_rules, extra_context)` — Build and apply sensitive data filter if sanitization is enabled.
+- `initialize_context_components(memory_path, codebase_path)` — Initialize optional context enrichment components.
+- `prepare_context(user_context, domain_rules, collect_env, compress_folder)` — Gather all context: env, codebase, schema, sensitive filter, memory, indexer.
+- `build_pipeline_context(extra_context)` — Build compact context for small LLM pipeline — strips raw blobs.
+- `execute_v3_pipeline(query, small_llm, large_llm, pipeline)` — Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
+- `run_preprocessing(preprocessor, query, extra_context, pipeline)` — Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
+- `run_execution(executor, executor_input, system_prompt)` — Run the large-LLM execution step. Returns (exec_result, duration_ms).
+- `persist_session(user_memory, query, exec_result)` — Persist interaction to UserMemory if available.
+- `record_trace(trace, pipeline, small_llm, large_llm)` — Record preprocessing and execution steps to trace.
 - `preprocess_and_execute(query, small_llm, large_llm, strategy)` — One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
 - `preprocess_and_execute_sync(query, small_llm, large_llm, strategy)` — Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
-- `configure(name, level, sinks, bridge_stdlib)` — Configure logging.
-- `log_call(func)` — Decorator that logs function calls.
-- `process(config, guard_config, dry_run, json_output)` — Execute a DevOps process chain.
-- `decompose(query, config, strategy, json_output)` — [v0.2] Decompose a query using small LLM without calling the large model.
-- `init(output, devops)` — Generate a starter preLLM config file.
-- `serve(host, port, small, large)` — Start the OpenAI-compatible API server.
-- `doctor(env_file, live)` — Check configuration and provider connectivity.
-- `budget(reset, json_output)` — Show LLM API spend tracking and budget status.
-- `models(provider, search)` — List popular model pairs and provider examples.
 - `extract_classification_from_state(state)` — Extract classification result from pipeline state.
 - `extract_structure_from_state(state)` — Extract structure result from pipeline state.
 - `extract_sub_queries_from_state(state)` — Extract sub-queries from pipeline state.
@@ -419,72 +408,62 @@ llx/
 - `format_runtime_context(extra_context)` — Extract and format runtime context information.
 - `format_user_context(extra_context)` — Extract and format user context information.
 - `build_executor_system_prompt(prep_result, extra_context)` — Build a system prompt for the large LLM from preprocessing results and context.
-- `main()` — CLI entry point for AI tools manager.
-- `analyze_project(project_path)` — Collect all available metrics for a project.
+- `configure(name, level, sinks, bridge_stdlib)` — Configure logging.
+- `log_call(func)` — Decorator that logs function calls.
 - `check_tool(name)` — Check if a CLI tool is available on PATH.
 - `run_code2llm(project_path, output_dir, fmt)` — —
 - `run_redup(project_path, output_dir, fmt)` — —
 - `run_vallm(project_path, output_dir)` — —
 - `run_all_tools(project_path, output_dir, on_progress)` — —
-- `main()` — —
+- `process(config, guard_config, dry_run, json_output)` — Execute a DevOps process chain.
+- `decompose(query, config, strategy, json_output)` — [v0.2] Decompose a query using small LLM without calling the large model.
+- `init(output, devops)` — Generate a starter preLLM config file.
+- `serve(host, port, small, large)` — Start the OpenAI-compatible API server.
+- `doctor(env_file, live)` — Check configuration and provider connectivity.
+- `budget(reset, json_output)` — Show LLM API spend tracking and budget status.
+- `models(provider, search)` — List popular model pairs and provider examples.
+- `main()` — CLI entry point for AI tools manager.
 - `main()` — CLI entry point for Docker manager.
-- `main()` — CLI entry point for VS Code manager.
+- `main()` — —
+- `analyze_project(project_path)` — Collect all available metrics for a project.
 - `get_budget_tracker(monthly_limit, persist_path)` — Get or create the global budget tracker singleton.
 - `reset_budget_tracker()` — Reset the global tracker (for testing).
+- `main()` — CLI entry point for VS Code manager.
+- `main()` — CLI entry point for config manager.
 - `is_container_running(container_name)` — Check if a Docker container is running by name.
 - `docker_exec(container, cmd, timeout, interactive)` — Run a command inside a Docker container.
 - `docker_cp(src, dest, timeout)` — Copy files between host and container via ``docker cp``.
-- `main()` — CLI entry point for config manager.
-- `output_rich(metrics, result, verbose)` — Rich terminal output for analysis results.
-- `output_json(metrics, result)` — JSON output for machine consumption.
-- `print_models_table(config, tag, provider, tier)` — Print models table with optional filtering.
-- `print_info_tables(config)` — Print tools and models info tables.
+- `main()` — CLI entry point for health checker.
 - `main()` — CLI entry point for model manager.
 - `create_strategy(output, model, local)` — Create a new strategy interactively with LLM.
 - `validate_strategy(strategy_file)` — Validate a strategy YAML file.
 - `run_strategy_command(strategy_file, project_path, backend, dry_run)` — Run strategy to create tickets.
 - `verify_strategy(strategy_file, project_path, backend)` — Verify strategy execution.
 - `add_strategy_commands(main_app)` — Add strategy commands to main typer app.
-- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
-- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
-- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
-- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
-- `proxy_config(output)` — Generate LiteLLM proxy config.
-- `proxy_status()` — Check if proxy is running.
-- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
-- `info()` — Show available tools, models, and configuration.
-- `init(path)` — Initialize llx.toml configuration file.
-- `mcp_start(mode, port)` — Start the llx MCP server.
-- `mcp_config()` — Print Claude Desktop config snippet.
-- `mcp_tools()` — List available MCP tools.
-- `plan_apply(strategy, path, sprint, dry_run)` — Apply a planfile strategy to the project.
-- `plan_models(provider, tier, local_only, cloud_only)` — List available models.
-- `plan_all(description, output_dir, profile, project_type)` — Complete workflow: generate strategy, code, and optionally run.
-- `plan_detect(path)` — Detect project type and show configuration.
-- `plan_types()` — List all available project types.
-- `plan_generate(path, output, model, sprints)` — Generate strategy.yaml using planfile.
-- `plan_review(strategy, path)` — Review progress against strategy quality gates.
-- `plan_code(strategy, output_dir, model, profile)` — Implement the strategy sprint-by-sprint.
-- `plan_run(project_dir, port, install)` — Start the generated application (detects command from strategy or uses uvicorn).
-- `plan_monitor(strategy, url, interval)` — Monitor a running application: health check + quality gates summary.
-- `plan_wizard(path, description, profile, output)` — Unified wizard: Generate strategy -> Implement code -> Run -> Monitor.
-- `main()` — —
-- `main()` — CLI entry point for health checker.
-- `execute_strategy(strategy_path, project_path)` — Execute strategy with simplified format support.
+- `output_rich(metrics, result, verbose)` — Rich terminal output for analysis results.
+- `output_json(metrics, result)` — JSON output for machine consumption.
+- `print_models_table(config, tag, provider, tier)` — Print models table with optional filtering.
+- `print_info_tables(config)` — Print tools and models info tables.
 - `example_create_strategy()` — Create a strategy using LLX with local LLM.
 - `example_validate_strategy()` — Load and validate an existing strategy.
 - `example_run_strategy()` — Run strategy to create tickets (dry run).
 - `example_verify_strategy()` — Verify strategy execution.
 - `example_programmatic_strategy()` — Create strategy programmatically without LLM.
+- `load_valid_strategy(path)` — Load and validate strategy from YAML file.
+- `verify_strategy_post_execution(strategy, project_path, backend)` — Verify strategy after execution.
+- `analyze_project_metrics(project_path)` — Analyze project metrics using available tools.
+- `apply_strategy_to_tickets(strategy, project_path, backend, dry_run)` — Apply strategy to create tickets in PM system.
+- `run_strategy(strategy_path, project_path, backend, dry_run)` — Run strategy: load, validate, and apply.
+- `execute_strategy(strategy_path, project_path)` — Execute strategy with simplified format support.
+- `main()` — —
 - `load_json(path, label)` — Load JSON from *path*, returning None on missing file or error.
 - `save_json(path, data, label)` — Save *data* as JSON to *path*, creating parent dirs as needed.
-- `main()` — —
-- `cli_main(build_parser, dispatch, factory, cleanup)` — Generic CLI entry point.
 - `cmd_remove_wrapper(args, id_attr, id_label, remove_func)` — Generic wrapper for remove commands.
 - `cmd_remove_pair_wrapper(args, first_attr, second_attr, first_label)` — Generic wrapper for remove commands keyed by two arguments.
 - `cmd_status_wrapper(args, id_attr, id_label, status_func)` — Generic wrapper for status commands.
 - `cmd_list_wrapper(items, title, formatter)` — Generic wrapper for list commands.
 - `cmd_cleanup_wrapper(cleanup_func, item_label)` — Generic wrapper for cleanup commands.
+- `cli_main(build_parser, dispatch, factory, cleanup)` — Generic CLI entry point.
 - `list_tools()` — —
 - `call_tool(name, arguments)` — —
 - `main()` — —
@@ -492,23 +471,15 @@ llx/
 - `generate_proxy_config(config, output_path)` — Generate a LiteLLM proxy config YAML.
 - `start_proxy(config)` — Start LiteLLM proxy server.
 - `check_proxy(base_url)` — Check if LiteLLM proxy is running.
-- `load_valid_strategy(path)` — Load and validate strategy from YAML file.
-- `verify_strategy_post_execution(strategy, project_path, backend)` — Verify strategy after execution.
-- `analyze_project_metrics(project_path)` — Analyze project metrics using available tools.
-- `apply_strategy_to_tickets(strategy, project_path, backend, dry_run)` — Apply strategy to create tickets in PM system.
-- `run_strategy(strategy_path, project_path, backend, dry_run)` — Run strategy: load, validate, and apply.
-- `main()` — —
-- `main()` — —
 - `select_model(metrics, config)` — Select the best model tier based on project metrics.
 - `check_context_fit(metrics, model)` — Check if the project context fits within the model's context window.
 - `select_with_context_check(metrics, config)` — Select model and verify context window fit.
 - `main()` — —
-- `generate_strategy_with_fix(project_path, model, sprints, focus)` — Generate strategy using llx.planfile.
-- `save_fixed_strategy(data, output_path)` — Save the fixed strategy to YAML file.
-- `main()` — Generate a complete strategy using the fixed generator.
+- `main()` — —
+- `main()` — —
+- `main()` — CLI entry point.  CC ≤ 3.
 - `perform_health_checks(providers)` — Perform health checks on all providers.
 - `health_check_worker(orchestrator)` — Background worker for health checks.
-- `main()` — CLI entry point.  CC ≤ 3.
 - `execute_request(request, provider, model)` — Execute LLM request, dispatching to the correct provider executor.
 - `execute_ollama(request, provider, model)` — Execute Ollama request.
 - `execute_openai(request, provider, model)` — Execute OpenAI-compatible request.
@@ -582,6 +553,35 @@ llx/
 - `show_help()` — —
 - `determine_task_type()` — —
 - `build_llx_cmd()` — —
+- `setup_logging(level, markdown_file, terminal_format)` — Initialize nfo logging for the entire preLLM project.
+- `get_logger(name)` — Get or create the nfo logger.
+- `analyze(path, toon_dir, task, local)` — Analyze a project and recommend the optimal LLM model.
+- `select(path, toon_dir, task, local)` — Quick model selection from existing analysis files.
+- `chat(path, prompt, toon_dir, task)` — Analyze project, select model, and send a prompt.
+- `proxy_start(config_path, port, background)` — Start LiteLLM proxy server with llx configuration.
+- `proxy_config(output)` — Generate LiteLLM proxy config.
+- `proxy_status()` — Check if proxy is running.
+- `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
+- `info()` — Show available tools, models, and configuration.
+- `init(path)` — Initialize llx.toml configuration file.
+- `mcp_start(mode, port)` — Start the llx MCP server.
+- `mcp_config()` — Print Claude Desktop config snippet.
+- `mcp_tools()` — List available MCP tools.
+- `plan_apply(strategy, path, sprint, dry_run)` — Apply a planfile strategy to the project.
+- `plan_models(provider, tier, local_only, cloud_only)` — List available models.
+- `plan_all(description, output_dir, profile, project_type)` — Complete workflow: generate strategy, code, and optionally run.
+- `plan_detect(path)` — Detect project type and show configuration.
+- `plan_types()` — List all available project types.
+- `plan_generate(path, output, model, sprints)` — Generate strategy.yaml using planfile.
+- `plan_review(strategy, path)` — Review progress against strategy quality gates.
+- `plan_code(strategy, output_dir, model, profile)` — Implement the strategy sprint-by-sprint.
+- `plan_run(project_dir, port, install)` — Start the generated application (detects command from strategy or uses uvicorn).
+- `plan_monitor(strategy, url, interval)` — Monitor a running application: health check + quality gates summary.
+- `plan_wizard(path, description, profile, output)` — Unified wizard: Generate strategy -> Implement code -> Run -> Monitor.
+- `main()` — —
+- `generate_strategy_with_fix(project_path, model, sprints, focus)` — Generate strategy using llx.planfile.
+- `save_fixed_strategy(data, output_path)` — Save the fixed strategy to YAML file.
+- `main()` — Generate a complete strategy using the fixed generator.
 
 
 ## Project Structure

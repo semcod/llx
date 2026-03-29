@@ -1,10 +1,10 @@
-# llx | 136f 28058L | python:128,shell:8 | 2026-03-27
-# stats: 1043 func | 0 cls | 136 mod | CC̄=3.7 | critical:5 | cycles:0
+# llx | 137f 28062L | python:129,shell:8 | 2026-03-29
+# stats: 1043 func | 0 cls | 137 mod | CC̄=3.7 | critical:5 | cycles:0
 # alerts[5]: fan-out _plan_code_impl=36; fan-out execute_v3_pipeline=23; fan-out plan_all=20; CC _plan_code_impl=19; fan-out _dispatch=18
 # hotspots[5]: _plan_code_impl fan=36; execute_v3_pipeline fan=23; plan_all fan=20; context fan=18; _dispatch fan=18
-# evolution: CC̄ 3.8→3.7 (improved -0.1)
+# evolution: CC̄ 3.7→3.7 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[136]:
+M[137]:
   ai-tools-manage.sh,351
   docker-manage.sh,406
   docker/ai-tools/entrypoint.sh,175
@@ -135,6 +135,7 @@ M[136]:
   llx/tools/utils/_cmd_uninstall_extension.py,31
   llx/tools/vscode_manager.py,792
   llx/utils/cli_main.py,30
+  my-api/__init__.py,4
   my-api/main.py,107
   my-api/models.py,42
   my-api/monitoring.py,125
@@ -262,15 +263,22 @@ Based on...
     _handle_aider(args)
     _handle_planfile_generate(args)
     _handle_planfile_apply(args)
+  llx/prellm/analyzers/context_engine.py:
+    e: ContextEngine
+    ContextEngine: __init__(1),gather(0),enrich_prompt(2),gather_runtime(0),_auto_collect_env(0),_gather_process(-1),_gather_locale(-1),_gather_network(-1),_gather_env(0),_gather_git(0),_gather_git_gitpython(0),_gather_git_subprocess(0),_gather_system(0)  # Collects context from environment, git, and system for promp...
   llx/prellm/agents/preprocessor.py:
     e: PreprocessResult,PreprocessorAgent,_get_user_memory_class,_get_codebase_indexer_class
     PreprocessResult(BaseModel):  # Output of the PreprocessorAgent — structured input for the E...
     PreprocessorAgent: __init__(7),preprocess(3),_extract_executor_input(1),_extract_confidence(0)  # Agent preprocessing — small LLM (≤24B) analyzes and structur...
     _get_user_memory_class()
     _get_codebase_indexer_class()
-  llx/prellm/analyzers/context_engine.py:
-    e: ContextEngine
-    ContextEngine: __init__(1),gather(0),enrich_prompt(2),gather_runtime(0),_auto_collect_env(0),_gather_process(-1),_gather_locale(-1),_gather_network(-1),_gather_env(0),_gather_git(0),_gather_git_gitpython(0),_gather_git_subprocess(0),_gather_system(0)  # Collects context from environment, git, and system for promp...
+  llx/prellm/pipeline_ops.py:
+    e: execute_v3_pipeline,run_preprocessing,run_execution,persist_session,record_trace
+    execute_v3_pipeline(query;small_llm;large_llm;pipeline;user_context;domain_rules;prompts_path;pipelines_path;schemas_path;memory_path;codebase_path;collect_env;compress_folder;sanitize;sensitive_rules)
+    run_preprocessing(preprocessor;query;extra_context;pipeline)
+    run_execution(executor;executor_input;system_prompt)
+    persist_session(user_memory;query;exec_result)
+    record_trace(trace;pipeline;small_llm;large_llm;query;extra_context;prep_result;exec_result;prep_duration_ms;exec_duration_ms)
   llx/prellm/server.py:
     e: ChatMessage,PreLLMExtras,ChatCompletionRequest,ChatCompletionChoice,UsageInfo,PreLLMMeta,ChatCompletionResponse,BatchItem,HealthResponse,AuthMiddleware,_parse_model_pair,_build_prellm_meta,health,list_models,chat_completions,_stream_response,batch_process,create_app
     ChatMessage(BaseModel):
@@ -291,13 +299,6 @@ Based on...
     _stream_response(query;small;large;strategy;extras)
     batch_process(items)
     create_app(small_model;large_model;strategy;config_path;master_key;dotenv_path)
-  llx/prellm/pipeline_ops.py:
-    e: execute_v3_pipeline,run_preprocessing,run_execution,persist_session,record_trace
-    execute_v3_pipeline(query;small_llm;large_llm;pipeline;user_context;domain_rules;prompts_path;pipelines_path;schemas_path;memory_path;codebase_path;collect_env;compress_folder;sanitize;sensitive_rules)
-    run_preprocessing(preprocessor;query;extra_context;pipeline)
-    run_execution(executor;executor_input;system_prompt)
-    persist_session(user_memory;query;exec_result)
-    record_trace(trace;pipeline;small_llm;large_llm;query;extra_context;prep_result;exec_result;prep_duration_ms;exec_duration_ms)
   llx/tools/ai_tools_manager.py:
     e: AIToolsManager,_build_parser,_dispatch,_handle_test,_handle_models,_handle_install,_handle_restore,main
     AIToolsManager: __init__(1),is_container_running(0),start_ai_tools(1),stop_ai_tools(0),restart_ai_tools(0),access_shell(0),execute_command(2),_get_service_statuses(0),_get_tool_statuses(0),_get_workspace_status(0),get_status(0),test_connectivity(0),run_chat_test(2),get_available_models(0),install_tool(1),update_tools(0),get_logs(1),create_workspace_example(1),backup_configurations(1),restore_configurations(1),print_status_summary(0),print_usage_examples(0)  # Manages AI tools container and operations...
@@ -354,6 +355,9 @@ Usage:
 
 Usage:
    ...
+  llx/orchestration/routing/engine.py:
+    e: RoutingEngine
+    RoutingEngine: __init__(1),load_config(0),save_config(0),route_request(1),_get_candidates(1),_get_llm_candidates(1),_get_vscode_candidates(1),_get_ai_tools_candidates(1),_filter_candidates(2),_filter_by_rate_limits(2),_apply_routing_strategy(2),_apply_strategy(3),_round_robin_strategy(2),_least_loaded_strategy(2),_priority_based_strategy(2),_cost_optimized_strategy(2),_performance_optimized_strategy(2),_availability_first_strategy(2),_create_decision_from_candidate(5),_validate_decision(1),_create_no_resources_decision(1),_create_routing_failed_decision(1),_create_validation_failed_decision(1),_calculate_llm_score(2),_calculate_vscode_score(2),_calculate_ai_tools_score(2),_get_cost_per_token(2),_get_vscode_cost_per_hour(1),_get_ai_tools_cost_per_hour(1),_get_provider_performance(1),_update_routing_metrics(3),start_background_tasks(0),_metrics_worker(0),_optimization_worker(0),_collect_system_metrics(0),_optimize_routing(0),get_routing_status(0),print_status_summary(0)  # Intelligent routing engine for LLM and VS Code requests...
   llx/prellm/context/folder_compressor.py:
     e: FolderCompressor,_relative_path,_path_to_module,_extract_module_from_import,_extract_module_docstring
     FolderCompressor: __init__(1),compress(3),to_toon(1),to_dependency_graph(1),to_summary(1),estimate_token_count(0)  # Compresses a project folder into a lightweight representatio...
@@ -361,18 +365,15 @@ Usage:
     _path_to_module(rel_path)
     _extract_module_from_import(import_line;project_name)
     _extract_module_docstring(path)
-  llx/orchestration/routing/engine.py:
-    e: RoutingEngine
-    RoutingEngine: __init__(1),load_config(0),save_config(0),route_request(1),_get_candidates(1),_get_llm_candidates(1),_get_vscode_candidates(1),_get_ai_tools_candidates(1),_filter_candidates(2),_filter_by_rate_limits(2),_apply_routing_strategy(2),_apply_strategy(3),_round_robin_strategy(2),_least_loaded_strategy(2),_priority_based_strategy(2),_cost_optimized_strategy(2),_performance_optimized_strategy(2),_availability_first_strategy(2),_create_decision_from_candidate(5),_validate_decision(1),_create_no_resources_decision(1),_create_routing_failed_decision(1),_create_validation_failed_decision(1),_calculate_llm_score(2),_calculate_vscode_score(2),_calculate_ai_tools_score(2),_get_cost_per_token(2),_get_vscode_cost_per_hour(1),_get_ai_tools_cost_per_hour(1),_get_provider_performance(1),_update_routing_metrics(3),start_background_tasks(0),_metrics_worker(0),_optimization_worker(0),_collect_system_metrics(0),_optimize_routing(0),get_routing_status(0),print_status_summary(0)  # Intelligent routing engine for LLM and VS Code requests...
-  llx/prellm/context/schema_generator.py:
-    e: ContextSchemaGenerator
-    ContextSchemaGenerator: generate(5),to_prompt_section(1),estimate_relevance(2),_detect_execution_env(0),_detect_tools(-1),_detect_project_type(0),_build_project_summary(0),_summarize_history(0),_estimate_token_cost(0)  # Generates a structured context schema from available context...
   llx/prellm/context/codebase_indexer.py:
     e: CodeSymbol,FileIndex,CodebaseIndex,CodebaseIndexer
     CodeSymbol:  # A code symbol extracted from source...
     FileIndex:  # Index of a single source file...
     CodebaseIndex:  # Full codebase index...
     CodebaseIndexer: __init__(1),_check_tree_sitter(-1),index_directory(3),_index_file(2),_extract_with_tree_sitter(3),_get_parser(1),_walk_tree(4),_get_line(1),_extract_with_regex(2),_extract_imports(1),search(3),get_context_for_query(3),get_compressed_context(3),estimate_tokens(0)  # Index a codebase using tree-sitter for AST-based symbol extr...
+  llx/prellm/context/schema_generator.py:
+    e: ContextSchemaGenerator
+    ContextSchemaGenerator: generate(5),to_prompt_section(1),estimate_relevance(2),_detect_execution_env(0),_detect_tools(-1),_detect_project_type(0),_build_project_summary(0),_summarize_history(0),_estimate_token_cost(0)  # Generates a structured context schema from available context...
   llx/prellm/core.py:
     e: PreLLM,_resolve_pipeline_name,_apply_config_overrides,_trace_preprocess_configuration,preprocess_and_execute,preprocess_and_execute_sync
     PreLLM: __init__(2),__call__(3),decompose_only(3),get_audit_log(0),_audit(3),_load_config(0)  # preLLM v0.2/v0.3 — small LLM decomposition before large LLM ...
@@ -496,6 +497,9 @@ Ever...
     StepExecutionResult(BaseModel):  # Result of executing a single pipeline step...
     PipelineResult(BaseModel):  # Result of executing a full pipeline...
     PromptPipeline: __init__(4),from_yaml(5),execute(2),_execute_llm_step(2),_execute_algo_step(2),_gather_inputs(2),_build_user_message(2),_evaluate_condition(2),register_algo_handler(2),_algo_domain_rule_matcher(2),_algo_field_validator(2),_algo_yaml_formatter(2),_algo_runtime_collector(2),_algo_sensitive_filter(2),_algo_session_injector(2),_algo_shell_context_collector(2),_algo_folder_compressor(2),_algo_context_schema_generator(2)  # Generic pipeline — executes a sequence of LLM + algorithmic ...
+  llx/orchestration/queue/manager.py:
+    e: QueueManager
+    QueueManager: __init__(1),load_queues(0),save_queues(0),start(0),stop(0),add_queue(1),remove_queue(1),enqueue_request(1),dequeue_request(1),complete_request(3),get_queue_status(1),get_queue_metrics(1),_get_queue_id(2),_get_single_queue_status(1),_get_all_queue_status(0),_worker_loop(2),_process_request(1),_retry_request(2),_calculate_retry_delay(2),_update_averages(2),print_status_summary(0)  # Manages multiple request queues with intelligent prioritizat...
   llx/planfile/generate_strategy.py:
     e: _normalize_strategy_data,_normalize_sprints,_normalize_single_sprint,_extract_sprint_id,_generate_tasks_from_patterns,_normalize_quality_gates,_normalize_single_gate,_normalize_goal,_normalize_metadata,generate_strategy_with_fix,_print_generation_info,_build_strategy_prompt,_call_llm_for_strategy,_parse_and_fix_yaml,_fix_yaml_formatting,_fix_list_formatting,_fix_indentation,save_fixed_strategy,main
     _normalize_strategy_data(data)
@@ -517,9 +521,6 @@ Ever...
     _fix_indentation(yaml_text)
     save_fixed_strategy(data;output_path)
     main()
-  llx/orchestration/queue/manager.py:
-    e: QueueManager
-    QueueManager: __init__(1),load_queues(0),save_queues(0),start(0),stop(0),add_queue(1),remove_queue(1),enqueue_request(1),dequeue_request(1),complete_request(3),get_queue_status(1),get_queue_metrics(1),_get_queue_id(2),_get_single_queue_status(1),_get_all_queue_status(0),_worker_loop(2),_process_request(1),_retry_request(2),_calculate_retry_delay(2),_update_averages(2),print_status_summary(0)  # Manages multiple request queues with intelligent prioritizat...
   llx/prellm/model_catalog.py:
     e: list_model_pairs,list_openrouter_models
     list_model_pairs(provider;search)
@@ -643,13 +644,6 @@ Us...
     run_redup(project_path;output_dir;fmt)
     run_vallm(project_path;output_dir)
     run_all_tools(project_path;output_dir;on_progress)
-  llx/cli/strategy_commands.py:
-    e: create_strategy,validate_strategy,run_strategy_command,verify_strategy,add_strategy_commands
-    create_strategy(output;model;local)
-    validate_strategy(strategy_file)
-    run_strategy_command(strategy_file;project_path;backend;dry_run)
-    verify_strategy(strategy_file;project_path;backend)
-    add_strategy_commands(main_app)
   llx/prellm/budget.py:
     e: BudgetExceededError,UsageEntry,BudgetTracker,_current_month_key,get_budget_tracker,reset_budget_tracker
     BudgetExceededError(Exception): __init__(3)  # Raised when the monthly budget limit has been reached...
@@ -661,6 +655,13 @@ Usage:
     _current_month_key()
     get_budget_tracker(monthly_limit;persist_path)
     reset_budget_tracker()
+  llx/cli/strategy_commands.py:
+    e: create_strategy,validate_strategy,run_strategy_command,verify_strategy,add_strategy_commands
+    create_strategy(output;model;local)
+    validate_strategy(strategy_file)
+    run_strategy_command(strategy_file;project_path;backend;dry_run)
+    verify_strategy(strategy_file;project_path;backend)
+    add_strategy_commands(main_app)
   llx/planfile/models.py:
     e: TaskType,ModelTier,ModelHints,TaskPattern,Sprint,Goal,QualityGate,Strategy
     TaskType(str,Enum):  # Type of task in the strategy...
@@ -709,11 +710,6 @@ Usage:
     _cmd_metrics(args;engine)
     _cmd_optimize(args;engine)
     main()
-  llx/prellm/logging_setup.py:
-    e: setup_logging,get_logger,_get_version
-    setup_logging(level;markdown_file;terminal_format)
-    get_logger(name)
-    _get_version()
   llx/prellm/context_ops.py:
     e: collect_user_context,collect_environment_context,compress_codebase_folder,generate_context_schema,build_sensitive_filter,initialize_context_components,prepare_context,build_pipeline_context
     collect_user_context(user_context)
@@ -774,6 +770,11 @@ Usage:
   llx/prellm/context/shell_collector.py:
     e: ShellContextCollector
     ShellContextCollector: __init__(1),collect_env_vars(1),collect_process_info(0),collect_locale_info(0),collect_shell_info(0),collect_network_context(0),collect_all(1),_is_safe_key(1)  # Collects full shell environment context for LLM prompt enric...
+  llx/prellm/logging_setup.py:
+    e: setup_logging,get_logger,_get_version
+    setup_logging(level;markdown_file;terminal_format)
+    get_logger(name)
+    _get_version()
   simple_generate.py:
     e: generate_simple_strategy
     generate_simple_strategy(project_path;output)
@@ -924,6 +925,7 @@ Usage:
   llx/tools/utils/_cmd_uninstall_extension.py:
     e: create_simple_handler
     create_simple_handler(arg_name;arg_label;manager_method)
+  my-api/__init__.py:
   llx/__init__.py:
   llx/__main__.py:
   my-api/models.py:
@@ -945,22 +947,27 @@ Usage:
   llx/integrations/__init__.py:
   llx/routing/__init__.py:
   llx/orchestration/session/__init__.py:
-  llx/orchestration/instances/__init__.py:
   llx/orchestration/session/models.py:
     e: SessionType,SessionStatus,SessionConfig,SessionState
     SessionType(Enum):  # Types of sessions...
     SessionStatus(Enum):  # Session status...
     SessionConfig:  # Configuration for a session...
     SessionState:  # Current state of a session...
-  llx/orchestration/vscode/__init__.py:
-  llx/orchestration/llm/__init__.py:
+  llx/orchestration/instances/__init__.py:
   llx/orchestration/instances/models.py:
     e: InstanceType,InstanceStatus,InstanceConfig,InstanceState
     InstanceType(Enum):  # Types of instances...
     InstanceStatus(Enum):  # Instance status...
     InstanceConfig:  # Configuration for an instance...
     InstanceState:  # Current state of an instance...
-  llx/orchestration/queue/__init__.py:
+  llx/orchestration/vscode/__init__.py:
+  llx/orchestration/vscode/models.py:
+    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
+    VSCodeAccountType(Enum):  # Types of VS Code accounts...
+    VSCodeAccount:  # VS Code account configuration...
+    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
+    VSCodeSession:  # Active VS Code session...
+  llx/orchestration/llm/__init__.py:
   llx/orchestration/llm/models.py:
     e: LLMProviderType,ModelCapability,LLMModel,LLMProvider,LLMRequest,LLMResponse
     LLMProviderType(Enum):  # Types of LLM providers...
@@ -969,12 +976,7 @@ Usage:
     LLMProvider:  # LLM provider configuration...
     LLMRequest:  # LLM request...
     LLMResponse:  # LLM response...
-  llx/orchestration/vscode/models.py:
-    e: VSCodeAccountType,VSCodeAccount,VSCodeInstanceConfig,VSCodeSession
-    VSCodeAccountType(Enum):  # Types of VS Code accounts...
-    VSCodeAccount:  # VS Code account configuration...
-    VSCodeInstanceConfig:  # Configuration for a VS Code instance...
-    VSCodeSession:  # Active VS Code session...
+  llx/orchestration/queue/__init__.py:
   llx/orchestration/ratelimit/__init__.py:
   llx/orchestration/ratelimit/models.py:
     e: LimitType,RateLimitConfig,RateLimitState
@@ -982,8 +984,6 @@ Usage:
     RateLimitConfig:  # Configuration for rate limiting...
     RateLimitState:  # Current state of rate limiting...
   llx/orchestration/routing/__init__.py:
-  llx/prellm/chains/__init__.py:
-  llx/prellm/utils/__init__.py:
   llx/orchestration/routing/models.py:
     e: RoutingStrategy,ResourceType,RequestPriority,RoutingRequest,RoutingDecision,RoutingMetrics
     RoutingStrategy(Enum):  # Routing strategies...
@@ -992,6 +992,8 @@ Usage:
     RoutingRequest:  # A request to be routed...
     RoutingDecision:  # A routing decision...
     RoutingMetrics:  # Metrics for routing performance...
+  llx/prellm/chains/__init__.py:
+  llx/prellm/utils/__init__.py:
   llx/prellm/context/__init__.py:
   llx/prellm/analyzers/__init__.py:
   llx/prellm/agents/__init__.py:
@@ -1012,8 +1014,6 @@ Usage:
     restart()
     quick_chat()
     help()
-  generate.sh:
-  project.sh:
   docker-manage.sh:
     e: print_header,print_status,print_warning,print_error,check_docker,check_compose,get_compose_cmd
     print_header()
@@ -1023,14 +1023,16 @@ Usage:
     check_docker()
     check_compose()
     get_compose_cmd()
+  generate.sh:
+  project.sh:
   docker/ollama/entrypoint.sh:
+  docker/vscode/install-extensions.sh:
+    e: is_extension_installed,install_extension
+    is_extension_installed()
+    install_extension()
   docker/ai-tools/entrypoint.sh:
     e: hello_world,print,hello_world
     hello_world()
     print()
     hello_world()
   docker/ai-tools/install-tools.sh:
-  docker/vscode/install-extensions.sh:
-    e: is_extension_installed,install_extension
-    is_extension_installed()
-    install_extension()

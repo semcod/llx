@@ -1,12 +1,12 @@
-# code2llm | 136f 28058L | python:128,shell:8 | 2026-03-27
+# code2llm | 137f 28062L | python:129,shell:8 | 2026-03-29
 # CC̄=3.7 | critical:5/1090 | dups:0 | cycles:0
 
 HEALTH[5]:
   🟡 CC    _build_model_registry CC=15 (limit:15)
   🟡 CC    detect_from_files CC=15 (limit:15)
+  🟡 CC    get_status CC=15 (limit:15)
   🟡 CC    plan_all CC=16 (limit:15)
   🟡 CC    _plan_code_impl CC=19 (limit:15)
-  🟡 CC    get_status CC=15 (limit:15)
 
 REFACTOR[1]:
   1. split 5 high-CC methods  (CC>15)
@@ -14,13 +14,13 @@ REFACTOR[1]:
 PIPELINES[809]:
   [1] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
       PURITY: 100% pure
-  [2] Src [test]: test → _normalize_strategy_data → _normalize_goal
+  [2] Src [__init__]: __init__
       PURITY: 100% pure
-  [3] Src [__init__]: __init__
+  [3] Src [increment_successful_requests]: increment_successful_requests
       PURITY: 100% pure
-  [4] Src [increment_successful_requests]: increment_successful_requests
+  [4] Src [increment_failed_requests]: increment_failed_requests
       PURITY: 100% pure
-  [5] Src [increment_failed_requests]: increment_failed_requests
+  [5] Src [record_request_latency]: record_request_latency
       PURITY: 100% pure
 
 LAYERS:
@@ -153,6 +153,7 @@ LAYERS:
   │ monitoring                 125L  4C   14m  CC=2      ←0
   │ main                       107L  2C   11m  CC=3      ←0
   │ models                      42L  5C    0m  CC=0.0    ←0
+  │ __init__                     4L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.6    ←in:0  →out:0
   │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
@@ -189,15 +190,15 @@ COUPLING:
               trace                                                                                              1                                                                                                                                                                         ──
   CYCLES: none
   HUB: docker.ai-tools/ (fan-in=846)
-  HUB: llx/ (fan-in=17)
-  HUB: llx.analysis/ (fan-in=14)
   HUB: llx.integrations/ (fan-in=5)
+  HUB: llx.routing/ (fan-in=8)
+  HUB: llx.analysis/ (fan-in=14)
   HUB: llx.utils/ (fan-in=13)
   HUB: llx.planfile/ (fan-in=12)
-  HUB: llx.routing/ (fan-in=8)
+  HUB: llx/ (fan-in=17)
   SMELL: llx.tools/ fan-out=493 → split needed
-  SMELL: llx.orchestration/ fan-out=316 → split needed
   SMELL: llx.cli/ fan-out=54 → split needed
+  SMELL: llx.orchestration/ fan-out=316 → split needed
   SMELL: llx.mcp/ fan-out=17 → split needed
   SMELL: llx.planfile/ fan-out=30 → split needed
 

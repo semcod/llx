@@ -1,4 +1,4 @@
-# llx | 1043 func | 100f | 30513L | python | 2026-03-27
+# llx | 1043 func | 100f | 30509L | python | 2026-03-29
 
 HEALTH:
   CC̄=3.7  critical=54 (limit:10)  dup=5  cycles=0
@@ -15,7 +15,7 @@ ALERTS[20]:
   !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
   !!  high_fan_out     SessionManager.load_sessions = 16 (limit:10)
 
-MODULES[136] (top by size):
+MODULES[137] (top by size):
   M[llx/cli/app.py] 1087L C:0 F:28 CC↑19 D:0 (python)
   M[llx/tools/config_manager.py] 795L C:1 F:45 CC↑12 D:0 (python)
   M[llx/tools/vscode_manager.py] 792L C:1 F:38 CC↑10 D:0 (python)
@@ -31,7 +31,7 @@ MODULES[136] (top by size):
   M[llx/tools/docker_manager.py] 553L C:1 F:24 CC↑10 D:0 (python)
   M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
   M[llx/orchestration/queue/manager.py] 495L C:1 F:21 CC↑9 D:0 (python)
-  LANGS: python:128/shell:8
+  LANGS: python:129/shell:8
 
 HOTSPOTS[10]:
   ★ _plan_code_impl fan=36  // Internal implementation of plan code.
@@ -50,4 +50,4 @@ REFACTOR[15]:
   [5] H/H Split god module llx/orchestration/instances/manager.py (556L, 1 classes)
 
 EVOLUTION:
-  2026-03-27 CC̄=3.7 crit=54 30513L // Automated analysis
+  2026-03-29 CC̄=3.7 crit=54 30509L // Automated analysis

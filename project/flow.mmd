@@ -24,7 +24,6 @@ flowchart TD
 
     subgraph Core
         simple_generate__generate_simple_strategy["generate_simple_strategy"]
-        trace__test["test"]
         my_api__monitoring__CustomMetrics__increment_successful_requests["increment_successful_requests"]
         my_api__monitoring__CustomMetrics__increment_failed_requests["increment_failed_requests"]
         my_api__monitoring__CustomMetrics__record_request_latency["record_request_latency"]
@@ -35,6 +34,7 @@ flowchart TD
         my_api__monitoring__AlertingRules__add_rule["add_rule"]
         my_api__monitoring__AlertingRules__register_rules["register_rules"]
         my_api__monitoring__main["main"]
+        trace__test["test"]
         llx__config__LlxConfig__load["load"]
         llx__config___apply_yaml_models["_apply_yaml_models"]
         llx__prellm__cli_config__config_set_cmd["config_set_cmd"]
@@ -46,4 +46,4 @@ flowchart TD
         llx__prellm__context__user_memory__UserMemory__export_session["export_session"]
     end
 
-    class simple_generate__generate_simple_strategy,trace__test,my_api__monitoring__CustomMetrics__increment_successful_requests,my_api__monitoring__CustomMetrics__increment_failed_requests,my_api__monitoring__CustomMetrics__record_request_latency,my_api__monitoring__HealthChecks__check_database_connection,my_api__monitoring__HealthChecks__check_api_endpoint,my_api__monitoring__HealthChecks__register_healthchecks,my_api__monitoring__PrometheusMetrics__register_metrics,my_api__monitoring__AlertingRules__add_rule entry
+    class simple_generate__generate_simple_strategy,my_api__monitoring__CustomMetrics__increment_successful_requests,my_api__monitoring__CustomMetrics__increment_failed_requests,my_api__monitoring__CustomMetrics__record_request_latency,my_api__monitoring__HealthChecks__check_database_connection,my_api__monitoring__HealthChecks__check_api_endpoint,my_api__monitoring__HealthChecks__register_healthchecks,my_api__monitoring__PrometheusMetrics__register_metrics,my_api__monitoring__AlertingRules__add_rule,my_api__monitoring__AlertingRules__register_rules entry

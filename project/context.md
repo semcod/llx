@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 129, shell: 30
+- **Languages**: python: 130, shell: 30
 - **Analysis Mode**: static
 - **Total Functions**: 1090
 - **Total Classes**: 177
-- **Modules**: 159
+- **Modules**: 160
 - **Entry Points**: 906
 
 ## Architecture by Module
@@ -43,14 +43,14 @@
 - **Classes**: 1
 - **File**: `ai_tools_manager.py`
 
-### llx.cli.app
-- **Functions**: 28
-- **File**: `app.py`
-
 ### llx.orchestration.llm.orchestrator
 - **Functions**: 28
 - **Classes**: 1
 - **File**: `orchestrator.py`
+
+### llx.cli.app
+- **Functions**: 28
+- **File**: `app.py`
 
 ### llx.tools.health_checker
 - **Functions**: 27
@@ -101,14 +101,14 @@
 - **Classes**: 1
 - **File**: `limiter.py`
 
-### ai-tools-manage
-- **Functions**: 15
-- **File**: `ai-tools-manage.sh`
-
 ### llx.prellm.context.user_memory
 - **Functions**: 15
 - **Classes**: 1
 - **File**: `user_memory.py`
+
+### ai-tools-manage
+- **Functions**: 15
+- **File**: `ai-tools-manage.sh`
 
 ## Key Entry Points
 
@@ -146,13 +146,13 @@ Main execution flows into the system:
 > Load sessions from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, SessionConfig
 
-### llx.cli.app.plan_models
-> List available models.
-- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
-
 ### llx.orchestration.queue.manager.QueueManager.load_queues
 > Load queues from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, QueueConfig
+
+### llx.cli.app.plan_models
+> List available models.
+- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
 
 ### llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples
 > Print usage examples.
@@ -301,16 +301,16 @@ load_sessions [llx.orchestration.session.manager.SessionManager]
   └─ →> print
 ```
 
-### Flow 9: plan_models
-```
-plan_models [llx.cli.app]
-```
-
-### Flow 10: load_queues
+### Flow 9: load_queues
 ```
 load_queues [llx.orchestration.queue.manager.QueueManager]
   └─ →> print
   └─ →> print
+```
+
+### Flow 10: plan_models
+```
+plan_models [llx.cli.app]
 ```
 
 ## Key Classes
@@ -450,6 +450,12 @@ Key functions that process and transform data:
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
+### llx.prellm._get_process_chain
+
+### llx.prellm.pipeline_ops.run_preprocessing
+> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
+- **Output to**: time.time, preprocessor.preprocess, time.time
+
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
@@ -459,12 +465,6 @@ Special cases
 ### llx.prellm.server.batch_process
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm._get_process_chain
-
-### llx.prellm.pipeline_ops.run_preprocessing
-> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
-- **Output to**: time.time, preprocessor.preprocess, time.time
 
 ### llx.prellm.prompt_registry.PromptRegistry.validate
 > Validate that all prompts have non-empty templates. Returns list of error messages.
@@ -511,6 +511,22 @@ Usage:
 > Execute a DevOps process chain.
 - **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
 
+### llx.prellm.extractors.format_classification_context
+> Extract and format classification context from preprocessing result.
+- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
+
+### llx.prellm.extractors.format_context_schema
+> Extract and format context schema information.
+- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
+
+### llx.prellm.extractors.format_runtime_context
+> Extract and format runtime context information.
+- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
+
+### llx.prellm.extractors.format_user_context
+> Extract and format user context information.
+- **Output to**: extra_context.get, parts.append
+
 ### llx.analysis.collector._parse_map_stats_line
 > Parse: # stats: 814 func | 0 cls | 108 mod | CC̄=4.6
 - **Output to**: line.split, part.strip, re.search, re.search, re.search
@@ -523,21 +539,8 @@ Usage:
 > Parse: # hotspots[5]: _extract fan=45; ...
 - **Output to**: re.search, re.finditer, max, max, int
 
-### llx.tools.ai_tools_manager._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
-### llx.tools.cli._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, start_p.add_argument, start_p.add_argument
-
 ### llx.tools.docker_manager._build_parser
 - **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
-### llx.tools.vscode_manager._build_parser
-- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
-### llx.tools.config_manager.ConfigManager.validate_env_config
-> Validate environment configuration.
-- **Output to**: self.load_config, env_vars.get, env_vars.get, env_vars.get, None.append
 
 ## Behavioral Patterns
 
@@ -569,8 +572,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
 - `llx.planfile.generate_strategy.main` - 35 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
-- `llx.cli.app.plan_models` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
+- `llx.cli.app.plan_models` - 34 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
 - `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
 - `llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config` - 30 calls
@@ -591,8 +594,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
 - `llx.planfile.runner.run_strategy` - 23 calls
 - `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
-- `llx.cli.app.plan_generate` - 23 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
+- `llx.cli.app.plan_generate` - 23 calls
 - `llx.prellm.server.chat_completions` - 22 calls
 - `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
 - `llx.cli.app.chat` - 22 calls
@@ -633,10 +636,10 @@ graph TD
     load_sessions --> exists
     load_sessions --> get
     load_sessions --> print
-    plan_models --> command
-    plan_models --> Option
     load_queues --> exists
     load_queues --> get
+    load_queues --> print
+    plan_models --> command
 ```
 
 ## Reverse Engineering Guidelines

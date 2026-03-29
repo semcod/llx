@@ -1,4 +1,4 @@
-# code2llm/evolution | 1043 func | 100f | 2026-03-27
+# code2llm/evolution | 1043 func | 100f | 2026-03-29
 
 NEXT[6] (ranked by impact):
   [1] !! SPLIT           llx/cli/app.py
@@ -63,4 +63,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.8 → now CC̄=3.7
+  prev CC̄=3.7 → now CC̄=3.7
