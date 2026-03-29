@@ -397,6 +397,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.44] - 2026-03-29
+
+### Other
+- Update llx/commands/fix.py
+
 ## [0.1.43] - 2026-03-29
 
 ### Docs
