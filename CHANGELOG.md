@@ -397,6 +397,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.48] - 2026-03-30
+
+### Other
+- Update llx/__init__.py
+- Update llx/llm.py
+- Update llx/mcp/__init__.py
+- Update llx/mcp/workflows.py
+
 ## [0.1.47] - 2026-03-30
 
 ### Other
