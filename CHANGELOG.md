@@ -397,6 +397,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.50] - 2026-03-30
+
+### Other
+- Update llx/config.py
+- Update llx/llm.py
+
 ## [0.1.49] - 2026-03-30
 
 ### Test

@@ -6,10 +6,13 @@ without changing their import paths all at once.
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 try:
     from dotenv import load_dotenv
@@ -62,7 +65,15 @@ def _ensure_dotenv_loaded() -> None:
 def get_llm_model() -> str:
     """Get the default LLM model from environment or fallback settings."""
     _ensure_dotenv_loaded()
-    return os.getenv("LLM_MODEL", os.getenv("PFIX_MODEL", DEFAULT_MODEL))
+    model = os.getenv("LLM_MODEL") or os.getenv("PFIX_MODEL")
+    if model:
+        logger.debug("LLM_MODEL from .env: %s", model)
+        return model
+    logger.info(
+        "LLM_MODEL not set in .env — using config default: %s",
+        DEFAULT_MODEL,
+    )
+    return DEFAULT_MODEL
 
 
 def get_api_key() -> str | None:
