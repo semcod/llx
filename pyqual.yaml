@@ -1,17 +1,37 @@
 pipeline:
-  name: llx-quality-loop
+  name: llx-quality-loop-with-aider
 
   # Quality gates — pipeline iterates until ALL pass
   metrics:
-    coverage_min: 10     # test coverage (%) - llx current: ~15%
+    cc_max: 15           # cyclomatic complexity per function
+    vallm_pass_min: 90   # vallm validation pass rate (%)
+    coverage_min: 80     # test coverage (%)
 
   # Pipeline stages — executed in order
   stages:
+    - name: analyze
+      run: code2llm ./ -f toon,evolution || true
+
+    - name: validate
+      run: vallm batch ./ --recursive --errors-json > .pyqual/errors.json || true
+
+    # Autonomous code generation / fixes via llx + aider.
+    - name: fix
+      run: llx fix . --errors .pyqual/errors.json --verbose
+      when: metrics_fail
+
     - name: test
-      run: pytest tests/ -v --cov=llx --cov-report=json:.pyqual/coverage.json
+      run: pytest --cov=llx --cov-report=json:.pyqual/coverage.json
       when: always
 
   # Loop behavior
   loop:
-    max_iterations: 1
+    max_iterations: 3
     on_fail: report
+
+  # Environment passed to every stage command.
+  env:
+    LLM_MODEL: openrouter/qwen/qwen3-coder-next
+    LLX_CODE_TOOL: aider
+    LLX_DEFAULT_TIER: balanced
+    LLX_VERBOSE: true

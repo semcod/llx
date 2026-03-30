@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.48"
+version = "0.1.49"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 license = "Apache-2.0"
@@ -78,6 +78,7 @@ all = [
     "jinja2>=3.1",
     "nfo>=0.1",
     "fastapi>=0.110",
+    "pyqual>=0.1.36",
 ]
 dev = [
     "pytest>=8.0",
@@ -87,6 +88,7 @@ dev = [
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
+    "pyqual>=0.1.36",
     "starlette>=0.37",
     "sse-starlette>=2.0",
     "uvicorn>=0.29",
