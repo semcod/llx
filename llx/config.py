@@ -17,6 +17,7 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -133,6 +134,33 @@ class ProxyConfig:
     budget_limit: float | None = None
 
 
+def normalize_litellm_base_url(base_url: str) -> str:
+    """Normalize an OpenAI-compatible base URL for llx clients.
+
+    llx accepts both root endpoints such as ``http://localhost:4000`` and
+    OpenAI-style bases such as ``http://localhost:4000/v1``. The latter is
+    normalized so llx can append its own ``/v1/...`` request paths without
+    accidentally duplicating the version segment.
+    """
+    stripped = base_url.strip()
+    if not stripped:
+        return stripped
+
+    if "://" not in stripped:
+        path = stripped.rstrip("/")
+        if path.endswith("/v1"):
+            path = path[:-3]
+        return path
+
+    parsed = urlsplit(stripped)
+    path = parsed.path.rstrip("/")
+    if path.endswith("/v1"):
+        path = path[:-3]
+
+    normalized = urlunsplit((parsed.scheme, parsed.netloc, path, parsed.query, parsed.fragment))
+    return normalized.rstrip("/")
+
+
 @dataclass
 class LlxConfig:
     """Root configuration for llx."""
@@ -149,6 +177,9 @@ class LlxConfig:
     code_tool: str = "internal"  # internal, aider, etc.
     run_env: str = "local"     # local, docker, k8s, etc.
     litellm_config: LiteLLMConfig = field(default_factory=LiteLLMConfig._default_config)
+
+    def __post_init__(self) -> None:
+        self.litellm_base_url = normalize_litellm_base_url(self.litellm_base_url)
 
     @classmethod
     def load(cls, project_path: str | Path = ".") -> LlxConfig:
@@ -170,7 +201,9 @@ class LlxConfig:
                 if config.litellm_config.model_list:
                     litellm_models = config.litellm_config.to_llx_models()
                     config.models.update(litellm_models)
-                return _apply_env(config)
+                config = _apply_env(config)
+                config.litellm_base_url = normalize_litellm_base_url(config.litellm_base_url)
+                return config
 
         # Try llx.toml (legacy)
         for name in ("llx.toml", ".llx.toml"):
@@ -179,7 +212,9 @@ class LlxConfig:
                 with open(toml_path, "rb") as f:
                     data = tomllib.load(f)
                 config = _apply_toml(config, data)
-                return _apply_env(config)
+                config = _apply_env(config)
+                config.litellm_base_url = normalize_litellm_base_url(config.litellm_base_url)
+                return config
 
         # Fallback to pyproject.toml [tool.llx]
         pyproject = root / "pyproject.toml"
@@ -190,7 +225,9 @@ class LlxConfig:
             if tool_llx:
                 config = _apply_toml(config, tool_llx)
 
-        return _apply_env(config)
+        config = _apply_env(config)
+        config.litellm_base_url = normalize_litellm_base_url(config.litellm_base_url)
+        return config
 
 
 def _apply_toml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:

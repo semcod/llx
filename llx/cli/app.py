@@ -287,15 +287,18 @@ def _run_analysis_tools(project_path: Path, config: LlxConfig) -> None:
 @mcp_app.command("start")
 def mcp_start(
     mode: str = typer.Option("stdio", help="Server mode: stdio or sse"),
-    port: int = typer.Option(3000, help="Port for SSE mode"),
+    port: int = typer.Option(8000, help="Port for SSE mode"),
 ) -> None:
     """Start the llx MCP server."""
-    import asyncio
     from llx.mcp.server import main as mcp_main
+
     console.print(f"Starting llx MCP server ({mode} mode)...")
     if mode == "sse":
-        console.print(f"[yellow]SSE mode not yet implemented, using stdio[/yellow]")
-    asyncio.run(mcp_main())
+        console.print(f"[green]SSE endpoint:[/green] http://localhost:{port}/sse")
+        mcp_main(["--sse", "--port", str(port)])
+        return
+
+    mcp_main([])
 
 @mcp_app.command("config")
 def mcp_config() -> None:

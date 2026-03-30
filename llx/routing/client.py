@@ -16,6 +16,7 @@ from typing import Any, AsyncIterator, Iterator
 import httpx
 
 from llx.config import LlxConfig, ModelConfig
+from llx.config import normalize_litellm_base_url
 from llx.analysis.collector import ProjectMetrics
 
 
@@ -62,6 +63,7 @@ class LlxClient:
 
     def __init__(self, config: LlxConfig | None = None):
         self.config = config or LlxConfig()
+        self.config.litellm_base_url = normalize_litellm_base_url(self.config.litellm_base_url)
         headers = {"Content-Type": "application/json"}
         # Add auth header for proxy
         if self.config.proxy.master_key:

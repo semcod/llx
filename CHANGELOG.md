@@ -397,6 +397,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.46] - 2026-03-30
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update docs/aider-integration.md
+
+### Test
+- Update tests/test_mcp.py
+- Update tests/test_proxym_integration.py
+
+### Other
+- Update llx/cli/app.py
+- Update llx/config.py
+- Update llx/integrations/proxym.py
+- Update llx/mcp/__main__.py
+- Update llx/mcp/server.py
+- Update llx/routing/client.py
+
 ## [0.1.45] - 2026-03-29
 
 ### Docs

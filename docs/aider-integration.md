@@ -27,6 +27,8 @@ docker exec -it <ollama_container> ollama pull qwen2.5-coder:7b
 
 ### 1. Via MCP Server
 
+This example uses the default **stdio** transport. If you need a web or remote client, start the MCP server in SSE mode with `llx mcp start --mode sse --port 8000` and connect to `http://localhost:8000/sse` plus `http://localhost:8000/messages/`.
+
 ```python
 from mcp.client.session import ClientSession
 from mcp.client.stdio import stdio_client

@@ -26,7 +26,7 @@ from typing import Any
 import httpx
 
 from llx.analysis.collector import ProjectMetrics
-from llx.config import LlxConfig
+from llx.config import LlxConfig, normalize_litellm_base_url
 from llx.routing.selector import ModelTier, select_model
 
 
@@ -123,7 +123,8 @@ class ProxymClient:
         timeout: float = 120.0,
     ):
         self.config = config or LlxConfig()
-        self.base_url = base_url or self.config.litellm_base_url
+        self.base_url = normalize_litellm_base_url(base_url or self.config.litellm_base_url)
+        self.config.litellm_base_url = self.base_url
         self._http = httpx.Client(
             base_url=self.base_url,
             timeout=timeout,

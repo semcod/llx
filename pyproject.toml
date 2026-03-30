@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.45"
+version = "0.1.46"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 license = "Apache-2.0"
@@ -42,7 +42,7 @@ llx-orchestrator = "llx.orchestration.orchestrator_cli:main"
 llx-mcp = "llx.mcp.server:main_sync"
 
 [project.optional-dependencies]
-mcp = ["mcp>=1.0"]
+mcp = ["mcp>=1.0", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
 litellm = ["litellm>=1.40"]
 code2llm = ["code2llm>=0.9"]
 redup = ["redup>=0.4"]
@@ -72,10 +72,12 @@ all = [
     "vallm>=0.1",
     "ollama>=0.3",
     "mcp>=1.0",
+    "starlette>=0.37",
+    "sse-starlette>=2.0",
+    "uvicorn>=0.29",
     "jinja2>=3.1",
     "nfo>=0.1",
     "fastapi>=0.110",
-    "uvicorn>=0.29",
 ]
 dev = [
     "pytest>=8.0",
@@ -85,6 +87,9 @@ dev = [
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
+    "starlette>=0.37",
+    "sse-starlette>=2.0",
+    "uvicorn>=0.29",
 ]
 
 [project.urls]

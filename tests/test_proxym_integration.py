@@ -159,3 +159,31 @@ class TestListModelsUnavailable:
         models = client.list_models()
         assert models == []
         client.close()
+
+
+class TestBaseUrlNormalization:
+    """Regression tests for llx-side endpoint normalization."""
+
+    def test_normalize_litellm_base_url_strips_v1_suffix(self):
+        from llx.config import normalize_litellm_base_url
+
+        assert normalize_litellm_base_url("http://localhost:4000") == "http://localhost:4000"
+        assert normalize_litellm_base_url("http://localhost:4000/v1") == "http://localhost:4000"
+        assert normalize_litellm_base_url("http://localhost:4000/v1/") == "http://localhost:4000"
+        assert normalize_litellm_base_url("http://localhost:4000/api/v1") == "http://localhost:4000/api"
+
+    def test_llx_client_normalizes_config_base_url(self):
+        from llx.config import LlxConfig
+        from llx.routing.client import LlxClient
+
+        client = LlxClient(LlxConfig(litellm_base_url="http://localhost:4000/v1"))
+        assert client.config.litellm_base_url == "http://localhost:4000"
+        client.close()
+
+    def test_proxym_client_normalizes_config_base_url(self):
+        from llx.integrations.proxym import ProxymClient
+
+        client = ProxymClient(base_url="http://localhost:4000/v1")
+        assert client.base_url == "http://localhost:4000"
+        assert client.config.litellm_base_url == "http://localhost:4000"
+        client.close()

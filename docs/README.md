@@ -564,7 +564,7 @@ llx/
 - `models(tag, provider, tier)` — Show available models with optional filtering by tags, provider, or tier.
 - `info()` — Show available tools, models, and configuration.
 - `init(path)` — Initialize llx.toml configuration file.
-- `mcp_start(mode, port)` — Start the llx MCP server.
+- `mcp_start(mode, port)` — Start the llx MCP server (stdio by default; `--mode sse` exposes `/sse` and `/messages/`).
 - `mcp_config()` — Print Claude Desktop config snippet.
 - `mcp_tools()` — List available MCP tools.
 - `plan_apply(strategy, path, sprint, dry_run)` — Apply a planfile strategy to the project.

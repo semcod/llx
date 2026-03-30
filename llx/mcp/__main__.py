@@ -1,4 +1,8 @@
 """Allow: python -m llx.mcp"""
-from llx.mcp.server import main
-import asyncio
-asyncio.run(main())
+
+import sys
+
+from llx.mcp.server import main_sync
+
+
+raise SystemExit(main_sync(sys.argv[1:]))

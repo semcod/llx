@@ -11,7 +11,7 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.45-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.46-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$6.15-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-11.9h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
 - 🤖 **LLM usage:** $6.1500 (41 commits)
@@ -79,15 +79,39 @@ preLLM proved the concept but had architectural issues that llx resolves:
 
 llx now provides a complete **MCP (Model Context Protocol) server** that exposes all wronai tools as MCP endpoints:
 
+By default, the MCP server runs over **stdio** for Claude Desktop. If you need to connect from a web client or another process, start the SSE server explicitly and use the `/sse` and `/messages/` endpoints.
+
 ```bash
-# Start MCP server for Claude Desktop
+# Start MCP server for Claude Desktop (stdio)
 llx mcp start
+
+# Start MCP server over SSE for web/remote clients
+llx mcp start --mode sse --port 8000
+
+# SSE endpoint: http://localhost:8000/sse
+# Message endpoint: http://localhost:8000/messages/
 
 # Generate Claude Desktop config
 llx mcp config
 
 # List available MCP tools
 llx mcp tools
+```
+
+### SSE / HTTP clients
+
+For clients like `pyqual` that expect an HTTP SSE endpoint, start llx in SSE mode:
+
+```bash
+llx mcp start --mode sse --port 8000
+# or
+python -m llx.mcp --sse --port 8000
+```
+
+Then point the client at:
+
+```text
+http://localhost:8000/sse
 ```
 
 ### MCP Tools Available
