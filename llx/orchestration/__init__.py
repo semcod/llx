@@ -32,4 +32,4 @@ __all__ = [
     "LLMOrchestrator",
 ]
 
-__version__ = "0.1.46"
+__version__ = "0.1.47"

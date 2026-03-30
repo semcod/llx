@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +12,7 @@ from rich.panel import Panel
 from llx.analysis.collector import ProjectMetrics, analyze_project
 from llx.config import LlxConfig
 from llx.routing.selector import SelectionResult, select_model
+from llx.utils.issues import load_issue_source, build_fix_prompt
 
 # Import preLLM if available
 try:
@@ -43,8 +43,11 @@ def fix(
     if errors:
         errors_path = Path(errors)
         if errors_path.exists():
-            errors_data = _load_errors(errors_path)
-            console.print(f"[green]✓[/green] Loaded {len(errors_data)} errors from {errors}")
+            errors_data = load_issue_source(errors_path)
+            if isinstance(errors_data, list):
+                console.print(f"[green]✓[/green] Loaded {len(errors_data)} errors from {errors}")
+            else:
+                console.print(f"[green]✓[/green] Loaded errors from {errors}")
         else:
             console.print(f"[red]✗[/red] Errors file not found: {errors}")
             raise typer.Exit(1)
@@ -70,7 +73,8 @@ def fix(
     console.print(Panel(_format_metrics(metrics), title="Project Metrics", border_style="blue"))
 
     # Prepare fix prompt
-    prompt = _prepare_fix_prompt(workdir_path, errors_data, metrics)
+    issues_for_prompt = errors_data if errors_data is not None else []
+    prompt = build_fix_prompt(workdir_path, issues_for_prompt)
 
     if dry_run:
         console.print("\n[bold]Dry run - would execute:[/bold]")
@@ -112,18 +116,6 @@ def fix(
         raise typer.Exit(1)
 
 
-def _load_errors(errors_path: Path) -> list[dict[str, Any]]:
-    """Load error entries from JSON and normalize common shapes."""
-    raw = json.loads(errors_path.read_text())
-    if isinstance(raw, list):
-        return [item for item in raw if isinstance(item, dict)]
-    if isinstance(raw, dict):
-        for key in ("errors", "results", "issues"):
-            value = raw.get(key)
-            if isinstance(value, list):
-                return [item for item in value if isinstance(item, dict)]
-    return []
-
 
 def _select_small_model(config: LlxConfig) -> str:
     """Choose a smaller model for the preLLM preprocessing step."""
@@ -162,36 +154,6 @@ def _format_metrics(metrics: ProjectMetrics) -> str:
     ]
     return "\n".join(lines)
 
-
-def _prepare_fix_prompt(workdir: Path, errors_data: list[dict] | None, metrics: ProjectMetrics) -> str:
-    """Prepare fix prompt based on errors and metrics."""
-    prompt_parts = [
-        f"Fix code issues in project at {workdir.name}",
-        f"\nProject metrics:",
-        f"- Files: {metrics.total_files}",
-        f"- Lines: {metrics.total_lines:,}",
-        f"- Average CC: {metrics.avg_cc:.1f}",
-        f"- Max CC: {metrics.max_cc}",
-    ]
-
-    if errors_data:
-        prompt_parts.append(f"\nFound {len(errors_data)} errors:")
-        for i, error in enumerate(errors_data[:5]):  # Show first 5 errors
-            prompt_parts.append(
-                f"\n{i+1}. {error.get('file', 'unknown')}:"
-                f" {error.get('message', 'no message')}"
-                f" (line {error.get('line', '?')})"
-            )
-        if len(errors_data) > 5:
-            prompt_parts.append(f"\n... and {len(errors_data) - 5} more errors")
-    
-    prompt_parts.extend([
-        "\nPlease provide specific code fixes for these issues.",
-        "Focus on reducing cyclomatic complexity and fixing validation errors.",
-        "Return the fixes in a clear format with file paths and line numbers."
-    ])
-
-    return "\n".join(prompt_parts)
 
 
 if __name__ == "__main__":
