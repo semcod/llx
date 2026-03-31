@@ -65,7 +65,7 @@ def _ensure_dotenv_loaded() -> None:
 def get_llm_model() -> str:
     """Get the default LLM model from environment or fallback settings."""
     _ensure_dotenv_loaded()
-    model = os.getenv("LLM_MODEL") or os.getenv("PFIX_MODEL")
+    model = os.getenv("LLM_MODEL")
     if model:
         logger.debug("LLM_MODEL from .env: %s", model)
         return model
