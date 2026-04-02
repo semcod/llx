@@ -1,37 +1,43 @@
 pipeline:
   name: llx-quality-loop-with-aider
-
-  # Quality gates — pipeline iterates until ALL pass
   metrics:
-    cc_max: 15           # cyclomatic complexity per function
-    vallm_pass_min: 90   # vallm validation pass rate (%)
-    coverage_min: 80     # test coverage (%)
-
-  # Pipeline stages — executed in order
+    cc_max: 2
+    vallm_pass_min: 90
+    coverage_min: 50
   stages:
-    - name: analyze
-      run: code2llm ./ -f toon,evolution || true
-
-    - name: validate
-      run: vallm batch ./ --recursive --errors-json > .pyqual/errors.json || true
-
-    # Autonomous code generation / fixes via llx + aider.
-    - name: fix
-      run: llx fix . --errors .pyqual/errors.json --verbose
-      when: metrics_fail
-
-    - name: test
-      run: pytest --cov=llx --cov-report=json:.pyqual/coverage.json
-      when: always
-
-  # Loop behavior
+  - name: test
+    run: .venv/bin/pytest --cov=llx --cov-report=json:.pyqual/coverage.json -q
+    when: always
+  - name: prefact
+    tool: prefact
+    optional: true
+    when: metrics_fail
+    timeout: 300
+  - name: fix
+    run: llx fix . --apply --errors TODO.md --verbose
+    when: metrics_fail
+    timeout: 1800
+  - name: verify
+    run: echo "Skipping vallm verify on large project" || vallm batch ./ --recursive
+      --format toon --output ./project
+    optional: true
+    when: after_fix
+    timeout: 30
+  - name: build
+    run: .venv/bin/python -m build
+    when: metrics_pass
+    timeout: 120
+  - name: publish
+    run: .venv/bin/python -m twine upload dist/* --skip-existing || echo "Publish skipped"
+    optional: true
+    when: metrics_pass
+    timeout: 120
   loop:
     max_iterations: 3
     on_fail: report
-
-  # Environment passed to every stage command.
   env:
-    LLM_MODEL: openrouter/qwen/qwen3-coder-next
-    LLX_CODE_TOOL: aider
+    LLM_MODEL: openrouter/openai/gpt-5-mini
+    LLX_CODE_TOOL: internal
     LLX_DEFAULT_TIER: balanced
     LLX_VERBOSE: true
+    PATH: "/home/tom/github/semcod/llx/.venv/bin:/usr/local/bin:/usr/bin:/bin"

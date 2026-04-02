@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -75,7 +77,13 @@ def fix(
 
     # Prepare fix prompt
     issues_for_prompt = errors_data if errors_data is not None else []
-    prompt = build_fix_prompt(workdir_path, issues_for_prompt)
+    analysis = {
+        "selection": {
+            "model_id": selected_model_id,
+            "tier": selection.tier.value if selection else "forced",
+        }
+    } if selected_model_id else None
+    prompt = build_fix_prompt(workdir_path, issues_for_prompt, analysis=analysis)
 
     if dry_run:
         console.print("\n[bold]Dry run - would execute:[/bold]")
@@ -138,8 +146,11 @@ def fix(
         console.print(Panel(result.content, title="LLM Response", border_style="green"))
 
         if apply and result.content:
-            # Apply fixes (simplified - in real implementation would parse and apply)
-            console.print("\n[yellow]![/yellow] Auto-apply not implemented yet. Please apply manually.")
+            changes, files = apply_code_changes(workdir_path, result.content)
+            if changes > 0:
+                console.print(f"\n[green]✓[/green] Applied {changes} changes to {len(files)} files: {', '.join(files)}")
+            else:
+                console.print("\n[yellow]![/yellow] No code changes could be auto-applied. Manual review needed.")
 
     except Exception as e:
         console.print(f"[red]✗[/red] Error generating fixes: {e}")
@@ -148,6 +159,70 @@ def fix(
             console.print(traceback.format_exc())
         raise typer.Exit(1)
 
+
+def apply_code_changes(workdir: Path, content: str) -> tuple[int, list[str]]:
+    """Parse code blocks from LLM response and apply changes to files.
+    
+    Returns:
+        Tuple of (number of changes applied, list of modified files)
+    """
+    # Pattern to match code blocks with file paths
+    # Matches: ```python filename.py\ncode\n``` or ```filename.py\ncode\n```
+    code_block_pattern = r'```(?:python)?\s*\n?(?:(#|//)\s*(?:File|file):?\s*)?(\S+).*?\n(.*?)```'
+    
+    changes_applied = 0
+    modified_files: list[str] = []
+    
+    # Simple approach: look for code blocks and try to extract filename
+    lines = content.split('\n')
+    current_file = None
+    current_code: list[str] = []
+    in_code_block = False
+    
+    for line in lines:
+        if line.startswith('```'):
+            if in_code_block and current_file and current_code:
+                # Save the code block
+                file_path = workdir / current_file
+                try:
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+                    file_path.write_text('\n'.join(current_code))
+                    modified_files.append(str(current_file))
+                    changes_applied += 1
+                except Exception:
+                    pass
+                current_file = None
+                current_code = []
+            in_code_block = not in_code_block
+            # Try to extract filename from ``` line
+            if in_code_block:
+                parts = line.replace('```', '').strip().split()
+                if parts and not parts[0].startswith('python'):
+                    current_file = parts[0]
+                elif parts and len(parts) > 1:
+                    current_file = parts[1]
+        elif in_code_block:
+            # Check for file header comment
+            if line.strip().startswith('# File:') or line.strip().startswith('// File:'):
+                file_comment = line.strip().replace('# File:', '').replace('// File:', '').strip()
+                if file_comment:
+                    current_file = file_comment
+            elif line.strip().startswith('#') and ('.py' in line or '/' in line):
+                # Possible file path in comment
+                potential_file = line.strip().lstrip('#').strip()
+                if not potential_file.startswith(' '):
+                    current_file = potential_file
+            else:
+                current_code.append(line)
+    
+    # If no specific file blocks found, try to apply as patch to mentioned files
+    if changes_applied == 0:
+        # Look for search/replace patterns
+        search_replace_pattern = r'(?:^|\n)(?:#|//)\s*(?:SEARCH|REPLACE)\s*[:\n](.*?)(?=(?:\n(?:#|//)\s*(?:SEARCH|REPLACE)\s*[:\n]|\Z))'
+        # This is a simplified implementation
+        pass
+    
+    return changes_applied, modified_files
 
 
 def _extract_issue_files(issues: dict[str, Any] | list[dict[str, Any]] | list[Any]) -> list[str]:
