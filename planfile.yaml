@@ -4879,3 +4879,224 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-68331a44
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/commands/fix.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/commands/fix.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-32c6a4b0
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/commands/fix.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/commands/fix.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-49a99b0c
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in llx/commands/fix.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/commands/fix.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7f81ee6f
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/llm.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/llm.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-73ee53f8
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/llm.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/llm.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-3b5528be
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/client.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/client.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d75ce086
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/mcp/server.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/server.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-3811768c
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/service.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/service.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4e388d05
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/mcp/service.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/service.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7dda93bf
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in llx/mcp/service.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/service.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-164e6e35
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/workflows.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/mcp/workflows.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-dc5e0151
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/utils/issues.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - llx/utils/issues.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5bffe6eb
+    name: Fix outdated-dependency issues
+    description: Resolve 1 outdated-dependency issues in pyproject.toml
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - pyproject.toml
+    rule_id: outdated-dependency
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6288355b
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in scripts/pyqual_auto.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/pyqual_auto.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ede8a4ef
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in scripts/pyqual_auto.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - scripts/pyqual_auto.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-95888d1a
+    name: Fix magic-numbers issues
+    description: Resolve 5 magic-numbers issues in scripts/pyqual_auto.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - scripts/pyqual_auto.py
+    rule_id: magic-numbers
+    count: 5
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1091646d
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in scripts/pyqual_auto.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - scripts/pyqual_auto.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced

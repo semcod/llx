@@ -2,6 +2,9 @@
 my-api/.env.example
 test-api-qwen/.env.example
 .idea
+.pyqual
+.code2llm
+.code2llm_cache
 litellm_config.yaml
 litellm-config.yaml
 .llm

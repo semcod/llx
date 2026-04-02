@@ -18,12 +18,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       - name: Create virtualenv
         run: python -m venv .venv
       - name: Install dependencies
         run: |
           .venv/bin/python -m pip install --upgrade pip
-          .venv/bin/pip install -e ".[dev]" build twine
+          .venv/bin/pip install -e ".[dev,prellm-full]" build twine
+      - name: Run tests with verbose output
+        run: |
+          .venv/bin/python -m pytest --cov=llx --cov-report=json:.pyqual/coverage.json -v --tb=short
       - name: Run pyqual
         run: .venv/bin/pyqual run --config pyqual.yaml --workdir .
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY || 'dummy-key-for-ci' }}

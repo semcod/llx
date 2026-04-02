@@ -1,0 +1,413 @@
+# System Architecture Analysis
+
+## Overview
+
+- **Project**: .
+- **Primary Language**: python
+- **Languages**: python: 145, shell: 39
+- **Analysis Mode**: static
+- **Total Functions**: 1141
+- **Total Classes**: 182
+- **Modules**: 184
+- **Entry Points**: 0
+
+## Architecture by Module
+
+### llx.tools.config_manager
+- **Functions**: 45
+- **Classes**: 1
+- **File**: `config_manager.py`
+
+### llx.tools.vscode_manager
+- **Functions**: 38
+- **Classes**: 1
+- **File**: `vscode_manager.py`
+
+### llx.orchestration.routing.engine
+- **Functions**: 38
+- **Classes**: 1
+- **File**: `engine.py`
+
+### llx.tools.model_manager
+- **Functions**: 36
+- **Classes**: 1
+- **File**: `model_manager.py`
+
+### llx.prellm.trace
+- **Functions**: 29
+- **Classes**: 2
+- **File**: `trace.py`
+
+### llx.tools.ai_tools_manager
+- **Functions**: 29
+- **Classes**: 1
+- **File**: `ai_tools_manager.py`
+
+### llx.cli.app
+- **Functions**: 29
+- **File**: `app.py`
+
+### llx.orchestration.llm.orchestrator
+- **Functions**: 28
+- **Classes**: 1
+- **File**: `orchestrator.py`
+
+### llx.tools.health_checker
+- **Functions**: 27
+- **Classes**: 1
+- **File**: `health_checker.py`
+
+### llx.orchestration.vscode.orchestrator
+- **Functions**: 27
+- **Classes**: 1
+- **File**: `orchestrator.py`
+
+### llx.tools.docker_manager
+- **Functions**: 24
+- **Classes**: 1
+- **File**: `docker_manager.py`
+
+### llx.analysis.collector
+- **Functions**: 21
+- **Classes**: 1
+- **File**: `collector.py`
+
+### llx.orchestration.queue.manager
+- **Functions**: 21
+- **Classes**: 1
+- **File**: `manager.py`
+
+### llx.orchestration.session.manager
+- **Functions**: 20
+- **Classes**: 1
+- **File**: `manager.py`
+
+### llx.planfile.generate_strategy
+- **Functions**: 19
+- **File**: `generate_strategy.py`
+
+### llx.prellm.pipeline
+- **Functions**: 18
+- **Classes**: 5
+- **File**: `pipeline.py`
+
+### llx.orchestration.instances.manager
+- **Functions**: 18
+- **Classes**: 1
+- **File**: `manager.py`
+
+### llx.orchestration.ratelimit.limiter
+- **Functions**: 17
+- **Classes**: 1
+- **File**: `limiter.py`
+
+### root.ai-tools-manage
+- **Functions**: 15
+- **File**: `ai-tools-manage.sh`
+
+### llx.prellm.context.user_memory
+- **Functions**: 15
+- **Classes**: 1
+- **File**: `user_memory.py`
+
+## Key Entry Points
+
+Main execution flows into the system:
+
+## Process Flows
+
+Key execution flows identified:
+
+## Key Classes
+
+### llx.orchestration.routing.engine.RoutingEngine
+> Intelligent routing engine for LLM and VS Code requests.
+- **Methods**: 38
+- **Key Methods**: llx.orchestration.routing.engine.RoutingEngine.__init__, llx.orchestration.routing.engine.RoutingEngine.load_config, llx.orchestration.routing.engine.RoutingEngine.save_config, llx.orchestration.routing.engine.RoutingEngine.route_request, llx.orchestration.routing.engine.RoutingEngine._get_candidates, llx.orchestration.routing.engine.RoutingEngine._get_llm_candidates, llx.orchestration.routing.engine.RoutingEngine._get_vscode_candidates, llx.orchestration.routing.engine.RoutingEngine._get_ai_tools_candidates, llx.orchestration.routing.engine.RoutingEngine._filter_candidates, llx.orchestration.routing.engine.RoutingEngine._filter_by_rate_limits
+
+### llx.tools.config_manager.ConfigManager
+> Manages llx configuration files and settings.
+- **Methods**: 30
+- **Key Methods**: llx.tools.config_manager.ConfigManager.__init__, llx.tools.config_manager.ConfigManager.load_config, llx.tools.config_manager.ConfigManager.save_config, llx.tools.config_manager.ConfigManager._load_env_file, llx.tools.config_manager.ConfigManager._save_env_file, llx.tools.config_manager.ConfigManager.create_default_env, llx.tools.config_manager.ConfigManager.update_env_var, llx.tools.config_manager.ConfigManager.get_env_var, llx.tools.config_manager.ConfigManager.validate_env_config, llx.tools.config_manager.ConfigManager.get_llx_config
+
+### llx.orchestration.llm.orchestrator.LLMOrchestrator
+> Orchestrates multiple LLM providers and models with intelligent routing.
+- **Methods**: 28
+- **Key Methods**: llx.orchestration.llm.orchestrator.LLMOrchestrator.__init__, llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config, llx.orchestration.llm.orchestrator.LLMOrchestrator.save_config, llx.orchestration.llm.orchestrator.LLMOrchestrator._create_default_config, llx.orchestration.llm.orchestrator.LLMOrchestrator.start, llx.orchestration.llm.orchestrator.LLMOrchestrator.stop, llx.orchestration.llm.orchestrator.LLMOrchestrator.add_provider, llx.orchestration.llm.orchestrator.LLMOrchestrator.remove_provider, llx.orchestration.llm.orchestrator.LLMOrchestrator.add_model, llx.orchestration.llm.orchestrator.LLMOrchestrator.complete_request
+
+### llx.orchestration.vscode.orchestrator.VSCodeOrchestrator
+> Orchestrates multiple VS Code instances with intelligent management.
+- **Methods**: 27
+- **Key Methods**: llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.__init__, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.save_config, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator._create_default_config, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.stop, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.add_account, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.remove_account, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.create_instance, llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.remove_instance
+
+### llx.tools.model_manager.ModelManager
+> Manages local Ollama models and llx configurations.
+- **Methods**: 24
+- **Key Methods**: llx.tools.model_manager.ModelManager.__init__, llx.tools.model_manager.ModelManager.check_ollama_running, llx.tools.model_manager.ModelManager.check_llx_running, llx.tools.model_manager.ModelManager.get_ollama_models, llx.tools.model_manager.ModelManager.get_llx_models, llx.tools.model_manager.ModelManager.pull_model, llx.tools.model_manager.ModelManager.remove_model, llx.tools.model_manager.ModelManager.test_model, llx.tools.model_manager.ModelManager.test_llx_model, llx.tools.model_manager.ModelManager.get_model_info
+
+### llx.tools.ai_tools_manager.AIToolsManager
+> Manages AI tools container and operations.
+- **Methods**: 22
+- **Key Methods**: llx.tools.ai_tools_manager.AIToolsManager.__init__, llx.tools.ai_tools_manager.AIToolsManager.is_container_running, llx.tools.ai_tools_manager.AIToolsManager.start_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.stop_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.restart_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.access_shell, llx.tools.ai_tools_manager.AIToolsManager.execute_command, llx.tools.ai_tools_manager.AIToolsManager._get_service_statuses, llx.tools.ai_tools_manager.AIToolsManager._get_tool_statuses, llx.tools.ai_tools_manager.AIToolsManager._get_workspace_status
+
+### llx.tools.vscode_manager.VSCodeManager
+> Manages VS Code server with AI extensions.
+- **Methods**: 22
+- **Key Methods**: llx.tools.vscode_manager.VSCodeManager.__init__, llx.tools.vscode_manager.VSCodeManager.is_vscode_running, llx.tools.vscode_manager.VSCodeManager.start_vscode, llx.tools.vscode_manager.VSCodeManager.stop_vscode, llx.tools.vscode_manager.VSCodeManager.restart_vscode, llx.tools.vscode_manager.VSCodeManager.wait_for_vscode_ready, llx.tools.vscode_manager.VSCodeManager.check_vscode_health, llx.tools.vscode_manager.VSCodeManager.get_vscode_url, llx.tools.vscode_manager.VSCodeManager.get_vscode_password, llx.tools.vscode_manager.VSCodeManager.install_extensions
+
+### llx.prellm.trace.TraceRecorder
+> Records execution trace and generates markdown documentation.
+- **Methods**: 21
+- **Key Methods**: llx.prellm.trace.TraceRecorder.start, llx.prellm.trace.TraceRecorder.stop, llx.prellm.trace.TraceRecorder.step, llx.prellm.trace.TraceRecorder.set_result, llx.prellm.trace.TraceRecorder.total_duration_ms, llx.prellm.trace.TraceRecorder._generate_markdown_header, llx.prellm.trace.TraceRecorder._generate_markdown_config, llx.prellm.trace.TraceRecorder._generate_markdown_step_details, llx.prellm.trace.TraceRecorder._generate_markdown_decision_path, llx.prellm.trace.TraceRecorder._generate_markdown_result
+
+### llx.orchestration.queue.manager.QueueManager
+> Manages multiple request queues with intelligent prioritization.
+- **Methods**: 21
+- **Key Methods**: llx.orchestration.queue.manager.QueueManager.__init__, llx.orchestration.queue.manager.QueueManager.load_queues, llx.orchestration.queue.manager.QueueManager.save_queues, llx.orchestration.queue.manager.QueueManager.start, llx.orchestration.queue.manager.QueueManager.stop, llx.orchestration.queue.manager.QueueManager.add_queue, llx.orchestration.queue.manager.QueueManager.remove_queue, llx.orchestration.queue.manager.QueueManager.enqueue_request, llx.orchestration.queue.manager.QueueManager.dequeue_request, llx.orchestration.queue.manager.QueueManager.complete_request
+
+### llx.orchestration.session.manager.SessionManager
+> Manages multiple sessions with intelligent scheduling and rate limiting.
+- **Methods**: 20
+- **Key Methods**: llx.orchestration.session.manager.SessionManager.__init__, llx.orchestration.session.manager.SessionManager.load_sessions, llx.orchestration.session.manager.SessionManager.save_sessions, llx.orchestration.session.manager.SessionManager.create_session, llx.orchestration.session.manager.SessionManager.remove_session, llx.orchestration.session.manager.SessionManager.get_available_session, llx.orchestration.session.manager.SessionManager.request_session, llx.orchestration.session.manager.SessionManager.release_session, llx.orchestration.session.manager.SessionManager.get_session_status, llx.orchestration.session.manager.SessionManager.list_sessions
+
+### llx.prellm.pipeline.PromptPipeline
+> Generic pipeline — executes a sequence of LLM + algorithmic steps.
+
+Usage:
+    pipeline = PromptPipe
+- **Methods**: 18
+- **Key Methods**: llx.prellm.pipeline.PromptPipeline.__init__, llx.prellm.pipeline.PromptPipeline.from_yaml, llx.prellm.pipeline.PromptPipeline.execute, llx.prellm.pipeline.PromptPipeline._execute_llm_step, llx.prellm.pipeline.PromptPipeline._execute_algo_step, llx.prellm.pipeline.PromptPipeline._gather_inputs, llx.prellm.pipeline.PromptPipeline._build_user_message, llx.prellm.pipeline.PromptPipeline._evaluate_condition, llx.prellm.pipeline.PromptPipeline.register_algo_handler, llx.prellm.pipeline.PromptPipeline._algo_domain_rule_matcher
+
+### llx.tools.docker_manager.DockerManager
+> Manages Docker containers for llx ecosystem.
+- **Methods**: 18
+- **Key Methods**: llx.tools.docker_manager.DockerManager.__init__, llx.tools.docker_manager.DockerManager.get_compose_cmd, llx.tools.docker_manager.DockerManager.run_compose_cmd, llx.tools.docker_manager.DockerManager.start_environment, llx.tools.docker_manager.DockerManager.stop_environment, llx.tools.docker_manager.DockerManager.restart_service, llx.tools.docker_manager.DockerManager.get_service_status, llx.tools.docker_manager.DockerManager.get_service_logs, llx.tools.docker_manager.DockerManager.check_service_health, llx.tools.docker_manager.DockerManager.wait_for_service
+
+### llx.orchestration.instances.manager.InstanceManager
+> Manages multiple Docker instances with intelligent allocation and monitoring.
+- **Methods**: 18
+- **Key Methods**: llx.orchestration.instances.manager.InstanceManager.__init__, llx.orchestration.instances.manager.InstanceManager.load_instances, llx.orchestration.instances.manager.InstanceManager.save_instances, llx.orchestration.instances.manager.InstanceManager.create_instance, llx.orchestration.instances.manager.InstanceManager.start_instance, llx.orchestration.instances.manager.InstanceManager.stop_instance, llx.orchestration.instances.manager.InstanceManager.remove_instance, llx.orchestration.instances.manager.InstanceManager.get_available_instance, llx.orchestration.instances.manager.InstanceManager.use_instance, llx.orchestration.instances.manager.InstanceManager.get_instance_status
+
+### llx.orchestration.ratelimit.limiter.RateLimiter
+> Manages rate limiting for multiple providers and accounts.
+- **Methods**: 17
+- **Key Methods**: llx.orchestration.ratelimit.limiter.RateLimiter.__init__, llx.orchestration.ratelimit.limiter.RateLimiter.load_limits, llx.orchestration.ratelimit.limiter.RateLimiter.save_limits, llx.orchestration.ratelimit.limiter.RateLimiter._create_default_limits, llx.orchestration.ratelimit.limiter.RateLimiter.add_limit, llx.orchestration.ratelimit.limiter.RateLimiter.remove_limit, llx.orchestration.ratelimit.limiter.RateLimiter.check_rate_limit, llx.orchestration.ratelimit.limiter.RateLimiter.record_request, llx.orchestration.ratelimit.limiter.RateLimiter.release_request, llx.orchestration.ratelimit.limiter.RateLimiter.get_status
+
+### llx.prellm.context.user_memory.UserMemory
+> Stores user query history and learned preferences.
+
+Usage:
+    # SQLite (default, no extra deps)
+   
+- **Methods**: 15
+- **Key Methods**: llx.prellm.context.user_memory.UserMemory.__init__, llx.prellm.context.user_memory.UserMemory._init_sqlite, llx.prellm.context.user_memory.UserMemory._init_chromadb, llx.prellm.context.user_memory.UserMemory.add_interaction, llx.prellm.context.user_memory.UserMemory.get_recent_context, llx.prellm.context.user_memory.UserMemory.get_user_preferences, llx.prellm.context.user_memory.UserMemory.set_preference, llx.prellm.context.user_memory.UserMemory.clear, llx.prellm.context.user_memory.UserMemory.export_session, llx.prellm.context.user_memory.UserMemory.import_session
+
+### llx.tools.health_checker.HealthChecker
+> Comprehensive health monitoring for llx ecosystem.
+- **Methods**: 15
+- **Key Methods**: llx.tools.health_checker.HealthChecker.__init__, llx.tools.health_checker.HealthChecker._build_service_result, llx.tools.health_checker.HealthChecker._check_redis_health, llx.tools.health_checker.HealthChecker._populate_service_details, llx.tools.health_checker.HealthChecker._check_http_health, llx.tools.health_checker.HealthChecker.check_service_health, llx.tools.health_checker.HealthChecker.check_container_health, llx.tools.health_checker.HealthChecker.check_system_resources, llx.tools.health_checker.HealthChecker.check_filesystem_health, llx.tools.health_checker.HealthChecker.check_network_connectivity
+
+### llx.prellm.context.sensitive_filter.SensitiveDataFilter
+> Classifies and filters sensitive data from context before LLM calls.
+- **Methods**: 14
+- **Key Methods**: llx.prellm.context.sensitive_filter.SensitiveDataFilter.__init__, llx.prellm.context.sensitive_filter.SensitiveDataFilter._load_rules, llx.prellm.context.sensitive_filter.SensitiveDataFilter.classify_key, llx.prellm.context.sensitive_filter.SensitiveDataFilter.classify_value, llx.prellm.context.sensitive_filter.SensitiveDataFilter.filter_dict, llx.prellm.context.sensitive_filter.SensitiveDataFilter.filter_context_for_large_llm, llx.prellm.context.sensitive_filter.SensitiveDataFilter.sanitize_text, llx.prellm.context.sensitive_filter.SensitiveDataFilter.get_filter_report, llx.prellm.context.sensitive_filter.SensitiveDataFilter._filter_dict_item, llx.prellm.context.sensitive_filter.SensitiveDataFilter._filter_env_var_item
+
+### llx.prellm.context.codebase_indexer.CodebaseIndexer
+> Index a codebase using tree-sitter for AST-based symbol extraction.
+
+Usage:
+    indexer = CodebaseIn
+- **Methods**: 14
+- **Key Methods**: llx.prellm.context.codebase_indexer.CodebaseIndexer.__init__, llx.prellm.context.codebase_indexer.CodebaseIndexer._check_tree_sitter, llx.prellm.context.codebase_indexer.CodebaseIndexer.index_directory, llx.prellm.context.codebase_indexer.CodebaseIndexer._index_file, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_with_tree_sitter, llx.prellm.context.codebase_indexer.CodebaseIndexer._get_parser, llx.prellm.context.codebase_indexer.CodebaseIndexer._walk_tree, llx.prellm.context.codebase_indexer.CodebaseIndexer._get_line, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_with_regex, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_imports
+
+### llx.prellm.analyzers.context_engine.ContextEngine
+> Collects context from environment, git, and system for prompt enrichment.
+
+Used by both core Prellm 
+- **Methods**: 13
+- **Key Methods**: llx.prellm.analyzers.context_engine.ContextEngine.__init__, llx.prellm.analyzers.context_engine.ContextEngine.gather, llx.prellm.analyzers.context_engine.ContextEngine.enrich_prompt, llx.prellm.analyzers.context_engine.ContextEngine.gather_runtime, llx.prellm.analyzers.context_engine.ContextEngine._auto_collect_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_process, llx.prellm.analyzers.context_engine.ContextEngine._gather_locale, llx.prellm.analyzers.context_engine.ContextEngine._gather_network, llx.prellm.analyzers.context_engine.ContextEngine._gather_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_git
+
+### llx.prellm.query_decomposer.QueryDecomposer
+> Decomposes user queries using a small LLM before routing to a large model.
+
+Supports 5 strategies:
+ 
+- **Methods**: 10
+- **Key Methods**: llx.prellm.query_decomposer.QueryDecomposer.__init__, llx.prellm.query_decomposer.QueryDecomposer.decompose, llx.prellm.query_decomposer.QueryDecomposer._classify, llx.prellm.query_decomposer.QueryDecomposer._structure, llx.prellm.query_decomposer.QueryDecomposer._split, llx.prellm.query_decomposer.QueryDecomposer._enrich, llx.prellm.query_decomposer.QueryDecomposer._compose, llx.prellm.query_decomposer.QueryDecomposer._match_domain_rule, llx.prellm.query_decomposer.QueryDecomposer._auto_select_strategy, llx.prellm.query_decomposer.QueryDecomposer._find_missing_fields
+
+## Data Transformation Functions
+
+Key functions that process and transform data:
+
+### llx.commands.fix._format_aider_result
+> Render aider output for the console.
+- **Output to**: result.get, None.strip, None.strip, None.strip, result.get
+
+### llx.commands.fix._format_selection
+> Render a short selection summary.
+- **Output to**: selection.explain
+
+### llx.commands.fix._format_metrics
+> Render the most useful project metrics for the operator.
+- **Output to**: None.join
+
+### llx.examples.utils.TaskQueue.process
+> Process all tasks in queue.
+- **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
+
+### llx.prellm.cli_config._format_config_sections
+> Group config entries into categorized sections for display.
+- **Output to**: entries.items, None.append, None.append, var.startswith, None.append
+
+### llx.prellm.cli.process
+> Execute a DevOps process chain.
+- **Output to**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option
+
+### llx.prellm.trace._format_tree_value
+> Format a value for display in the decision tree — no truncation.
+- **Output to**: isinstance, str, isinstance, json.dumps, val.replace
+
+### llx.prellm._get_process_chain
+
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
+
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
+
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm.pipeline_ops.run_preprocessing
+> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
+- **Output to**: time.time, preprocessor.preprocess, time.time
+
+### llx.prellm.cli_query._execute_and_format_result
+> Execute the query and format output.
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute, recorder.stop, typer.echo, recorder.save
+
+### llx.prellm.prompt_registry.PromptRegistry.validate
+> Validate that all prompts have non-empty templates. Returns list of error messages.
+- **Output to**: self._ensure_loaded, set, self._entries.items, self._entries.keys, errors.append
+
+### llx.prellm.validators.ResponseValidator.validate
+> Validate a dict against a named schema.
+
+Args:
+    data: The data dict to validate (typically parsed
+- **Output to**: self._ensure_loaded, self._schemas.get, schema.types.items, schema.constraints.items, ValidationResult
+
+### llx.prellm.validators.ResponseValidator.validate_or_retry
+> Validate, and if invalid, call retry_fn and try again.
+
+Args:
+    data: Initial data to validate.
+  
+- **Output to**: self.validate, logger.info, retry_fn, self.validate
+
+### llx.prellm.core._trace_preprocess_configuration
+- **Output to**: trace.step, str
+
+### llx.prellm.core.preprocess_and_execute
+> One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
+- **Output to**: llx.prellm.core._resolve_pipeline_name, llx.prellm.core._apply_config_overrides, logger.info, llx.prellm.trace.get_current_trace, llx.prellm.core._trace_preprocess_configuration
+
+### llx.prellm.core.preprocess_and_execute_sync
+> Synchronous version of preprocess_and_execute() — runs the async function in an event loop.
+
+Usage:
+
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm.pipeline.PromptPipeline._algo_yaml_formatter
+> Format pipeline state into structured executor input.
+- **Output to**: inputs.get, state.get, state.get, isinstance, str
+
+### llx.prellm.cli_commands.process
+> Execute a DevOps process chain.
+- **Output to**: typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option
+
+### llx.prellm.extractors.format_classification_context
+> Extract and format classification context from preprocessing result.
+- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
+
+### llx.prellm.extractors.format_context_schema
+> Extract and format context schema information.
+- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
+
+### llx.prellm.extractors.format_runtime_context
+> Extract and format runtime context information.
+- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
+
+### llx.prellm.extractors.format_user_context
+> Extract and format user context information.
+- **Output to**: extra_context.get, parts.append
+
+### llx.prellm.chains.process_chain.ProcessChain._load_process_config
+- **Output to**: raw.get, ProcessConfig, open, steps.append, yaml.safe_load
+
+## Public API Surface
+
+Functions exposed as public API (no underscore prefix):
+
+- `llx.commands.fix.fix` - 60 calls
+- `llx.cli.app.plan_all` - 57 calls
+- `llx.prellm.cli_context.context` - 49 calls
+- `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
+- `llx.cli.app.plan_monitor` - 43 calls
+- `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
+- `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
+- `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
+- `llx.planfile.generate_strategy.main` - 35 calls
+- `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
+- `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
+- `llx.cli.app.plan_models` - 34 calls
+- `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
+- `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
+- `llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config` - 30 calls
+- `llx.orchestration.queue.manager.QueueManager.print_status_summary` - 30 calls
+- `llx.prellm.cli_commands.decompose` - 29 calls
+- `llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary` - 29 calls
+- `llx.mcp.workflows.run_llx_fix_workflow` - 28 calls
+- `llx.cli.app.plan_detect` - 28 calls
+- `llx.prellm.pipeline_ops.execute_v3_pipeline` - 27 calls
+- `llx.tools.docker_manager.DockerManager.print_status_summary` - 27 calls
+- `llx.mcp.service.create_service_app` - 27 calls
+- `llx.cli.app.plan_wizard` - 27 calls
+- `llx.config.LlxConfig.load` - 26 calls
+- `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
+- `llx.prellm.cli_config.config_show_cmd` - 25 calls
+- `llx.prellm.cli_commands.budget` - 25 calls
+- `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
+- `llx.prellm.env_config.get_env_config` - 24 calls
+- `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
+- `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
+- `llx.planfile.runner.run_strategy` - 23 calls
+- `llx.orchestration.instances.manager.InstanceManager.print_status_summary` - 23 calls
+- `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.start_instance` - 23 calls
+- `llx.utils.issues.issue_text` - 23 calls
+- `llx.cli.app.plan_generate` - 23 calls
+- `llx.prellm.server.chat_completions` - 22 calls
+- `llx.prellm.pipeline.PromptPipeline.from_yaml` - 22 calls
+- `llx.cli.app.chat` - 22 calls
+
+## System Interactions
+
+How components interact:
+
+```mermaid
+graph TD
+```
+
+## Reverse Engineering Guidelines
+
+1. **Entry Points**: Start analysis from the entry points listed above
+2. **Core Logic**: Focus on classes with many methods
+3. **Data Flow**: Follow data transformation functions
+4. **Process Flows**: Use the flow diagrams for execution paths
+5. **API Surface**: Public API functions reveal the interface
+
+## Context for LLM
+
+Maintain the identified architectural patterns and public API surface when suggesting changes.
