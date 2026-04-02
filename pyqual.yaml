@@ -34,10 +34,10 @@ pipeline:
     timeout: 120
   loop:
     max_iterations: 3
-    on_fail: report
+    on_fail: create_ticket
   env:
     LLM_MODEL: openrouter/openai/gpt-5-mini
     LLX_CODE_TOOL: internal
     LLX_DEFAULT_TIER: balanced
     LLX_VERBOSE: true
-    PATH: "/home/tom/github/semcod/llx/.venv/bin:/usr/local/bin:/usr/bin:/bin"
+    PATH: ".venv/bin:/usr/local/bin:/usr/bin:/bin"

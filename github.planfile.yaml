@@ -1,0 +1,4 @@
+integrations:
+  github:
+    repo: wronai/llx
+    token: ${GITHUB_TOKEN}

@@ -1,0 +1,48 @@
+name: pyqual issue sync
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - reopened
+      - closed
+      - labeled
+      - unlabeled
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Create virtualenv
+        run: python -m venv .venv
+      - name: Install dependencies
+        run: |
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -e ".[dev]" build twine
+      - name: Sync GitHub issues into TODO
+        run: |
+          .venv/bin/pyqual tickets github --workdir . --direction from
+          .venv/bin/pyqual tickets todo --workdir . --direction to
+      - name: Create pull request with TODO updates
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: pyqual/issue-sync
+          commit-message: "chore: sync GitHub issues to TODO"
+          title: "Sync GitHub issues to TODO"
+          body: |
+            Automated sync from GitHub issues via pyqual.
+          delete-branch: true
+          labels: automated, pyqual

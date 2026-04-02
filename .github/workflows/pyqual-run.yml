@@ -1,0 +1,29 @@
+name: pyqual run
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Create virtualenv
+        run: python -m venv .venv
+      - name: Install dependencies
+        run: |
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/pip install -e ".[dev]" build twine
+      - name: Run pyqual
+        run: .venv/bin/pyqual run --config pyqual.yaml --workdir .
