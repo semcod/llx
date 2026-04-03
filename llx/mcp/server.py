@@ -41,6 +41,9 @@ from llx.mcp.tools import (
     tool_aider,
     tool_planfile_generate,
     tool_planfile_apply,
+    tool_llx_privacy_scan,
+    tool_llx_project_anonymize,
+    tool_llx_project_deanonymize,
 )
 
 server = Server("llx")
@@ -60,6 +63,9 @@ TOOLS = [
     tool_aider,
     tool_planfile_generate,
     tool_planfile_apply,
+    tool_llx_privacy_scan,
+    tool_llx_project_anonymize,
+    tool_llx_project_deanonymize,
 ]
 
 @server.list_tools()

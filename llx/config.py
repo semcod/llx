@@ -177,6 +177,12 @@ class LlxConfig:
     code_tool: str = "internal"  # internal, aider, etc.
     run_env: str = "local"     # local, docker, k8s, etc.
     litellm_config: LiteLLMConfig = field(default_factory=LiteLLMConfig._default_config)
+    # Privacy settings
+    privacy: dict[str, Any] = field(default_factory=lambda: {
+        "enable_anonymization": False,
+        "patterns": ["api_key", "token", "password", "secret", "email", "phone", "ssn_pl"],
+        "exclude_patterns": [],
+    })
 
     def __post_init__(self) -> None:
         self.litellm_base_url = normalize_litellm_base_url(self.litellm_base_url)

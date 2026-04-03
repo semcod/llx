@@ -125,6 +125,9 @@ http://localhost:8000/sse
 | `redup_scan` | Run duplication detection | `redup` CLI |
 | `vallm_validate` | Validate code quality | `vallm` API/CLI |
 | `llx_proxy_status` | Check LiteLLM proxy status | `llx proxy status` |
+| `llx_privacy_scan` | Scan text for sensitive data | - |
+| `llx_project_anonymize` | Anonymize entire project | - |
+| `llx_project_deanonymize` | Deanonymize LLM responses | - |
 | `aider` | AI pair programming tool | `aider` CLI |
 
 ### Claude Desktop Setup
@@ -190,6 +193,63 @@ llx select . --local
 | Max CC | 25 | 15 | — | — |
 | Dup groups | 15 | 5 | — | — |
 | Dep cycles | any | — | — | — |
+
+## Privacy & Anonymization (NEW)
+
+LLX provides **reversible anonymization** to protect sensitive data when sending to LLMs:
+
+### Features
+- **Text anonymization**: Emails, API keys, passwords, PESEL, credit cards
+- **Project-level**: AST-based code anonymization (variables, functions, classes)
+- **Round-trip**: Anonymize → Send to LLM → Deanonymize response
+- **Persistent mapping**: Save/restore context for later deanonymization
+
+### Quick Usage
+
+```python
+from llx.privacy import quick_anonymize, quick_deanonymize
+
+# Simple text anonymization
+result = quick_anonymize("Email: user@example.com, API: sk-abc123")
+print(result.text)  # "Email: [EMAIL_A1B2], API: [APIKEY_C3D4]"
+
+# Later: restore original values
+restored = quick_deanonymize(llm_response, result.mapping)
+```
+
+### Project-Level Anonymization
+
+```python
+from llx.privacy.project import AnonymizationContext, ProjectAnonymizer
+from llx.privacy.deanonymize import ProjectDeanonymizer
+
+# Anonymize entire project
+ctx = AnonymizationContext(project_path="./my-project")
+anonymizer = ProjectAnonymizer(ctx)
+result = anonymizer.anonymize_project()
+
+# Save context for later
+ctx.save("./my-project.anon.json")
+
+# Deanonymize LLM response
+deanonymizer = ProjectDeanonymizer(ctx)
+restored = deanonymizer.deanonymize_chat_response(llm_response)
+```
+
+### MCP Tools
+
+```json
+// Scan for sensitive data
+{"tool": "llx_privacy_scan", "text": "Email: user@example.com"}
+
+// Anonymize project
+{"tool": "llx_project_anonymize", "path": "./my-project", "output_dir": "./anon"}
+
+// Deanonymize response
+{"tool": "llx_project_deanonymize", "context_path": "./anon/.anonymization_context.json", "text": "Fix fn_ABC123"}
+```
+
+See `docs/PRIVACY.md` and `examples/privacy/` for complete documentation.
 
 ## Real-World Selection Examples
 

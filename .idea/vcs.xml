@@ -4,7 +4,5 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../planfile" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../wronai/prellm" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../wronai/proxy" vcs="Git" />
   </component>
 </project>

@@ -10,7 +10,7 @@ Both modes support the OpenAI-compatible API format.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Iterator
 
 import httpx
@@ -20,12 +20,23 @@ from llx.config import normalize_litellm_base_url
 from llx.analysis.collector import ProjectMetrics
 
 
+try:
+    from llx.privacy import Anonymizer, AnonymizationResult
+    PRIVACY_AVAILABLE = True
+except ImportError:
+    PRIVACY_AVAILABLE = False
+    Anonymizer = None  # type: ignore
+    AnonymizationResult = None  # type: ignore
+
+
 @dataclass
 class ChatMessage:
     """A single chat message."""
 
     role: str  # system, user, assistant
     content: str
+    _anonymized: bool = field(default=False, repr=False)
+    _anonymization_mapping: dict[str, str] = field(default_factory=dict, repr=False)
 
 
 @dataclass
@@ -36,6 +47,7 @@ class ChatResponse:
     model: str
     usage: dict[str, int]  # prompt_tokens, completion_tokens, total_tokens
     raw: dict[str, Any] | None = None
+    _anonymization_mapping: dict[str, str] = field(default_factory=dict, repr=False)
 
     @property
     def prompt_tokens(self) -> int:
@@ -49,6 +61,25 @@ class ChatResponse:
     def total_tokens(self) -> int:
         return self.usage.get("total_tokens", 0)
 
+    def deanonymize(self) -> "ChatResponse":
+        """Return response with original values restored."""
+        if not self._anonymization_mapping:
+            return self
+        
+        if not PRIVACY_AVAILABLE:
+            return self
+            
+        restored_content = Anonymizer().deanonymize(
+            self.content, self._anonymization_mapping
+        )
+        return ChatResponse(
+            content=restored_content,
+            model=self.model,
+            usage=self.usage,
+            raw=self.raw,
+            _anonymization_mapping=self._anonymization_mapping,
+        )
+
 
 class LlxClient:
     """LLM client that routes through LiteLLM proxy or calls directly.
@@ -59,11 +90,23 @@ class LlxClient:
             model="anthropic/claude-sonnet-4-20250514",
             messages=[ChatMessage(role="user", content="Explain this code")],
         )
+    
+    With anonymization:
+        client = LlxClient(config, anonymize=True)
+        response = client.chat_with_context(prompt, context)
+        restored = response.deanonymize()  # Restore sensitive data
     """
 
-    def __init__(self, config: LlxConfig | None = None):
+    def __init__(self, config: LlxConfig | None = None, *, anonymize: bool = False):
         self.config = config or LlxConfig()
         self.config.litellm_base_url = normalize_litellm_base_url(self.config.litellm_base_url)
+        
+        # Initialize anonymizer if requested and available
+        self._anonymize = anonymize and PRIVACY_AVAILABLE
+        self._anonymizer: Anonymizer | None = None
+        if self._anonymize:
+            self._anonymizer = Anonymizer()
+        
         headers = {"Content-Type": "application/json"}
         # Add auth header for proxy
         if self.config.proxy.master_key:
@@ -74,6 +117,7 @@ class LlxClient:
             timeout=120.0,
             headers=headers,
         )
+        self._last_anonymization_mapping: dict[str, str] = {}
 
     def chat(
         self,
@@ -84,6 +128,7 @@ class LlxClient:
         max_tokens: int = 4096,
         system: str | None = None,
         metrics: ProjectMetrics | None = None,
+        anonymize: bool | None = None,
     ) -> ChatResponse:
         """Send a chat completion request.
 
@@ -95,6 +140,7 @@ class LlxClient:
             max_tokens: Maximum response tokens.
             system: System prompt (prepended as system message).
             metrics: Project metrics for proxym-aware routing (X-Task-Tier header).
+            anonymize: Override default anonymization setting for this request.
 
         Returns:
             ChatResponse with content and usage stats.
@@ -103,17 +149,38 @@ class LlxClient:
             default = self.config.models.get(self.config.default_tier)
             model = default.model_id if default else "anthropic/claude-sonnet-4-20250514"
 
-        payload = self._build_payload(messages, model, temperature, max_tokens, system)
+        # Determine if we should anonymize for this request
+        should_anonymize = self._anonymize if anonymize is None else (anonymize and PRIVACY_AVAILABLE)
+
+        # Anonymize messages if enabled
+        processed_messages = messages
+        anonymization_mapping: dict[str, str] = {}
+        if should_anonymize and self._anonymizer:
+            processed_messages = []
+            for msg in messages:
+                result = self._anonymizer.anonymize(msg.content, context=f"msg_{msg.role}")
+                processed_messages.append(
+                    ChatMessage(
+                        role=msg.role,
+                        content=result.text,
+                        _anonymized=True,
+                        _anonymization_mapping=result.mapping,
+                    )
+                )
+                anonymization_mapping.update(result.mapping)
+            self._last_anonymization_mapping = anonymization_mapping
+
+        payload = self._build_payload(processed_messages, model, temperature, max_tokens, system)
         extra_headers = self._metrics_headers(metrics) if metrics else {}
 
         try:
             response = self._http.post("/v1/chat/completions", json=payload, headers=extra_headers)
             response.raise_for_status()
             data = response.json()
-            return self._parse_response(data, model)
+            return self._parse_response(data, model, anonymization_mapping)
         except httpx.ConnectError:
             # Proxy not running — try litellm direct if available
-            return self._fallback_direct(payload, model)
+            return self._fallback_direct(payload, model, anonymization_mapping)
         except httpx.HTTPStatusError as e:
             raise RuntimeError(
                 f"LiteLLM proxy error {e.response.status_code}: {e.response.text[:300]}"
@@ -162,7 +229,8 @@ class LlxClient:
             "max_tokens": max_tokens,
         }
 
-    def _parse_response(self, data: dict[str, Any], model: str) -> ChatResponse:
+    def _parse_response(self, data: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
+        """Parse API response with optional anonymization mapping."""
         choices = data.get("choices", [])
         content = choices[0]["message"]["content"] if choices else ""
         usage = data.get("usage", {})
@@ -176,9 +244,10 @@ class LlxClient:
                 "total_tokens": usage.get("total_tokens", 0),
             },
             raw=data,
+            _anonymization_mapping=anonymization_mapping or {},
         )
 
-    def _fallback_direct(self, payload: dict[str, Any], model: str) -> ChatResponse:
+    def _fallback_direct(self, payload: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
         """Fallback to direct litellm call when proxy is not running."""
         try:
             import litellm
@@ -191,6 +260,7 @@ class LlxClient:
                     "completion_tokens": response.usage.completion_tokens,
                     "total_tokens": response.usage.total_tokens,
                 },
+                _anonymization_mapping=anonymization_mapping or {},
             )
         except ImportError:
             raise RuntimeError(
