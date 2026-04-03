@@ -45,7 +45,7 @@ pipeline:
     when: metrics_pass
     timeout: 120
   - name: publish
-    run: .venv/bin/python -m twine upload dist/* --skip-existing
+    run: .venv/bin/python -m twine upload dist/*
     optional: true
     when: metrics_pass
     timeout: 120
