@@ -13,6 +13,26 @@ pipeline:
     when: always
     env:
       OPENROUTER_API_KEY: dummy-key-for-ci
+  # Security: Check for known vulnerabilities in dependencies
+  - name: security-audit
+    run: |
+      echo "Running pip-audit for CVE checks..."
+      .venv/bin/pip-audit --format=json --output=.pyqual/pip-audit.json || true
+      echo "Running bandit security scan..."
+      .venv/bin/bandit -r llx -f json -o .pyqual/bandit.json -ll || true
+    when: always
+    optional: true
+    timeout: 120
+  # Code Quality: Fast linting with ruff
+  - name: lint
+    run: |
+      echo "Running ruff linter..."
+      .venv/bin/ruff check llx tests --output-format=json > .pyqual/ruff.json || true
+      echo "Running ruff format check..."
+      .venv/bin/ruff format --check llx tests || true
+    when: always
+    optional: true
+    timeout: 60
   # Optional: Pre-push secret scanning to prevent GitHub Push Protection blocks
   # Uncomment if you have git-secrets or trufflehog installed
   # - name: secret-scan
