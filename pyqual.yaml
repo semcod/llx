@@ -33,6 +33,14 @@ pipeline:
     when: always
     optional: true
     timeout: 60
+  # Type Checking: Static type analysis with mypy
+  - name: type-check
+    run: |
+      echo "Running mypy type checker..."
+      .venv/bin/mypy llx --ignore-missing-imports --show-error-codes --json > .pyqual/mypy.json || true
+    when: always
+    optional: true
+    timeout: 120
   # Optional: Pre-push secret scanning to prevent GitHub Push Protection blocks
   # Uncomment if you have git-secrets or trufflehog installed
   # - name: secret-scan
@@ -45,6 +53,14 @@ pipeline:
   #   when: always
   #   optional: true
   #   timeout: 60
+  # Detect Secrets: Scan for hardcoded secrets and credentials
+  - name: detect-secrets
+    run: |
+      echo "Scanning for hardcoded secrets..."
+      .venv/bin/detect-secrets scan --all-files --force-use-all-plugins --json > .pyqual/detect-secrets.json || true
+    when: always
+    optional: true
+    timeout: 60
   - name: prefact
     tool: prefact
     optional: true
