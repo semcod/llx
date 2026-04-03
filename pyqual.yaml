@@ -1,3 +1,6 @@
+# Pyqual Pipeline Configuration
+# See docs/GITHUB_PUSH_PROTECTION.md for troubleshooting push protection issues
+
 pipeline:
   name: llx-quality-loop-with-aider
   metrics:
@@ -10,6 +13,18 @@ pipeline:
     when: always
     env:
       OPENROUTER_API_KEY: dummy-key-for-ci
+  # Optional: Pre-push secret scanning to prevent GitHub Push Protection blocks
+  # Uncomment if you have git-secrets or trufflehog installed
+  # - name: secret-scan
+  #   run: |
+  #     if command -v git-secrets &> /dev/null; then
+  #       git secrets --scan
+  #     elif command -v trufflehog &> /dev/null; then
+  #       trufflehog git file://. --since-commit HEAD~1
+  #     fi
+  #   when: always
+  #   optional: true
+  #   timeout: 60
   - name: prefact
     tool: prefact
     optional: true
@@ -34,6 +49,8 @@ pipeline:
     optional: true
     when: metrics_pass
     timeout: 120
+  # NOTE: Push stage auto-commits and pushes. If GitHub Push Protection blocks,
+  # see docs/GITHUB_PUSH_PROTECTION.md for remediation steps
   - name: push
     run: |
       git add -A
@@ -54,6 +71,7 @@ pipeline:
       REMOTE=$(git rev-parse origin/main)
       if [ "$LOCAL" != "$REMOTE" ]; then
         echo "ERROR: Push failed - local commit $LOCAL != origin/main $REMOTE"
+        echo "See docs/GITHUB_PUSH_PROTECTION.md for troubleshooting"
         exit 1
       fi
       echo "✓ Push verified: local == origin/main ($LOCAL)"
