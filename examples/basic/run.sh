@@ -25,7 +25,7 @@ echo -e "${CYAN}─────────────────${NC}"
 # Use LLX for everything
 if [ -n "$DESCRIPTION" ]; then
     echo -e "\n${YELLOW}Generating project...${NC}"
-    python3 -m llx plan all "$DESCRIPTION" --output "$PROJECT" --profile free --no-run
+    python3 -m llx plan all "$DESCRIPTION" --output "$PROJECT" --profile free
     
     echo -e "\n${GREEN}✅ Done!${NC}"
     echo -e "${CYAN}To monitor, run in another terminal:${NC}"

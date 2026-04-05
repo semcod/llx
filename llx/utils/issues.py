@@ -171,22 +171,101 @@ def build_fix_prompt(
             tier = selection.get("tier")
 
     issue_lines: list[str] = []
-    if isinstance(issues, dict):
-        issue_lines.append(issue_text(issues))
-    else:
-        for issue in list(issues)[:prompt_limit]:
-            issue_lines.append(issue_text(issue))
+    issue_list = [issues] if isinstance(issues, dict) else list(issues)[:prompt_limit]
+    for issue in issue_list:
+        issue_lines.append(issue_text(issue))
 
     issue_block = "\n".join(f"- {line}" for line in issue_lines) if issue_lines else "- No structured issues were found."
     analysis_block = json.dumps(analysis, indent=2, ensure_ascii=False) if analysis else "{}"
 
-    return (
+    # Include referenced file snippets so the LLM sees actual content
+    file_context = _collect_file_context(project_path, issue_list)
+
+    prompt = (
         f"You are {action_label} in {project_path}.\n"
         "Use the smallest safe changes that make the quality gates pass.\n"
         "Preserve existing behavior unless a change is clearly justified.\n"
         f"Selected model: {selected_model or 'auto'}\n"
         f"Selection tier: {tier or 'unknown'}\n\n"
         f"Issue summary:\n{issue_block}\n\n"
+    )
+    if file_context:
+        prompt += f"Referenced file contents:\n{file_context}\n\n"
+    prompt += (
         f"Analysis payload:\n{analysis_block}\n\n"
         "Return code edits only."
     )
+    return prompt
+
+
+# -- File-reference extraction for richer prompts --
+
+
+_FILE_REF_RE = re.compile(
+    r'(?:^|[\s`\'"(])('
+    r'[a-zA-Z0-9_./-]+'
+    r'\.(?:py|yml|yaml|ts|js|json|toml|cfg|ini|sh|dockerfile|css|html)'
+    r')(?:[\s`\'",.;:)\]]|$)',
+    re.IGNORECASE,
+)
+
+_MAX_SNIPPET_LINES = 60
+_MAX_TOTAL_LINES = 300
+
+
+def _collect_file_context(
+    project_path: Path,
+    issues: list[Any],
+    max_snippet: int = _MAX_SNIPPET_LINES,
+    max_total: int = _MAX_TOTAL_LINES,
+) -> str:
+    """Extract file references from issues and include relevant snippets."""
+    refs: dict[str, int | None] = {}  # file -> optional line number
+
+    for issue in issues:
+        if isinstance(issue, dict):
+            f = issue.get("file") or issue.get("path")
+            if f:
+                refs.setdefault(str(f), issue.get("line") or issue.get("lineno"))
+            msg = str(issue.get("message") or issue.get("msg") or "")
+        elif isinstance(issue, str):
+            msg = issue
+        else:
+            continue
+        for m in _FILE_REF_RE.finditer(msg):
+            refs.setdefault(m.group(1), None)
+
+    if not refs:
+        return ""
+
+    blocks: list[str] = []
+    total_lines = 0
+
+    for file_rel, line_hint in refs.items():
+        if total_lines >= max_total:
+            break
+        fp = project_path / file_rel
+        if not fp.is_file():
+            continue
+        try:
+            content_lines = fp.read_text(errors="replace").splitlines()
+        except OSError:
+            continue
+        if not content_lines:
+            continue
+
+        # Select a window around the hint line, or the start of the file
+        if line_hint and line_hint > 1:
+            start = max(0, line_hint - max_snippet // 2)
+        else:
+            start = 0
+        end = min(len(content_lines), start + max_snippet)
+        remaining = max_total - total_lines
+        end = min(end, start + remaining)
+
+        snippet = "\n".join(content_lines[start:end])
+        line_info = f" (lines {start + 1}-{end})" if start > 0 or end < len(content_lines) else ""
+        blocks.append(f"--- {file_rel}{line_info} ---\n{snippet}")
+        total_lines += end - start
+
+    return "\n\n".join(blocks)

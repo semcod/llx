@@ -1,50 +1,69 @@
 flowchart TD
     docker__ai_tools["docker.ai-tools<br/>2 funcs"]
+    examples__docker["examples.docker<br/>14 funcs"]
+    examples__filtering["examples.filtering<br/>7 funcs"]
+    examples__privacy["examples.privacy<br/>71 funcs"]
     llx__analysis["llx.analysis<br/>27 funcs"]
-    llx__cli["llx.cli<br/>45 funcs"]
-    llx__config["llx.config<br/>7 funcs"]
+    llx__cli["llx.cli<br/>46 funcs"]
+    llx__commands["llx.commands<br/>13 funcs"]
+    llx__config["llx.config<br/>9 funcs"]
     llx__examples["llx.examples<br/>13 funcs"]
     llx__integrations["llx.integrations<br/>15 funcs"]
     llx__litellm_config["llx.litellm_config<br/>10 funcs"]
-    llx__mcp["llx.mcp<br/>18 funcs"]
+    llx__mcp["llx.mcp<br/>48 funcs"]
     llx__orchestration["llx.orchestration<br/>267 funcs"]
     llx__planfile["llx.planfile<br/>58 funcs"]
     llx__prellm["llx.prellm<br/>297 funcs"]
-    llx__routing["llx.routing<br/>19 funcs"]
+    llx__privacy["llx.privacy<br/>98 funcs"]
+    llx__routing["llx.routing<br/>20 funcs"]
     llx__tools["llx.tools<br/>219 funcs"]
-    llx__utils["llx.utils<br/>1 funcs"]
+    llx__utils["llx.utils<br/>7 funcs"]
+    scripts__pyqual_auto["scripts.pyqual_auto<br/>10 funcs"]
     simple_generate["simple_generate<br/>1 funcs"]
     trace["trace<br/>1 funcs"]
     llx__tools ==>|487| docker__ai_tools
+    examples__privacy ==>|486| docker__ai_tools
     llx__orchestration ==>|309| docker__ai_tools
     llx__planfile ==>|26| docker__ai_tools
     llx__cli ==>|24| docker__ai_tools
+    scripts__pyqual_auto ==>|19| docker__ai_tools
     llx__examples ==>|12| docker__ai_tools
     llx__cli ==>|9| llx__config
     llx__cli ==>|8| llx__planfile
+    llx__tools ==>|7| examples__docker
     llx__orchestration ==>|7| llx__utils
     llx__tools ==>|6| llx__utils
     llx__mcp ==>|6| llx__analysis
     llx__cli ==>|5| llx__analysis
     llx__mcp ==>|5| llx__config
     llx__cli ==>|5| llx__routing
+    examples__privacy -->|3| llx__privacy
+    llx__mcp -->|3| llx__utils
     llx__cli -->|3| llx__integrations
     simple_generate -->|2| llx__planfile
+    llx__commands -->|2| llx__utils
     llx__planfile -->|2| llx__config
     llx__planfile -->|2| llx__analysis
     llx__mcp -->|2| llx__routing
     llx__mcp -->|2| llx__prellm
+    llx__integrations -->|2| llx__config
     trace -->|1| llx__planfile
     llx__config -->|1| llx__litellm_config
+    llx__commands -->|1| llx__analysis
+    llx__commands -->|1| llx__config
+    llx__commands -->|1| llx__prellm
+    llx__commands -->|1| examples__filtering
     llx__examples -->|1| llx__config
+    llx__utils -->|1| llx__mcp
     llx__utils -->|1| llx__prellm
-    llx__mcp -->|1| llx__examples
+    llx__mcp -->|1| examples__filtering
     llx__mcp -->|1| llx__integrations
     llx__mcp -->|1| llx__planfile
-    llx__integrations -->|1| llx__examples
-    llx__integrations -->|1| llx__config
+    llx__mcp -->|1| llx__privacy
+    llx__integrations -->|1| examples__filtering
     llx__integrations -->|1| llx__analysis
     llx__integrations -->|1| llx__routing
-    llx__routing -->|1| llx__examples
+    llx__routing -->|1| llx__config
+    llx__routing -->|1| examples__filtering
     llx__routing -->|1| llx__integrations
-    llx__cli -->|1| llx__examples
+    llx__cli -->|1| examples__filtering

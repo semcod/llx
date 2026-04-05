@@ -1,16 +1,16 @@
 """llx MCP Server — orchestrates code2llm, redup, vallm as MCP tools.
 
 Start:
-    python -m llx.mcp.server             # stdio mode (for Claude Desktop)
-    python -m llx.mcp.server --sse       # SSE mode on /sse and /messages/
-    python -m llx.mcp.server --sse --port 8000
+    python -m llx.mcp                  # stdio mode (for Claude Desktop)
+    python -m llx.mcp --sse            # SSE mode on /sse and /messages/
+    python -m llx.mcp --sse --port 8000
 
 Claude Desktop config:
     {
       "mcpServers": {
         "llx": {
           "command": "python3",
-          "args": ["-m", "llx.mcp.server"]
+          "args": ["-m", "llx.mcp"]
         }
       }
     }
@@ -26,47 +26,13 @@ from typing import Any
 from mcp.server import Server
 from mcp.types import Tool, TextContent
 
-from llx.mcp.tools import (
-    tool_llx_analyze,
-    tool_llx_select,
-    tool_llx_chat,
-    tool_llx_preprocess,
-    tool_llx_context,
-    tool_code2llm_analyze,
-    tool_redup_scan,
-    tool_vallm_validate,
-    tool_llx_proxy_status,
-    tool_llx_proxym_status,
-    tool_llx_proxym_chat,
-    tool_aider,
-    tool_planfile_generate,
-    tool_planfile_apply,
-    tool_llx_privacy_scan,
-    tool_llx_project_anonymize,
-    tool_llx_project_deanonymize,
-)
+from llx.mcp.tools import MCP_TOOLS
 
 server = Server("llx")
 
-TOOLS = [
-    tool_llx_analyze,
-    tool_llx_select,
-    tool_llx_chat,
-    tool_llx_preprocess,
-    tool_llx_context,
-    tool_llx_proxym_status,
-    tool_llx_proxym_chat,
-    tool_code2llm_analyze,
-    tool_redup_scan,
-    tool_vallm_validate,
-    tool_llx_proxy_status,
-    tool_aider,
-    tool_planfile_generate,
-    tool_planfile_apply,
-    tool_llx_privacy_scan,
-    tool_llx_project_anonymize,
-    tool_llx_project_deanonymize,
-]
+TOOLS = MCP_TOOLS
+
+_TOOL_HANDLERS = {tool.definition.name: tool.handler for tool in TOOLS}
 
 @server.list_tools()
 async def list_tools() -> list[Tool]:
@@ -74,7 +40,7 @@ async def list_tools() -> list[Tool]:
 
 @server.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
-    handler = {t.definition.name: t.handler for t in TOOLS}.get(name)
+    handler = _TOOL_HANDLERS.get(name)
     if not handler:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
     result = await handler(arguments)

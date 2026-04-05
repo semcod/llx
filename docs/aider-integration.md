@@ -36,7 +36,7 @@ from mcp.client.stdio import stdio_client
 async def use_aider():
     server_params = {
         'command': 'python',
-        'args': ['-m', 'llx.mcp.server']
+        'args': ['-m', 'llx.mcp']
     }
     
     async with stdio_client(server_params) as (read, write):
@@ -54,27 +54,17 @@ async def use_aider():
             print(result.content[0].text)
 ```
 
-### 2. Direct Python API
+### 2. Call the tool from an initialized session
+
+Once the MCP session is initialized, invoke the tool like this:
 
 ```python
-from llx.mcp.tools import _handle_aider
-import asyncio
-
-async def refactor_code():
-    result = await _handle_aider({
-        'prompt': 'Convert this to use async/await patterns',
-        'path': './my_project',
-        'model': 'ollama/qwen2.5-coder:7b',
-        'files': ['api.py']
-    })
-    
-    if result['success']:
-        print("Refactoring successful!")
-        print(result['stdout'])
-    else:
-        print("Error:", result.get('error'))
-
-asyncio.run(refactor_code())
+await session.call_tool('aider', {
+    'prompt': 'Convert this to use async/await patterns',
+    'path': './my_project',
+    'model': 'ollama/qwen2.5-coder:7b',
+    'files': ['api.py']
+})
 ```
 
 ### 3. Command Line (when aider is installed)
@@ -111,8 +101,8 @@ def fetch_data(url):
     response = requests.get(url)
     return response.json()
 
-# Use aider to convert to async
-await _handle_aider({
+# Use aider through the MCP client
+await session.call_tool('aider', {
     'prompt': 'Convert to async/await with proper error handling',
     'path': '.',
     'files': ['api_client.py']
@@ -123,7 +113,7 @@ await _handle_aider({
 
 ```python
 # Ask aider to add type hints to entire project
-await _handle_aider({
+await session.call_tool('aider', {
     'prompt': 'Add comprehensive type hints to all functions',
     'path': './src',
     'model': 'ollama/qwen2.5-coder:7b'
@@ -134,7 +124,7 @@ await _handle_aider({
 
 ```python
 # Generate unit tests
-await _handle_aider({
+await session.call_tool('aider', {
     'prompt': 'Write comprehensive unit tests using pytest',
     'path': '.',
     'files': ['calculator.py'],

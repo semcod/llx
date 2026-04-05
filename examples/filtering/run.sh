@@ -16,6 +16,21 @@ NC='\033[0m'
 
 DESCRIPTION="${1:-A project with strict filtering constraints}"
 
+# Check for help flag
+if [ "$DESCRIPTION" = "--help" ] || [ "$DESCRIPTION" = "-h" ]; then
+    echo -e "${YELLOW}Usage:${NC}"
+    echo "  $0 [description]"
+    echo
+    echo -e "${YELLOW}Example:${NC}"
+    echo "  $0 \"A secure API with strict code quality constraints\""
+    echo
+    echo -e "${CYAN}This example demonstrates LLX filtering capabilities:${NC}"
+    echo "  - Code quality constraints"
+    echo "  - Dependency filtering"
+    echo "  - Security requirements"
+    exit 0
+fi
+
 echo -e "${BOLD}🚀 LLX Filtering Example${NC}"
 echo -e "${CYAN}─────────────────────${NC}"
 

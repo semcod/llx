@@ -15,6 +15,21 @@ NC='\033[0m'
 
 DESCRIPTION="${1:-A complex project to demonstrate LLX strategy-driven development}"
 
+# Check for help flag
+if [ "$DESCRIPTION" = "--help" ] || [ "$DESCRIPTION" = "-h" ]; then
+    echo -e "${YELLOW}Usage:${NC}"
+    echo "  $0 [description]"
+    echo
+    echo -e "${YELLOW}Example:${NC}"
+    echo "  $0 \"A complex web application with microservices architecture\""
+    echo
+    echo -e "${CYAN}This example demonstrates LLX planfile capabilities:${NC}"
+    echo "  - Strategy-driven development"
+    echo "  - Comprehensive project planning"
+    echo "  - Multi-sprint organization"
+    exit 0
+fi
+
 echo -e "${BOLD}🚀 LLX Planfile Example${NC}"
 echo -e "${CYAN}────────────────────${NC}"
 

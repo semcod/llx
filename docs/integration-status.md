@@ -85,15 +85,24 @@ llx plan generate --local my_strategy.yaml --profile local
 
 ### Use Aider via MCP with Docker
 ```python
-from llx.mcp.tools import _handle_aider
+from mcp.client.session import ClientSession
+from mcp.client.stdio import stdio_client
 
-result = await _handle_aider({
-    'prompt': 'Add type hints to all functions',
-    'path': './src',
-    'model': 'ollama/qwen2.5-coder:7b',
-    'files': ['main.py', 'utils.py'],
-    'use_docker': True
-})
+server_params = {
+    'command': 'python',
+    'args': ['-m', 'llx.mcp'],
+}
+
+async with stdio_client(server_params) as (read, write):
+    async with ClientSession(read, write) as session:
+        await session.initialize()
+        result = await session.call_tool('aider', {
+            'prompt': 'Add type hints to all functions',
+            'path': './src',
+            'model': 'ollama/qwen2.5-coder:7b',
+            'files': ['main.py', 'utils.py'],
+            'use_docker': True
+        })
 ```
 
 ### Run Complete Demo

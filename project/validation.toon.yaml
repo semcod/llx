@@ -1,268 +1,153 @@
-# vallm batch | 357f | 188✓ 4⚠ 47✗ | 2026-03-31
+# vallm batch | 393f | 243✓ 14⚠ 21✗ | 2026-04-05
 
 SUMMARY:
-  scanned: 357  passed: 188 (52.7%)  warnings: 4  errors: 47  unsupported: 122
+  scanned: 393  passed: 243 (61.8%)  warnings: 14  errors: 21  unsupported: 129
 
-WARNINGS[4]{path,score}:
+WARNINGS[14]{path,score}:
+  llx/commands/fix.py,0.83
+    issues[10]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,fix has cyclomatic complexity 25 (max: 15),33
+      complexity.cyclomatic,warning,apply_code_changes has cyclomatic complexity 36 (max: 15),167
+      complexity.cyclomatic,warning,_apply_openai_patch has cyclomatic complexity 21 (max: 15),268
+      complexity.cyclomatic,warning,_parse_unified_hunks has cyclomatic complexity 16 (max: 15),439
+      complexity.maintainability,warning,Low maintainability index: 13.6 (threshold: 20),
+      complexity.lizard_cc,warning,fix: CC=25 exceeds limit 15,33
+      complexity.lizard_length,warning,fix: 105 lines exceeds limit 100,33
+      complexity.lizard_cc,warning,apply_code_changes: CC=36 exceeds limit 15,167
+      complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,268
+      complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,439
   llx/cli/app.py,0.93
     issues[5]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,plan_all has cyclomatic complexity 16 (max: 15),440
-      complexity.cyclomatic,warning,_plan_code_impl has cyclomatic complexity 19 (max: 15),786
-      complexity.maintainability,warning,Low maintainability index: 18.6 (threshold: 20),
-      complexity.lizard_cc,warning,_plan_code_impl: CC=19 exceeds limit 15,786
-      complexity.lizard_length,warning,_plan_code_impl: 105 lines exceeds limit 100,786
-  llx/commands/fix.py,0.97
-    issues[2]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,fix has cyclomatic complexity 21 (max: 15),31
-      complexity.lizard_cc,warning,fix: CC=21 exceeds limit 15,31
+      complexity.cyclomatic,warning,plan_all has cyclomatic complexity 16 (max: 15),430
+      complexity.cyclomatic,warning,_plan_code_impl has cyclomatic complexity 19 (max: 15),776
+      complexity.maintainability,warning,Low maintainability index: 18.7 (threshold: 20),
+      complexity.lizard_cc,warning,_plan_code_impl: CC=19 exceeds limit 15,776
+      complexity.lizard_length,warning,_plan_code_impl: 105 lines exceeds limit 100,776
+  examples/privacy/advanced/01_api_integration.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_realistic_project: 289 lines exceeds limit 100,75
+  examples/privacy/advanced/02_multi_stage.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,create_business_logic_project: 179 lines exceeds limit 100,118
+  examples/privacy/ml/04_behavioral_learning.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,main: 110 lines exceeds limit 100,326
+  llx/planfile/builder.py,0.97
+    issues[1]{rule,severity,message,line}:
+      complexity.lizard_length,warning,ask_llm_questions: 119 lines exceeds limit 100,64
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),101
       complexity.lizard_cc,warning,main: CC=17 exceeds limit 15,101
+  llx/orchestration/instances/manager.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 16.5 (threshold: 20),
+  llx/orchestration/ratelimit/limiter.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 17.6 (threshold: 20),
+  llx/orchestration/routing/engine.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 10.6 (threshold: 20),
+  llx/orchestration/vscode/orchestrator.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 17.2 (threshold: 20),
   llx/prellm/trace.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
+  llx/privacy/_streaming_impl.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 20.0 (threshold: 20),
+  llx/tools/model_manager.py,0.98
+    issues[1]{rule,severity,message,line}:
+      complexity.maintainability,warning,Low maintainability index: 16.2 (threshold: 20),
 
-ERRORS[47]{path,score}:
+ERRORS[21]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
-  llx/detection/__init__.py,0.57
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'detector' not found,3
-  llx/orchestration/instances/__init__.py,0.57
+  test-api-qwen/test_api.py,0.57
     issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'manager' not found,4
-      python.import.resolvable,error,Module 'ports' not found,5
-  llx/orchestration/llm/__init__.py,0.57
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,7
-      python.import.resolvable,error,Module 'orchestrator' not found,15
-  llx/orchestration/queue/__init__.py,0.57
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'manager' not found,4
-  llx/orchestration/ratelimit/__init__.py,0.57
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'limiter' not found,4
-  llx/orchestration/routing/__init__.py,0.57
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'engine' not found,11
-  llx/orchestration/session/__init__.py,0.57
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'manager' not found,4
-  llx/orchestration/vscode/__init__.py,0.57
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,3
-      python.import.resolvable,error,Module 'orchestrator' not found,4
-      python.import.resolvable,error,Module 'ports' not found,5
-  llx/tools/__init__.py,0.57
-    issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,6
-      python.import.resolvable,error,Module 'ai_tools_manager' not found,7
-      python.import.resolvable,error,Module 'vscode_manager' not found,8
-      python.import.resolvable,error,Module 'model_manager' not found,9
-      python.import.resolvable,error,Module 'config_manager' not found,10
-      python.import.resolvable,error,Module 'health_checker' not found,11
-  llx/tools/_utils.py,0.57
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'utils.cli_main' not found,6
-  my-api/tests/test_my_api.py,0.57
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'my_api' not found,11
-  test-api-qwen/tests/test_test_api_qwen.py,0.57
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'test_api_qwen' not found,11
-  llx/orchestration/instances/cli.py,0.67
-    issues[7]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'cli_utils' not found,7
-      python.import.resolvable,error,Module 'utils._cmd_remove' not found,8
-      python.import.resolvable,error,Module 'utils._cmd_status' not found,9
-      python.import.resolvable,error,Module 'utils._cmd_cleanup' not found,10
-      python.import.resolvable,error,Module 'models' not found,12
-      python.import.resolvable,error,Module 'manager' not found,13
-  llx/orchestration/vscode/cli.py,0.67
-    issues[7]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'cli_utils' not found,7
-      python.import.resolvable,error,Module 'utils._cmd_remove' not found,8
-      python.import.resolvable,error,Module 'utils._cmd_status' not found,9
-      python.import.resolvable,error,Module 'utils._cmd_cleanup' not found,10
-      python.import.resolvable,error,Module 'models' not found,12
-      python.import.resolvable,error,Module 'orchestrator' not found,13
-  llx/orchestration/llm/cli.py,0.68
-    issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,9
-      python.import.resolvable,error,Module 'cli_utils' not found,10
-      python.import.resolvable,error,Module 'utils._cmd_remove' not found,11
-      python.import.resolvable,error,Module 'utils._cmd_cleanup' not found,12
-      python.import.resolvable,error,Module 'models' not found,14
-      python.import.resolvable,error,Module 'orchestrator' not found,15
-  llx/orchestration/session/cli.py,0.68
-    issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'cli_utils' not found,7
-      python.import.resolvable,error,Module 'utils._cmd_remove' not found,8
-      python.import.resolvable,error,Module 'utils._cmd_status' not found,9
-      python.import.resolvable,error,Module 'models' not found,11
-      python.import.resolvable,error,Module 'manager' not found,12
-  llx/orchestration/__init__.py,0.69
-    issues[5]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'session' not found,17
-      python.import.resolvable,error,Module 'instances' not found,18
-      python.import.resolvable,error,Module 'ratelimit' not found,19
-      python.import.resolvable,error,Module 'routing' not found,21
-      python.import.resolvable,error,Module 'vscode' not found,22
-  llx/orchestration/queue/cli.py,0.71
-    issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,7
-      python.import.resolvable,error,Module 'cli_utils' not found,8
-      python.import.resolvable,error,Module 'utils._cmd_remove' not found,9
-      python.import.resolvable,error,Module 'utils._cmd_cleanup' not found,10
-      python.import.resolvable,error,Module 'models' not found,12
-      python.import.resolvable,error,Module 'manager' not found,13
-  llx/orchestration/ratelimit/cli.py,0.71
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'cli_utils' not found,7
-      python.import.resolvable,error,Module 'models' not found,9
-      python.import.resolvable,error,Module 'limiter' not found,10
-  llx/orchestration/routing/cli.py,0.71
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,6
-      python.import.resolvable,error,Module 'utils._cmd_cleanup' not found,7
-      python.import.resolvable,error,Module 'models' not found,9
-      python.import.resolvable,error,Module 'engine' not found,10
-  llx/orchestration/llm/orchestrator.py,0.76
-    issues[9]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,15
-      python.import.resolvable,error,Module 'session.manager' not found,16
-      python.import.resolvable,error,Module 'ratelimit.limiter' not found,17
-      python.import.resolvable,error,Module 'ratelimit.models' not found,18
-      python.import.resolvable,error,Module 'routing.engine' not found,19
-      python.import.resolvable,error,Module 'routing.models' not found,20
-      python.import.resolvable,error,Module 'models' not found,27
-      python.import.resolvable,error,Module 'executors' not found,35
-      python.import.resolvable,error,Module 'health' not found,36
-  llx/orchestration/routing/engine.py,0.76
-    issues[8]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,12
-      python.import.resolvable,error,Module 'models' not found,14
-      python.import.resolvable,error,Module 'session.manager' not found,22
-      python.import.resolvable,error,Module 'session.models' not found,23
-      python.import.resolvable,error,Module 'instances.manager' not found,24
-      python.import.resolvable,error,Module 'instances.models' not found,25
-      python.import.resolvable,error,Module 'ratelimit.limiter' not found,26
-      python.import.resolvable,error,Module 'ratelimit.models' not found,27
-  llx/orchestration/utils/_cmd_remove.py,0.79
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'cli_utils' not found,4
-  llx/prellm/utils/__init__.py,0.79
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'lazy_imports' not found,3
-  llx/orchestration/vscode/orchestrator.py,0.80
-    issues[8]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,16
-      python.import.resolvable,error,Module 'ports' not found,17
-      python.import.resolvable,error,Module '_utils' not found,18
-      python.import.resolvable,error,Module 'instances.manager' not found,19
-      python.import.resolvable,error,Module 'instances.models' not found,20
-      python.import.resolvable,error,Module 'session.manager' not found,21
-      python.import.resolvable,error,Module 'ratelimit.limiter' not found,22
-      python.import.resolvable,error,Module 'routing.engine' not found,23
-  llx/tools/health_checker.py,0.84
-    issues[6]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module 'model_manager' not found,15
-      python.import.resolvable,error,Module '_utils' not found,16
-      python.import.resolvable,error,Module 'vscode_manager' not found,17
-      python.import.resolvable,error,Module 'ai_tools_manager' not found,18
-      python.import.resolvable,error,Module 'health_runner' not found,19
-  llx/orchestration/llm/executors.py,0.86
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,10
-  llx/orchestration/llm/health.py,0.86
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,10
-  test-api-qwen/test_api.py,0.86
-    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,1
+      python.import.resolvable,error,Module 'fastapi.testclient' not found,2
       python.import.resolvable,error,Module 'main' not found,3
-  llx/orchestration/cli.py,0.87
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'instances' not found,88
-      python.import.resolvable,error,Module 'session' not found,105
-      python.import.resolvable,error,Module 'instances' not found,106
-  llx/orchestration/instances/manager.py,0.88
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,15
-      python.import.resolvable,error,Module 'ports' not found,16
-      python.import.resolvable,error,Module '_utils' not found,17
-  llx/planfile/builder.py,0.88
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,10
-      python.import.resolvable,error,Module 'models' not found,304
-  llx/tools/vscode_manager.py,0.88
-    issues[4]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-      python.import.resolvable,error,Module '_docker' not found,16
-      python.import.resolvable,error,Module 'utils._cmd_uninstall_extension' not found,17
-  llx/orchestration/instances/ports.py,0.89
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,7
-  llx/orchestration/ratelimit/limiter.py,0.89
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,13
-      python.import.resolvable,error,Module '_utils' not found,14
-  llx/tools/ai_tools_manager.py,0.89
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-      python.import.resolvable,error,Module '_docker' not found,16
-  llx/orchestration/session/manager.py,0.90
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-  llx/tools/model_manager.py,0.90
-    issues[3]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'docker_manager' not found,14
-      python.import.resolvable,error,Module '_utils' not found,15
-      python.import.resolvable,error,Module 'utils._cmd_uninstall_extension' not found,16
-  llx/planfile/runner.py,0.91
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,9
-  llx/orchestration/queue/manager.py,0.92
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,16
-      python.import.resolvable,error,Module '_utils' not found,17
-  llx/config.py,0.93
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'litellm_config' not found,33
-      python.import.resolvable,error,Module 'tomli' not found,29
-  llx/tools/config_manager.py,0.93
-    issues[2]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,14
-      python.import.resolvable,error,Module 'utils._cmd_uninstall_extension' not found,15
-  my-api/monitoring.py,0.94
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'flask_healthcheck' not found,11
-  llx/planfile/builder_simple.py,0.95
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'models' not found,10
-  llx/tools/docker_manager.py,0.96
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module '_utils' not found,15
-  my-api/test_api.py,0.97
-    issues[1]{rule,severity,message,line}:
+  my-api/test_api.py,0.74
+    issues[9]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,2
+      python.import.resolvable,error,Module 'fastapi.testclient' not found,3
       python.import.resolvable,error,Module 'main' not found,4
+      python.import.resolvable,error,Module 'pytest' not found,11
+      python.import.resolvable,error,Module 'pytest' not found,46
+      python.import.resolvable,error,Module 'pytest' not found,56
+      python.import.resolvable,error,Module 'pytest' not found,67
+      python.import.resolvable,error,Module 'pytest' not found,78
+      python.import.resolvable,error,Module 'pytest' not found,90
+  my-api/monitoring.py,0.76
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'prometheus_client' not found,6
+      python.import.resolvable,error,Module 'prometheus_client' not found,7
+      python.import.resolvable,error,Module 'flask' not found,10
+      python.import.resolvable,error,Module 'flask_healthcheck' not found,11
+  my-api/main.py,0.79
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'fastapi' not found,5
+      python.import.resolvable,error,Module 'uvicorn' not found,106
+  tests/test_privacy.py,0.79
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  test-api-qwen/main.py,0.83
+    issues[2]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'fastapi' not found,1
+      python.import.resolvable,error,Module 'uvicorn' not found,4
+  llx/mcp/server.py,0.87
+    issues[3]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'mcp.server' not found,26
+      python.import.resolvable,error,Module 'mcp.types' not found,27
+      python.import.resolvable,error,Module 'mcp.server.stdio' not found,51
+  llx/prellm/server.py,0.90
+    issues[4]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'fastapi' not found,22
+      python.import.resolvable,error,Module 'fastapi.middleware.cors' not found,23
+      python.import.resolvable,error,Module 'fastapi.responses' not found,24
+      python.import.resolvable,error,Module 'starlette.middleware.base' not found,26
+  tests/test_aider_mcp.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  tests/test_core.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,9
+  tests/test_detection.py,0.93
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,3
+  tests/test_privacy_project.py,0.94
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,7
+  llx/config.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'tomli' not found,29
+  llx/tools/config_manager.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'toml' not found,9
+  tests/test_mcp.py,0.96
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,5
+  tests/test_privacy_extended.py,0.97
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,17
+  llx/prellm/cli_commands.py,0.98
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'uvicorn' not found,145
+  tests/test_prellm_integration.py,0.98
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,7
+  tests/test_proxym_integration.py,0.98
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,7
+  llx/mcp/tools.py,0.99
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'mcp.types' not found,11
 
 UNSUPPORTED[6]{bucket,count}:
-  *.md,64
+  *.md,71
   Dockerfile*,13
   *.txt,18
   *.yml,9

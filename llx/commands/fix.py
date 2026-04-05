@@ -62,10 +62,14 @@ def fix(
     metrics = analyze_project(workdir_path)
     config = LlxConfig.load(workdir_path)
 
-    # Select model based on metrics
+    # Select model: --model flag > LLM_MODEL env var > metric-based routing
+    env_model = os.environ.get("LLM_MODEL")
     if model:
         selected_model_id = model
         selection: SelectionResult | None = None
+    elif env_model:
+        selected_model_id = env_model
+        selection = None
     else:
         selection = select_model(metrics, config)
         selected_model_id = selection.model_id
@@ -161,28 +165,70 @@ def fix(
 
 
 def apply_code_changes(workdir: Path, content: str) -> tuple[int, list[str]]:
-    """Parse code blocks from LLM response and apply changes to files.
-    
+    """Parse LLM response and apply changes to files.
+
+    Supports four response formats (tried in order):
+    1. JSON array of ``{"file": "...", "patch": "..."}`` objects
+       (patches are unified diffs or full-file replacements)
+    2. OpenAI ``*** Begin Patch`` / ``*** End Patch`` format
+    3. Markdown code blocks with file paths in the header
+    4. Code blocks with ``# File:`` / ``// File:`` comments
+
     Returns:
         Tuple of (number of changes applied, list of modified files)
     """
-    # Pattern to match code blocks with file paths
-    # Matches: ```python filename.py\ncode\n``` or ```filename.py\ncode\n```
-    code_block_pattern = r'```(?:python)?\s*\n?(?:(#|//)\s*(?:File|file):?\s*)?(\S+).*?\n(.*?)```'
-    
+    import json as _json
+    import subprocess as _sp
+
     changes_applied = 0
     modified_files: list[str] = []
-    
-    # Simple approach: look for code blocks and try to extract filename
+
+    # ------------------------------------------------------------------
+    # Strategy 1: JSON patch array (from preLLM / structured output)
+    # ------------------------------------------------------------------
+    json_str = _extract_json_from_content(content)
+    if json_str:
+        try:
+            patches = _json.loads(json_str)
+            if isinstance(patches, list):
+                for entry in patches:
+                    if not isinstance(entry, dict):
+                        continue
+                    file_rel = entry.get("file")
+                    patch_text = entry.get("patch") or entry.get("diff") or entry.get("content")
+                    if not file_rel or not patch_text:
+                        continue
+                    file_path = workdir / file_rel
+                    if not file_path.exists():
+                        continue
+                    applied = _apply_unified_diff(file_path, patch_text)
+                    if applied:
+                        modified_files.append(file_rel)
+                        changes_applied += 1
+                if changes_applied > 0:
+                    return changes_applied, modified_files
+        except (_json.JSONDecodeError, TypeError, ValueError):
+            pass
+
+    # ------------------------------------------------------------------
+    # Strategy 2: OpenAI "*** Begin Patch" format (GPT-5-mini, etc.)
+    # ------------------------------------------------------------------
+    if '*** Begin Patch' in content:
+        oa_changes, oa_files = _apply_openai_patch(workdir, content)
+        if oa_changes > 0:
+            return oa_changes, oa_files
+
+    # ------------------------------------------------------------------
+    # Strategy 3: Markdown code blocks with file names
+    # ------------------------------------------------------------------
     lines = content.split('\n')
-    current_file = None
+    current_file: str | None = None
     current_code: list[str] = []
     in_code_block = False
-    
+
     for line in lines:
         if line.startswith('```'):
             if in_code_block and current_file and current_code:
-                # Save the code block
                 file_path = workdir / current_file
                 try:
                     file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -194,35 +240,264 @@ def apply_code_changes(workdir: Path, content: str) -> tuple[int, list[str]]:
                 current_file = None
                 current_code = []
             in_code_block = not in_code_block
-            # Try to extract filename from ``` line
             if in_code_block:
-                parts = line.replace('```', '').strip().split()
-                if parts and not parts[0].startswith('python'):
-                    current_file = parts[0]
-                elif parts and len(parts) > 1:
-                    current_file = parts[1]
+                header = line.replace('```', '').strip()
+                # Skip lang-only headers like ```json, ```python
+                if header and header not in ('json', 'python', 'typescript',
+                                              'javascript', 'bash', 'sh',
+                                              'yaml', 'yml', 'toml', 'diff'):
+                    parts = header.split()
+                    candidate = parts[1] if len(parts) > 1 else parts[0]
+                    if '.' in candidate or '/' in candidate:
+                        current_file = candidate
         elif in_code_block:
-            # Check for file header comment
             if line.strip().startswith('# File:') or line.strip().startswith('// File:'):
                 file_comment = line.strip().replace('# File:', '').replace('// File:', '').strip()
                 if file_comment:
                     current_file = file_comment
-            elif line.strip().startswith('#') and ('.py' in line or '/' in line):
-                # Possible file path in comment
+            elif not current_file and line.strip().startswith('#') and ('.' in line and '/' in line):
                 potential_file = line.strip().lstrip('#').strip()
                 if not potential_file.startswith(' '):
                     current_file = potential_file
             else:
                 current_code.append(line)
-    
-    # If no specific file blocks found, try to apply as patch to mentioned files
-    if changes_applied == 0:
-        # Look for search/replace patterns
-        search_replace_pattern = r'(?:^|\n)(?:#|//)\s*(?:SEARCH|REPLACE)\s*[:\n](.*?)(?=(?:\n(?:#|//)\s*(?:SEARCH|REPLACE)\s*[:\n]|\Z))'
-        # This is a simplified implementation
-        pass
-    
+
     return changes_applied, modified_files
+
+
+def _apply_openai_patch(workdir: Path, content: str) -> tuple[int, list[str]]:
+    """Apply patches in OpenAI ``*** Begin Patch`` format.
+
+    Format::
+
+        *** Begin Patch
+        *** Update File: path/to/file.py
+        @@
+         context line
+        -old line
+        +new line
+        *** End Patch
+
+    Returns (changes_applied, list_of_modified_files).
+    """
+    changes = 0
+    files: list[str] = []
+
+    in_patch = False
+    current_file: str | None = None
+    hunks: list[tuple[list[str], list[str]]] = []  # (removed, added) per hunk
+    cur_removed: list[str] = []
+    cur_added: list[str] = []
+    cur_context: list[str] = []
+
+    def _flush_hunk():
+        nonlocal cur_removed, cur_added, cur_context
+        if cur_removed or cur_added:
+            hunks.append((
+                cur_context + cur_removed,  # lines to find (context + removed)
+                cur_context + cur_added,    # lines to replace with (context + added)
+            ))
+        cur_removed = []
+        cur_added = []
+        cur_context = []
+
+    def _apply_file_hunks(file_rel: str) -> bool:
+        nonlocal changes
+        _flush_hunk()
+        if not hunks:
+            return False
+        file_path = workdir / file_rel
+        if not file_path.exists():
+            return False
+        original = file_path.read_text()
+        result = original
+        for old_lines, new_lines in hunks:
+            old_block = '\n'.join(old_lines)
+            new_block = '\n'.join(new_lines)
+            if old_block in result:
+                result = result.replace(old_block, new_block, 1)
+        if result != original:
+            file_path.write_text(result)
+            files.append(file_rel)
+            changes += 1
+            return True
+        return False
+
+    for raw_line in content.splitlines():
+        line = raw_line.rstrip()
+        if line.strip() == '*** Begin Patch':
+            in_patch = True
+            continue
+        if line.strip() == '*** End Patch':
+            if current_file:
+                _apply_file_hunks(current_file)
+            in_patch = False
+            current_file = None
+            hunks = []
+            continue
+        if not in_patch:
+            continue
+        if line.startswith('*** Update File:') or line.startswith('*** Add File:'):
+            if current_file:
+                _apply_file_hunks(current_file)
+                hunks = []
+            current_file = line.split(':', 1)[1].strip()
+            cur_removed = []
+            cur_added = []
+            cur_context = []
+            continue
+        if line.startswith('*** Delete File:'):
+            if current_file:
+                _apply_file_hunks(current_file)
+                hunks = []
+            # Skip deletion for safety
+            current_file = None
+            continue
+        if line == '@@':
+            _flush_hunk()
+            continue
+        if not current_file:
+            continue
+        if line.startswith('-'):
+            cur_removed.append(line[1:])
+        elif line.startswith('+'):
+            cur_added.append(line[1:])
+        elif line.startswith(' '):
+            # context line — if we have pending changes, flush first
+            if cur_removed or cur_added:
+                _flush_hunk()
+            cur_context.append(line[1:])
+        # Lines without prefix are also context
+        elif not line.startswith('***'):
+            if cur_removed or cur_added:
+                _flush_hunk()
+            cur_context.append(line)
+
+    return changes, files
+
+
+def _extract_json_from_content(content: str) -> str | None:
+    """Extract a JSON array from content, handling ```json fences."""
+    import re
+    # Try fenced json block first
+    m = re.search(r'```json\s*\n(.*?)```', content, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    # Try bare JSON array
+    m = re.search(r'(\[\s*\{.*\}\s*\])', content, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    return None
+
+
+def _apply_unified_diff(file_path: Path, patch_text: str) -> bool:
+    """Apply a unified diff patch to a file using line-level matching.
+
+    Falls back to subprocess ``patch`` if available.
+    Returns True on success.
+    """
+    import subprocess as _sp
+
+    original = file_path.read_text()
+    original_lines = original.splitlines(keepends=True)
+
+    # Parse hunks from unified diff
+    hunks = _parse_unified_hunks(patch_text)
+    if hunks:
+        result_lines = list(original_lines)
+        offset = 0
+        for hunk in hunks:
+            old_start, old_count, new_lines_for_hunk, removed_lines = hunk
+            # Find best match position using context
+            pos = _find_hunk_position(result_lines, removed_lines, old_start - 1 + offset)
+            if pos is not None:
+                # Remove old lines and insert new
+                del result_lines[pos:pos + len(removed_lines)]
+                for i, nl in enumerate(new_lines_for_hunk):
+                    result_lines.insert(pos + i, nl)
+                offset += len(new_lines_for_hunk) - len(removed_lines)
+            else:
+                # Hunk didn't match — abort this patch
+                return False
+        file_path.write_text(''.join(result_lines))
+        return True
+
+    # Fallback: try system ``patch`` command
+    try:
+        proc = _sp.run(
+            ['patch', '--no-backup-if-mismatch', '-p1', str(file_path)],
+            input=patch_text,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        return proc.returncode == 0
+    except (FileNotFoundError, _sp.TimeoutExpired):
+        return False
+
+
+def _parse_unified_hunks(patch_text: str) -> list[tuple[int, int, list[str], list[str]]]:
+    """Parse a unified diff into hunks.
+
+    Returns list of (old_start, old_count, new_lines, removed_lines).
+    """
+    import re
+    hunks: list[tuple[int, int, list[str], list[str]]] = []
+    hunk_header = re.compile(r'^@@ -(\d+)(?:,(\d+))? \+\d+(?:,\d+)? @@')
+
+    current_old_start = 0
+    current_old_count = 0
+    new_lines: list[str] = []
+    removed_lines: list[str] = []
+    in_hunk = False
+
+    for raw_line in patch_text.splitlines():
+        m = hunk_header.match(raw_line)
+        if m:
+            if in_hunk and (new_lines or removed_lines):
+                hunks.append((current_old_start, current_old_count, new_lines, removed_lines))
+            current_old_start = int(m.group(1))
+            current_old_count = int(m.group(2) or '1')
+            new_lines = []
+            removed_lines = []
+            in_hunk = True
+            continue
+        if not in_hunk:
+            continue
+        if raw_line.startswith('-') and not raw_line.startswith('---'):
+            removed_lines.append(raw_line[1:] + '\n')
+        elif raw_line.startswith('+') and not raw_line.startswith('+++'):
+            new_lines.append(raw_line[1:] + '\n')
+        elif raw_line.startswith(' '):
+            # Context line — part of both old and new
+            removed_lines.append(raw_line[1:] + '\n')
+            new_lines.append(raw_line[1:] + '\n')
+
+    if in_hunk and (new_lines or removed_lines):
+        hunks.append((current_old_start, current_old_count, new_lines, removed_lines))
+
+    return hunks
+
+
+def _find_hunk_position(lines: list[str], removed_lines: list[str], hint: int) -> int | None:
+    """Find where ``removed_lines`` appear in ``lines``, starting near ``hint``."""
+    if not removed_lines:
+        return max(0, min(hint, len(lines)))
+
+    stripped_removed = [l.rstrip('\n') for l in removed_lines]
+    # Search within ±50 lines of the hint
+    for delta in range(0, 80):
+        for candidate in (hint + delta, hint - delta):
+            if candidate < 0 or candidate + len(stripped_removed) > len(lines):
+                continue
+            match = True
+            for i, rl in enumerate(stripped_removed):
+                if lines[candidate + i].rstrip('\n') != rl:
+                    match = False
+                    break
+            if match:
+                return candidate
+    return None
 
 
 def _extract_issue_files(issues: dict[str, Any] | list[dict[str, Any]] | list[Any]) -> list[str]:

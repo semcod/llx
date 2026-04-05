@@ -55,9 +55,7 @@ pip install aider-chat
 
 ### Basic Refactoring
 ```python
-from llx.mcp.tools import _handle_aider
-
-result = await _handle_aider({
+await session.call_tool('aider', {
     'prompt': 'Add type hints to all functions',
     'path': './my_project',
     'model': 'ollama/qwen2.5-coder:7b'
@@ -66,7 +64,7 @@ result = await _handle_aider({
 
 ### With Specific Files
 ```python
-result = await _handle_aider({
+await session.call_tool('aider', {
     'prompt': 'Convert to async/await',
     'path': '.',
     'files': ['api.py', 'database.py'],
@@ -79,8 +77,14 @@ result = await _handle_aider({
 from mcp.client.session import ClientSession
 from mcp.client.stdio import stdio_client
 
+server_params = {
+    'command': 'python',
+    'args': ['-m', 'llx.mcp'],
+}
+
 async with stdio_client(server_params) as (read, write):
     async with ClientSession(read, write) as session:
+        await session.initialize()
         result = await session.call_tool('aider', {
             'prompt': 'Add error handling',
             'path': './src'

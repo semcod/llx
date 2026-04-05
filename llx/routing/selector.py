@@ -27,6 +27,9 @@ class ModelTier(str, Enum):
     OPENROUTER = "openrouter"  # Fallback pool
 
 
+TIER_ORDER = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, ModelTier.BALANCED, ModelTier.PREMIUM]
+
+
 @dataclass
 class SelectionResult:
     """Result of model selection with explanation."""
@@ -105,8 +108,7 @@ def select_model(
         tier = _compute_tier(metrics, thresholds, reasons, task_hint)
 
     # Apply max_tier ceiling
-    tier_order = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, ModelTier.BALANCED, ModelTier.PREMIUM]
-    if max_tier and tier_order.index(tier) > tier_order.index(max_tier):
+    if max_tier and TIER_ORDER.index(tier) > TIER_ORDER.index(max_tier):
         reasons.append(f"Downgraded from {tier.value} to {max_tier.value} (cost limit)")
         tier = max_tier
 
@@ -118,7 +120,7 @@ def select_model(
         tier = ModelTier.BALANCED
 
     # Compute alternative
-    alt = _compute_alternative(tier, tier_order)
+    alt = _compute_alternative(tier, TIER_ORDER)
 
     return SelectionResult(
         tier=tier,
@@ -262,10 +264,9 @@ def select_with_context_check(
     if not check_context_fit(metrics, result.model):
         config = config or LlxConfig()
         # Try upgrading
-        tier_order = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, ModelTier.BALANCED, ModelTier.PREMIUM]
-        current_idx = tier_order.index(result.tier)
-        for next_idx in range(current_idx + 1, len(tier_order)):
-            next_tier = tier_order[next_idx]
+        current_idx = TIER_ORDER.index(result.tier)
+        for next_idx in range(current_idx + 1, len(TIER_ORDER)):
+            next_tier = TIER_ORDER[next_idx]
             next_model = config.models.get(next_tier.value)
             if next_model and check_context_fit(metrics, next_model):
                 result.reasons.append(

@@ -73,8 +73,8 @@ class HybridAnonymizer:
         
         # Find quoted strings and assignments
         patterns = [
-            r'["\']([A-Za-z0-9!@#$%^&*()_+\-=\[\]{};:\'"|,.<>/?]{' + str(self.min_random_length) + ',})["\']',
-            r'[=:]\s*([A-Za-z0-9!@#$%^&*()_+\-=\[\]{};:\'"|,.<>/?]{' + str(self.min_random_length) + ',})(?:\s*$|\s*[,;})])',
+            '["\\\']([A-Za-z0-9!@#$%^&*()_+\\-=\\[\\]{};:\\\'\\"|,.<>/?]{' + str(self.min_random_length) + ',})["\\\']',
+            '[=:]\\s*([A-Za-z0-9!@#$%^&*()_+\\-=\\[\\]{};:\\\'\\"|,.<>/?]{' + str(self.min_random_length) + ',})(?:\\s*$|\\s*[,;})])',
         ]
         
         for pattern in patterns:

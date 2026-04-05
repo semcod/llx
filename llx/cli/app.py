@@ -308,7 +308,7 @@ def mcp_config() -> None:
         "mcpServers": {
             "llx": {
                 "command": sys.executable,
-                "args": ["-m", "llx.mcp.server"],
+                "args": ["-m", "llx.mcp"],
             }
         }
     }
@@ -319,22 +319,12 @@ def mcp_config() -> None:
 @mcp_app.command("tools")
 def mcp_tools() -> None:
     """List available MCP tools."""
-    from llx.mcp.tools import (
-        tool_llx_analyze, tool_llx_select, tool_llx_chat,
-        tool_llx_preprocess, tool_llx_context,
-        tool_llx_proxym_status, tool_llx_proxym_chat,
-        tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
-        tool_llx_proxy_status, tool_planfile_generate, tool_planfile_apply,
-    )
+    from llx.mcp.tools import MCP_TOOLS
     from rich.table import Table
     table = Table(title="MCP Tools", show_header=True)
     table.add_column("Tool", style="bold")
     table.add_column("Description")
-    for t in [tool_llx_analyze, tool_llx_select, tool_llx_chat,
-              tool_llx_preprocess, tool_llx_context,
-              tool_llx_proxym_status, tool_llx_proxym_chat,
-              tool_code2llm_analyze, tool_redup_scan, tool_vallm_validate,
-              tool_llx_proxy_status, tool_planfile_generate, tool_planfile_apply]:
+    for t in MCP_TOOLS:
         table.add_row(t.definition.name, t.definition.description[:80])
     console.print(table)
 

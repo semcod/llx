@@ -5,29 +5,33 @@
 **Intelligent LLM model router driven by real code metrics.**
 
 [![PyPI](https://img.shields.io/pypi/v/llx)](https://pypi.org/project/llx/)
+[![Version](https://img.shields.io/badge/version-0.1.54-blue)](https://pypi.org/project/llx/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
+## Documentation map
 
-## AI Cost Tracking
-
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.51-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$6.15-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-11.9h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
-
-- 🤖 **LLM usage:** $6.1500 (41 commits)
-- 👤 **Human dev:** ~$1192 (11.9h @ $100/h, 30min dedup)
-
-Generated on 2026-03-29 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
-
----
-
-
+- `README.md` — project overview, install, and quickstart
+- `docs/README.md` — generated API inventory from source analysis
+- `docs/llx-tools.md` — ecosystem CLI reference
+- `docs/PRIVACY.md` — anonymization and sensitive-data handling
 
 **Successor to [preLLM](https://github.com/wronai/prellm)** — rebuilt with modular architecture, no god modules, and metric-driven routing.
 
 llx analyzes your codebase with **code2llm**, **redup**, and **vallm**, then selects the optimal LLM model based on actual project metrics — file count, complexity, coupling, duplication — not abstract scores.
 
 **Principle**: larger + more coupled + more complex → stronger (and more expensive) model.
+
+## CLI surface
+
+llx is organized around a small set of command groups:
+
+- `llx analyze`, `llx select`, `llx chat` — metric-driven analysis and model routing
+- `llx proxy` — LiteLLM proxy config, start, and status
+- `llx mcp` — MCP server start, config, and tool listing
+- `llx plan` — planfile generation, review, code generation, and execution
+- `llx strategy` — interactive strategy creation, validation, run, and verification
+- `llx info`, `llx models`, `llx init`, `llx fix` — inspection and utility commands
 
 ## Why llx? (Lessons from preLLM)
 
@@ -75,11 +79,11 @@ preLLM proved the concept but had architectural issues that llx resolves:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## MCP Server Integration (NEW)
+## MCP server
 
-llx now provides a complete **MCP (Model Context Protocol) server** that exposes all wronai tools as MCP endpoints:
+llx exposes its MCP tools through a shared registry in `llx.mcp.tools.MCP_TOOLS`.
 
-By default, the MCP server runs over **stdio** for Claude Desktop. If you need to connect from a web client or another process, start the SSE server explicitly and use the `/sse` and `/messages/` endpoints.
+By default, the MCP server runs over **stdio** for Claude Desktop. Use SSE only when you need a remote or web client.
 
 ```bash
 # Start MCP server for Claude Desktop (stdio)
@@ -88,56 +92,33 @@ llx mcp start
 # Start MCP server over SSE for web/remote clients
 llx mcp start --mode sse --port 8000
 
-# SSE endpoint: http://localhost:8000/sse
-# Message endpoint: http://localhost:8000/messages/
-
 # Generate Claude Desktop config
 llx mcp config
 
-# List available MCP tools
+# List the live MCP registry
 llx mcp tools
-```
 
-### SSE / HTTP clients
-
-For clients like `pyqual` that expect an HTTP SSE endpoint, start llx in SSE mode:
-
-```bash
-llx mcp start --mode sse --port 8000
-# or
+# Direct module entrypoint
 python -m llx.mcp --sse --port 8000
 ```
 
-Then point the client at:
+### Tool groups
 
-```text
-http://localhost:8000/sse
-```
+- `llx_analyze`, `llx_select`, `llx_chat` — project metrics and model routing
+- `llx_preprocess`, `llx_context` — query preprocessing and environment context
+- `code2llm_analyze`, `redup_scan`, `vallm_validate` — code-quality analysis helpers
+- `llx_proxy_status`, `llx_proxym_status`, `llx_proxym_chat` — proxy and proxym integration
+- `aider`, `planfile_generate`, `planfile_apply` — workflow and refactoring helpers
+- `llx_privacy_scan`, `llx_project_anonymize`, `llx_project_deanonymize` — privacy tooling
 
-### MCP Tools Available
-
-| Tool | Description | Wraps |
-|------|-------------|-------|
-| `llx_analyze` | Analyze project and recommend model | `llx analyze` |
-| `llx_select` | Quick model selection | `llx select` |
-| `llx_chat` | Analyze + select model + send prompt | `llx chat` |
-| `code2llm_analyze` | Run code2llm static analysis | `code2llm` CLI |
-| `redup_scan` | Run duplication detection | `redup` CLI |
-| `vallm_validate` | Validate code quality | `vallm` API/CLI |
-| `llx_proxy_status` | Check LiteLLM proxy status | `llx proxy status` |
-| `llx_privacy_scan` | Scan text for sensitive data | - |
-| `llx_project_anonymize` | Anonymize entire project | - |
-| `llx_project_deanonymize` | Deanonymize LLM responses | - |
-| `aider` | AI pair programming tool | `aider` CLI |
-
-### Claude Desktop Setup
+### Claude Desktop setup
 
 ```json
 {
   "mcpServers": {
     "llx": {
       "command": "python3",
-      "args": ["-m", "llx.mcp.server"]
+      "args": ["-m", "llx.mcp"]
     }
   }
 }
@@ -194,7 +175,7 @@ llx select . --local
 | Dup groups | 15 | 5 | — | — |
 | Dep cycles | any | — | — | — |
 
-## Privacy & Anonymization (NEW)
+## Privacy & Anonymization
 
 LLX provides **reversible anonymization** to protect sensitive data when sending to LLMs:
 
@@ -308,42 +289,34 @@ print(result.explain())   # Human-readable reasoning
 | [vallm](https://github.com/semcod/vallm) | Code validation | Pass rate, issue count |
 | **llx** | **Model routing + MCP server** | **Consumes all above** |
 
-## Package Structure
+## Package structure
 
 ```
 llx/
-├── __init__.py              # Public API (30L)
-├── config.py                # Config loader (160L)
-├── mcp/                     # MCP server (NEW)
-│   ├── __init__.py          # Module init
-│   ├── server.py            # MCP server dispatcher (40L)
-│   ├── tools.py             # 7 MCP tool definitions (250L)
-│   └── __main__.py          # python -m llx.mcp
-├── analysis/
-│   ├── collector.py         # Metrics from .toon, filesystem (280L)
-│   └── runner.py            # Tool invocation (80L)
-├── routing/
-│   ├── selector.py          # Metric → tier mapping (200L)
-│   └── client.py            # LiteLLM client wrapper (150L)
-├── integrations/
-│   ├── context_builder.py   # .toon → LLM context (130L)
-│   └── proxy.py             # LiteLLM proxy management (100L)
-└── cli/
-    ├── app.py               # Commands (300L, max CC ≤ 8)
-    └── formatters.py        # Output formatting (340L, max CC ≤ 10)
+├── __init__.py
+├── config.py
+├── analysis/            # Project metrics and external tool runners
+├── cli/                 # Typer commands and terminal formatters
+├── commands/            # High-level command helpers
+├── detection/           # Project type detection
+├── integrations/        # Proxy, proxym, and context helpers
+├── mcp/                 # MCP server, client, service, and tool registry
+├── orchestration/       # Multi-instance coordination utilities
+├── planfile/            # Strategy generation and execution helpers
+├── prellm/              # Small→large LLM preprocessing pipeline
+├── privacy/             # Anonymization and deanonymization helpers
+├── routing/             # Model selection and LiteLLM client
+└── tools/               # Docker, VS Code, models, config, health utilities
 ```
 
-**Total**: ~1,600 lines across 12 modules. No file exceeds 350L. Max CC ≤ 10.
+Full generated API inventory: `docs/README.md`.
 
-Compare: preLLM had 8,900 lines with 3 god modules (cli.py: 999L, core.py: 893L, trace.py: 509L).
+## Architecture notes
 
-## Architecture Improvements (v0.1.7)
-
-- **✅ Refactored 6 high-CC functions** to meet targets (CC̄ ≤ 2.5, max CC ≤ 16)
-- **✅ Added complete MCP server** with 7 tools for Claude Desktop integration
-- **✅ Fixed import resolution issues** reported by vallm
-- **✅ Enhanced test coverage** for MCP functionality
-- **✅ Modular design** with single-responsibility functions
+- **Shared MCP registry**: `llx.mcp.tools.MCP_TOOLS` powers both `llx mcp tools` and the server dispatcher.
+- **Single tier order**: `routing/selector.py` uses one `TIER_ORDER` constant for selection and context-window upgrades.
+- **Version alignment**: the package exports now match `pyproject.toml` and `VERSION`.
+- **Focused modules**: CLI, routing, analysis, integrations, and planfile code are split by responsibility.
 
 ## License
 

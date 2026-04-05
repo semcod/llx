@@ -1,26 +1,27 @@
-# llx | 1043 func | 100f | 30509L | python | 2026-03-29
+# llx | 1212 func | 114f | 36464L | python | 2026-04-05
 
 HEALTH:
-  CC̄=3.7  critical=54 (limit:10)  dup=5  cycles=0
+  CC̄=3.7  critical=69 (limit:10)  dup=13  cycles=0
 
 ALERTS[20]:
+  !!! cc_exceeded      apply_code_changes = 36 (limit:15)
   !!! high_fan_out     _plan_code_impl = 36 (limit:10)
+  !!! high_fan_out     fix = 29 (limit:10)
+  !!! cc_exceeded      fix = 25 (limit:15)
+  !!! high_fan_out     apply_code_changes = 24 (limit:10)
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
+  !!! high_fan_out     main = 20 (limit:10)
+  !!! high_fan_out     run_llx_fix_workflow = 20 (limit:10)
+  !!! high_fan_out     create_service_app = 20 (limit:10)
   !!! high_fan_out     plan_all = 20 (limit:10)
-  !!  high_fan_out     context = 18 (limit:10)
-  !!  high_fan_out     _dispatch = 18 (limit:10)
-  !!  high_fan_out     LlxConfig.load = 17 (limit:10)
-  !!  high_fan_out     plan_monitor = 17 (limit:10)
-  !!  high_fan_out     chat_completions = 16 (limit:10)
-  !!  high_fan_out     ConfigManager.get_config_summary = 16 (limit:10)
-  !!  high_fan_out     SessionManager.load_sessions = 16 (limit:10)
 
-MODULES[137] (top by size):
-  M[llx/cli/app.py] 1087L C:0 F:28 CC↑19 D:0 (python)
+MODULES[154] (top by size):
+  M[llx/cli/app.py] 1094L C:0 F:29 CC↑19 D:0 (python)
+  M[llx/mcp/tools.py] 995L C:1 F:17 CC↑13 D:0 (python)
   M[llx/tools/config_manager.py] 795L C:1 F:45 CC↑12 D:0 (python)
   M[llx/tools/vscode_manager.py] 792L C:1 F:38 CC↑10 D:0 (python)
   M[llx/tools/model_manager.py] 758L C:1 F:36 CC↑8 D:0 (python)
-  M[llx/mcp/tools.py] 748L C:1 F:14 CC↑13 D:0 (python)
+  M[llx/commands/fix.py] 700L C:0 F:13 CC↑36 D:0 (python)
   M[llx/prellm/trace.py] 649L C:2 F:29 CC↑13 D:2 (python)
   M[llx/orchestration/llm/orchestrator.py] 643L C:1 F:28 CC↑10 D:0 (python)
   M[llx/orchestration/routing/engine.py] 640L C:1 F:38 CC↑11 D:0 (python)
@@ -30,24 +31,25 @@ MODULES[137] (top by size):
   M[llx/orchestration/instances/manager.py] 556L C:1 F:18 CC↑12 D:0 (python)
   M[llx/tools/docker_manager.py] 553L C:1 F:24 CC↑10 D:0 (python)
   M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
-  M[llx/orchestration/queue/manager.py] 495L C:1 F:21 CC↑9 D:0 (python)
-  LANGS: python:129/shell:8
+  LANGS: python:146/shell:8
 
 HOTSPOTS[10]:
   ★ _plan_code_impl fan=36  // Internal implementation of plan code.
+  ★ fix fan=29  // Fix code issues using LLX-driven model selection.
+  ★ apply_code_changes fan=24  // Parse LLM response and apply changes to files.
+
+Supports four response formats (
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
 
 
-  ★ plan_all fan=20  // Complete workflow: generate strategy, code, and optionally run.
-  ★ context fan=18  // Show collected environment context, schema, and blocked sensitive data.
-  ★ _dispatch fan=18  // 18-way dispatch
+  ★ main fan=20  // Orchestrates 20 calls
 
 REFACTOR[15]:
-  [1] H/H Split god module llx/cli/app.py (1087L, 0 classes)
-  [2] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
-  [3] H/H Split god module llx/mcp/tools.py (748L, 1 classes)
-  [4] H/H Split god module llx/prellm/trace.py (649L, 2 classes)
-  [5] H/H Split god module llx/orchestration/instances/manager.py (556L, 1 classes)
+  [1] H/L Split fix (CC=25 → target CC<10)
+  [2] H/L Split apply_code_changes (CC=36 → target CC<10)
+  [3] H/H Split god module llx/commands/fix.py (700L, 0 classes)
+  [4] H/H Split god module llx/cli/app.py (1094L, 0 classes)
+  [5] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
 
 EVOLUTION:
-  2026-03-29 CC̄=3.7 crit=54 30509L // Automated analysis
+  2026-04-05 CC̄=3.7 crit=69 36464L // Automated analysis

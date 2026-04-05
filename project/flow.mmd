@@ -4,11 +4,6 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
-        llx__cli__strategy_commands__create_strategy["create_strategy"]
-        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
-        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
-        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
-        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
         llx__cli__formatters__output_rich["output_rich"]
         llx__cli__formatters__output_json["output_json"]
         llx__cli__formatters___filter_models["_filter_models"]
@@ -19,26 +14,31 @@ flowchart TD
         llx__cli__formatters___render_tools_table["_render_tools_table"]
         llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__formatters___render_agents_table["_render_agents_table"]
-        ...["+30 more"]
+        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        ...["+31 more"]
     end
 
     subgraph Core
-        simple_generate__generate_simple_strategy["generate_simple_strategy"]
-        my_api__monitoring__CustomMetrics__increment_successful_requests["increment_successful_requests"]
-        my_api__monitoring__CustomMetrics__increment_failed_requests["increment_failed_requests"]
-        my_api__monitoring__CustomMetrics__record_request_latency["record_request_latency"]
-        my_api__monitoring__HealthChecks__check_database_connection["check_database_connection"]
-        my_api__monitoring__HealthChecks__check_api_endpoint["check_api_endpoint"]
-        my_api__monitoring__HealthChecks__register_healthchecks["register_healthchecks"]
-        my_api__monitoring__PrometheusMetrics__register_metrics["register_metrics"]
-        my_api__monitoring__AlertingRules__add_rule["add_rule"]
-        my_api__monitoring__AlertingRules__register_rules["register_rules"]
-        my_api__monitoring__main["main"]
-        trace__test["test"]
-        llx__config__LlxConfig__load["load"]
-        llx__config___apply_yaml_models["_apply_yaml_models"]
-        llx__prellm__cli_config__config_set_cmd["config_set_cmd"]
-        ...["+794 more"]
+        docker_manage__print_header["print_header"]
+        docker_manage__print_status["print_status"]
+        docker_manage__print_warning["print_warning"]
+        docker_manage__print_error["print_error"]
+        docker_manage__check_docker["check_docker"]
+        docker_manage__check_compose["check_compose"]
+        docker_manage__get_compose_cmd["get_compose_cmd"]
+        ai_tools_manage__print_header["print_header"]
+        ai_tools_manage__print_status["print_status"]
+        ai_tools_manage__print_error["print_error"]
+        ai_tools_manage__print_warning["print_warning"]
+        ai_tools_manage__get_compose_cmd["get_compose_cmd"]
+        ai_tools_manage__is_running["is_running"]
+        ai_tools_manage__start_ai_tools["start_ai_tools"]
+        ai_tools_manage__stop_ai_tools["stop_ai_tools"]
+        ...["+902 more"]
     end
 
     subgraph Exporters
@@ -46,4 +46,4 @@ flowchart TD
         llx__prellm__context__user_memory__UserMemory__export_session["export_session"]
     end
 
-    class simple_generate__generate_simple_strategy,my_api__monitoring__CustomMetrics__increment_successful_requests,my_api__monitoring__CustomMetrics__increment_failed_requests,my_api__monitoring__CustomMetrics__record_request_latency,my_api__monitoring__HealthChecks__check_database_connection,my_api__monitoring__HealthChecks__check_api_endpoint,my_api__monitoring__HealthChecks__register_healthchecks,my_api__monitoring__PrometheusMetrics__register_metrics,my_api__monitoring__AlertingRules__add_rule,my_api__monitoring__AlertingRules__register_rules entry
+    class docker_manage__print_header,docker_manage__print_status,docker_manage__print_warning,docker_manage__print_error,docker_manage__check_docker,docker_manage__check_compose,docker_manage__get_compose_cmd,ai_tools_manage__print_header,ai_tools_manage__print_status,ai_tools_manage__print_error entry

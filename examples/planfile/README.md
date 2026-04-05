@@ -304,7 +304,7 @@ llx plan apply parallel-refactor.yaml . --sprint "sprint-4"
   "mcpServers": {
     "llx": {
       "command": "python3",
-      "args": ["-m", "llx.mcp.server"],
+      "args": ["-m", "llx.mcp"],
       "env": {
         "LLX_CONFIG_PATH": "/path/to/llx.toml"
       }
