@@ -1,0 +1,25 @@
+goal:
+  description: Improve code quality
+  title: Project Refactoring
+goals: []
+metadata:
+  created_at: '2026-04-05T12:52:18.533627'
+  version: '1.0'
+project_name: My Project
+project_type: Web Service
+quality_gates: []
+sprints:
+- deliverables:
+  - Performance benchmark report
+  - Security review summary
+  - Production-ready release package
+  name: Sprint 1
+  number: 1
+  objectives:
+  - Profile and optimize critical paths (DB queries, serialization)
+  - Implement caching strategies where appropriate
+  - Conduct security audit and compliance review
+  - Finalize release notes and deployment checklist
+  sprint: 1
+  tasks: []
+  title: Performance Optimization and Final Review

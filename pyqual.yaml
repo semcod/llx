@@ -15,49 +15,25 @@ pipeline:
       OPENROUTER_API_KEY: dummy-key-for-ci
   # Security: Check for known vulnerabilities in dependencies
   - name: security-audit
-    run: |
-      echo "Running pip-audit for CVE checks..."
-      .venv/bin/pip-audit --format=json --output=.pyqual/pip-audit.json || true
-      echo "Running bandit security scan..."
-      .venv/bin/bandit -r llx -f json -o .pyqual/bandit.json -ll || true
+    run: .venv/bin/python -m llx.pyqual_plugins.security_audit
     when: always
     optional: true
     timeout: 120
   # Code Quality: Fast linting with ruff
   - name: lint
-    run: |
-      echo "Running ruff linter..."
-      .venv/bin/ruff check llx tests --output-format=json > .pyqual/ruff.json || true
-      echo "Running ruff format check..."
-      .venv/bin/ruff format --check llx tests || true
+    run: .venv/bin/python -m llx.pyqual_plugins.lint
     when: always
     optional: true
     timeout: 60
   # Type Checking: Static type analysis with mypy
   - name: type-check
-    run: |
-      echo "Running mypy type checker..."
-      .venv/bin/mypy llx --ignore-missing-imports --show-error-codes --json > .pyqual/mypy.json || true
+    run: .venv/bin/python -m llx.pyqual_plugins.type_check
     when: always
     optional: true
     timeout: 120
-  # Optional: Pre-push secret scanning to prevent GitHub Push Protection blocks
-  # Uncomment if you have git-secrets or trufflehog installed
-  # - name: secret-scan
-  #   run: |
-  #     if command -v git-secrets &> /dev/null; then
-  #       git secrets --scan
-  #     elif command -v trufflehog &> /dev/null; then
-  #       trufflehog git file://. --since-commit HEAD~1
-  #     fi
-  #   when: always
-  #   optional: true
-  #   timeout: 60
   # Detect Secrets: Scan for hardcoded secrets and credentials
   - name: detect-secrets
-    run: |
-      echo "Scanning for hardcoded secrets..."
-      .venv/bin/detect-secrets scan --all-files --force-use-all-plugins --json > .pyqual/detect-secrets.json || true
+    run: .venv/bin/python -m llx.pyqual_plugins.detect_secrets
     when: always
     optional: true
     timeout: 60
@@ -76,45 +52,18 @@ pipeline:
     optional: true
     when: after_fix
     timeout: 30
+  # Auto-bump version if already on PyPI
   - name: bump-version
-    run: |
-      VERSION=$(cat VERSION | tr -d '\n')
-      # Check if version already exists on PyPI
-      if pip index versions llx 2>/dev/null | grep -q "$VERSION"; then
-        echo "Version $VERSION already on PyPI, bumping patch version..."
-        # Parse version and bump patch
-        MAJOR=$(echo $VERSION | cut -d. -f1)
-        MINOR=$(echo $VERSION | cut -d. -f2)
-        PATCH=$(echo $VERSION | cut -d. -f3)
-        NEW_PATCH=$((PATCH + 1))
-        NEW_VERSION="${MAJOR}.${MINOR}.${NEW_PATCH}"
-        echo "Bumping: $VERSION -> $NEW_VERSION"
-        # Update files
-        echo "$NEW_VERSION" > VERSION
-        sed -i "s/version = \"$VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
-        # Commit the bump
-        git add VERSION pyproject.toml
-        git commit -m "chore: auto-bump version $VERSION -> $NEW_VERSION [pyqual]"
-        echo "✓ Version bumped to $NEW_VERSION"
-      else
-        echo "Version $VERSION not on PyPI, no bump needed"
-      fi
+    run: .venv/bin/python -m llx.pyqual_plugins.bump_version
     when: metrics_pass
     timeout: 30
   - name: build
     run: .venv/bin/python -m build
     when: metrics_pass
     timeout: 120
+  # Idempotent publish - skips if version exists
   - name: publish
-    run: |
-      VERSION=$(cat VERSION | tr -d '\n')
-      # Skip if version already exists on PyPI (idempotent publish)
-      if pip index versions llx 2>/dev/null | grep -q "$VERSION"; then
-        echo "Version $VERSION already on PyPI, skipping upload"
-        exit 0
-      fi
-      echo "Publishing version $VERSION to PyPI..."
-      .venv/bin/python -m twine upload dist/*
+    run: .venv/bin/python -m llx.pyqual_plugins.publish
     optional: true
     when: metrics_pass
     timeout: 120
@@ -131,35 +80,9 @@ pipeline:
       git push origin main
     when: always
     timeout: 30
+  # Verify deployment with retries
   - name: verify-push-publish
-    run: |
-      VERSION=$(cat VERSION | tr -d '\n')
-      echo "Testing push and publish for version $VERSION"
-      # Verify push - check if current commit is on origin/main
-      LOCAL=$(git rev-parse HEAD)
-      REMOTE=$(git rev-parse origin/main)
-      if [ "$LOCAL" != "$REMOTE" ]; then
-        echo "ERROR: Push failed - local commit $LOCAL != origin/main $REMOTE"
-        echo "See docs/GITHUB_PUSH_PROTECTION.md for troubleshooting"
-        exit 1
-      fi
-      echo "✓ Push verified: local == origin/main ($LOCAL)"
-      # Verify publish - check if version is on PyPI (with retry)
-      MAX_RETRIES=3
-      RETRY=0
-      while [ $RETRY -lt $MAX_RETRIES ]; do
-        if pip index versions llx 2>/dev/null | grep -q "$VERSION"; then
-          echo "✓ Publish verified: version $VERSION on PyPI"
-          echo "All deployment tests passed!"
-          exit 0
-        fi
-        RETRY=$((RETRY + 1))
-        echo "Retry $RETRY/$MAX_RETRIES: Version $VERSION not found on PyPI yet..."
-        sleep 5
-      done
-      echo "WARNING: Version $VERSION not found on PyPI after $MAX_RETRIES retries"
-      echo "This may be expected if publish was skipped (version already existed)"
-      exit 0
+    run: .venv/bin/python -m llx.pyqual_plugins.verify_push_publish
     when: always
     timeout: 60
   loop:
