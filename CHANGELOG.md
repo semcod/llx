@@ -397,6 +397,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.57] - 2026-04-09
+
+### Docs
+- Update README.md
+
+### Other
+- Update llx/privacy/_streaming_impl.py
+- Update llx/privacy/_streaming_parallel.py
+- Update project/validation.toon.yaml
+
 ## [0.1.56] - 2026-04-09
 
 ### Docs

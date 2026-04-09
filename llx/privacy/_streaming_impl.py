@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Callable, Iterator
 
@@ -22,6 +21,7 @@ from llx.privacy._streaming_chunking import (
     ProgressCallback,
     ProgressInfo,
 )
+from llx.privacy._streaming_parallel import ParallelProjectProcessor
 from llx.privacy.deanonymize import ProjectDeanonymizer, StreamingDeanonymizer
 
 
@@ -70,7 +70,8 @@ class StreamingProjectAnonymizer:
         progress_callback: ProgressCallback | None = None,
     ) -> Iterator[ProgressInfo]:
         """Stream anonymize project with progress updates."""
-        include, exclude = self._resolve_patterns(include_patterns, exclude_patterns)
+        include = include_patterns or DEFAULT_INCLUDE_PATTERNS
+        exclude = exclude_patterns or DEFAULT_EXCLUDE_PATTERNS
         all_files, total_bytes = self._collect_files(include, exclude)
         progress = self._build_progress(all_files, total_bytes, chunk_size)
 
@@ -83,15 +84,6 @@ class StreamingProjectAnonymizer:
 
             progress.current_chunk = current_chunk
             yield progress
-
-    def _resolve_patterns(
-        self,
-        include_patterns: list[str] | None,
-        exclude_patterns: list[str] | None,
-    ) -> tuple[list[str], list[str]]:
-        include = include_patterns or DEFAULT_INCLUDE_PATTERNS
-        exclude = exclude_patterns or DEFAULT_EXCLUDE_PATTERNS
-        return include, exclude
 
     def _collect_files(
         self,
@@ -259,48 +251,6 @@ class StreamingProjectDeanonymizer:
                     return
 
             yield (file_path, result.text)
-
-
-class ParallelProjectProcessor:
-    """Process multiple files in parallel for speed.
-
-    Uses multiprocessing for CPU-bound anonymization tasks.
-    """
-
-    def __init__(
-        self,
-        project_path: str | Path,
-        max_workers: int | None = None,
-    ):
-        self.project_path = Path(project_path)
-        self.max_workers = max_workers or os.cpu_count() or 4
-
-    def anonymize_parallel(
-        self,
-        files: list[str | Path],
-        context: AnonymizationContext,
-    ) -> dict[str, str]:
-        """Anonymize multiple files in parallel."""
-        from concurrent.futures import ProcessPoolExecutor, as_completed
-
-        results: dict[str, str] = {}
-        anonymizer = ProjectAnonymizer(context)
-
-        with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
-            future_to_file = {
-                executor.submit(anonymizer.anonymize_file, fp): fp
-                for fp in files
-            }
-
-            for future in as_completed(future_to_file):
-                file_path = future_to_file[future]
-                try:
-                    result = future.result()
-                    results[str(file_path)] = result
-                except Exception as e:
-                    results[str(file_path)] = f"# ERROR: {e}\n"
-
-        return results
 
 
 def anonymize_project_with_progress(

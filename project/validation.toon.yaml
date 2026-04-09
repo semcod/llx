@@ -1,21 +1,19 @@
-# vallm batch | 422f | 270✓ 14⚠ 23✗ | 2026-04-09
+# vallm batch | 424f | 272✓ 14⚠ 23✗ | 2026-04-09
 
 SUMMARY:
-  scanned: 422  passed: 270 (64.0%)  warnings: 14  errors: 23  unsupported: 129
+  scanned: 424  passed: 272 (64.2%)  warnings: 14  errors: 23  unsupported: 129
 
 WARNINGS[14]{path,score}:
-  llx/commands/fix.py,0.83
-    issues[10]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,fix has cyclomatic complexity 25 (max: 15),33
-      complexity.cyclomatic,warning,_apply_markdown_code_block_strategy has cyclomatic complexity 22 (max: 15),232
-      complexity.cyclomatic,warning,_apply_openai_patch has cyclomatic complexity 21 (max: 15),280
-      complexity.cyclomatic,warning,_parse_unified_hunks has cyclomatic complexity 16 (max: 15),451
-      complexity.maintainability,warning,Low maintainability index: 11.1 (threshold: 20),
-      complexity.lizard_cc,warning,fix: CC=25 exceeds limit 15,33
-      complexity.lizard_length,warning,fix: 105 lines exceeds limit 100,33
-      complexity.lizard_cc,warning,_apply_markdown_code_block_strategy: CC=22 exceeds limit 15,232
-      complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,280
-      complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,451
+  llx/commands/fix.py,0.87
+    issues[8]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,fix has cyclomatic complexity 25 (max: 15),39
+      complexity.cyclomatic,warning,_apply_markdown_code_block_strategy has cyclomatic complexity 22 (max: 15),238
+      complexity.cyclomatic,warning,_apply_openai_patch has cyclomatic complexity 21 (max: 15),286
+      complexity.maintainability,warning,Low maintainability index: 16.9 (threshold: 20),
+      complexity.lizard_cc,warning,fix: CC=25 exceeds limit 15,39
+      complexity.lizard_length,warning,fix: 105 lines exceeds limit 100,39
+      complexity.lizard_cc,warning,_apply_markdown_code_block_strategy: CC=22 exceeds limit 15,238
+      complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,286
   examples/privacy/advanced/01_api_integration.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_realistic_project: 289 lines exceeds limit 100,73
@@ -25,6 +23,10 @@ WARNINGS[14]{path,score}:
   examples/privacy/ml/04_behavioral_learning.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,main: 110 lines exceeds limit 100,326
+  llx/commands/_patch_apply.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_parse_unified_hunks has cyclomatic complexity 16 (max: 15),58
+      complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,58
   llx/planfile/builder.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,ask_llm_questions: 119 lines exceeds limit 100,64
@@ -51,9 +53,6 @@ WARNINGS[14]{path,score}:
   llx/prellm/trace.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 18.3 (threshold: 20),
-  llx/privacy/_streaming_impl.py,0.98
-    issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 20.0 (threshold: 20),
   llx/tools/model_manager.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 16.2 (threshold: 20),
