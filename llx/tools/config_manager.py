@@ -3,11 +3,10 @@ Config Manager for llx
 Manages llx configuration files and settings.
 """
 
-import os
 import sys
 import json
 import toml
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 import shutil
 

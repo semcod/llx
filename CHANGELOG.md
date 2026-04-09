@@ -397,6 +397,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.56] - 2026-04-09
+
+### Docs
+- Update README.md
+- Update docs/README.md
+- Update examples/multi-provider/README.md
+- Update llx/planfile/IMPROVEMENTS_SUMMARY.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/privacy/test_anonymizer.py
+- Update tests/privacy/test_context.py
+- Update tests/privacy/test_deanonymizer.py
+- Update tests/test_mcp.py
+- Update tests/test_prellm_integration.py
+- Update tests/test_privacy_extended.py
+- Update tests/test_privacy_project.py
+
+### Other
+- Update examples/planfile/planfile_config.yaml
+- Update examples/privacy/advanced/01_api_integration.py
+- Update examples/privacy/ml/01_entropy_ml_detection.py
+- Update llx.yaml
+- Update llx/__init__.py
+- Update llx/cli/__init__.py
+- Update llx/cli/app.py
+- Update llx/cli/commands/analyze.py
+- Update llx/cli/commands/planner.py
+- Update llx/commands/fix.py
+- ... and 54 more files
+
 ## [0.1.51] - 2026-03-31
 
 ### Other

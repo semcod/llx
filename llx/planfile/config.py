@@ -9,10 +9,10 @@ class PlanfileConfig:
     """Configuration for planfile generation and execution."""
     
     DEFAULT_CONFIG = {
-        "default_model": "openai/gpt-4o-mini",
+        "default_model": "openai/gpt-5.4-mini",
         "model_tiers": {
             "local": "ollama/llama2",
-            "cheap": "openai/gpt-4o-mini",
+            "cheap": "openai/gpt-5.4-mini",
             "balanced": "openai/gpt-4o",
             "premium": "openai/gpt-4o-turbo"
         },

@@ -4,11 +4,10 @@ Manages VS Code server with AI extensions and configurations.
 """
 
 import os
-import sys
 import subprocess
 import json
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 from pathlib import Path
 import requests
 from .docker_manager import DockerManager

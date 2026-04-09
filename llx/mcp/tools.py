@@ -256,7 +256,7 @@ async def _handle_llx_preprocess(args: dict) -> dict:
 
     query = args["query"]
     small_llm = args.get("small_llm", "ollama/qwen2.5:3b")
-    large_llm = args.get("large_llm", "gpt-4o-mini")
+    large_llm = args.get("large_llm", "gpt-5.4-mini")
     strategy = args.get("strategy", "auto")
     execute = args.get("execute", False)
 
@@ -298,7 +298,7 @@ tool_llx_preprocess = McpTool(
             "properties": {
                 "query": {"type": "string", "description": "The query to preprocess"},
                 "small_llm": {"type": "string", "description": "Small LLM model (default: ollama/qwen2.5:3b)"},
-                "large_llm": {"type": "string", "description": "Large LLM model (default: gpt-4o-mini)"},
+                "large_llm": {"type": "string", "description": "Large LLM model (default: gpt-5.4-mini)"},
                 "strategy": {"type": "string", "enum": ["auto", "classify", "structure", "split", "enrich", "passthrough"], "default": "auto"},
                 "execute": {"type": "boolean", "description": "Also execute with large LLM (default: false, decompose only)", "default": False},
             },

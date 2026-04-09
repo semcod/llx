@@ -1,17 +1,17 @@
-# code2llm/evolution | 1202 func | 113f | 2026-04-05
+# code2llm/evolution | 1242 func | 130f | 2026-04-09
 
-NEXT[10] (ranked by impact):
-  [1] !! SPLIT           llx/cli/app.py
-      WHY: 1094L, 0 classes, max CC=19
-      EFFORT: ~4h  IMPACT: 20786
-
-  [2] !! SPLIT           llx/mcp/tools.py
+NEXT[9] (ranked by impact):
+  [1] !! SPLIT           llx/mcp/tools.py
       WHY: 995L, 1 classes, max CC=13
       EFFORT: ~4h  IMPACT: 12935
 
-  [3] !! SPLIT           llx/tools/config_manager.py
-      WHY: 795L, 1 classes, max CC=12
-      EFFORT: ~4h  IMPACT: 9540
+  [2] !! SPLIT           llx/tools/config_manager.py
+      WHY: 794L, 1 classes, max CC=12
+      EFFORT: ~4h  IMPACT: 9528
+
+  [3] !! SPLIT           llx/tools/vscode_manager.py
+      WHY: 791L, 1 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 7910
 
   [4] !! SPLIT-FUNC      apply_code_changes  CC=36  fan=24
       WHY: CC=36 exceeds 15
@@ -21,37 +21,33 @@ NEXT[10] (ranked by impact):
       WHY: CC=25 exceeds 15
       EFFORT: ~1h  IMPACT: 725
 
-  [6] !  SPLIT-FUNC      _plan_code_impl  CC=19  fan=36
-      WHY: CC=19 exceeds 15
-      EFFORT: ~1h  IMPACT: 684
-
-  [7] !  SPLIT-FUNC      StreamingProjectAnonymizer.anonymize_streaming  CC=24  fan=16
-      WHY: CC=24 exceeds 15
-      EFFORT: ~1h  IMPACT: 384
-
-  [8] !  SPLIT-FUNC      _apply_openai_patch  CC=21  fan=18
+  [6] !  SPLIT-FUNC      _apply_openai_patch  CC=21  fan=18
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 378
 
-  [9] !  SPLIT-FUNC      plan_all  CC=16  fan=20
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 320
+  [7] !  SPLIT-FUNC      _collect_file_context  CC=20  fan=15
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 300
 
-  [10] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
+  [8] !  SPLIT-FUNC      RateLimiter.get_status  CC=15  fan=11
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 165
 
+  [9] !  SPLIT-FUNC      _parse_unified_hunks  CC=16  fan=9
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 144
+
 
 RISKS[3]:
-  ⚠ Splitting llx/cli/app.py may break 29 import paths
   ⚠ Splitting llx/mcp/tools.py may break 17 import paths
   ⚠ Splitting llx/tools/config_manager.py may break 45 import paths
+  ⚠ Splitting llx/tools/vscode_manager.py may break 38 import paths
 
 METRICS-TARGET:
   CC̄:          3.7 → ≤2.6
   max-CC:      36 → ≤18
-  god-modules: 16 → 0
-  high-CC(≥15): 11 → ≤5
+  god-modules: 15 → 0
+  high-CC(≥15): 9 → ≤4
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

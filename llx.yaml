@@ -260,7 +260,7 @@ development:
   # Test settings
   testing:
     mock_apis: false
-    test_models: ["gpt-4o-mini", "claude-haiku-4-5-20251001"]
+    test_models: ["gpt-5.4-mini", "claude-haiku-4-5-20251001"]
     timeout_multiplier: 2.0
 
 # Feature Flags

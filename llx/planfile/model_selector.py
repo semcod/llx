@@ -119,12 +119,12 @@ class ModelSelector:
             # Special handling for models loaded from LiteLLM config
             # They might have model_name as key in config.models
             if tier_name in ['nemotron-3-super', 'llama-3.2-3b-instruct', 'mistral-7b-instruct', 
-                            'qwen2.5-coder:7b', 'deepseek-chat-v3-0324', 'gpt-4o', 'gpt-4o-mini',
+                            'qwen2.5-coder:7b', 'deepseek-chat-v3-0324', 'gpt-4o', 'gpt-5.4-mini',
                             'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-haiku-4-5-20251001']:
                 # These are from LiteLLM config, determine actual tier
                 if 'nemotron' in model.model_id or 'llama-3.2-3b-instruct:free' in model.model_id or 'mistral-7b-instruct:free' in model.model_id:
                     actual_tier = 'free'
-                elif 'gpt-4o-mini' in model.model_id or 'claude-haiku' in model.model_id:
+                elif 'gpt-5.4-mini' in model.model_id or 'claude-haiku' in model.model_id:
                     actual_tier = 'cheap'
                 elif 'gpt-4o' in model.model_id or 'claude-sonnet' in model.model_id:
                     actual_tier = 'balanced'

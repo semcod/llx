@@ -3,10 +3,7 @@ AI Tools Manager for llx
 Manages shell-based AI tools (Aider, Claude Code, Cursor) in Docker.
 """
 
-import os
-import sys
 import subprocess
-import json
 import time
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path

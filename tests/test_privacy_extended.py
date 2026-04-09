@@ -8,11 +8,8 @@ Additional test coverage for:
 - Performance/memory characteristics
 """
 
-import asyncio
 import json
-import tempfile
 import time
-from pathlib import Path
 
 import pytest
 
@@ -20,19 +17,15 @@ from llx.privacy.project import (
     AnonymizationContext,
     ProjectAnonymizer,
     ASTAnonymizer,
-    ProjectAnonymizationResult,
 )
 from llx.privacy.deanonymize import (
     ProjectDeanonymizer,
-    DeanonymizationResult,
     StreamingDeanonymizer,
     quick_project_deanonymize,
 )
 from llx.privacy.streaming import (
     StreamingProjectAnonymizer,
     ChunkedProcessor,
-    ProgressInfo,
-    StreamingProjectDeanonymizer,
 )
 
 

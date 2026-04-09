@@ -249,7 +249,7 @@ def preprocess_and_execute_sync(
 
     Usage:
         from llx.prellm import preprocess_and_execute_sync
-        result = preprocess_and_execute_sync("Deploy app", large_llm="gpt-4o-mini")
+        result = preprocess_and_execute_sync("Deploy app", large_llm="gpt-5.4-mini")
     """
     import asyncio
     return asyncio.run(preprocess_and_execute(
@@ -439,7 +439,7 @@ class PreLLM:
         # Parse large_model
         large_raw = raw.get("large_model", {})
         large_model = LLMProviderConfig(**large_raw) if isinstance(large_raw, dict) and large_raw else LLMProviderConfig(
-            model="gpt-4o-mini", max_tokens=2048
+            model="gpt-5.4-mini", max_tokens=2048
         )
 
         # Parse domain_rules

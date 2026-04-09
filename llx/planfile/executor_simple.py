@@ -235,7 +235,7 @@ def _select_model(task: dict, config: LlxConfig, metrics: Any) -> str:
     
     # Fallback to default
     default = config.models.get(config.default_tier)
-    return default.model_id if default else "openai/gpt-4o-mini"
+    return default.model_id if default else "openai/gpt-5.4-mini"
 
 
 def _build_task_prompt(task: dict, metrics: Any) -> str:

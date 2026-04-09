@@ -6,12 +6,12 @@ Usage:
     result = await preprocess_and_execute(
         query="Deploy app to production",
         small_llm="ollama/qwen2.5:3b",
-        large_llm="gpt-4o-mini",
+        large_llm="gpt-5.4-mini",
     )
     print(result.content)
 """
 
-__version__ = "0.1.54"
+__version__ = "0.1.56"
 
 # 1-function API — the primary interface (always uses v0.3 pipeline internally)
 from llx.prellm.core import preprocess_and_execute, preprocess_and_execute_sync

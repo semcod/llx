@@ -146,7 +146,7 @@ OPENAI_API_KEY=sk-...
 # Available models
 # gpt-4-turbo     # Premium
 # gpt-4o          # Balanced
-# gpt-4o-mini     # Cheap
+# gpt-5.4-mini     # Cheap
 ```
 
 ### Gemini

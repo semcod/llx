@@ -1,7 +1,7 @@
-# vallm batch | 393f | 243✓ 14⚠ 21✗ | 2026-04-05
+# vallm batch | 422f | 270✓ 14⚠ 23✗ | 2026-04-09
 
 SUMMARY:
-  scanned: 393  passed: 243 (61.8%)  warnings: 14  errors: 21  unsupported: 129
+  scanned: 422  passed: 270 (64.0%)  warnings: 14  errors: 23  unsupported: 129
 
 WARNINGS[14]{path,score}:
   llx/commands/fix.py,0.83
@@ -16,16 +16,9 @@ WARNINGS[14]{path,score}:
       complexity.lizard_cc,warning,apply_code_changes: CC=36 exceeds limit 15,167
       complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,268
       complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,439
-  llx/cli/app.py,0.93
-    issues[5]{rule,severity,message,line}:
-      complexity.cyclomatic,warning,plan_all has cyclomatic complexity 16 (max: 15),430
-      complexity.cyclomatic,warning,_plan_code_impl has cyclomatic complexity 19 (max: 15),776
-      complexity.maintainability,warning,Low maintainability index: 18.7 (threshold: 20),
-      complexity.lizard_cc,warning,_plan_code_impl: CC=19 exceeds limit 15,776
-      complexity.lizard_length,warning,_plan_code_impl: 105 lines exceeds limit 100,776
   examples/privacy/advanced/01_api_integration.py,0.97
     issues[1]{rule,severity,message,line}:
-      complexity.lizard_length,warning,create_realistic_project: 289 lines exceeds limit 100,75
+      complexity.lizard_length,warning,create_realistic_project: 289 lines exceeds limit 100,73
   examples/privacy/advanced/02_multi_stage.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_business_logic_project: 179 lines exceeds limit 100,118
@@ -35,6 +28,10 @@ WARNINGS[14]{path,score}:
   llx/planfile/builder.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,ask_llm_questions: 119 lines exceeds limit 100,64
+  llx/utils/issues.py,0.97
+    issues[2]{rule,severity,message,line}:
+      complexity.cyclomatic,warning,_collect_file_context has cyclomatic complexity 20 (max: 15),216
+      complexity.lizard_cc,warning,_collect_file_context: CC=20 exceeds limit 15,216
   test-local-chat.py,0.97
     issues[2]{rule,severity,message,line}:
       complexity.cyclomatic,warning,main has cyclomatic complexity 19 (max: 15),101
@@ -47,7 +44,7 @@ WARNINGS[14]{path,score}:
       complexity.maintainability,warning,Low maintainability index: 17.6 (threshold: 20),
   llx/orchestration/routing/engine.py,0.98
     issues[1]{rule,severity,message,line}:
-      complexity.maintainability,warning,Low maintainability index: 10.6 (threshold: 20),
+      complexity.maintainability,warning,Low maintainability index: 10.7 (threshold: 20),
   llx/orchestration/vscode/orchestrator.py,0.98
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 17.2 (threshold: 20),
@@ -61,7 +58,7 @@ WARNINGS[14]{path,score}:
     issues[1]{rule,severity,message,line}:
       complexity.maintainability,warning,Low maintainability index: 16.2 (threshold: 20),
 
-ERRORS[21]{path,score}:
+ERRORS[23]{path,score}:
   docker/postgres/init.sql,0.00
     issues[1]{rule,severity,message,line}:
       syntax.tree_sitter,error,tree-sitter found 7 parse error(s) in sql,
@@ -91,6 +88,9 @@ ERRORS[21]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'fastapi' not found,5
       python.import.resolvable,error,Module 'uvicorn' not found,106
+  tests/privacy/test_anonymizer.py,0.79
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,1
   tests/test_privacy.py,0.79
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
@@ -98,6 +98,12 @@ ERRORS[21]{path,score}:
     issues[2]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'fastapi' not found,1
       python.import.resolvable,error,Module 'uvicorn' not found,4
+  tests/privacy/test_context.py,0.86
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,1
+  tests/privacy/test_deanonymizer.py,0.86
+    issues[1]{rule,severity,message,line}:
+      python.import.resolvable,error,Module 'pytest' not found,1
   llx/mcp/server.py,0.87
     issues[3]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'mcp.server' not found,26
@@ -118,21 +124,18 @@ ERRORS[21]{path,score}:
   tests/test_detection.py,0.93
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,3
-  tests/test_privacy_project.py,0.94
-    issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'pytest' not found,7
   llx/config.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'tomli' not found,29
   llx/tools/config_manager.py,0.96
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'toml' not found,9
+      python.import.resolvable,error,Module 'toml' not found,8
   tests/test_mcp.py,0.96
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'pytest' not found,5
   tests/test_privacy_extended.py,0.97
     issues[1]{rule,severity,message,line}:
-      python.import.resolvable,error,Module 'pytest' not found,17
+      python.import.resolvable,error,Module 'pytest' not found,14
   llx/prellm/cli_commands.py,0.98
     issues[1]{rule,severity,message,line}:
       python.import.resolvable,error,Module 'uvicorn' not found,145

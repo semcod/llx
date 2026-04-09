@@ -4,12 +4,12 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 159, shell: 31
+- **Languages**: python: 180, shell: 31
 - **Analysis Mode**: static
-- **Total Functions**: 1330
-- **Total Classes**: 224
-- **Modules**: 190
-- **Entry Points**: 1088
+- **Total Functions**: 1370
+- **Total Classes**: 226
+- **Modules**: 211
+- **Entry Points**: 1101
 
 ## Architecture by Module
 
@@ -42,10 +42,6 @@
 - **Functions**: 29
 - **Classes**: 1
 - **File**: `ai_tools_manager.py`
-
-### llx.cli.app
-- **Functions**: 29
-- **File**: `app.py`
 
 ### llx.orchestration.llm.orchestrator
 - **Functions**: 28
@@ -87,14 +83,13 @@
 - **Classes**: 1
 - **File**: `manager.py`
 
+### llx.cli.app
+- **Functions**: 19
+- **File**: `app.py`
+
 ### llx.planfile.generate_strategy
 - **Functions**: 19
 - **File**: `generate_strategy.py`
-
-### llx.prellm.pipeline
-- **Functions**: 18
-- **Classes**: 5
-- **File**: `pipeline.py`
 
 ### llx.orchestration.instances.manager
 - **Functions**: 18
@@ -110,6 +105,11 @@
 - **Functions**: 17
 - **Classes**: 1
 - **File**: `tools.py`
+
+### llx.privacy.deanonymize
+- **Functions**: 16
+- **Classes**: 4
+- **File**: `deanonymize.py`
 
 ## Key Entry Points
 
@@ -137,10 +137,6 @@ Main execution flows into the system:
 ### examples.privacy.ml.03_contextual_passwords.main
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, ContextualPasswordDetector, examples.privacy.ml.03_contextual_passwords.create_test_code_samples, samples.items, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
-### llx.cli.app.plan_all
-> Complete workflow: generate strategy, code, and optionally run.
-- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
-
 ### examples.privacy.project.01_anonymize_project.main
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.project.01_anonymize_project.create_sample_project
 
@@ -157,10 +153,6 @@ Main execution flows into the system:
 > Load instances from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, InstanceConfig
 
-### llx.cli.app.plan_monitor
-> Monitor a running application: health check + quality gates summary.
-- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, strat.get, os.getenv, open, _yaml.safe_load
-
 ### examples.privacy.advanced.03_cicd_integration.main
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.advanced.03_cicd_integration.create_cicd_project
 
@@ -168,9 +160,17 @@ Main execution flows into the system:
 > Print quick start guide.
 - **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
 
+### llx.orchestration.vscode.config_io.load_vscode_config
+> Load VS Code orchestration configuration into an orchestrator instance.
+- **Calls**: orchestrator.config_file.exists, orchestrator.config.update, data.get, data.get, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, orchestrator._create_default_config
+
 ### llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
 > Load VS Code orchestration configuration.
 - **Calls**: self.config_file.exists, self.config.update, data.get, data.get, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config
+
+### llx.orchestration.ratelimit._persistence.load_limits_from_file
+> Load rate limits from configuration file.
+- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
 
 ### llx.orchestration.ratelimit.limiter.RateLimiter.load_limits
 > Load rate limits from configuration file.
@@ -187,10 +187,6 @@ Main execution flows into the system:
 ### llx.orchestration.queue.manager.QueueManager.load_queues
 > Load queues from configuration file.
 - **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, QueueConfig
-
-### llx.cli.app.plan_models
-> List available models.
-- **Calls**: plan_app.command, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, ModelFilter, ModelSelector
 
 ### llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples
 > Print usage examples.
@@ -220,9 +216,11 @@ Main execution flows into the system:
 > Run aider AI pair programming tool.
 - **Calls**: Path, args.get, args.get, args.get, args.get, args.get, args.get, docker_cmd.extend
 
-### llx.cli.app.plan_detect
-> Detect project type and show configuration.
-- **Calls**: plan_app.command, typer.Argument, ProjectTypeDetector, None.resolve, detector.detect_from_path, detector.detect_from_files, detector.detect_from_config, console.print
+### examples.privacy.basic.01_text_anonymization.main
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
+### examples.privacy.basic.02_custom_patterns.main
+- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, Anonymizer, anon.add_pattern, anon.add_pattern, anon.add_pattern, docker.ai-tools.entrypoint.print
 
 ## Process Flows
 
@@ -241,33 +239,35 @@ main [examples.privacy.ml.02_hybrid_system]
 fix [llx.commands.fix]
 ```
 
-### Flow 3: plan_all
-```
-plan_all [llx.cli.app]
-```
-
-### Flow 4: load_instances
+### Flow 3: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 5: plan_monitor
-```
-plan_monitor [llx.cli.app]
-```
-
-### Flow 6: print_quick_start
+### Flow 4: print_quick_start
 ```
 print_quick_start [llx.tools.vscode_manager.VSCodeManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 7: load_config
+### Flow 5: load_vscode_config
+```
+load_vscode_config [llx.orchestration.vscode.config_io]
+```
+
+### Flow 6: load_config
 ```
 load_config [llx.orchestration.vscode.orchestrator.VSCodeOrchestrator]
+```
+
+### Flow 7: load_limits_from_file
+```
+load_limits_from_file [llx.orchestration.ratelimit._persistence]
+  └─ →> print
+  └─ →> print
 ```
 
 ### Flow 8: load_limits
@@ -420,17 +420,6 @@ Returns list of (old_start, old_count, new_lines, removed_lines).
 > Render the most useful project metrics for the operator.
 - **Output to**: None.join
 
-### llx.privacy.streaming.ChunkedProcessor.process_file
-> Process a file in chunks.
-
-For Python files, tries to split at logical boundaries
-(function/class de
-- **Output to**: Path, file_path.stat, file_path.read_text, anonymizer_func, self._split_and_process
-
-### llx.privacy.streaming.ChunkedProcessor._split_and_process
-> Split large file and process chunks.
-- **Output to**: open, len, anonymizer_func, line.encode, line.encode
-
 ### llx.privacy._streaming_impl.ChunkedProcessor.process_file
 > Process a file in chunks.
 
@@ -450,6 +439,14 @@ For Python files, tries to split at logical boundaries
 ### llx.privacy._streaming_impl.StreamingProjectAnonymizer._process_file
 - **Output to**: str, file_path.relative_to, sum, self._anonymize_large_file, self.anonymizer.anonymize_file
 
+### llx.pyqual_plugins.bump_version.parse_version
+> Parse version string into components.
+- **Output to**: re.match, ValueError, int, int, int
+
+### llx.pyqual_plugins.lint.run_ruff_format_check
+> Run ruff format check.
+- **Output to**: docker.ai-tools.entrypoint.print, subprocess.run, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+
 ### llx.examples.utils.TaskQueue.process
 > Process all tasks in queue.
 - **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
@@ -466,8 +463,6 @@ For Python files, tries to split at logical boundaries
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
-### llx.prellm._get_process_chain
-
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
@@ -477,6 +472,8 @@ Special cases
 ### llx.prellm.server.batch_process
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
+
+### llx.prellm._get_process_chain
 
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
@@ -524,15 +521,15 @@ Args:
 - **Confidence**: 0.70
 - **Functions**: llx.mcp.service.McpServiceState.mark_request, llx.mcp.service.McpServiceState.mark_session_open, llx.mcp.service.McpServiceState.mark_session_close, llx.mcp.service.McpServiceState.mark_message, llx.mcp.service.McpServiceState.mark_error
 
-### state_machine_ProxymClient
-- **Type**: state_machine
-- **Confidence**: 0.70
-- **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
-
 ### state_machine_LlxClient
 - **Type**: state_machine
 - **Confidence**: 0.70
 - **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response
+
+### state_machine_ProxymClient
+- **Type**: state_machine
+- **Confidence**: 0.70
+- **Functions**: llx.integrations.proxym.ProxymClient.__init__, llx.integrations.proxym.ProxymClient.is_available, llx.integrations.proxym.ProxymClient.status, llx.integrations.proxym.ProxymClient.chat, llx.integrations.proxym.ProxymClient.chat_with_analysis
 
 ## Public API Surface
 
@@ -545,23 +542,22 @@ Functions exposed as public API (no underscore prefix):
 - `examples.privacy.ml.01_entropy_ml_detection.main` - 65 calls
 - `llx.commands.fix.fix` - 65 calls
 - `examples.privacy.ml.03_contextual_passwords.main` - 64 calls
-- `llx.cli.app.plan_all` - 57 calls
 - `examples.privacy.project.01_anonymize_project.main` - 52 calls
 - `examples.privacy.streaming.01_streaming_anonymization.main` - 50 calls
 - `llx.prellm.cli_context.context` - 49 calls
 - `examples.privacy.project.02_deanonymize_project.main` - 45 calls
 - `scripts.pyqual_auto.main` - 43 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
-- `llx.cli.app.plan_monitor` - 43 calls
 - `examples.privacy.advanced.03_cicd_integration.main` - 42 calls
 - `llx.commands.fix.apply_code_changes` - 38 calls
 - `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
+- `llx.orchestration.vscode.config_io.load_vscode_config` - 36 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
+- `llx.orchestration.ratelimit._persistence.load_limits_from_file` - 36 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.load_limits` - 36 calls
 - `llx.planfile.generate_strategy.main` - 35 calls
 - `llx.orchestration.session.manager.SessionManager.load_sessions` - 34 calls
 - `llx.orchestration.queue.manager.QueueManager.load_queues` - 34 calls
-- `llx.cli.app.plan_models` - 34 calls
 - `llx.tools.ai_tools_manager.AIToolsManager.print_usage_examples` - 31 calls
 - `llx.tools.health_checker.HealthChecker.monitor_services` - 30 calls
 - `llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config` - 30 calls
@@ -569,15 +565,16 @@ Functions exposed as public API (no underscore prefix):
 - `llx.prellm.cli_commands.decompose` - 29 calls
 - `llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary` - 29 calls
 - `llx.mcp.workflows.run_llx_fix_workflow` - 28 calls
-- `llx.cli.app.plan_detect` - 28 calls
 - `examples.privacy.basic.01_text_anonymization.main` - 27 calls
 - `examples.privacy.basic.02_custom_patterns.main` - 27 calls
 - `llx.prellm.pipeline_ops.execute_v3_pipeline` - 27 calls
 - `llx.tools.docker_manager.DockerManager.print_status_summary` - 27 calls
 - `llx.mcp.service.create_service_app` - 27 calls
-- `llx.cli.app.plan_wizard` - 27 calls
 - `llx.config.LlxConfig.load` - 26 calls
-- `llx.privacy.streaming.StreamingProjectAnonymizer.anonymize_streaming` - 26 calls
+- `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
+- `llx.prellm.cli_config.config_show_cmd` - 25 calls
+- `llx.prellm.cli_commands.budget` - 25 calls
+- `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 
 ## System Interactions
 
@@ -596,18 +593,15 @@ graph TD
     fix --> Option
     main --> ContextualPasswordDe
     main --> create_test_code_sam
-    plan_all --> command
-    plan_all --> Argument
-    plan_all --> Option
     main --> ArgumentParser
     main --> add_argument
     load_instances --> exists
     load_instances --> get
     load_instances --> print
-    plan_monitor --> command
-    plan_monitor --> Argument
-    plan_monitor --> Option
-    plan_monitor --> get
+    print_quick_start --> print
+    load_vscode_config --> exists
+    load_vscode_config --> update
+    load_vscode_config --> get
 ```
 
 ## Reverse Engineering Guidelines

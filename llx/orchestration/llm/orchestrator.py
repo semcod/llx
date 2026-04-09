@@ -3,7 +3,6 @@ LLM Orchestrator — core routing and provider management.
 Extracted from the monolithic llm_orchestrator.py.
 """
 
-import json
 import time
 import threading
 from typing import Dict, List, Optional, Any
@@ -32,7 +31,7 @@ from .models import (
     LLMRequest,
     LLMResponse,
 )
-from .executors import execute_request, messages_to_prompt
+from .executors import execute_request
 from .health import perform_health_checks, health_check_worker
 
 

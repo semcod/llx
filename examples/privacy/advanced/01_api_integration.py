@@ -8,11 +8,9 @@ Simulates a complete workflow:
 5. Apply changes back to project
 """
 
-import json
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from llx.privacy.project import AnonymizationContext, ProjectAnonymizer
 from llx.privacy.deanonymize import ProjectDeanonymizer

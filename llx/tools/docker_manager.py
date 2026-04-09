@@ -4,11 +4,10 @@ Comprehensive Docker container management for llx services.
 """
 
 import os
-import sys
 import subprocess
 import json
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 from pathlib import Path
 import requests
 

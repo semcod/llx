@@ -82,7 +82,10 @@ class TestMcpServerCli:
             calls.append(argv)
             return 0
 
+        # Mock before lazy import in mcp_start function
         monkeypatch.setattr(mcp_server, "main", fake_main)
+        # Also mock at module path to catch the import
+        monkeypatch.setattr("llx.mcp.server.main", fake_main)
 
         mcp_start(mode="stdio", port=8123)
 

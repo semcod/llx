@@ -57,7 +57,7 @@ def get_env_config(
     )
     
     # Large model config
-    large_model_name = large_model or os.getenv("PRELLM_LARGE_MODEL", "gpt-4o-mini")
+    large_model_name = large_model or os.getenv("PRELLM_LARGE_MODEL", "gpt-5.4-mini")
     large_max_tokens = int(os.getenv("PRELLM_LARGE_MAX_TOKENS", "2048"))
     large_temperature = float(os.getenv("PRELLM_LARGE_TEMPERATURE", "0.7"))
     

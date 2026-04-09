@@ -81,11 +81,11 @@ class TestPreLLMFunctional:
         from llx.prellm.models import PreLLMResponse
         resp = PreLLMResponse(
             content="test output",
-            model_used="gpt-4o-mini",
+            model_used="gpt-5.4-mini",
             small_model_used="ollama/qwen2.5:3b",
         )
         assert resp.content == "test output"
-        assert resp.model_used == "gpt-4o-mini"
+        assert resp.model_used == "gpt-5.4-mini"
         assert resp.retries == 0
 
     def test_llm_provider_config_defaults(self):

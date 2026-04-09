@@ -177,50 +177,62 @@ def apply_code_changes(workdir: Path, content: str) -> tuple[int, list[str]]:
     Returns:
         Tuple of (number of changes applied, list of modified files)
     """
+    changes_applied, modified_files = _apply_json_patch_strategy(workdir, content)
+    if changes_applied > 0:
+        return changes_applied, modified_files
+
+    oa_changes, oa_files = _apply_openai_patch_strategy(workdir, content)
+    if oa_changes > 0:
+        return oa_changes, oa_files
+
+    return _apply_markdown_code_block_strategy(workdir, content)
+
+
+def _apply_json_patch_strategy(workdir: Path, content: str) -> tuple[int, list[str]]:
+    """Apply JSON-formatted patch arrays."""
     import json as _json
-    import subprocess as _sp
 
     changes_applied = 0
     modified_files: list[str] = []
 
-    # ------------------------------------------------------------------
-    # Strategy 1: JSON patch array (from preLLM / structured output)
-    # ------------------------------------------------------------------
     json_str = _extract_json_from_content(content)
-    if json_str:
-        try:
-            patches = _json.loads(json_str)
-            if isinstance(patches, list):
-                for entry in patches:
-                    if not isinstance(entry, dict):
-                        continue
-                    file_rel = entry.get("file")
-                    patch_text = entry.get("patch") or entry.get("diff") or entry.get("content")
-                    if not file_rel or not patch_text:
-                        continue
-                    file_path = workdir / file_rel
-                    if not file_path.exists():
-                        continue
-                    applied = _apply_unified_diff(file_path, patch_text)
-                    if applied:
-                        modified_files.append(file_rel)
-                        changes_applied += 1
-                if changes_applied > 0:
-                    return changes_applied, modified_files
-        except (_json.JSONDecodeError, TypeError, ValueError):
-            pass
+    if not json_str:
+        return changes_applied, modified_files
 
-    # ------------------------------------------------------------------
-    # Strategy 2: OpenAI "*** Begin Patch" format (GPT-5-mini, etc.)
-    # ------------------------------------------------------------------
-    if '*** Begin Patch' in content:
-        oa_changes, oa_files = _apply_openai_patch(workdir, content)
-        if oa_changes > 0:
-            return oa_changes, oa_files
+    try:
+        patches = _json.loads(json_str)
+        if isinstance(patches, list):
+            for entry in patches:
+                if not isinstance(entry, dict):
+                    continue
+                file_rel = entry.get("file")
+                patch_text = entry.get("patch") or entry.get("diff") or entry.get("content")
+                if not file_rel or not patch_text:
+                    continue
+                file_path = workdir / file_rel
+                if not file_path.exists():
+                    continue
+                applied = _apply_unified_diff(file_path, patch_text)
+                if applied:
+                    modified_files.append(file_rel)
+                    changes_applied += 1
+    except (_json.JSONDecodeError, TypeError, ValueError):
+        pass
 
-    # ------------------------------------------------------------------
-    # Strategy 3: Markdown code blocks with file names
-    # ------------------------------------------------------------------
+    return changes_applied, modified_files
+
+
+def _apply_openai_patch_strategy(workdir: Path, content: str) -> tuple[int, list[str]]:
+    """Apply OpenAI patch blocks when present."""
+    if '*** Begin Patch' not in content:
+        return 0, []
+    return _apply_openai_patch(workdir, content)
+
+
+def _apply_markdown_code_block_strategy(workdir: Path, content: str) -> tuple[int, list[str]]:
+    """Apply markdown code blocks with file headers."""
+    changes_applied = 0
+    modified_files: list[str] = []
     lines = content.split('\n')
     current_file: str | None = None
     current_code: list[str] = []

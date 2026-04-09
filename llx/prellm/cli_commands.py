@@ -100,7 +100,7 @@ def init(
 
     config = {
         "small_model": {"model": "phi3:mini", "fallback": ["qwen2:1.5b"], "max_tokens": 512, "temperature": 0.0},
-        "large_model": {"model": "gpt-4o-mini", "fallback": ["llama3"], "max_tokens": 2048},
+        "large_model": {"model": "gpt-5.4-mini", "fallback": ["llama3"], "max_tokens": 2048},
         "default_strategy": "classify",
         "policy": "devops" if devops else "strict",
         "domain_rules": [
@@ -140,7 +140,7 @@ def serve(
 
     Example:
         prellm serve
-        prellm serve --small ollama/qwen2.5:3b --large gpt-4o-mini --port 8080
+        prellm serve --small ollama/qwen2.5:3b --large gpt-5.4-mini --port 8080
     """
     import uvicorn
     from llx.prellm.env_config import get_env_config

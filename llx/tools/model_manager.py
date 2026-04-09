@@ -4,14 +4,12 @@ Manages local Ollama models and llx model configurations.
 """
 
 import os
-import sys
 import subprocess
 import json
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from pathlib import Path
 import requests
-from .docker_manager import DockerManager
 from ._utils import cli_main
 from .utils._cmd_uninstall_extension import create_simple_handler
 

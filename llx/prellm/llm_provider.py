@@ -33,7 +33,7 @@ class LLMProvider:
     """LiteLLM wrapper with retry and fallback support.
 
     Usage:
-        provider = LLMProvider(LLMProviderConfig(model="gpt-4o-mini"))
+        provider = LLMProvider(LLMProviderConfig(model="gpt-5.4-mini"))
         text = await provider.complete("Hello", system_prompt="Be helpful")
         data = await provider.complete_json("Extract: {...}")
     """

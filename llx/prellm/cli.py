@@ -3,7 +3,7 @@
 v0.5 refactor: commands split into cli_query, cli_context, cli_config, cli_commands modules.
 
 Usage:
-    prellm "Deploy app to prod" --small ollama/qwen2.5:3b --large gpt-4o-mini
+    prellm "Deploy app to prod" --small ollama/qwen2.5:3b --large gpt-5.4-mini
     prellm "Refaktoryzuj kod" --strategy structure --json
 """
 

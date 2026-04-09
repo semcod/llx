@@ -3,7 +3,6 @@ Routing Engine — intelligent request routing to optimal resources.
 Extracted from the monolithic routing_engine.py.
 """
 
-import json
 import time
 import threading
 from typing import Dict, List, Optional, Any
@@ -14,7 +13,6 @@ from .._utils import load_json, save_json
 from .models import (
     RoutingStrategy,
     ResourceType,
-    RequestPriority,
     RoutingRequest,
     RoutingDecision,
     RoutingMetrics,

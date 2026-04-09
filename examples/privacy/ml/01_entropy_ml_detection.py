@@ -14,10 +14,8 @@ import tempfile
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from llx.privacy import Anonymizer
-from llx.privacy.project import AnonymizationContext, ProjectAnonymizer, ASTAnonymizer
 
 
 @dataclass

@@ -1,26 +1,19 @@
 """Tests for project-level anonymization and deanonymization."""
 
-import json
-import tempfile
 from pathlib import Path
 
-import pytest
 
 from llx.privacy.project import (
     AnonymizationContext,
     ProjectAnonymizer,
-    ProjectAnonymizationResult,
-    SymbolMapping,
 )
 from llx.privacy.deanonymize import (
     ProjectDeanonymizer,
-    DeanonymizationResult,
     StreamingDeanonymizer,
 )
 from llx.privacy.streaming import (
     StreamingProjectAnonymizer,
     ChunkedProcessor,
-    ProgressInfo,
 )
 
 

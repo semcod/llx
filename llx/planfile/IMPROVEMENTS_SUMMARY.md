@@ -83,7 +83,7 @@ focus_areas:
       - "Add validation"
 
 model_tiers:
-  cheap: "openai/gpt-4o-mini"
+  cheap: "openai/gpt-5.4-mini"
   balanced: "claude-sonnet-4"
 ```
 
