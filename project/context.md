@@ -4,11 +4,11 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 180, shell: 31
+- **Languages**: python: 181, shell: 31
 - **Analysis Mode**: static
-- **Total Functions**: 1370
+- **Total Functions**: 1373
 - **Total Classes**: 226
-- **Modules**: 211
+- **Modules**: 212
 - **Entry Points**: 1101
 
 ## Architecture by Module
@@ -63,11 +63,6 @@
 - **Classes**: 1
 - **File**: `docker_manager.py`
 
-### llx.privacy._streaming_impl
-- **Functions**: 23
-- **Classes**: 7
-- **File**: `_streaming_impl.py`
-
 ### llx.analysis.collector
 - **Functions**: 21
 - **Classes**: 1
@@ -91,6 +86,11 @@
 - **Functions**: 19
 - **File**: `generate_strategy.py`
 
+### llx.privacy._streaming_impl
+- **Functions**: 18
+- **Classes**: 3
+- **File**: `_streaming_impl.py`
+
 ### llx.orchestration.instances.manager
 - **Functions**: 18
 - **Classes**: 1
@@ -106,10 +106,9 @@
 - **Classes**: 1
 - **File**: `tools.py`
 
-### llx.privacy.deanonymize
+### llx.commands.fix
 - **Functions**: 16
-- **Classes**: 4
-- **File**: `deanonymize.py`
+- **File**: `fix.py`
 
 ## Key Entry Points
 
@@ -420,24 +419,20 @@ Returns list of (old_start, old_count, new_lines, removed_lines).
 > Render the most useful project metrics for the operator.
 - **Output to**: None.join
 
-### llx.privacy._streaming_impl.ChunkedProcessor.process_file
-> Process a file in chunks.
-
-For Python files, tries to split at logical boundaries
-(function/class de
-- **Output to**: Path, file_path.stat, self._split_and_process, self._process_small_file
-
-### llx.privacy._streaming_impl.ChunkedProcessor._process_small_file
-- **Output to**: file_path.read_text, anonymizer_func, ChunkResult
-
-### llx.privacy._streaming_impl.ChunkedProcessor._split_and_process
-- **Output to**: open, len, anonymizer_func, line.encode, line.encode
-
 ### llx.privacy._streaming_impl.StreamingProjectAnonymizer._process_batch
 - **Output to**: self._process_file, progress_callback
 
 ### llx.privacy._streaming_impl.StreamingProjectAnonymizer._process_file
 - **Output to**: str, file_path.relative_to, sum, self._anonymize_large_file, self.anonymizer.anonymize_file
+
+### llx.privacy._streaming_chunking.ChunkedProcessor.process_file
+- **Output to**: Path, file_path.stat, self._split_and_process, self._process_small_file
+
+### llx.privacy._streaming_chunking.ChunkedProcessor._process_small_file
+- **Output to**: file_path.read_text, anonymizer_func, ChunkResult
+
+### llx.privacy._streaming_chunking.ChunkedProcessor._split_and_process
+- **Output to**: open, len, anonymizer_func, line.encode, line.encode
 
 ### llx.pyqual_plugins.bump_version.parse_version
 > Parse version string into components.
@@ -463,6 +458,8 @@ For Python files, tries to split at logical boundaries
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
+### llx.prellm._get_process_chain
+
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
@@ -472,8 +469,6 @@ Special cases
 ### llx.prellm.server.batch_process
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
-
-### llx.prellm._get_process_chain
 
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
@@ -549,7 +544,6 @@ Functions exposed as public API (no underscore prefix):
 - `scripts.pyqual_auto.main` - 43 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
 - `examples.privacy.advanced.03_cicd_integration.main` - 42 calls
-- `llx.commands.fix.apply_code_changes` - 38 calls
 - `llx.tools.vscode_manager.VSCodeManager.print_quick_start` - 36 calls
 - `llx.orchestration.vscode.config_io.load_vscode_config` - 36 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config` - 36 calls
@@ -575,6 +569,7 @@ Functions exposed as public API (no underscore prefix):
 - `llx.prellm.cli_config.config_show_cmd` - 25 calls
 - `llx.prellm.cli_commands.budget` - 25 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
+- `examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan` - 24 calls
 
 ## System Interactions
 

@@ -1,12 +1,12 @@
-# redup/duplication | 31 groups | 183f 36147L | 2026-04-09
+# redup/duplication | 31 groups | 185f 36128L | 2026-04-09
 
 SUMMARY:
-  files_scanned: 183
-  total_lines:   36147
+  files_scanned: 185
+  total_lines:   36128
   dup_groups:    31
   dup_fragments: 72
   saved_lines:   498
-  scan_ms:       9567
+  scan_ms:       8408
 
 DUPLICATES[31] (ranked by impact):
   [209d7601e17179e8] !! STRU  create_business_logic_project  L=185 N=2 saved=185 sim=1.00

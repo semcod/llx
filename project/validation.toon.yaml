@@ -7,15 +7,15 @@ WARNINGS[14]{path,score}:
   llx/commands/fix.py,0.83
     issues[10]{rule,severity,message,line}:
       complexity.cyclomatic,warning,fix has cyclomatic complexity 25 (max: 15),33
-      complexity.cyclomatic,warning,apply_code_changes has cyclomatic complexity 36 (max: 15),167
-      complexity.cyclomatic,warning,_apply_openai_patch has cyclomatic complexity 21 (max: 15),268
-      complexity.cyclomatic,warning,_parse_unified_hunks has cyclomatic complexity 16 (max: 15),439
-      complexity.maintainability,warning,Low maintainability index: 13.6 (threshold: 20),
+      complexity.cyclomatic,warning,_apply_markdown_code_block_strategy has cyclomatic complexity 22 (max: 15),232
+      complexity.cyclomatic,warning,_apply_openai_patch has cyclomatic complexity 21 (max: 15),280
+      complexity.cyclomatic,warning,_parse_unified_hunks has cyclomatic complexity 16 (max: 15),451
+      complexity.maintainability,warning,Low maintainability index: 11.1 (threshold: 20),
       complexity.lizard_cc,warning,fix: CC=25 exceeds limit 15,33
       complexity.lizard_length,warning,fix: 105 lines exceeds limit 100,33
-      complexity.lizard_cc,warning,apply_code_changes: CC=36 exceeds limit 15,167
-      complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,268
-      complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,439
+      complexity.lizard_cc,warning,_apply_markdown_code_block_strategy: CC=22 exceeds limit 15,232
+      complexity.lizard_cc,warning,_apply_openai_patch: CC=21 exceeds limit 15,280
+      complexity.lizard_cc,warning,_parse_unified_hunks: CC=16 exceeds limit 15,451
   examples/privacy/advanced/01_api_integration.py,0.97
     issues[1]{rule,severity,message,line}:
       complexity.lizard_length,warning,create_realistic_project: 289 lines exceeds limit 100,73

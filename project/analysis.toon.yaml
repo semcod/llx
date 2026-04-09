@@ -1,11 +1,10 @@
-# code2llm | 176f 33133L | python:167,shell:8 | 2026-04-09
-# CC̄=3.7 | critical:9/1370 | dups:0 | cycles:0
+# code2llm | 177f 33122L | python:168,shell:8 | 2026-04-09
+# CC̄=3.7 | critical:9/1373 | dups:0 | cycles:0
 
-HEALTH[11]:
-  🔴 GOD   llx/privacy/_streaming_impl.py = 516L, 7 classes, 23m, max CC=8
+HEALTH[10]:
   🟡 CC    main CC=15 (limit:15)
   🟡 CC    fix CC=25 (limit:15)
-  🟡 CC    apply_code_changes CC=36 (limit:15)
+  🟡 CC    _apply_markdown_code_block_strategy CC=22 (limit:15)
   🟡 CC    _apply_openai_patch CC=21 (limit:15)
   🟡 CC    _parse_unified_hunks CC=16 (limit:15)
   🟡 CC    _build_model_registry CC=15 (limit:15)
@@ -14,14 +13,13 @@ HEALTH[11]:
   🟡 CC    issue_text CC=15 (limit:15)
   🟡 CC    _collect_file_context CC=20 (limit:15)
 
-REFACTOR[2]:
-  1. split llx/privacy/_streaming_impl.py  (god module)
-  2. split 10 high-CC methods  (CC>15)
+REFACTOR[1]:
+  1. split 10 high-CC methods  (CC>15)
 
 PIPELINES[987]:
-  [1] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
+  [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
       PURITY: 100% pure
-  [2] Src [test]: test → _normalize_strategy_data → _normalize_goal
+  [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
       PURITY: 100% pure
   [3] Src [__init__]: __init__
       PURITY: 100% pure
@@ -36,7 +34,7 @@ LAYERS:
   │ !! config_manager             794L  1C   45m  CC=12     ←0
   │ !! vscode_manager             791L  1C   38m  CC=10     ←0
   │ !! model_manager              756L  1C   36m  CC=8      ←0
-  │ !! fix                        700L  0C   13m  CC=36     ←0
+  │ !! fix                        712L  0C   16m  CC=25     ←0
   │ !! trace                      648L  2C   29m  CC=13     ←2
   │ !! orchestrator               642L  1C   28m  CC=10     ←0
   │ !! engine                     638L  1C   38m  CC=11     ←0
@@ -45,7 +43,6 @@ LAYERS:
   │ !! health_checker             589L  1C   27m  CC=10     ←0
   │ !! manager                    556L  1C   18m  CC=12     ←0
   │ !! docker_manager             552L  1C   24m  CC=10     ←0
-  │ !! _streaming_impl            516L  7C   23m  CC=8      ←0
   │ !! limiter                    508L  1C   17m  CC=15     ←0
   │ manager                    495L  1C   21m  CC=9      ←0
   │ pipeline                   483L  5C   18m  CC=9      ←1
@@ -61,6 +58,7 @@ LAYERS:
   │ config                     376L  4C    9m  CC=13     ←10
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
+  │ _streaming_impl            345L  3C   18m  CC=6      ←0
   │ proxym                     331L  3C   12m  CC=8      ←1
   │ query_decomposer           330L  1C   10m  CC=9      ←0
   │ formatters                 312L  0C   12m  CC=14     ←2
@@ -103,6 +101,7 @@ LAYERS:
   │ llm_provider               150L  1C    4m  CC=11     ←0
   │ cli                        149L  0C    9m  CC=10     ←0
   │ cli                        149L  0C    9m  CC=6      ←0
+  │ _streaming_chunking        148L  4C    5m  CC=8      ←0
   │ workflows                  146L  1C    3m  CC=8      ←0
   │ config_io                  142L  0C    2m  CC=6      ←0
   │ examples                   141L  0C    5m  CC=2      ←0
@@ -238,20 +237,20 @@ COUPLING:
         llx.commands                                                                                                                                           1                                       2                                       1                                                          ──                   1
           llx.prellm                                                                                                                                                              ←2                  ←1                                                                                                  ←1                  ──
   CYCLES: none
-  HUB: llx.analysis/ (fan-in=16)
-  HUB: llx.routing/ (fan-in=9)
   HUB: llx.planfile/ (fan-in=10)
+  HUB: llx.routing/ (fan-in=9)
   HUB: llx.integrations/ (fan-in=5)
-  HUB: docker.ai-tools/ (fan-in=951)
   HUB: llx/ (fan-in=22)
+  HUB: llx.analysis/ (fan-in=16)
   HUB: llx.utils/ (fan-in=18)
-  SMELL: scripts/ fan-out=19 → split needed
-  SMELL: llx.tools/ fan-out=493 → split needed
-  SMELL: llx.cli/ fan-out=56 → split needed
+  HUB: docker.ai-tools/ (fan-in=951)
   SMELL: llx.planfile/ fan-out=30 → split needed
-  SMELL: llx.orchestration/ fan-out=326 → split needed
+  SMELL: llx.tools/ fan-out=493 → split needed
   SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
+  SMELL: llx.orchestration/ fan-out=326 → split needed
   SMELL: llx.mcp/ fan-out=21 → split needed
+  SMELL: scripts/ fan-out=19 → split needed
+  SMELL: llx.cli/ fan-out=56 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

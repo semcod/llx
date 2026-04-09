@@ -4,6 +4,11 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
+        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
         llx__cli__formatters__output_rich["output_rich"]
         llx__cli__formatters__output_json["output_json"]
         llx__cli__formatters___filter_models["_filter_models"]
@@ -14,15 +19,17 @@ flowchart TD
         llx__cli__formatters___render_tools_table["_render_tools_table"]
         llx__cli__formatters___render_tiers_table["_render_tiers_table"]
         llx__cli__formatters___render_agents_table["_render_agents_table"]
-        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
-        llx__cli__formatters__print_info_tables["print_info_tables"]
-        llx__cli__strategy_commands__create_strategy["create_strategy"]
-        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
-        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
         ...["+23 more"]
     end
 
     subgraph Core
+        docker_manage__print_header["print_header"]
+        docker_manage__print_status["print_status"]
+        docker_manage__print_warning["print_warning"]
+        docker_manage__print_error["print_error"]
+        docker_manage__check_docker["check_docker"]
+        docker_manage__check_compose["check_compose"]
+        docker_manage__get_compose_cmd["get_compose_cmd"]
         ai_tools_manage__print_header["print_header"]
         ai_tools_manage__print_status["print_status"]
         ai_tools_manage__print_error["print_error"]
@@ -31,13 +38,6 @@ flowchart TD
         ai_tools_manage__is_running["is_running"]
         ai_tools_manage__start_ai_tools["start_ai_tools"]
         ai_tools_manage__stop_ai_tools["stop_ai_tools"]
-        ai_tools_manage__shell["shell"]
-        ai_tools_manage__status["status"]
-        ai_tools_manage__test["test"]
-        ai_tools_manage__logs["logs"]
-        ai_tools_manage__restart["restart"]
-        ai_tools_manage__quick_chat["quick_chat"]
-        ai_tools_manage__help["help"]
         ...["+926 more"]
     end
 
@@ -46,4 +46,4 @@ flowchart TD
         llx__prellm__context__user_memory__UserMemory__export_session["export_session"]
     end
 
-    class ai_tools_manage__print_header,ai_tools_manage__print_status,ai_tools_manage__print_error,ai_tools_manage__print_warning,ai_tools_manage__get_compose_cmd,ai_tools_manage__is_running,ai_tools_manage__start_ai_tools,ai_tools_manage__stop_ai_tools,ai_tools_manage__shell,ai_tools_manage__status entry
+    class docker_manage__print_header,docker_manage__print_status,docker_manage__print_warning,docker_manage__print_error,docker_manage__check_docker,docker_manage__check_compose,docker_manage__get_compose_cmd,ai_tools_manage__print_header,ai_tools_manage__print_status,ai_tools_manage__print_error entry

@@ -5,7 +5,7 @@ flowchart TD
     examples__privacy["examples.privacy<br/>71 funcs"]
     llx__analysis["llx.analysis<br/>27 funcs"]
     llx__cli["llx.cli<br/>38 funcs"]
-    llx__commands["llx.commands<br/>13 funcs"]
+    llx__commands["llx.commands<br/>16 funcs"]
     llx__config["llx.config<br/>9 funcs"]
     llx__examples["llx.examples<br/>13 funcs"]
     llx__integrations["llx.integrations<br/>15 funcs"]
@@ -34,8 +34,8 @@ flowchart TD
     llx__tools ==>|7| examples__docker
     llx__orchestration ==>|7| llx__utils
     llx__tools ==>|6| llx__utils
-    llx__cli ==>|6| llx__analysis
     llx__cli ==>|6| llx__planfile
+    llx__cli ==>|6| llx__analysis
     llx__cli ==>|6| llx__routing
     llx__mcp ==>|6| llx__analysis
     llx__mcp ==>|5| llx__config
