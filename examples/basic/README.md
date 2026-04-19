@@ -43,15 +43,11 @@ This example demonstrates the core functionality of llx: intelligent LLM model s
    .venv/bin/pip install -e .
    ```
 
-## Running the Example
-
 ### Quick Start
 ```bash
 ./run.sh
 ```
 
-### Manual Execution
-```bash
 # Set environment variables
 export $(grep -v '^#' .env | xargs)
 
@@ -93,8 +89,6 @@ export $(grep -v '^#' .env | xargs)
 ✅ Example completed successfully!
 ```
 
-## Key Concepts Demonstrated
-
 ### 1. Metric-Driven Selection
 llx analyzes your actual code metrics rather than using abstract scores:
 - **File count** → Determines project scale
@@ -110,8 +104,6 @@ The router balances capability with cost:
 
 ### 3. Configuration Awareness
 The example loads the current project config and checks which provider keys are present.
-
-## Troubleshooting
 
 ### Common Issues
 

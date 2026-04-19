@@ -59,22 +59,12 @@ llx-tools stop --env prod
 llx-tools stop --services vscode ai-tools
 ```
 
-#### Restart Services
 ```bash
-# Restart entire environment
-llx-tools restart
-
 # Restart specific service
 llx-tools restart --service llx-api
 ```
 
-### Status and Monitoring
-
-#### System Status
 ```bash
-# Basic status
-llx-tools status
-
 # Detailed status
 llx-tools status --detailed
 
@@ -82,7 +72,6 @@ llx-tools status --detailed
 llx-tools status --env prod
 ```
 
-#### Health Monitoring
 ```bash
 # Comprehensive health check
 llx-tools health check
@@ -231,13 +220,6 @@ llx-tools health quick
 # Work with AI tools
 llx-tools ai-tools shell
 
-# Stop at end of day
-llx-tools stop
-```
-
-### 2. Model Management
-
-```bash
 # Check available models
 llx-tools models list
 
@@ -251,24 +233,19 @@ llx-tools models test qwen2.5-coder:7b
 ollama rm unused-model
 ```
 
-### 3. VS Code Development
-
 ```bash
 # Start VS Code with AI extensions
 llx-tools vscode start
 llx-tools vscode install-extensions
 llx-tools vscode configure-roocode
-
-# Access at http://localhost:8080
-# Password: proxym-vscode
 ```
-
-### 4. Troubleshooting
 
 ```bash
 # Comprehensive health check
 llx-tools health check
+```
 
+```bash
 # Check specific service
 llx-tools docker status
 
@@ -279,8 +256,6 @@ llx-tools docker logs
 llx-tools utils doctor
 ```
 
-### 5. Environment Setup
-
 ```bash
 # Create configuration
 llx-tools config create-env
@@ -288,14 +263,9 @@ llx-tools config create-env
 # Validate setup
 llx-tools config validate
 
-# Start environment
-llx-tools start
-
 # Verify health
 llx-tools health check
 ```
-
-## 🔧 Configuration
 
 ### Environment Variables
 
@@ -352,15 +322,11 @@ The health checker monitors:
 - Configuration file existence
 - Important file accessibility
 
-## 🤖 AI Tools Integration
-
 ### Supported AI Tools
 
 1. **Aider** - AI pair programming tool
 2. **Claude Code** - Claude-based coding assistant
 3. **Cursor** - AI-powered code editor
-
-### AI Tools Commands
 
 ```bash
 # Access AI tools shell
@@ -382,8 +348,6 @@ cursor-local           # Cursor with local Ollama
 - **Documentation** - Generate comprehensive docs
 - **Testing** - Create unit tests automatically
 - **Debugging** - Identify and fix bugs
-
-## 📝 VS Code Integration
 
 ### RooCode Extension
 
@@ -558,12 +522,6 @@ Create automation scripts using llx-tools:
 
 echo "🚀 Starting daily development environment..."
 
-# Start services
-llx-tools start
-
-# Wait for readiness
-sleep 10
-
 # Health check
 llx-tools health quick
 
@@ -606,8 +564,6 @@ llx-tools docker backup --backup-dir ./backups/$(date +%Y%m%d)
 llx-tools config restore --backup-dir ./backups/20240325
 llx-tools docker restore --backup-dir ./backups/20240325
 ```
-
-## 📚 Additional Resources
 
 ### Documentation
 - [llx Main Documentation](../README.md)

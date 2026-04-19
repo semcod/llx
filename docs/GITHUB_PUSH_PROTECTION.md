@@ -1,5 +1,3 @@
-# GitHub Push Protection - Wytyczne i Rozwiązania Problematyczne
-
 ## Problem
 
 GitHub Push Protection blokuje push do repozytorium gdy wykryje potencjalne wycieki sekretów (klucze API, tokeny, hasła).
@@ -9,8 +7,6 @@ GitHub Push Protection blokuje push do repozytorium gdy wykryje potencjalne wyci
 1. **Przykłady kodu z fałszywymi kluczami** - dokumentacja i tutoriale często zawierają realistycznie wyglądające klucze
 2. **Testowe dane** - mock dane mogą wyglądać jak prawdziwe sekrety
 3. **Konfiguracje w YAML/JSON** - placeholder hasła i tokenów
-
-## Zapobieganie - Co dodać do pyqual
 
 ### 1. Pre-push Secret Scanning
 
@@ -63,13 +59,6 @@ git push origin main --force-with-lease
 
 **UWAGA**: Używaj tylko gdy masz 100% pewność że to fałszywy alarm!
 
-## Naprawa Post Factum
-
-### Scenariusz: Commit już utworzony, push zablokowany
-
-#### Krok 1: Zidentyfikuj problematyczne pliki
-
-```bash
 # Sprawdź co GitHub wykrył
 git push origin main 2>&1 | grep -A5 "secret"
 
@@ -77,18 +66,11 @@ git push origin main 2>&1 | grep -A5 "secret"
 git show --stat HEAD
 ```
 
-#### Krok 2: Popraw pliki (bez utraty kodu!)
-
-```bash
 # Zachowaj aktualny stan
 git stash push -m "temp-before-fix"
 
-# Popraw pliki (zamień fałszywe klucze na placeholdery)
 # Ręcznie edytuj lub użyj sed:
 sed -i 's/sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL[a-zA-Z0-9]*/sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL/g' plik.py
-
-# Dodaj poprawione pliki
-git add -A
 
 # Amend commit (zachowując oryginalną datę i autorstwo)
 git commit --amend --no-edit
@@ -103,21 +85,12 @@ else
 fi
 ```
 
-#### Krok 3: Jeśli amend nie pomaga (komplikowane przypadki)
-
-```bash
-# Rozwiązanie dla zaawansowanych - rebase interaktywny
-# (gdy problem jest w starszych commitach)
-
 # 1. Znajdź commit z problemem
 git log --oneline --all | grep -i "privacy\|secret\|api"
 
 # 2. Interaktywny rebase
 COMMIT_HASH="abc123"  # hash PRZED problematycznym commitem
 git rebase -i ${COMMIT_HASH}
-
-# W edytorze zmień 'pick' na 'edit' dla commitu do naprawy
-# Git zatrzyma się na tym commicie
 
 # 3. Popraw pliki w zatrzymanym commicie
 git add -A
@@ -140,11 +113,6 @@ git filter-repo --replace-text <(echo 'sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL[a-zA-Z
 git filter-repo --path examples/privacy/ --force
 ```
 
-## Rekomendacje dla Pyqual Enhancement
-
-### Feature: Pre-flight Secret Check
-
-```python
 # Nowy moduł: pyqual/secrets_check.py
 
 import re
@@ -202,9 +170,6 @@ def pre_push_check(repo_path: Path) -> bool:
     return True
 ```
 
-### Feature: Auto-fix Placeholders
-
-```yaml
 # pyqual.yaml stage:
 - name: sanitize-placeholders
   run: |

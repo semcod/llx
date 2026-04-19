@@ -1,5 +1,3 @@
-# FileMaster CLI API Documentation
-
 ## Overview
 
 **FileMaster CLI** is a robust command-line interface designed for efficient file management across local and remote systems. It provides a suite of commands to manage files and directories with ease, supporting operations such as create, read, update, delete, move, copy, and search. This documentation outlines all available commands, request/response formats, authentication mechanisms, and deployment instructions.
@@ -26,8 +24,6 @@
 - [Support](#support)
 
 ---
-
-## Installation
 
 ### Prerequisites
 
@@ -79,8 +75,6 @@ export FILEMASTER_REGION=us-east-1
 > **Note**: Environment variables override config file settings.
 
 ---
-
-## Commands
 
 ### List Files (`ls`)
 
@@ -155,10 +149,6 @@ File created: /home/user/notes/todo.txt
 ### Read File (`cat`)
 
 Outputs the contents of a file to stdout.
-
-#### Syntax
-
-filemaster cat PATH
 
 #### Example Request
 
@@ -297,8 +287,6 @@ filemaster info /home/user/report.pdf
 
 ---
 
-## Request/Response Examples
-
 ### Example 1: Recursive Copy with Authentication
 
 filemaster cp s3://mybucket/data/ /local/data/ -r
@@ -342,8 +330,6 @@ Path: /root/secret.txt
 Action: Read operation not allowed
 
 ---
-
-## Deployment Guide
 
 ### Local Deployment
 

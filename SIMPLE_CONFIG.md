@@ -1,8 +1,3 @@
-# LLX - Simple Configuration
-
-## Quick Start
-
-```bash
 # Generate strategy (automatically picks best available model)
 python simple_generate.py
 

@@ -2,8 +2,6 @@
 
 This directory demonstrates practical examples of combining cloud LLMs with local tools and AI assistants.
 
-## Available Examples
-
 ### 1. **Aider Integration**
 Use Aider (AI pair programming) with LLX model selection:
 ```bash
@@ -18,8 +16,6 @@ llx chat --model premium --tool aider --prompt "Add comprehensive error handling
 ./hybrid_dev.sh execute "Fix identified security issues" --local --execute
 ```
 
-### 2. **Claude Code Integration**
-```bash
 # Setup Claude Code environment
 docker run -it --rm -v $(pwd):/workspace anthropic/claude-code
 
@@ -31,8 +27,6 @@ llx chat --provider anthropic --model balanced --tool claude-code --prompt "Migr
 ./hybrid_dev.sh execute "Implement migration" --local --execute
 ```
 
-### 3. **VS Code + RooCode**
-```bash
 # Start development environment
 ./docker-manage.sh dev
 
@@ -43,8 +37,6 @@ llx chat --tool vscode --prompt "Add new feature with tests and documentation"
 ./hybrid_dev.sh workflow fullstack
 ```
 
-### 4. **Multi-Tool Orchestration**
-```bash
 # Use different tools for different phases
 ./hybrid_dev.sh execute "Generate API specification" --tier premium
 ./hybrid_dev.sh execute "Implement API endpoints" --tool aider-local --execute
@@ -52,10 +44,6 @@ llx chat --tool vscode --prompt "Add new feature with tests and documentation"
 ./hybrid_dev.sh execute "Review and optimize" --tier premium
 ```
 
-## Tool-Specific Examples
-
-### Aider Workflows
-```bash
 # Code review workflow
 aider --message="Review this code for security vulnerabilities" .
 aider --message="Add comprehensive error handling" .
@@ -72,8 +60,6 @@ aider --message="Extract common patterns into utilities" .
 aider --message="Improve code organization" .
 ```
 
-### Claude Code Patterns
-```bash
 # Large-scale refactoring
 claude-code "Refactor this monolith into microservices"
 
@@ -87,24 +73,11 @@ claude-code "Add security best practices throughout codebase"
 claude-code "Generate comprehensive API documentation"
 ```
 
-### VS Code + RooCode
-```bash
-# Interactive development
-# Open VS Code and use RooCode extension for:
-# - Code generation
-# - Refactoring suggestions
-# - Bug fixes
-# - Test generation
-
 # Through LLX automation
 llx chat --tool vscode --prompt "Generate CRUD operations for User model"
 llx chat --tool vscode --prompt "Add unit tests for all service methods"
 ```
 
-## Integration Strategies
-
-### 1. **Sequential Tool Usage**
-```bash
 # Phase 1: Design with premium model
 llx chat --model premium --prompt "Design scalable API architecture" --save ./design/api-architecture.md
 
@@ -118,8 +91,6 @@ llx chat --local --prompt "Generate comprehensive tests" --execute
 llx chat --model premium --prompt "Review implementation and suggest improvements"
 ```
 
-### 2. **Parallel Processing**
-```bash
 # Generate multiple components simultaneously
 llx chat --model balanced --prompt "Create user service" --output services/user &
 llx chat --model balanced --prompt "Create product service" --output services/product &
@@ -129,10 +100,6 @@ wait
 # Integrate with Aider
 aider --message="Integrate all services and add API gateway" .
 ```
-
-### 3. **Tool Specialization**
-```bash
-# Use each tool for what it does best
 
 # Aider for code implementation
 aider --message="Implement business logic and algorithms" .
@@ -147,11 +114,6 @@ llx chat --local --prompt "Fix typos and formatting issues" --execute
 llx chat --model premium --prompt "Resolve architectural conflicts and make design decisions"
 ```
 
-## Real-World Scenarios
-
-### E-commerce Platform Development
-```bash
-#!/bin/bash
 # Complete e-commerce development using multiple tools
 
 echo "🏗️  Phase 1: Architecture Design (Premium Cloud)"
@@ -194,9 +156,6 @@ echo "🚀 Phase 6: Deployment Setup"
 llx chat --model balanced --prompt "Create Docker, Kubernetes, and CI/CD configuration" --execute
 ```
 
-### Data Science Pipeline
-```bash
-#!/bin/bash
 # ML pipeline development with hybrid approach
 
 echo "📊 Phase 1: Pipeline Design (Premium)"
@@ -223,9 +182,6 @@ echo "📈 Phase 5: Monitoring (Balanced)"
 llx chat --model balanced --prompt "Add comprehensive monitoring and logging" --execute
 ```
 
-### Mobile App Development
-```bash
-#!/bin/bash
 # Cross-platform mobile app development
 
 echo "📱 Phase 1: App Design (Premium)"
@@ -253,16 +209,12 @@ echo "📦 Phase 5: Build and Deploy (Balanced)"
 llx chat --model balanced --prompt "Create build scripts and deployment configuration" --execute
 ```
 
-## Best Practices
-
 ### 1. **Tool Selection Guidelines**
 - **Aider**: Best for code implementation, refactoring, and feature development
 - **Claude Code**: Ideal for architecture, complex refactoring, and large-scale changes
 - **VS Code + RooCode**: Great for interactive development and UI work
 - **Local LLX**: Perfect for quick fixes, documentation, and privacy-sensitive tasks
 
-### 2. **Cost Optimization**
-```bash
 # Use premium models sparingly
 llx chat --model premium --prompt "Make critical architectural decisions"
 
@@ -273,16 +225,12 @@ llx chat --model balanced --prompt "Implement features and business logic"
 llx chat --local --prompt "Fix bugs, add tests, update documentation"
 ```
 
-### 3. **Quality Assurance**
-```bash
 # Multi-tool review process
 aider --message="Implement feature" .
 llx chat --local --prompt "Review implementation for basic issues" .
 claude-code "Perform deep review and optimization" .
 ```
 
-### 4. **Workflow Automation**
-```bash
 # Create reusable workflows
 ./hybrid_dev.sh workflow fullstack    # Complete application
 ./hybrid_dev.sh workflow api         # REST API
@@ -290,11 +238,6 @@ claude-code "Perform deep review and optimization" .
 ./hybrid_dev.sh workflow mobile      # Mobile app
 ```
 
-## Advanced Integration
-
-### Custom Tool Chains
-```bash
-#!/bin/bash
 # Define custom tool chain for specific needs
 
 develop_feature() {

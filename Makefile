@@ -35,6 +35,11 @@ help:
 	@echo "  clean            Clean temporary files"
 	@echo "  backup           Create backups"
 	@echo "  doctor           Check system health"
+	@echo ""
+	@echo "Release:"
+	@echo "  publish          Build package for PyPI (dry-run)"
+	@echo "  publish-confirm  Upload to PyPI"
+	@echo "  publish-test     Upload to TestPyPI"
 
 # Installation
 install:
@@ -236,6 +241,25 @@ ci-build:
 	docker tag llx:${BUILD_NUMBER:-latest} llx:latest
 
 # Release helpers
+publish:
+	@echo "📦 Publishing to PyPI..."
+	@command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build)
+	rm -rf dist/ build/ *.egg-info/
+	.venv/bin/python -m build
+	.venv/bin/twine check dist/*
+	@echo "⚡ Ready to upload. Run: make publish-confirm to upload to PyPI"
+
+publish-confirm:
+	@echo "🚀 Uploading to PyPI..."
+	.venv/bin/twine upload dist/*
+
+publish-test:
+	@echo "📦 Publishing to TestPyPI..."
+	@command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build)
+	rm -rf dist/ build/ *.egg-info/
+	.venv/bin/python -m build
+	.venv/bin/twine upload --repository testpypi dist/*
+
 version:
 	@echo "📦 Version information..."
 	.venv/bin/python -c "import llx; print(f'llx version: {llx.__version__}')"

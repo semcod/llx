@@ -54,8 +54,6 @@ IDE/Tool → llx Proxy (localhost:4000) → Multiple LLM Providers
    .venv/bin/pip install litellm
    ```
 
-## Running the Proxy
-
 ### Quick Start
 ```bash
 ./run.sh
@@ -63,8 +61,6 @@ IDE/Tool → llx Proxy (localhost:4000) → Multiple LLM Providers
 
 The proxy will start and run until you stop it with Ctrl+C.
 
-### Manual Execution
-```bash
 # Set environment variables
 export $(grep -v '^#' .env | xargs)
 
@@ -76,8 +72,6 @@ export LLX_PROXY_MASTER_KEY="${LLX_PROXY_MASTER_KEY:-${AI_PROXY_MASTER_KEY:-sk-p
 # Start the proxy
 ../../.venv/bin/python main.py
 ```
-
-## IDE Integration
 
 ### VS Code Extensions
 
@@ -129,8 +123,6 @@ Additional tiers available in the current project config:
 The model list is generated from the current `llx.yaml`, so you usually do not
 need to maintain a separate alias file.
 
-## Testing the Proxy
-
 ### Test Models Endpoint
 ```bash
 curl -H "Authorization: Bearer sk-proxy-local-dev" \
@@ -144,8 +136,6 @@ curl -H "Authorization: Bearer sk-proxy-local-dev" \
      -d '{"model":"balanced","messages":[{"role":"user","content":"Hello!"}]}' \
      http://localhost:4000/v1/chat/completions
 ```
-
-## Features
 
 ### 1. Intelligent Routing
 The proxy automatically routes requests to the best provider based on:
@@ -172,8 +162,6 @@ Distribute load across providers:
 - Rate limit handling
 - Provider health monitoring
 
-## Configuration Options
-
 ### Proxy Settings
 ```bash
 LLX_PROXY_HOST=0.0.0.0         # Listen address
@@ -192,13 +180,6 @@ MAX_REQUEST_COST_USD=2.0       # Per-request limit
 ### Caching
 ```bash
 REDIS_URL=redis://localhost:6379/0  # Redis for caching
-# Without Redis, in-memory caching is used
-```
-
-## Troubleshooting
-
-### Port Already in Use
-```bash
 # Check what's using the port
 netstat -tuln | grep :4000
 
@@ -207,24 +188,13 @@ export LLX_PROXY_PORT=4002
 ./run.sh
 ```
 
-### API Key Issues
-```bash
-# Verify keys are loaded
-env | grep API_KEY
-
 # Test provider directly
 curl -H "Authorization: Bearer $ANTHROPIC_API_KEY" \
      https://api.anthropic.com/v1/messages
 ```
 
-### Connection Refused
-```bash
 # Check if proxy is running
 curl http://localhost:4000/health
-
-# Check logs for errors
-# The script outputs connection status during startup
-```
 
 ## Security Notes
 

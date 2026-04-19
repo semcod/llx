@@ -1,10 +1,6 @@
-# LLX Privacy Module Documentation
-
 ## Overview
 
 The LLX Privacy module provides **reversible anonymization** of sensitive data for secure communication with LLM APIs. It supports both simple text anonymization and complex project-level code anonymization with AST transformation.
-
-## Features
 
 ### Core Features
 - **Text anonymization**: Emails, phone numbers, API keys, passwords, PESEL, credit cards
@@ -23,8 +19,6 @@ The LLX Privacy module provides **reversible anonymization** of sensitive data f
 | System | Paths, IPs, hostnames | `/home/user`, `192.168.1.1` |
 | Code | Variables, functions, classes | `def process_data():` |
 
-## Quick Start
-
 ### Basic Text Anonymization
 
 ```python
@@ -33,8 +27,6 @@ from llx.privacy import quick_anonymize, quick_deanonymize
 # Anonymize
 result = quick_anonymize("Contact: admin@company.com, API: sk-abc123")
 print(result.text)
-# Output: Contact: [EMAIL_A1B2], API: [APIKEY_C3D4]
-
 # Deanonymize LLM response
 restored = quick_deanonymize(llm_response, result.mapping)
 ```
@@ -68,10 +60,6 @@ ctx = AnonymizationContext.load("/path/to/context.json")
 deanonymizer = ProjectDeanonymizer(ctx)
 restored = deanonymizer.deanonymize_chat_response(llm_response)
 ```
-
-## API Reference
-
-### Core Classes
 
 #### `Anonymizer`
 
@@ -167,8 +155,6 @@ files_result = deanonymizer.deanonymize_project_files(
 # Quick method
 restored = deanonymizer.deanonymize_chat_response(llm_response)
 ```
-
-### Streaming Classes
 
 #### `StreamingProjectAnonymizer`
 
@@ -269,11 +255,6 @@ See `examples/privacy/` for complete examples:
 ### MCP Integration
 - `mcp/README.md` - MCP tool usage and JSON-RPC examples
 
-## Best Practices
-
-### 1. Always Save Context
-
-```python
 # After anonymization
 ctx.save("project.anon.json")
 
@@ -281,9 +262,6 @@ ctx.save("project.anon.json")
 ctx = AnonymizationContext.load("project.anon.json")
 ```
 
-### 2. Use Consistent Salt for Reproducibility
-
-```python
 # Same salt = same anonymized names
 ctx = AnonymizationContext(
     project_path="/project",
@@ -304,9 +282,6 @@ print(f"Functions: {len(ctx.functions)}")
 print(result.files["main.py"][:1000])
 ```
 
-### 4. Handle Streaming Properly
-
-```python
 # For very large responses
 streamer = StreamingDeanonymizer(ctx)
 
@@ -320,15 +295,10 @@ if final:
     yield final
 ```
 
-### 5. Secure Context Files
-
-```gitignore
 # .gitignore
 *.anonymization_context.json
 *.anon.json
 ```
-
-## Symbol Types
 
 ### Text Anonymization Tokens
 
@@ -349,8 +319,6 @@ if final:
 | Class | `cls_XXXXXX` | `cls_g7h8i9` |
 | Module | `mod_XXXXXX` | `mod_j0k1l2` |
 | Path | `pth_XXXXXX` | `pth_m3n4o5` |
-
-## Advanced Usage
 
 ### Custom AST Transformation
 
@@ -393,8 +361,6 @@ processor = ChunkedProcessor(max_chunk_size=1024*1024)  # 1MB
 for chunk in processor.process_file("large_file.py", anonymize_func):
     process(chunk.content)
 ```
-
-## Troubleshooting
 
 ### Issue: AST parsing fails for Python file
 

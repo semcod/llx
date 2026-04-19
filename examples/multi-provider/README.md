@@ -53,15 +53,11 @@ This example demonstrates how to configure and use multiple LLM providers with l
    .venv/bin/pip install litellm
    ```
 
-## Running the Example
-
 ### Quick Start
 ```bash
 ./run.sh
 ```
 
-### Manual Execution
-```bash
 # Set environment variables
 export $(grep -v '^#' .env | xargs)
 
@@ -116,48 +112,21 @@ Provider priority (for failover):
 ✅ Multi-provider example completed!
 ```
 
-## Provider Configuration
-
 ### Anthropic Claude
 ```bash
 ANTHROPIC_API_KEY=sk-ant-api03-...
-
-# Available models
-# claude-opus-4-20250514      # Premium, highest quality
-# claude-sonnet-4-20250514    # Balanced, good performance
-# claude-haiku-4-5-20251001   # Cheap, fast responses
-```
 
 ### OpenRouter
 ```bash
 OPENROUTER_API_KEY=sk-or-v1-...
 
-# Popular models
-# anthropic/claude-3.5-sonnet
-# openai/gpt-4o
-# meta-llama/llama-3.1-70b-instruct
-# gemini/gemini-2.5-pro
-```
-
 ### OpenAI
 ```bash
 OPENAI_API_KEY=sk-...
 
-# Available models
-# gpt-4-turbo     # Premium
-# gpt-4o          # Balanced
-# gpt-5.4-mini     # Cheap
-```
-
 ### Gemini
 ```bash
 GEMINI_API_KEY=...
-
-# Available models
-# gemini/gemini-2.5-pro   # Premium
-# gemini/gemini-2.5-flash # Cheap
-# gemini/gemini-1.5-pro   # Balanced
-```
 
 ## Fallback Strategy
 
@@ -181,8 +150,6 @@ def select_provider_with_fallback(request):
     raise NoProvidersAvailableError()
 ```
 
-## Cost Optimization
-
 ### Model Selection by Task Type
 
 | Task Type | Recommended Provider | Model | Cost Strategy |
@@ -193,9 +160,6 @@ def select_provider_with_fallback(request):
 | **General Chat** | OpenRouter/OpenAI | Mix of models | Balanced |
 | **High Volume** | DeepSeek/Groq | DeepSeek Chat/Llama | Speed & cost |
 
-### Budget Management
-
-```bash
 # Set budget limits in .env
 MONTHLY_BUDGET_USD=60
 DAILY_BUDGET_USD=5
@@ -206,8 +170,6 @@ ANTHROPIC_BUDGET_USD=30
 OPENROUTER_BUDGET_USD=20
 OPENAI_BUDGET_USD=10
 ```
-
-## Advanced Configuration
 
 ### Provider Weights
 Configure provider selection probabilities:
@@ -232,8 +194,6 @@ MODEL_ALIAS_CHEAP=anthropic/claude-haiku-4-5-20251001
 MODEL_ALIAS_FREE=gemini/gemini-2.5-flash
 ```
 
-### Provider-Specific Settings
-```bash
 # Rate limiting
 ANTHROPIC_RATE_LIMIT=50          # requests/minute
 OPENROUTER_RATE_LIMIT=100
@@ -245,8 +205,6 @@ OPENROUTER_TIMEOUT=20
 OPENAI_TIMEOUT=25
 ```
 
-## Performance Monitoring
-
 ### Metrics to Track
 - Request success rate per provider
 - Average response time
@@ -254,8 +212,6 @@ OPENAI_TIMEOUT=25
 - Error rates and types
 - Rate limit hits
 
-### Monitoring Setup
-```python
 # Track provider performance
 provider_metrics = {
     'anthropic': {
@@ -266,8 +222,6 @@ provider_metrics = {
     }
 }
 ```
-
-## Troubleshooting
 
 ### Common Issues
 
@@ -317,8 +271,6 @@ export LLX_DEBUG=true
 5. **Implement Caching**: Reduce costs for repeated requests
 6. **Handle Failures Gracefully**: Implement proper error handling
 7. **Regular Key Rotation**: Maintain security and access
-
-## Production Considerations
 
 ### High Availability
 - Configure multiple API keys per provider

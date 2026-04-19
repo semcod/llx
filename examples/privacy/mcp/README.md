@@ -2,8 +2,6 @@
 
 This directory contains examples of using LLX privacy features via MCP tools.
 
-## Available MCP Tools
-
 ### `llx_privacy_scan`
 
 Scan text or files for sensitive data.
@@ -90,8 +88,6 @@ Deanonymize LLM response or project files.
   "output_dir": "/tmp/restored"
 }
 ```
-
-## Workflow Examples
 
 ### Example 1: Anonymize Before Sending to LLM
 

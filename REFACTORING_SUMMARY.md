@@ -1,9 +1,5 @@
-# Code Duplication Refactoring Summary
-
 ## Overview
 Successfully refactored 25 duplicate code groups identified by redup scan, eliminating 315 lines of duplicate code.
-
-## Completed Refactorings
 
 ### 1. _cmd_remove Functions (40 lines saved)
 - Created `llx/orchestration/utils/_cmd_remove.py` with `create_remove_handler` utility
@@ -40,8 +36,6 @@ Successfully refactored 25 duplicate code groups identified by redup scan, elimi
   - `llx/orchestration/llm/cli.py`
   - `llx/orchestration/queue/cli.py`
   - `llx/orchestration/routing/cli.py`
-
-## Cyclomatic Complexity Refactoring
 
 ### High CC Methods Reduced
 Successfully refactored 5 methods with cyclomatic complexity > 15:

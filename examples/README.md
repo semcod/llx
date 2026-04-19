@@ -49,8 +49,6 @@ examples/basic/
 | **[aider](./aider)** | Aider integration | `balanced` |
 | **[vscode-roocode](./vscode-roocode)** | VS Code extension | `free` |
 
-## Usage Examples
-
 ### Basic Usage
 ```bash
 cd examples/basic
@@ -65,8 +63,6 @@ cd examples
 ./run.sh local "Offline analytics tool"
 ```
 
-### Direct LLX CLI
-```bash
 # From repo root:
 PYTHONPATH=. python3 -m llx plan wizard --description "Build a notes API" --profile free
 ```

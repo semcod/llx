@@ -2,8 +2,6 @@
 
 This directory demonstrates various filtering options and parameter combinations in LLX.
 
-## Available Examples
-
 ### 1. **Tier-based Filtering**
 Filter models by cost/quality tiers:
 ```bash
@@ -46,8 +44,6 @@ llx chat --task review --prompt "Review this pull request"
 llx chat --task explain --prompt "Explain how this works"
 ```
 
-### 4. **Speed vs Quality Trade-offs**
-```bash
 # Fast responses for simple tasks
 llx chat --model cheap --task quick_fix --prompt "Add error handling"
 
@@ -58,8 +54,6 @@ llx chat --model premium --task refactor --prompt "Optimize this algorithm"
 llx chat --model balanced --task review --prompt "Review this implementation"
 ```
 
-### 5. **Cost Control Examples**
-```bash
 # Limit to free models
 llx chat --local --prompt "What does this function do?"
 
@@ -72,8 +66,6 @@ llx chat --model cheap --prompt "Add unit tests"
 llx chat --prompt "Design a complete system architecture"
 ```
 
-### 6. **Combined Filters**
-```bash
 # Local model for privacy
 llx chat --local --task refactor --prompt "Refactor this class"
 
@@ -84,8 +76,6 @@ llx chat --provider anthropic --model balanced --task explain --prompt "Explain 
 llx chat --provider openai --model cheap --task quick_fix --prompt "Fix this syntax error"
 ```
 
-### 7. **Context-aware Selection**
-```bash
 # Small project - automatically gets cheaper model
 cd small-project && llx chat --prompt "Add logging"
 
@@ -109,8 +99,6 @@ llx chat --model fast --prompt "Quick review needed"
 llx chat --model reliable --prompt "Critical bug fix"
 ```
 
-### 9. **Batch Processing**
-```bash
 # Process multiple files with consistent model
 for file in src/*.py; do
     llx chat --model cheap --task quick_fix --prompt "Fix linting errors in $(basename $file)" $file
@@ -120,8 +108,6 @@ done
 llx chat --model balanced --task explain --prompt "Generate module documentation" src/
 ```
 
-### 10. **Interactive Examples**
-```bash
 # Start a chat session with specific constraints
 llx chat --local --task refactor  # Will prompt for input
 
@@ -138,10 +124,6 @@ llx chat --model $MODEL --prompt "Suggest improvements"
 4. **Provider preferences**: Some providers excel at specific tasks
 5. **Project size matters**: LLX automatically adjusts based on codebase metrics
 
-## Real-world Scenarios
-
-### CI/CD Pipeline
-```bash
 # PR validation - fast and cheap
 llx chat --model cheap --task review --prompt "Check for common issues" .
 
@@ -152,8 +134,6 @@ llx chat --model balanced --task explain --prompt "Generate API docs" src/
 llx chat --model premium --task review --prompt "Security review" auth/
 ```
 
-### Development Workflow
-```bash
 # Quick prototyping - local
 llx chat --local --task quick_fix --prompt "Add placeholder implementation"
 
@@ -164,8 +144,6 @@ llx chat --model balanced --task review --prompt "Review this change"
 llx chat --model premium --task refactor --prompt "Design system architecture"
 ```
 
-### Learning and Exploration
-```bash
 # Understand codebase - local
 llx chat --local --task explain --prompt "How does this work?"
 

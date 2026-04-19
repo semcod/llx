@@ -10,8 +10,6 @@ The LLX planfile module has been simplified to:
 - Reduce complexity and improve maintainability
 - Use LLX's built-in model selection and routing
 
-## Key Changes
-
 ### 1. Simplified Executor
 - Removed complex executor implementations
 - Single `executor_simple.py` with clean implementation
@@ -26,8 +24,6 @@ The LLX planfile module has been simplified to:
 - Removed dependency on external planfile package
 - Uses only LLX internals
 - Cleaner import structure
-
-## Usage
 
 ### Basic Usage
 ```python
@@ -56,25 +52,6 @@ sprints:
         type: "refactor"
         model_hints: "balanced"
 ```
-
-### V1 Format Example
-```yaml
-name: "My Strategy"
-goal: "Improve code quality"
-
-sprints:
-  - id: 1
-    name: "Refactoring Sprint"
-    objectives: ["Extract methods", "Add tests"]
-    task_patterns:  # Separate patterns (V1)
-      - name: "Extract Methods"
-        description: "Extract complex methods"
-        task_type: "refactor"
-        model_hints:
-          implementation: "balanced"
-```
-
-## Implementation Details
 
 ### File Structure
 ```
@@ -119,10 +96,6 @@ llx/planfile/
    - Leverages project metrics
    - Consistent with LLX patterns
 
-## Migration
-
-### From V1 to V2
-```yaml
 # V1 - Separate patterns
 sprints:
   - id: 1
@@ -139,8 +112,6 @@ sprints:
       - name: "Task 1"
 ```
 
-### Code Changes
-```python
 # No changes needed - executor handles both formats!
 from llx.planfile import execute_strategy
 results = execute_strategy("strategy.yaml")

@@ -1,10 +1,6 @@
-# LLX Planfile Simplification Summary
-
 ## What Was Done
 
 Simplified the planfile integration in LLX to make it cleaner, more maintainable, and easier to use.
-
-## Key Simplifications
 
 ### 1. **Reduced File Count**
 - Before: 4 executor files (executor.py, executor_improved.py, executor_v2.py, etc.)
@@ -16,8 +12,6 @@ Simplified the planfile integration in LLX to make it cleaner, more maintainable
 - Automatic format detection and normalization
 - No need for separate execution paths
 
-### 3. **Cleaner Imports**
-```python
 # Before - Multiple executors
 from llx.planfile import execute_strategy
 from llx.planfile import execute_strategy_flexible
@@ -31,8 +25,6 @@ from llx.planfile import execute_strategy
 - Focused on core execution functionality
 - Clear separation of concerns
 
-## Files Modified
-
 ### Removed Files
 - `executor.py` - Complex LLX-dependent executor
 - `executor_improved.py` - Improved but still complex
@@ -45,8 +37,6 @@ from llx.planfile import execute_strategy
 
 ### Modified Files
 - `__init__.py` - Simplified exports
-
-## Implementation Details
 
 ### The Simplified Executor
 
@@ -79,8 +69,6 @@ def _normalize_strategy(strategy: dict) -> dict:
             task_patterns = [...]
             sprint["task_patterns"] = task_patterns
 ```
-
-## Benefits Achieved
 
 ### 1. **Maintainability**
 - Single source of truth for execution
@@ -117,8 +105,6 @@ LLX Planfile - Simplified Integration Test
 All tests passed!
 ```
 
-## Usage Examples
-
 ### V2 Format (Recommended)
 ```yaml
 name: "My Strategy"
@@ -149,8 +135,6 @@ from llx.planfile import execute_strategy
 # Works with either format!
 results = execute_strategy("strategy.yaml", dry_run=True)
 ```
-
-## Migration Path
 
 ### For Users
 - No changes required

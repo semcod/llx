@@ -2,10 +2,6 @@
 
 This example shows how to generate various command-line tools using LLX with different constraints and optimizations.
 
-## Quick Examples
-
-### Generate Python CLI Tool
-```bash
 # Simple CLI with local model
 llx chat --local --task quick_fix --prompt "Create a CLI tool for managing Git branches with commands: list, create, delete, merge" --output git-branch-manager
 
@@ -16,8 +12,6 @@ llx chat --model balanced --task refactor --prompt "Create a comprehensive Docke
 llx chat --model premium --task refactor --prompt "Build an interactive task management CLI with TUI, database backend, and sync capabilities" --output task-cli
 ```
 
-### Generate Shell Scripts
-```bash
 # System administration script
 llx chat --model cheap --task quick_fix --prompt "Create a bash script for automated system backup with compression and email notifications" --output backup.sh
 
@@ -28,8 +22,6 @@ llx chat --model balanced --prompt "Generate a comprehensive deployment script f
 llx chat --local --prompt "Create a smart Makefile for Python projects with test, lint, format, build, and clean targets" --output Makefile
 ```
 
-### Generate CLI with GUI
-```bash
 # Tkinter GUI tool
 llx chat --model balanced --prompt "Create a file organizer with GUI using Python Tkinter, with drag-drop, preview, and batch operations" --output file-organizer
 
@@ -40,10 +32,6 @@ llx chat --local --prompt "Build a system monitoring TUI using Python rich libra
 llx chat --model premium --prompt "Create a cross-platform GUI app using Electron for managing environment variables and configurations" --output env-manager
 ```
 
-## One-liner Generation
-
-### Python Tools
-```bash
 # JSON processor
 llx chat --local --prompt "Create a Python CLI tool for JSON processing with jq-like query support" --execute
 
@@ -54,8 +42,6 @@ llx chat --model cheap --prompt "Build a log analyzer CLI that parses Apache/Ngi
 llx chat --model balanced --prompt "Generate a secure password manager CLI with encryption and search" --execute
 ```
 
-### System Tools
-```bash
 # Process monitor
 llx chat --local --prompt "Create a process monitoring tool that shows CPU, memory, and can kill processes" --execute
 
@@ -66,10 +52,6 @@ llx chat --model cheap --prompt "Build a disk space analyzer that finds large fi
 llx chat --model balanced --prompt "Generate a network scanner that finds open ports and services" --execute
 ```
 
-## Advanced Examples
-
-### Multi-command CLI with Frameworks
-```bash
 # Click framework (Python)
 llx chat --model balanced --prompt """
 Create a Python CLI using Click framework for project management:
@@ -105,8 +87,6 @@ Create a Node.js CLI with Commander.js for API development:
 """ --execute
 ```
 
-### Specialized CLI Tools
-```bash
 # Database CLI
 llx chat --model premium --prompt """
 Build a universal database CLI that works with:
@@ -141,10 +121,6 @@ Generate a CI/CD management CLI for:
 """ --execute
 ```
 
-## Performance Optimization
-
-### Fast Generation
-```bash
 # Use cheap models for simple tools
 llx chat --model cheap --speed --prompt "Create a simple file watcher CLI that runs commands on changes" --execute
 
@@ -155,8 +131,6 @@ llx chat --local --prompt "Build a secure credential manager CLI with local encr
 llx chat --model balanced --prompt "Generate a parallel file processing CLI with worker pools" --execute
 ```
 
-### Quality Optimization
-```bash
 # Premium for complex tools
 llx chat --model premium --prompt "Build a distributed task queue CLI with Redis backend and web dashboard" --execute
 
@@ -164,10 +138,6 @@ llx chat --model premium --prompt "Build a distributed task queue CLI with Redis
 llx chat --model balanced --prompt "Create a REST API testing CLI with request collection and environments" --execute
 ```
 
-## Integration Examples
-
-### With Existing Tools
-```bash
 # Git integration
 llx chat --model balanced --prompt "Create a Git enhancement CLI with smart commits, PR management, and code review" --execute
 
@@ -178,8 +148,6 @@ llx chat --local --prompt "Build a Docker CLI extension for multi-container orch
 llx chat --model premium --prompt "Generate a kubectl plugin for advanced resource management and troubleshooting" --execute
 ```
 
-### With APIs
-```bash
 # Weather CLI
 llx chat --model cheap --prompt "Create a weather CLI using OpenWeatherMap API with forecasts and alerts" --execute
 
@@ -190,10 +158,6 @@ llx chat --model balanced --prompt "Build a GitHub CLI for repository management
 llx chat --model balanced --prompt "Generate a Slack CLI for messaging, file uploads, and channel management" --execute
 ```
 
-## Packaging and Distribution
-
-### Python Packages
-```bash
 # Generate complete package
 llx chat --model balanced --prompt """
 Create a distributable Python CLI package with:
@@ -216,8 +180,6 @@ Build a Python CLI with PyInstaller for:
 """ --execute
 ```
 
-### Binary Distribution
-```bash
 # Go binary
 llx chat --model balanced --prompt "Create a Go CLI with cross-compilation, releases, and homebrew formula" --execute
 
@@ -225,10 +187,6 @@ llx chat --model balanced --prompt "Create a Go CLI with cross-compilation, rele
 llx chat --model premium --prompt "Build a Rust CLI with cargo-dist for automatic releases and package managers" --execute
 ```
 
-## Real-world Scenarios
-
-### DevOps Tool Suite
-```bash
 # Complete DevOps CLI
 llx chat --model premium --prompt """
 Generate a comprehensive DevOps CLI suite:
@@ -243,8 +201,6 @@ Generate a comprehensive DevOps CLI suite:
 """ --execute
 ```
 
-### Data Science CLI
-```bash
 # ML/DL tools
 llx chat --model premium --prompt """
 Create a data science CLI with:
@@ -258,10 +214,6 @@ Create a data science CLI with:
 """ --execute
 ```
 
-## Best Practices
-
-### 1. **Start Simple**
-```bash
 # MVP first
 llx chat --model cheap --prompt "Create basic CLI with one command" --execute
 
@@ -269,8 +221,6 @@ llx chat --model cheap --prompt "Create basic CLI with one command" --execute
 llx chat --model balanced --prompt "Add more commands and features to existing CLI"
 ```
 
-### 2. **Use Appropriate Models**
-```bash
 # Simple scripts: cheap/local
 llx chat --model cheap --prompt "Generate a utility script for file conversion"
 
@@ -278,14 +228,10 @@ llx chat --model cheap --prompt "Generate a utility script for file conversion"
 llx chat --model premium --prompt "Build a full-featured CLI with plugin system"
 ```
 
-### 3. **Consider Distribution**
-```bash
 # Include packaging in prompt
 llx chat --model balanced --prompt "Create a CLI tool with installation script and documentation"
 ```
 
-### 4. **Add Testing**
-```bash
 # Generate with tests
 llx chat --model balanced --prompt "Build a CLI with comprehensive unit and integration tests"
 ```

@@ -19,9 +19,6 @@ Thank you for your interest in contributing to LLX! This document provides guide
 3. Set up the development environment (see below)
 4. Create a feature branch: `git checkout -b feature/your-feature-name`
 
-## Development Setup
-
-```bash
 # Create virtual environment
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
@@ -33,15 +30,10 @@ pip install -e ".[dev,prellm-full]"
 pre-commit install
 ```
 
-## Security Guidelines
-
 ### ⚠️ Critical: Avoiding GitHub Push Protection Blocks
 
 When adding examples or test data that contain "fake secrets" (API keys, tokens, passwords), follow these rules to prevent GitHub from blocking your push:
 
-#### 1. Use Safe Placeholder Patterns
-
-```python
 # ❌ BAD - Looks like a real secret
 STRIPE_KEY = "sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL"
 STRIPE_KEY = "sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL"
@@ -53,9 +45,6 @@ STRIPE_KEY = "<YOUR_STRIPE_LIVE_KEY_HERE>"
 STRIPE_KEY = "sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL"  # GitHub allows this pattern
 ```
 
-#### 2. Add Explicit Comments
-
-```python
 # ✅ Add comment to clarify it's an example
 STRIPE_KEY = "sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL"  # This is a dummy key for documentation
 ```
@@ -109,9 +98,6 @@ mypy llx/
 All contributions should include tests:
 
 ```bash
-# Run all tests
-pytest
-
 # Run with coverage
 pytest --cov=llx --cov-report=html
 

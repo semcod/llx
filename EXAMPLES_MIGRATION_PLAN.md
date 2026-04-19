@@ -1,11 +1,5 @@
-# Examples Migration List and Categorization
-
-## Current Examples Status
-
 ### ✅ Already Migrated
 1. **python-api** - API type - ✅ Refactored to simple form
-
-### 📋 Migration Queue
 
 #### Category: API Examples
 | Example | Current Status | Target Type | Priority | Notes |
@@ -41,8 +35,6 @@
 | docker | Docker setup | infra | Medium | Container deployment |
 | proxy | Proxy setup | infra | Medium | LiteLLM proxy |
 
-## Migration Priority Order
-
 ### Phase 1: Core Examples (Week 1)
 1. **basic** - Fundamental API example
 2. **cli-tools** - CLI tool example  
@@ -65,10 +57,6 @@
 13. **hybrid** - Multiple tools
 14. **vscode-roocode** - VS Code specific
 
-## Migration Template for Each Example
-
-### 1. Analysis Phase
-```bash
 # Analyze current example
 cd examples/[example-name]
 find . -name "*.sh" -exec wc -l {} \;  # Count script lines
@@ -81,8 +69,6 @@ cat run.sh                             # Review current script
 - Identify unique features
 - Note any special requirements
 
-### 3. Refactoring Script
-```bash
 # New run.sh template
 #!/bin/bash
 set -e
@@ -100,16 +86,8 @@ else
 fi
 ```
 
-### 4. Testing
-```bash
 # Test migration
 ./run.sh "Test description"
-# Verify generated files
-# Test functionality
-```
-
-## Specific Migration Notes
-
 ### basic Example
 - **Type**: api
 - **Framework**: fastapi (default)
@@ -140,8 +118,6 @@ fi
 - **Special**: Infrastructure as code
 - **Target**: Deployment configuration demo
 
-## Success Criteria for Each Migration
-
 ### Technical Criteria
 - [ ] run.sh < 30 lines
 - [ ] Uses `llx plan all` or simple LLX commands
@@ -160,8 +136,6 @@ fi
 - [ ] Good example output
 - [ ] Easy to understand
 
-## Implementation Checklist for Each Example
-
 ### Pre-Migration
 - [ ] Document current behavior
 - [ ] Identify all features
@@ -179,8 +153,6 @@ fi
 - [ ] Add to examples index
 - [ ] Verify all tests pass
 - [ ] Code review
-
-## Risks and Mitigations
 
 ### Risk 1: Lost Functionality
 - **Mitigation**: Comprehensive testing before/after

@@ -1,11 +1,5 @@
-# LLX Enhancement Plan for Examples Refactoring
-
 ## Overview
 Plan rozbudowy LLX aby wspierał uproszczone przykłady we wszystkich kategoriach.
-
-## Required Changes in LLX
-
-### 1. Enhanced `llx plan all` Command
 
 #### Current Signature:
 ```python
@@ -35,8 +29,6 @@ def plan_all(
     config_file: Optional[str] = None,      # NEW: Custom config
 )
 ```
-
-### 2. Project Type Configuration System
 
 #### New File: `llx/configs/project_types.yaml`
 ```yaml
@@ -135,10 +127,6 @@ defaults:
     files: ["model.py", "train.py", "predict.py", "requirements.txt", "Dockerfile"]
 ```
 
-### 3. Template System Enhancement
-
-#### Enhanced `llx/configs/planfile_config.yaml`:
-```yaml
 # Strategy templates
 strategy:
   templates:
@@ -188,8 +176,6 @@ code:
         1: {file: "model.py", prompt: "Generate ML model"}
         # ... more files
 ```
-
-### 4. Project Type Detection
 
 #### New File: `llx/llx/detection/project_detector.py`:
 ```python
@@ -244,8 +230,6 @@ class ProjectTypeDetector:
         return self.config["project_types"].get(project_type, {})
 ```
 
-### 5. Enhanced Command Implementation
-
 #### Modified `llx/cli/app.py`:
 ```python
 @plan_app.command("all")
@@ -289,8 +273,6 @@ def plan_all(
     
     # Continue with existing logic...
 ```
-
-### 6. New Utility Commands
 
 #### Add to `llx/cli/app.py`:
 ```python
@@ -342,8 +324,6 @@ def plan_types() -> None:
         console.print()
 ```
 
-## Implementation Steps
-
 ### Step 1: Core Infrastructure (Day 1-2)
 1. Create `project_types.yaml` configuration
 2. Implement `ProjectTypeDetector`
@@ -374,10 +354,6 @@ def plan_types() -> None:
 3. Update documentation
 4. Final review
 
-## Testing Strategy
-
-### Unit Tests
-```python
 # tests/test_project_detector.py
 def test_detect_api_from_path():
     detector = ProjectTypeDetector()
@@ -391,8 +367,6 @@ def test_detect_webapp_from_files():
         assert detector.detect_from_files(Path(tmp)) == "webapp"
 ```
 
-### Integration Tests
-```python
 # tests/test_plan_all_integration.py
 def test_plan_all_api():
     # Test API project generation
@@ -415,17 +389,6 @@ def test_plan_all_webapp():
 4. **Extensibility**: Easy to add new project types
 5. **Maintainability**: Centralized configuration and templates
 
-## Migration Path for Examples
-
-### Before:
-```bash
-# examples/webapp-react/run.sh (50+ lines)
-#!/bin/bash
-# Complex setup with npm, webpack, etc.
-```
-
-### After:
-```bash
 # examples/webapp-react/run.sh (15 lines)
 #!/bin/bash
 set -e

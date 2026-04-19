@@ -1,7 +1,3 @@
-# LLX + Planfile + Aider Integration Status
-
-## ✅ **Working Components**
-
 ### 1. **LLX Planfile Integration**
 - ✅ `llx plan models` - List available models with filters
 - ✅ `llx plan generate` - Generate strategies with model selection
@@ -26,8 +22,6 @@
   - `run.sh` - Script with --test and --demo options
   - `README.md` - Documentation
 
-## 🔧 **Improvements Made**
-
 ### 1. **YAML Parsing Fixes**
 - Fixed YAML parsing errors in strategy generation
 - Added robust error handling and fallbacks
@@ -48,8 +42,6 @@
 - Provider and tier filtering
 - API key status checking
 - Local vs cloud model separation
-
-## 📋 **Test Results**
 
 ### Planfile Generation
 ```bash
@@ -75,8 +67,6 @@ $ llx plan models --local
 ✅ Predefined profiles listed
 ✅ Provider filtering works
 ```
-
-## 🚀 **Usage Examples**
 
 ### Generate Strategy with Local Models
 ```bash

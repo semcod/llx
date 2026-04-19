@@ -1,5 +1,3 @@
-# LLX Examples Refactoring Specification
-
 ## Cel
 Uproszczenie wszystkich przykładów w `examples/*` do jednolitej, prostej postaci opartej na komendach LLX.
 
@@ -12,8 +10,6 @@ Uproszczenie wszystkich przykładów w `examples/*` do jednolitej, prostej posta
 - Wszystkie przykłady używają prostych skryptów (max 30 linii)
 - Cała logika jest w LLX, nie w skryptach
 - Spójny interfejs i użytkowanie
-
-## Specyfikacja uproszczonego przykładu
 
 ### 1. Struktura katalogu
 ```
@@ -29,16 +25,8 @@ examples/[example-name]/
 Maksymalnie 30 linii, zawiera:
 ```bash
 #!/bin/bash
-# Simple LLX workflow - all logic handled by LLX
-
-set -e
 # Kolory i zmienne
 DESCRIPTION="${1:-}"
-# Użycie llx plan all lub prostych komend LLX
-```
-
-### 3. Wymagania dotyczące LLX
-
 #### 3.1. Komenda `llx plan all`
 Musi obsługiwać:
 - Dowolny typ projektu (nie tylko API)
@@ -59,8 +47,6 @@ Komendy LLX muszą akceptować:
 - Różne typy generowanych projektów
 - Konfigurację specyficzną dla przykładu
 - Opcjonalne parametry przez CLI lub .env
-
-## Kategoria przykładów i wymagania
 
 ### Kategoria 1: API Examples
 - `python-api/` (już zrefaktoryzowany)
@@ -102,8 +88,6 @@ Wymagania:
 - Domyślny focus: `data` lub `ml`
 - 6-8 sprintów (data ingestion, processing, model, validation, deployment, monitoring)
 - Generowanie: Pandas, Scikit-learn, TensorFlow, etc.
-
-## Implementacja w LLX
 
 ### 1. Rozszerzenie `llx plan all`
 ```python
@@ -161,8 +145,6 @@ Automatyczne wykrywanie na podstawie:
 - Zawartości plików (package.json, requirements.txt)
 - Konfiguracji w `.llx-project-type`
 
-## Plan migracji
-
 ### Faza 1: Przygotowanie LLX (tydzień 1)
 1. Rozszerzyć `llx plan all` o parametry `project_type` i `framework`
 2. Dodać konfigurację typów projektów
@@ -181,8 +163,6 @@ Automatyczne wykrywanie na podstawie:
 3. Code review wszystkich zmian
 4. Wersja 1.0 uproszczonych przykładów
 
-## Kryteria sukcesu
-
 ### Techniczne
 - [ ] Wszystkie przykłady mają run.sh < 30 linii
 - [ ] 100% przykładów używa `llx plan all`
@@ -195,23 +175,6 @@ Automatyczne wykrywanie na podstawie:
 - [ ] Czytelna dokumentacja
 - [ ] Przykłady działają "out of the box"
 
-## Przykład refaktoryzacji
-
-### Przed (python-api/run.sh - 100+ linii):
-```bash
-#!/bin/bash
-# Complex script with:
-# - Interactive prompts
-# - Tool selection
-# - Environment setup
-# - Custom monitoring
-# - Error handling
-# - 100+ lines of code
-```
-
-### Po (python-api/run.sh - 25 linii):
-```bash
-#!/bin/bash
 # Simple LLX workflow
 set -e
 DESCRIPTION="${1:-}"
@@ -221,8 +184,6 @@ else
     echo "Usage: $0 \"description\""
 fi
 ```
-
-## Ryzyka i mitygacje
 
 ### Ryzyko 1: Utrata funkcjonalności
 - Mitygacja: Wszystkie funkcje przenoszone do LLX

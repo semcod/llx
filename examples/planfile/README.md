@@ -2,8 +2,6 @@
 
 This example demonstrates how to use LLX's planfile integration to execute comprehensive refactoring strategies with intelligent model selection and cost optimization.
 
-## The Planfile Approach
-
 ### Why Planfile?
 - **Strategic Planning**: Define multi-sprint refactoring strategies upfront
 - **Intelligent Execution**: Each task gets the optimal model based on complexity and context
@@ -11,10 +9,6 @@ This example demonstrates how to use LLX's planfile integration to execute compr
 - **Cost Control**: Budget-aware model selection with automatic tier optimization
 - **Validation**: Automatic code validation with vallm integration
 
-## Workflow Patterns
-
-### 1. **Generate → Review → Apply**
-```bash
 # Phase 1: Generate comprehensive strategy
 llx plan generate . --sprints 3 --focus complexity --tier free --output refactor-strategy.yaml
 
@@ -30,8 +24,6 @@ llx plan apply refactor-strategy.yaml . --sprint "sprint-2"
 llx plan apply refactor-strategy.yaml . --sprint "sprint-3"
 ```
 
-### 2. **Focused Refactoring**
-```bash
 # Generate focused strategy for specific issues
 llx plan generate . --focus duplication --sprints 2 --output dedup-strategy.yaml
 
@@ -40,8 +32,6 @@ llx plan apply dedup-strategy.yaml . --dry-run
 llx plan apply dedup-strategy.yaml .
 ```
 
-### 3. **Iterative Improvement**
-```bash
 # Continuous improvement loop
 while true; do
     # Analyze current state
@@ -60,11 +50,6 @@ while true; do
 done
 ```
 
-## Real-world Examples
-
-### Legacy Codebase Modernization
-```bash
-#!/bin/bash
 # Complete legacy modernization using planfile
 
 echo "🔍 Phase 1: Deep Analysis"
@@ -113,9 +98,6 @@ llx plan generate . \
 llx plan apply final-polish.yaml .
 ```
 
-### Microservices Refactoring
-```bash
-#!/bin/bash
 # Refactor monolith to microservices
 
 echo "🏗️  Phase 1: Architecture Analysis"
@@ -153,9 +135,6 @@ llx plan generate . \
 llx plan apply integration-tests.yaml .
 ```
 
-### Performance Optimization
-```bash
-#!/bin/bash
 # Systematic performance optimization
 
 echo "⚡ Phase 1: Performance Audit"
@@ -192,11 +171,6 @@ llx plan apply benchmark-suite.yaml .
 python benchmarks/run_all.py
 ```
 
-## Advanced Patterns
-
-### 1. **Budget-Constrained Refactoring**
-```bash
-#!/bin/bash
 # Refactor with strict budget controls
 
 BUDGET_LIMIT=50
@@ -226,9 +200,6 @@ while IFS= read -r task; do
 done < budget-refactor.yaml
 ```
 
-### 2. **Quality-Driven Refactoring**
-```bash
-#!/bin/bash
 # Refactor until quality gates pass
 
 TARGET_QUALITY=90
@@ -256,11 +227,6 @@ while (( $(echo "$CURRENT_QUALITY < $TARGET_QUALITY" | bc -l) )); do
     fi
 done
 ```
-
-### 3. **Parallel Sprint Execution**
-```bash
-#!/bin/bash
-# Execute independent sprints in parallel
 
 # Generate strategy with parallelizable sprints
 llx plan generate . \
@@ -296,8 +262,6 @@ llx plan apply parallel-refactor.yaml . --sprint "sprint-3"
 llx plan apply parallel-refactor.yaml . --sprint "sprint-4"
 ```
 
-## MCP Integration
-
 ### Using Planfile with Claude Desktop
 ```json
 {
@@ -313,8 +277,6 @@ llx plan apply parallel-refactor.yaml . --sprint "sprint-4"
 }
 ```
 
-### Claude Code + Planfile Workflow
-```bash
 # 1. Generate strategy via MCP
 planfile_generate --project_path . --model claude-opus-4 --sprints 3 --focus complexity
 
@@ -328,13 +290,6 @@ planfile_apply --strategy_path /tmp/strategy-*.yaml --project_path . --dry_run
 planfile_apply --strategy_path /tmp/strategy-*.yaml --project_path .
 ```
 
-## Tool Integration
-
-### Planfile + Aider
-```bash
-#!/bin/bash
-# Generate strategy with LLX, execute with Aider
-
 # Generate strategy
 llx plan generate . --output aider-strategy.yaml
 
@@ -346,11 +301,6 @@ while IFS= read -r task; do
     aider --message="$task" .
 done < aider-tasks.txt
 ```
-
-### Planfile + VS Code + Roo Code
-```bash
-#!/bin/bash
-# Visual refactoring with VS Code integration
 
 # Start development environment
 ./docker-manage.sh dev
@@ -371,8 +321,6 @@ for sprint in sprint-1 sprint-2 sprint-3; do
     read -p "Review changes in VS Code, press enter to continue..."
 done
 ```
-
-## Monitoring and Analytics
 
 ### Progress Tracking Dashboard
 ```python
@@ -436,8 +384,6 @@ if __name__ == "__main__":
     print(f"Progress: {report['overall_progress']:.1f}%")
 ```
 
-## Best Practices
-
 ### 1. **Strategy Design**
 - Start with clear objectives and success criteria
 - Break down large refactoring into manageable sprints
@@ -462,22 +408,15 @@ if __name__ == "__main__":
 - Document decisions and trade-offs
 - Plan for iterative improvement
 
-## Troubleshooting
-
-### Common Issues
-```bash
 # If strategy generation fails
 llx plan generate . --model local --sprints 1 --output debug-strategy.yaml
 
-# If execution fails mid-sprint
 # Find last completed task
 llx plan apply strategy.yaml . --sprint current --dry-run
 
-# Resume from specific task
 # Edit strategy.yaml to remove completed tasks, then:
 llx plan apply strategy.yaml .
 
-# If model selection is wrong
 # Edit strategy.yaml model_hints, then:
 llx plan apply strategy.yaml .
 ```

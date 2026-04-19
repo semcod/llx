@@ -20,28 +20,17 @@ VS Code (localhost:8080)
 └── AI Tools Container (optional)
 ```
 
-## 🚀 Quick Start
-
-### 1. Start Development Environment
-```bash
 # Start llx stack with VS Code
 ./docker-manage.sh dev
 ```
 
-### 2. Access VS Code
-```bash
 # Open VS Code in browser
 xdg-open http://localhost:8080
-# Login with password: proxym-vscode
-```
-
 ### 3. Use RooCode
 VS Code will automatically:
 - Install RooCode extension
 - Configure llx connection
 - Set up shortcuts and tasks
-
-## 🤖 RooCode Features
 
 ### Chat Interface
 - **Shortcut**: `Ctrl+Shift+R`
@@ -63,8 +52,6 @@ VS Code will automatically:
 - **Add Comments**: Right-click menu
 - **Write Tests**: Right-click menu
 
-## 🔧 Configuration
-
 ### RooCode Settings
 ```json
 {
@@ -85,11 +72,6 @@ VS Code will automatically:
 - **free** - Free-tier / low-cost tier for testing
 - **local** - Ollama-backed tier for offline usage
 
-## 📋 Usage Examples
-
-### 1. Code Generation
-```python
-# In VS Code, press Ctrl+Shift+G
 # Prompt: "Create a function that calculates factorial"
 
 def factorial(n):
@@ -101,72 +83,13 @@ def factorial(n):
     return n * factorial(n - 1)
 ```
 
-### 2. Code Explanation
-```python
-# Select code and press Ctrl+Shift+E
-# RooCode will explain what the code does
-```
-
-### 3. Refactoring
-```python
-# Select function and press Ctrl+Shift+F
-# Prompt: "Optimize for performance and add type hints"
-```
-
-### 4. Bug Fixing
-```python
-# Right-click → "Fix Bugs with AI"
-# RooCode will identify and fix issues
-```
-
-### 5. Test Generation
-```python
-# Right-click → "Write Tests with AI"
-# RooCode will generate comprehensive tests
-```
-
-## 🔄 Workflow Integration
-
-### Daily Development
-```bash
 # 1. Start environment
 ./docker-manage.sh dev
 
-# 2. Open VS Code
-# xdg-open http://localhost:8080 (password: proxym-vscode)
-
-# 3. Start coding with AI assistance
-# - Use Ctrl+Shift+R for chat
-# - Use Ctrl+Shift+G for code generation
-# - Use inline suggestions automatically
-```
-
-### Project Setup
-```bash
 # 1. Create new project
 mkdir my-project
 cd my-project
 
-# 2. Open in VS Code
-# VS Code will automatically detect and offer AI assistance
-
-# 3. Generate project structure
-# Use RooCode chat: "Create a Python project structure with tests"
-```
-
-### Code Review
-```bash
-# 1. Open file in VS Code
-# 2. Select code or entire file
-# 3. Press Ctrl+Shift+E (explain)
-# 4. Press Ctrl+Shift+F (refactor)
-# 5. Review AI suggestions
-```
-
-## 🎨 Advanced Features
-
-### Custom Prompts
-```python
 # In RooCode chat, use specific prompts:
 "Write a REST API endpoint for user management"
 "Add comprehensive error handling to this function"
@@ -181,15 +104,6 @@ RooCode automatically considers:
 - Import statements
 - Function signatures
 - Variable types
-
-### Multi-file Operations
-```python
-# Select multiple files in explorer
-# Right-click → "Generate Code with AI"
-# Prompt: "Create a complete CRUD API for these models"
-```
-
-## 📊 Performance Tips
 
 ### Model Selection
 - **balanced**: Best default for general coding tasks
@@ -206,8 +120,6 @@ RooCode automatically considers:
   "roocode.stream": true             // Real-time responses
 }
 ```
-
-## 🔍 Troubleshooting
 
 ### Common Issues
 
@@ -231,9 +143,6 @@ docker exec llx-vscode-dev code --install-extension roocode.roocode
 
 **Model not available:**
 ```bash
-# Check Ollama models
-ollama list
-
 # Pull new model
 ollama pull qwen2.5-coder:7b
 ```
@@ -248,8 +157,6 @@ curl http://localhost:4000/v1/models
 curl http://localhost:11434/api/tags
 ```
 
-### Debug Mode
-```bash
 # Enable debug logging
 export DEBUG=true
 ./docker-manage.sh restart dev vscode
@@ -257,8 +164,6 @@ export DEBUG=true
 # View logs
 ./docker-manage.sh logs dev vscode | grep -i roocode
 ```
-
-## 📚 Best Practices
 
 ### Prompt Engineering
 - Be specific about requirements
@@ -281,38 +186,7 @@ export DEBUG=true
 - Validate AI-generated inputs
 - Keep API keys secure
 
-## 🎯 Use Cases
-
-### 1. Rapid Prototyping
-```python
-# Prompt: "Create a FastAPI application with user authentication"
-# RooCode generates complete application structure
-```
-
-### 2. Code Migration
-```python
 # Select legacy code
-# Prompt: "Modernize this code with Python 3.9+ features"
-```
-
-### 3. Documentation
-```python
-# Select function
-# Prompt: "Add comprehensive docstring with examples and types"
-```
-
-### 4. Testing
-```python
-# Select module
-# Prompt: "Write unit tests with pytest and 100% coverage"
-```
-
-### 5. Debugging
-```python
-# Select problematic code
-# Prompt: "Identify and fix the bug in this function"
-```
-
 ## 🚀 Next Steps
 
 1. **Explore Features**: Try all RooCode shortcuts and actions

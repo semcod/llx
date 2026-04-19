@@ -26,8 +26,6 @@ This example demonstrates how to use llx with local LLM models via Ollama for pr
 - Ollama installed and running
 - Sufficient RAM/VRAM for model sizes
 
-## Setup
-
 ### 1. Install Ollama
 
 **Linux/macOS:**
@@ -49,11 +47,6 @@ sudo mv ollama /usr/local/bin/
 ### 2. Start Ollama Service
 ```bash
 ollama serve
-# Runs on http://localhost:11434
-```
-
-### 3. Download Models
-```bash
 # Coding models
 ollama pull qwen2.5-coder:7b      # Code specialization
 ollama pull codellama:7b           # Meta's code model
@@ -67,15 +60,11 @@ ollama pull mistral:7b            # Fast and efficient
 ollama pull llama3.1:70b          # High performance
 ```
 
-## Running the Example
-
 ### Quick Start
 ```bash
 ./run.sh
 ```
 
-### Manual Execution
-```bash
 # Set environment variables
 export OLLAMA_BASE_URL=http://localhost:11434
 
@@ -121,8 +110,6 @@ export OLLAMA_BASE_URL=http://localhost:11434
 ✅ Local models example completed!
 ```
 
-## Recommended Models
-
 ### Coding Models
 
 | Model | Size | Context | Strengths | Hardware |
@@ -146,8 +133,6 @@ export OLLAMA_BASE_URL=http://localhost:11434
 | **llama3.1:70b** | 40GB | 128K | Complex reasoning, architecture | 64GB RAM, 40GB VRAM |
 | **qwen2.5-coder:32b** | 19GB | 32K | Advanced coding tasks | 32GB RAM, 24GB VRAM |
 
-## Hardware Requirements
-
 ### Minimum Requirements (7B Models)
 - **RAM**: 8GB
 - **VRAM**: 5-6GB (GPU acceleration)
@@ -166,10 +151,6 @@ export OLLAMA_BASE_URL=http://localhost:11434
 
 **GPU Acceleration:**
 ```bash
-# Check if GPU is available
-ollama list
-
-# GPU should be detected automatically
 # Force GPU usage if needed
 CUDA_VISIBLE_DEVICES=0 ollama serve
 ```
@@ -183,20 +164,10 @@ ollama run llama3.1:8b --context 4096
 ollama pull llama3.1:8b-q4_0  # 4-bit quantization
 ```
 
-## Configuration
-
-### Environment Variables
-```bash
 # Ollama configuration
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODELS=/usr/share/ollama/.ollama/models
 
-# llx configuration for local models is defined in llx.toml
-# via the standard tier-based model settings
-```
-
-### llx Configuration
-```toml
 # llx.toml
 [models.local]
 provider = "ollama"
@@ -208,10 +179,6 @@ provider = "anthropic"
 model_id = "claude-sonnet-4-20250514"
 ```
 
-## Using Local Models with llx
-
-### Command Line
-```bash
 # Force local model selection
 ../../.venv/bin/python -m llx analyze . --local
 
@@ -234,13 +201,6 @@ metrics = analyze_project(".")
 selection = select_model(metrics, config=config, prefer_local=True)
 ```
 
-## Model Management
-
-### List Models
-```bash
-ollama list
-# Shows downloaded models with sizes
-
 # Detailed information
 ollama show qwen2.5-coder:7b
 ```
@@ -248,25 +208,15 @@ ollama show qwen2.5-coder:7b
 ### Remove Models
 ```bash
 ollama rm llama3.1:8b
-# Frees up disk space
-```
-
 ### Update Models
 ```bash
 ollama pull qwen2.5-coder:7b
-# Downloads latest version if available
-```
-
-### Model Information
-```bash
 # Check model details
 ollama show --modelfile qwen2.5-coder:7b
 
 # Test model interactively
 ollama run qwen2.5-coder:7b
 ```
-
-## Performance Tips
 
 ### Speed Optimization
 1. **Use GPU acceleration** when available
@@ -286,15 +236,10 @@ ollama run qwen2.5-coder:7b
 3. **Use SSD storage** for faster model loading
 4. **Limit concurrent requests**
 
-## Troubleshooting
-
 ### Common Issues
 
 **Ollama Service Not Running:**
 ```bash
-# Start Ollama service
-ollama serve
-
 # Check if running
 ps aux | grep ollama
 
@@ -304,9 +249,6 @@ curl http://localhost:11434/api/tags
 
 **Out of Memory Errors:**
 ```bash
-# Check available memory
-free -h
-
 # Use smaller model
 ollama pull llama3.2:3b
 
@@ -332,25 +274,15 @@ ollama pull llama3.1:8b-q4_0
 # Download model
 ollama pull qwen2.5-coder:7b
 
-# List available models
-ollama list
-
 # Check model name
 ollama list | grep qwen
 ```
 
-### Debug Mode
-```bash
 # Enable verbose logging
 OLLAMA_DEBUG=1 ollama serve
 
 # Check logs
 journalctl -u ollama  # systemd
-# or check terminal output
-```
-
-## Integration Examples
-
 ### VS Code Integration
 ```json
 // .vscode/settings.json
@@ -386,8 +318,6 @@ def chat_with_local_model(prompt, model="qwen2.5-coder:7b"):
     return response.json()["response"]
 ```
 
-## Production Considerations
-
 ### Security
 - Local models keep data private
 - No network exposure for sensitive data
@@ -400,8 +330,6 @@ def chat_with_local_model(prompt, model="qwen2.5-coder:7b"):
 - Use model-specific servers
 - Implement request queuing
 
-### Monitoring
-```bash
 # Monitor resource usage
 htop          # CPU/Memory
 nvidia-smi    # GPU usage

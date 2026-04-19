@@ -15,20 +15,6 @@ Aider is an AI pair programming tool that works directly in your terminal. When 
 - `run.sh` - Quick script to run the demo
 - `README.md` - This file
 
-## Quick Start
-
-```bash
-# Run the demo
-./run.sh
-
-# Or run directly
-python demo.py
-```
-
-## Prerequisites
-
-### Option 1: Docker (Recommended)
-```bash
 # Pull Aider image
 docker pull paulgauthier/aider
 
@@ -51,8 +37,6 @@ pip install aider-chat
 3. Calls Aider to add type hints automatically
 4. Shows the results
 
-## Usage Examples
-
 ### Basic Refactoring
 ```python
 await session.call_tool('aider', {
@@ -70,25 +54,6 @@ await session.call_tool('aider', {
     'files': ['api.py', 'database.py'],
     'model': 'ollama/qwen2.5-coder:7b'
 })
-```
-
-### Through MCP Server
-```python
-from mcp.client.session import ClientSession
-from mcp.client.stdio import stdio_client
-
-server_params = {
-    'command': 'python',
-    'args': ['-m', 'llx.mcp'],
-}
-
-async with stdio_client(server_params) as (read, write):
-    async with ClientSession(read, write) as session:
-        await session.initialize()
-        result = await session.call_tool('aider', {
-            'prompt': 'Add error handling',
-            'path': './src'
-        })
 ```
 
 ## Tips

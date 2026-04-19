@@ -28,21 +28,10 @@ The llx Orchestration System provides comprehensive management of multiple LLM p
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-# Install llx with orchestration
-pip install -e .
-
 # Or install orchestrator only
 pip install llx[orchestration]
 ```
 
-### Basic Usage
-
-```bash
 # Start orchestration system
 llx-orchestrator start
 
@@ -75,9 +64,6 @@ The routing engine intelligently routes requests to optimal resources based on a
 - **Performance Optimized**: Routes to highest performing option
 - **Round Robin**: Distributes load evenly
 
-### Usage Examples
-
-```bash
 # Route with specific strategy
 llx-orchestrator route llm "Hello" --strategy cost_optimized
 
@@ -101,9 +87,6 @@ Manages multiple LLM providers and models with automatic failover, load balancin
 - **Ollama**: Local models
 - **Custom**: OpenAI-compatible APIs
 
-### Provider Management
-
-```bash
 # List available providers
 llx-orchestrator llm list-providers
 
@@ -117,9 +100,6 @@ llx-orchestrator llm list-models --capability code_generation
 llx-orchestrator llm model-info --model-id qwen2.5-coder:7b
 ```
 
-### Request Completion
-
-```bash
 # Simple completion
 llx-orchestrator llm complete --prompt "Write a Python function"
 
@@ -143,9 +123,6 @@ Manages multiple VS Code instances with different accounts, ports, and configura
 - **Cursor**: Cursor AI integration
 - **Codeium**: Codeium AI integration
 
-### Account Management
-
-```bash
 # Add VS Code account
 llx-orchestrator vscode add-account \
   --account-id my-github \
@@ -164,9 +141,6 @@ llx-orchestrator vscode start-instance \
   --workspace ./my-project
 ```
 
-### Instance Management
-
-```bash
 # List instances
 llx-orchestrator vscode list-instances
 
@@ -188,9 +162,6 @@ Manages request queuing with intelligent prioritization and load distribution.
 - **Load balancing**: Distribute requests across available resources
 - **Timeout handling**: Automatic request timeout management
 
-### Queue Management
-
-```bash
 # Show queue status
 llx-orchestrator queue status
 
@@ -212,9 +183,6 @@ Manages rate limiting and cooldown periods for all providers and accounts.
 - **Requests per minute**: Minute-level request limits
 - **Concurrent requests**: Simultaneous request limits
 
-### Rate Limit Management
-
-```bash
 # Show rate limit status
 llx-orchestrator rate-limit status
 
@@ -235,9 +203,6 @@ Manages active sessions for LLM providers, VS Code instances, and AI tools.
 - **VS Code Sessions**: Active VS Code user sessions
 - **AI Tools Sessions**: Active AI tool sessions
 
-### Session Management
-
-```bash
 # List all sessions
 llx-orchestrator session list
 
@@ -265,9 +230,6 @@ Manages Docker instances for VS Code, AI tools, and LLM proxy services.
 - **AI Tools**: AI tools container instances
 - **LLM Proxy**: LiteLLM proxy instances
 
-### Instance Management
-
-```bash
 # List all instances
 llx-orchestrator instance list
 
@@ -297,9 +259,6 @@ All components use JSON configuration files stored in `orchestration/` directory
 - `vscode.json` - VS Code orchestration configuration
 - `llm.json` - LLM provider and model configurations
 
-### Configuration Management
-
-```bash
 # Show all configurations
 llx-orchestrator config show
 
@@ -313,11 +272,6 @@ llx-orchestrator config save
 llx-orchestrator config load
 ```
 
-## 📊 Monitoring and Health
-
-### System Health
-
-```bash
 # Comprehensive health check
 llx-orchestrator health
 
@@ -325,9 +279,6 @@ llx-orchestrator health
 llx-orchestrator monitor --interval 30 --duration 300
 ```
 
-### Performance Metrics
-
-```bash
 # Usage statistics
 llx-orchestrator llm usage
 
@@ -338,9 +289,6 @@ llx-orchestrator routing status
 llx-orchestrator queue metrics
 ```
 
-### System Diagnostics
-
-```bash
 # Run system diagnostics
 llx-orchestrator utils doctor
 
@@ -348,11 +296,6 @@ llx-orchestrator utils doctor
 llx-orchestrator utils benchmark --component all --iterations 1000
 ```
 
-## 🎯 Use Cases
-
-### 1. Multi-Account Development
-
-```bash
 # Create multiple VS Code accounts
 llx-orchestrator vscode add-account --account-id personal --type local --name "Personal Dev"
 llx-orchestrator vscode add-account --account-id work --type github --name "Work Account"
@@ -362,9 +305,6 @@ llx-orchestrator vscode start-instance --instance-id personal-dev --account-id p
 llx-orchestrator vscode start-instance --instance-id work-dev --account-id work
 ```
 
-### 2. Cost-Optimized LLM Usage
-
-```bash
 # Route to cheapest available provider
 llx-orchestrator route llm "Generate code" --strategy cost_optimized
 
@@ -372,9 +312,6 @@ llx-orchestrator route llm "Generate code" --strategy cost_optimized
 llx-orchestrator llm list-models | grep "cost_per_1k_input"
 ```
 
-### 3. High-Performance Routing
-
-```bash
 # Route to fastest available provider
 llx-orchestrator route llm "Urgent task" --strategy performance_optimized --priority urgent
 
@@ -382,9 +319,6 @@ llx-orchestrator route llm "Urgent task" --strategy performance_optimized --prio
 llx-orchestrator routing status
 ```
 
-### 4. Rate Limit Management
-
-```bash
 # Check available providers when rate limited
 llx-orchestrator rate-limit available
 
@@ -392,9 +326,6 @@ llx-orchestrator rate-limit available
 llx-orchestrator rate-limit status
 ```
 
-### 5. Load Balancing
-
-```bash
 # Start multiple instances
 for i in {1..3}; do
   llx-orchestrator vscode start-instance --instance-id dev-$i --account-id my-account
@@ -404,11 +335,6 @@ done
 llx-orchestrator route vscode "Open project" --strategy least_loaded
 ```
 
-## 🔄 Advanced Workflows
-
-### Multi-Provider Setup
-
-```bash
 # Configure multiple LLM providers
 python -c "
 from llx.orchestration.llm_orchestrator import LLMOrchestrator
@@ -459,9 +385,6 @@ decision = engine.route_request(request)
 print(f"Routed to: {decision.selected_resource}")
 ```
 
-### Automated Scaling
-
-```bash
 # Monitor and auto-scale based on queue length
 while true; do
   queue_length=$(llx-orchestrator queue status | jq '.queue_length')
@@ -474,8 +397,6 @@ while true; do
   sleep 60
 done
 ```
-
-## 🛠️ Development
 
 ### Adding New Providers
 
@@ -511,8 +432,6 @@ class CustomRoutingStrategy:
 engine = RoutingEngine()
 engine.register_strategy('custom', CustomRoutingStrategy())
 ```
-
-## 🔍 Troubleshooting
 
 ### Common Issues
 
@@ -552,9 +471,6 @@ llx-orchestrator status
 llx-orchestrator utils doctor
 ```
 
-### Debug Mode
-
-```bash
 # Enable debug logging
 export DEBUG=true
 export LLX_LOG_LEVEL=DEBUG
@@ -562,8 +478,6 @@ export LLX_LOG_LEVEL=DEBUG
 # Run with verbose output
 llx-orchestrator --verbose start
 ```
-
-## 📚 API Reference
 
 ### Core Components
 
@@ -575,9 +489,6 @@ llx-orchestrator --verbose start
 - **VSCodeOrchestrator**: VS Code-specific orchestration
 - **LLMOrchestrator**: LLM-specific orchestration
 
-### CLI Commands
-
-```bash
 # System management
 llx-orchestrator start|stop|restart|status|health|monitor
 
@@ -608,8 +519,6 @@ llx-orchestrator config [show|save|load]
 # Utilities
 llx-orchestrator utils [cleanup|reset|doctor|benchmark]
 ```
-
-## 🎉 Best Practices
 
 ### 1. Resource Management
 

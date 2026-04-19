@@ -1,5 +1,3 @@
-# System Architecture Analysis
-
 ## Overview
 
 - **Project**: .
@@ -10,8 +8,6 @@
 - **Total Classes**: 182
 - **Modules**: 184
 - **Entry Points**: 0
-
-## Architecture by Module
 
 ### llx.tools.config_manager
 - **Functions**: 45
@@ -117,8 +113,6 @@ Main execution flows into the system:
 ## Process Flows
 
 Key execution flows identified:
-
-## Key Classes
 
 ### llx.orchestration.routing.engine.RoutingEngine
 > Intelligent routing engine for LLM and VS Code requests.
@@ -266,8 +260,6 @@ Key functions that process and transform data:
 ### llx.prellm.trace._format_tree_value
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
-
-### llx.prellm._get_process_chain
 
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.

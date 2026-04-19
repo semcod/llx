@@ -2,8 +2,6 @@
 
 This example demonstrates how to generate complete applications using LLX with various configurations and tools.
 
-## Scenarios
-
 ### 1. **Cloud LLM + Local Tools**
 Generate code using cloud models but execute/build locally:
 ```bash
@@ -50,8 +48,6 @@ llx chat --provider anthropic --model premium --prompt "Refactor this legacy cod
 llx chat --local --task refactor --prompt "Add comprehensive logging to this application" --tool aider-local
 ```
 
-## Quick Start Commands
-
 ### Generate React App
 ```bash
 mkdir my-react-app && cd my-react-app
@@ -70,10 +66,6 @@ mkdir my-fullstack && cd my-fullstack
 llx chat --model premium --task refactor --prompt "Generate a complete full-stack application with React frontend, Node.js backend, MongoDB database, and Docker deployment" --execute
 ```
 
-## Configuration Examples
-
-### Budget-Friendly Development
-```bash
 # Use cheap models for boilerplate
 llx chat --model cheap --task quick_fix --prompt "Generate CRUD operations for User model"
 
@@ -84,8 +76,6 @@ llx chat --model balanced --task refactor --prompt "Implement payment processing
 llx chat --model premium --task review --prompt "Review and secure authentication system"
 ```
 
-### Speed-First Development
-```bash
 # Quick prototyping
 llx chat --model cheap --speed --prompt "Create a quick prototype of dashboard with charts"
 
@@ -93,8 +83,6 @@ llx chat --model cheap --speed --prompt "Create a quick prototype of dashboard w
 llx chat --model balanced --speed --prompt "Add real-time updates to the dashboard"
 ```
 
-### Quality-First Development
-```bash
 # Premium for architecture
 llx chat --model premium --task refactor --prompt "Design scalable system architecture"
 
@@ -102,10 +90,6 @@ llx chat --model premium --task refactor --prompt "Design scalable system archit
 llx chat --model premium --task refactor --prompt "Implement real-time collaboration with WebSockets"
 ```
 
-## Tool Integration
-
-### Aider Integration
-```bash
 # Start Aider session with LLX
 llx chat --tool aider --prompt "Refactor this entire codebase to use TypeScript"
 
@@ -113,8 +97,6 @@ llx chat --tool aider --prompt "Refactor this entire codebase to use TypeScript"
 llx chat --tool aider --model anthropic/claude-sonnet-4-20250514 --prompt "Add comprehensive test suite"
 ```
 
-### Claude Code Integration
-```bash
 # Use Claude Code for complex refactoring
 llx chat --tool claude-code --model premium --prompt "Migrate this monolith to microservices"
 
@@ -122,8 +104,6 @@ llx chat --tool claude-code --model premium --prompt "Migrate this monolith to m
 llx chat --tool claude-code-local --prompt "Add error handling throughout the application"
 ```
 
-### VS Code Integration
-```bash
 # Generate code in VS Code
 llx chat --tool vscode --prompt "Create a new component with tests and documentation"
 
@@ -131,10 +111,6 @@ llx chat --tool vscode --prompt "Create a new component with tests and documenta
 llx chat --tool roocode --prompt "Implement the remaining TODO items in this file"
 ```
 
-## Real-World Examples
-
-### E-commerce Platform
-```bash
 # Generate complete platform
 llx chat --model premium --task refactor --prompt """
 Generate a complete e-commerce platform with:
@@ -149,8 +125,6 @@ Generate a complete e-commerce platform with:
 """ --execute
 ```
 
-### Data Science Pipeline
-```bash
 # Generate ML pipeline
 llx chat --provider anthropic --model premium --prompt """
 Create a complete ML pipeline for fraud detection:
@@ -164,8 +138,6 @@ Create a complete ML pipeline for fraud detection:
 """ --execute
 ```
 
-### Mobile App Backend
-```bash
 # Generate mobile backend
 llx chat --model balanced --task refactor --prompt """
 Create a mobile app backend with:
@@ -180,10 +152,6 @@ Create a mobile app backend with:
 """ --execute
 ```
 
-## Best Practices
-
-### 1. **Start with Architecture**
-```bash
 # Design first
 llx chat --model premium --task refactor --prompt "Design system architecture for [your project]" --save ./architecture.md
 
@@ -191,8 +159,6 @@ llx chat --model premium --task refactor --prompt "Design system architecture fo
 llx chat --model balanced --prompt "Implement core module based on architecture.md"
 ```
 
-### 2. **Use Appropriate Models**
-```bash
 # Boilerplate: cheap models
 llx chat --model cheap --prompt "Generate basic CRUD structure"
 
@@ -203,8 +169,6 @@ llx chat --model balanced --prompt "Implement business rules"
 llx chat --model premium --prompt "Design and implement complex algorithm"
 ```
 
-### 3. **Iterative Development**
-```bash
 # Version 1: MVP
 llx chat --model cheap --speed --prompt "Create minimum viable product"
 
@@ -215,8 +179,6 @@ llx chat --model balanced --prompt "Add user authentication and profiles"
 llx chat --model premium --prompt "Optimize performance and add advanced features"
 ```
 
-### 4. **Code Quality**
-```bash
 # Generate with tests
 llx chat --model balanced --prompt "Create component with unit tests and integration tests"
 
@@ -227,10 +189,6 @@ llx chat --task explain --prompt "Generate comprehensive API documentation"
 llx chat --model premium --task review --prompt "Perform security review and suggest fixes"
 ```
 
-## Advanced Usage
-
-### Custom Templates
-```bash
 # Use custom template
 llx chat --template ./templates/react-ts --prompt "Create new feature using template"
 
@@ -238,8 +196,6 @@ llx chat --template ./templates/react-ts --prompt "Create new feature using temp
 llx chat --prompt "Generate reusable component library" --save-template ./templates/ui-lib
 ```
 
-### Multi-language Projects
-```bash
 # Polyglot application
 llx chat --model premium --prompt """
 Create a microservices application:
@@ -251,8 +207,6 @@ Create a microservices application:
 """ --execute
 ```
 
-### Database Integration
-```bash
 # Database-first approach
 llx chat --model balanced --prompt """
 Generate full CRUD application from database schema:

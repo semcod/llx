@@ -5,13 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.10] - 2026-03-29
-
 ### Fixed
 - Fix sorted-imports issues (ticket-a32b0841)
 - Fix import-section-separators issues (ticket-c1d2d7e9)
-
-## [0.1.10] - 2026-03-27
 
 ### Fixed
 - Fix unused-imports issues (ticket-11d4376c)
@@ -20,8 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix string-concat issues (ticket-39a4738e)
 - Fix unused-imports issues (ticket-ea1354b8)
 - Fix magic-numbers issues (ticket-65349f70)
-
-## [0.1.10] - 2026-03-27
 
 ### Fixed
 - Fix duplicate-imports issues (ticket-1293cd69)
@@ -32,8 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix unused-imports issues (ticket-ef0da84a)
 - Fix magic-numbers issues (ticket-f3b9618f)
 - Fix ai-boilerplate issues (ticket-a32e906c)
-
-## [0.1.10] - 2026-03-27
 
 ### Fixed
 - Fix wildcard-imports issues (ticket-78f7bf07)
@@ -395,19 +387,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix smart-return-type issues (ticket-54463a1e)
 - Fix unused-imports issues (ticket-a5bba07f)
 
-## [Unreleased]
-
-## [0.1.57] - 2026-04-09
-
-### Docs
-- Update README.md
-
 ### Other
 - Update llx/privacy/_streaming_impl.py
 - Update llx/privacy/_streaming_parallel.py
 - Update project/validation.toon.yaml
-
-## [0.1.56] - 2026-04-09
 
 ### Docs
 - Update README.md
@@ -439,18 +422,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/commands/fix.py
 - ... and 54 more files
 
-## [0.1.51] - 2026-03-31
-
-### Other
-- Update llx/llm.py
-
-## [0.1.50] - 2026-03-30
-
 ### Other
 - Update llx/config.py
 - Update llx/llm.py
-
-## [0.1.49] - 2026-03-30
 
 ### Test
 - Update tests/test_fix_aider_mode.py
@@ -459,15 +433,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/commands/fix.py
 - Update pyqual.yaml
 
-## [0.1.48] - 2026-03-30
-
 ### Other
 - Update llx/__init__.py
 - Update llx/llm.py
 - Update llx/mcp/__init__.py
 - Update llx/mcp/workflows.py
-
-## [0.1.47] - 2026-03-30
 
 ### Other
 - Update llx/commands/fix.py
@@ -475,8 +445,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/mcp/client.py
 - Update llx/mcp/service.py
 - Update llx/utils/issues.py
-
-## [0.1.46] - 2026-03-30
 
 ### Docs
 - Update README.md
@@ -495,20 +463,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/mcp/server.py
 - Update llx/routing/client.py
 
-## [0.1.45] - 2026-03-29
-
 ### Docs
 - Update my-api/README.md
 
 ### Test
 - Update test-api-qwen/README.md
 
-## [0.1.44] - 2026-03-29
-
 ### Other
 - Update llx/commands/fix.py
-
-## [0.1.43] - 2026-03-29
 
 ### Docs
 - Update docs/PYQUAL_INTEGRATION.md
@@ -519,8 +481,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/cli/app.py
 - Update llx/commands/__init__.py
 - Update llx/commands/fix.py
-
-## [0.1.42] - 2026-03-29
 
 ### Docs
 - Update CHANGELOG.md
@@ -542,12 +502,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/map.toon.yaml
 - ... and 3 more files
 
-## [0.1.41] - 2026-03-29
-
 ### Other
 - Update .idea/llx.iml
-
-## [0.1.40] - 2026-03-29
 
 ### Docs
 - Update CHANGELOG.md
@@ -566,8 +522,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update my-api/.gitignore
 - Update planfile.yaml
 - Update pyqual.yaml
-
-## [0.1.39] - 2026-03-27
 
 ### Docs
 - Update docs/README.md
@@ -590,8 +544,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/evolution.toon.yaml
 - Update project/flow.mmd
 - ... and 6 more files
-
-## [0.1.38] - 2026-03-27
 
 ### Docs
 - Update CHANGELOG.md
@@ -617,8 +569,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/prellm/cli.py
 - Update llx/prellm/core.py
 - ... and 21 more files
-
-## [0.1.37] - 2026-03-27
 
 ### Docs
 - Update CHANGELOG.md
@@ -649,8 +599,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/cli-tools/run.sh
 - ... and 55 more files
 
-## [0.1.36] - 2026-03-26
-
 ### Docs
 - Update examples/python-api/test-cli-debug/README.md
 - Update examples/python-api/test-cli-final/README.md
@@ -674,16 +622,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/python-api/test-cli-final/requirements.txt
 - ... and 31 more files
 
-## [0.1.35] - 2026-03-26
-
 ### Test
 - Update test_cli.py
 
 ### Other
 - Update llx/cli/app.py
 - Update llx/configs/project_types.yaml
-
-## [0.1.34] - 2026-03-26
 
 ### Docs
 - Update examples/README.md
@@ -704,8 +648,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/python-api/my-api-final/test_api.py
 - Update examples/python-api/my-api-restaurant/main.py
 - ... and 15 more files
-
-## [0.1.33] - 2026-03-26
 
 ### Docs
 - Update examples/planfile/FINAL_SUMMARY.md
@@ -728,8 +670,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/duplication_refactor_strategy_v2.yaml
 - ... and 15 more files
 
-## [0.1.32] - 2026-03-26
-
 ### Docs
 - Update EXAMPLES_MIGRATION_PLAN.md
 - Update EXAMPLES_REFACTORING_SPEC.md
@@ -750,8 +690,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/python-api/my-api-complete/requirements.txt
 - Update examples/python-api/my-api-complete/test_api.py
 - ... and 27 more files
-
-## [0.1.31] - 2026-03-26
 
 ### Docs
 - Update examples/README.md
@@ -781,8 +719,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/python-api/my-api-restaurant/Dockerfile
 - ... and 14 more files
 
-## [0.1.30] - 2026-03-26
-
 ### Docs
 - Update docs/README.md
 - Update examples/python-api/my-api/README.md
@@ -800,8 +736,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/cli/app.py
 - Update llx/planfile/generate_strategy.py
 - ... and 9 more files
-
-## [0.1.29] - 2026-03-26
 
 ### Docs
 - Update REFACTORING_SUMMARY.md
@@ -826,13 +760,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/orchestration/queue/cli.py
 - ... and 28 more files
 
-## [0.1.28] - 2026-03-26
-
 ### Other
 - Update examples/python-api/api-strategy.yaml
 - Update examples/python-api/run.sh
-
-## [0.1.27] - 2026-03-26
 
 ### Docs
 - Update SIMPLE_CONFIG.md
@@ -861,8 +791,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/cli-tools/.llx/code2llm/analysis.toon.yaml
 - ... and 66 more files
 
-## [0.1.26] - 2026-03-26
-
 ### Other
 - Update examples/basic/run.sh
 - Update examples/cleanup.sh
@@ -873,8 +801,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/multi-provider/run.sh
 - Update examples/planfile/generate_strategy.py
 - Update examples/vscode-roocode/run.sh
-
-## [0.1.25] - 2026-03-26
 
 ### Docs
 - Update examples/cli-tools/.llx/code2llm/README.md
@@ -894,8 +820,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/fullstack/fullstack-strategy.yaml
 - ... and 14 more files
 
-## [0.1.24] - 2026-03-26
-
 ### Docs
 - Update examples/REFACTORING_FINAL.md
 
@@ -907,8 +831,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/generate_strategy.py
 - Update examples/planfile/run.sh
 - Update examples/run.sh
-
-## [0.1.23] - 2026-03-26
 
 ### Docs
 - Update examples/REFACTORING_SUMMARY.md
@@ -925,8 +847,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/orchestration/llm/cli.py
 - Update llx/orchestration/queue/cli.py
 - ... and 3 more files
-
-## [0.1.22] - 2026-03-26
 
 ### Docs
 - Update TODO.md
@@ -945,8 +865,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/cli/formatters.py
 - ... and 5 more files
 
-## [0.1.21] - 2026-03-26
-
 ### Docs
 - Update docs/README.md
 - Update project/README.md
@@ -964,8 +882,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/mcp/tools.py
 - Update llx/prellm/core.py
 - ... and 19 more files
-
-## [0.1.20] - 2026-03-26
 
 ### Docs
 - Update docs/README.md
@@ -990,8 +906,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/strategy.yaml
 - ... and 25 more files
 
-## [0.1.19] - 2026-03-26
-
 ### Docs
 - Update docs/README.md
 - Update examples/planfile/TEST_REPORT.md
@@ -1010,8 +924,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/simple_strategy.yaml
 - Update examples/planfile/test_planfile_v2_integration.py
 - ... and 12 more files
-
-## [0.1.18] - 2026-03-26
 
 ### Docs
 - Update LLX_PLANFILE_SIMPLIFICATION.md
@@ -1034,8 +946,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/run.sh
 - ... and 22 more files
 
-## [0.1.17] - 2026-03-26
-
 ### Docs
 - Update REFACTORING_SPRINT4_SUMMARY.md
 - Update docs/README.md
@@ -1055,8 +965,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/flow.mmd
 - ... and 5 more files
 
-## [0.1.16] - 2026-03-26
-
 ### Docs
 - Update examples/planfile/FINAL_SUMMARY.md
 
@@ -1073,8 +981,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/simple_test.py
 - ... and 10 more files
 
-## [0.1.15] - 2026-03-26
-
 ### Other
 - Update examples/planfile/calculator.py
 - Update examples/planfile/duplicate_test.py
@@ -1082,15 +988,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update examples/planfile/test_planfile_working.py
 - Update examples/planfile/test_report.py
 
-## [0.1.14] - 2026-03-26
-
 ### Other
 - Update examples/planfile/calculator.py
 - Update examples/planfile/duplicate_test.py
 - Update examples/planfile/simple_test.py
 - Update project/validation.toon.yaml
-
-## [0.1.13] - 2026-03-26
 
 ### Docs
 - Update docs/README.md
@@ -1110,8 +1012,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/index.html
 - ... and 1 more files
 
-## [0.1.12] - 2026-03-26
-
 ### Docs
 - Update docs/README.md
 - Update examples/planfile/README.md
@@ -1130,8 +1030,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/calls.mmd
 - Update project/calls.png
 - ... and 11 more files
-
-## [0.1.11] - 2026-03-26
 
 ### Docs
 - Update LLX_STRATEGY_INTEGRATION.md
@@ -1159,8 +1057,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/orchestration/instances/manager.py
 - ... and 16 more files
 
-## [0.1.10] - 2026-03-26
-
 ### Docs
 - Update README.md
 - Update docs/README.md
@@ -1187,8 +1083,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/litellm_config.py
 - ... and 28 more files
 
-## [0.1.9] - 2026-03-26
-
 ### Docs
 - Update docs/README.md
 - Update project/README.md
@@ -1206,8 +1100,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/tools/config_manager.py
 - Update project/analysis.toon.yaml
 - ... and 13 more files
-
-## [0.1.8] - 2026-03-26
 
 ### Docs
 - Update README.md
@@ -1239,8 +1131,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/cli/app.py
 - ... and 67 more files
 
-## [0.1.7] - 2026-03-25
-
 ### Docs
 - Update docs/README.md
 - Update docs/orchestration.md
@@ -1263,8 +1153,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/compact_flow.png
 - ... and 7 more files
 
-## [0.1.6] - 2026-03-25
-
 ### Other
 - Update llx/analysis/collector.py
 - Update llx/cli/app.py
@@ -1277,8 +1165,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/orchestration/routing_engine.py
 - Update llx/orchestration/vscode_orchestrator.py
 - ... and 2 more files
-
-## [0.1.5] - 2026-03-25
 
 ### Docs
 - Update docs/README.md
@@ -1299,8 +1185,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update llx/orchestration/queue_manager.py
 - Update llx/orchestration/rate_limiter.py
 - ... and 21 more files
-
-## [0.1.4] - 2026-03-25
 
 ### Docs
 - Update README.md
@@ -1324,8 +1208,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/calls.png
 - ... and 7 more files
 
-## [0.1.3] - 2026-03-25
-
 ### Docs
 - Update README.md
 - Update docs/README.md
@@ -1344,8 +1226,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update project/compact_flow.png
 - Update project/duplication.toon.yaml
 - ... and 8 more files
-
-## [0.1.2] - 2026-03-25
 
 ### Docs
 - Update docs/README.md
@@ -1370,11 +1250,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update docker/nginx/nginx.conf
 - Update docker/ollama/entrypoint.sh
 - ... and 29 more files
-
-## [0.1.1] - 2026-03-25
-
-### Docs
-- Update README.md
 
 ### Test
 - Update tests/__init__.py

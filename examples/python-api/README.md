@@ -8,9 +8,6 @@ Kompletny przykład 2-krokowego workflow: **prompt → planfile → kod → uruc
 export OPENROUTER_API_KEY=sk-or-v1-...   # FREE konto na openrouter.ai
 ```
 
-## Użycie — 4 one-linery
-
-```bash
 # 1. Wygeneruj planfile (free LLM)
 llx plan generate . --profile free --sprints 4 --focus api -o strategy.yaml
 
@@ -48,10 +45,6 @@ my-api/
 cd my-api
 pip install -r requirements.txt
 uvicorn main:app --reload
-
-# → http://localhost:8000/docs   (Swagger UI)
-# → http://localhost:8000/health
-```
 
 ## Modele (free tier)
 

@@ -1,7 +1,3 @@
-# My Project
-
-My Project
-
 ## Run
 ```bash
 pip install -r requirements.txt

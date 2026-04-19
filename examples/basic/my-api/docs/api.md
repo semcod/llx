@@ -31,8 +31,6 @@ To authenticate subsequent requests, include the JWT token in the `Authorization
 **Endpoints**
 ------------
 
-### Users
-
 #### Get All Users
 
 * **Endpoint:** `/users`
@@ -72,8 +70,6 @@ To authenticate subsequent requests, include the JWT token in the `Authorization
   "name": "string",
   "email": "string"
 }
-### Products
-
 #### Get All Products
 
 * **Endpoint:** `/products`
@@ -113,8 +109,6 @@ To authenticate subsequent requests, include the JWT token in the `Authorization
   "name": "string",
   "price": "float"
 }
-### Orders
-
 #### Get All Orders
 
 * **Endpoint:** `/orders`

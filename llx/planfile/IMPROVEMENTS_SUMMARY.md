@@ -1,7 +1,3 @@
-# LLX Planfile - Uproszczenia i Usprawnienia
-
-## Przeprowadzone zmiany
-
 ### 1. Uproszczenie Executora
 - **Przed**: 4 pliki executora (executor.py, executor_improved.py, executor_v2.py, itp.)
 - **Po**: 1 plik (`executor_simple.py`)
@@ -45,8 +41,6 @@ llx/planfile/
 └── examples.py         # Przykłady użycia
 ```
 
-## Przykłady użycia
-
 ### Podstawowe wykonanie
 ```python
 from llx.planfile import execute_strategy
@@ -70,8 +64,6 @@ from llx.planfile.builder_simple import SimpleStrategyBuilder
 builder = SimpleStrategyBuilder(config_file="my_config.yaml")
 ```
 
-### Konfiguracja niestandardowa
-```yaml
 # planfile_config.yaml
 focus_areas:
   security:
@@ -86,8 +78,6 @@ model_tiers:
   cheap: "openai/gpt-5.4-mini"
   balanced: "claude-sonnet-4"
 ```
-
-## Elastyczność
 
 ### 1. Nowe obszary focus
 Można łatwo dodać nowe obszary przez konfigurację:
@@ -115,8 +105,6 @@ Można łatwo dodać nowe obszary przez konfigurację:
 | Builder | ✅ | 4/4 passed |
 | Konfiguracja | ✅ | 3/3 passed |
 | Integracja | ✅ | 8/8 passed |
-
-## Rekomendacje
 
 ### Dla użytkowników
 1. Używaj V2 format dla nowych projektów

@@ -1,5 +1,3 @@
-# LLX Strategy Integration - Summary
-
 ## Overview
 
 Successfully integrated strategy management directly into LLX without needing a separate library. The implementation uses:
@@ -8,8 +6,6 @@ Successfully integrated strategy management directly into LLX without needing a 
 - **YAML** for human-readable strategy files
 - **LLX with local LLM** for interactive strategy creation
 - **CLI commands** for strategy management
-
-## Implementation Details
 
 ### 1. Core Components Added to LLX
 
@@ -25,8 +21,6 @@ llx/cli/
 └── strategy_commands.py # CLI commands (create, validate, run, verify)
 ```
 
-### 2. Key Features
-
 #### Strategy Models
 - **Strategy**: Main configuration with sprints, tasks, and quality gates
 - **Sprint**: Time-boxed iterations with objectives
@@ -40,8 +34,6 @@ llx/cli/
 - Builds validated strategy automatically
 - Saves to YAML format
 
-#### CLI Commands
-```bash
 # Create strategy interactively
 llx strategy create --output my_strategy.yaml
 
@@ -85,8 +77,6 @@ tasks:
         design: "balanced"
         implementation: "balanced"
 ```
-
-## Usage Examples
 
 ### 1. Programmatic Creation
 

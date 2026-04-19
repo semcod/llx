@@ -9,8 +9,6 @@
 **License:** Apache-2.0[(LICENSE)](./LICENSE)  
 **Repository:** [https://github.com/semcod/llx](https://github.com/semcod/llx)
 
-## Installation
-
 ### From PyPI
 
 ```bash
@@ -39,14 +37,6 @@ pip install llx[prellm-full]    # prellm-full features
 pip install llx[all]    # all optional features
 pip install llx[dev]    # development tools
 ```
-
-## Quick Start
-
-### CLI Usage
-
-```bash
-# Generate full documentation for your project
-llx ./my-project
 
 # Only regenerate README
 llx ./my-project --readme-only
@@ -156,8 +146,6 @@ Content outside the markers is preserved when regenerating. Enable this with `sy
 ```
 llx/
 ├── docker-manage├── generate├── project├── ai-tools-manage├── my-api/    ├── monitoring├── trace    ├── cleanup    ├── run    ├── pyqual-llx-demo├── simple_generate            ├── 01_entropy_ml_detection            ├── 04_behavioral_learning            ├── 03_contextual_passwords            ├── 02_hybrid_system            ├── 01_streaming_anonymization            ├── 02_deanonymize_project            ├── 01_anonymize_project            ├── 03_cicd_integration            ├── 02_multi_stage            ├── 01_text_anonymization            ├── 02_custom_patterns        ├── run        ├── run        ├── run        ├── run        ├── docker        ├── run        ├── run        ├── generate_simple        ├── run        ├── run        ├── run        ├── run        ├── filtering            ├── 01_api_integration        ├── run        ├── setup-aliases        ├── run        ├── run        ├── run        ├── hybrid        ├── run        ├── entrypoint        ├── install-extensions        ├── entrypoint        ├── install-tools    ├── pyqual_auto    ├── config    ├── llm├── llx/    ├── __main__        ├── _patch_apply    ├── commands/        ├── fix        ├── deanonymize_results    ├── litellm_config        ├── streaming        ├── project    ├── privacy/        ├── _streaming_impl        ├── _project_ast        ├── _project_anonymizer        ├── deanonymize        ├── deanonymize_engine        ├── _project_context        ├── _streaming_chunking        ├── deanonymize_utils        ├── type_check        ├── detect_secrets    ├── pyqual_plugins/        ├── bump_version        ├── publish        ├── lint        ├── verify_push_publish        ├── security_audit        ├── utils        ├── env_config        ├── cli_config        ├── cli        ├── trace        ├── __core        ├── cli_context        ├── model_catalog    ├── models    ├── main    ├── prellm/        ├── server        ├── context_ops        ├── pipeline_ops        ├── query_decomposer        ├── cli_query        ├── prompt_registry        ├── validators        ├── core        ├── models        ├── llm_provider        ├── cli_commands        ├── pipeline/        ├── _nfo_compat        ├── chains/            ├── process_chain        ├── utils/            ├── lazy_imports            ├── lazy_loader            ├── folder_compressor            ├── shell_collector            ├── user_memory            ├── sensitive_filter        ├── context/        ├── budget            ├── schema_generator            ├── codebase_indexer            ├── config            ├── loader            ├── algo_handlers            ├── engine        ├── analyzers/            ├── preprocessor        ├── agents/            ├── context_engine            ├── executor    ├── analysis/        ├── extractors        ├── collector        ├── runner        ├── ai_tools_manager        ├── cli        ├── _utils        ├── docker_manager    ├── tools/        ├── vscode_manager        ├── config_manager        ├── health_checker        ├── _docker            ├── _cmd_uninstall_extension        ├── health_runner    ├── cli/        ├── model_manager        ├── strategy_commands        ├── formatters            ├── planner        ├── app        ├── config            ├── analyze        ├── examples        ├── runner    ├── planfile/        ├── executor_simple        ├── models        ├── detector    ├── detection/        ├── model_selector        ├── _utils    ├── orchestration/        ├── cli        ├── cli_utils            ├── cli        ├── session/            ├── manager            ├── cli            ├── manager            ├── ports        ├── instances/            ├── models            ├── cli            ├── ports        ├── vscode/            ├── defaults            ├── config_io            ├── orchestrator            ├── models            ├── cli        ├── llm/            ├── health            ├── models            ├── executors            ├── orchestrator            ├── models            ├── cli        ├── queue/            ├── models            ├── _cmd_cleanup            ├── _cmd_remove            ├── _cmd_status            ├── manager            ├── cli            ├── _persistence            ├── limiter            ├── _crud        ├── ratelimit/            ├── models            ├── cli        ├── routing/            ├── models            ├── engine        ├── cli_main        ├── issues        ├── server    ├── mcp/        ├── client        ├── __main__        ├── workflows        ├── tools        ├── proxy    ├── integrations/        ├── service    ├── routing/        ├── client        ├── proxym        ├── selector        ├── logging_setup        ├── generate_strategy```
-
-## API Overview
 
 ### Classes
 
@@ -952,19 +940,12 @@ llx/
 
 We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
-### Development Setup
-
-```bash
 # Clone the repository
 git clone https://github.com/semcod/llx
 cd llx
 
 # Install in development mode
 pip install -e ".[dev]"
-
-# Run tests
-pytest
-```
 
 ## Documentation
 
@@ -979,14 +960,14 @@ pytest
 | Output | Description | Link |
 |--------|-------------|------|
 | `README.md` | Project overview (this file) | — |
-| `docs/api.md` | Consolidated API reference | [View](./docs/api.md) |
-| `docs/modules.md` | Module reference with metrics | [View](./docs/modules.md) |
-| `docs/architecture.md` | Architecture with diagrams | [View](./docs/architecture.md) |
-| `docs/dependency-graph.md` | Dependency graphs | [View](./docs/dependency-graph.md) |
-| `docs/coverage.md` | Docstring coverage report | [View](./docs/coverage.md) |
-| `docs/getting-started.md` | Getting started guide | [View](./docs/getting-started.md) |
-| `docs/configuration.md` | Configuration reference | [View](./docs/configuration.md) |
-| `docs/api-changelog.md` | API change tracking | [View](./docs/api-changelog.md) |
+| `docs/api.md` | Consolidated API reference | [View](https://github.com/wronai/llx/blob/main/docs/api.md) |
+| `docs/modules.md` | Module reference with metrics | [View](https://github.com/wronai/llx/blob/main/docs/modules.md) |
+| `docs/architecture.md` | Architecture with diagrams | [View](https://github.com/wronai/llx/blob/main/docs/architecture.md) |
+| `docs/dependency-graph.md` | Dependency graphs | [View](https://github.com/wronai/llx/blob/main/docs/dependency-graph.md) |
+| `docs/coverage.md` | Docstring coverage report | [View](https://github.com/wronai/llx/blob/main/docs/coverage.md) |
+| `docs/getting-started.md` | Getting started guide | [View](https://github.com/wronai/llx/blob/main/docs/getting-started.md) |
+| `docs/configuration.md` | Configuration reference | [View](https://github.com/wronai/llx/blob/main/docs/configuration.md) |
+| `docs/api-changelog.md` | API change tracking | [View](https://github.com/wronai/llx/blob/main/docs/api-changelog.md) |
 | `CONTRIBUTING.md` | Contribution guidelines | [View](./CONTRIBUTING.md) |
 | `examples/` | Usage examples | [Browse](./examples) |
 | `mkdocs.yml` | MkDocs configuration | — |

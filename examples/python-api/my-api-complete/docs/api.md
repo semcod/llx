@@ -35,8 +35,6 @@ API jest zbudowane zgodnie z zasadami REST, wykorzystuje format JSON do wymiany 
 
 ---
 
-## 2. Bazy danych - Model danych
-
 ### Tabela: `orders`
 
 | Pole            | Typ danych       | Opis                                      |
@@ -77,8 +75,6 @@ Jeśli token jest nieprawidłowy lub brakuje go, API zwraca:
 **Status HTTP: 401 Unauthorized**
 
 ---
-
-## 4. Endpoints
 
 ### `GET /orders`
 
@@ -165,10 +161,6 @@ Aktualizuje istniejące zamówienie (np. zmienia status).
 
 ---
 
-### `DELETE /orders/{id}`
-
-Usuwa zamówienie.
-
 #### Odpowiedź:
 - **204 No Content** – zamówienie usunięte
 - **404 Not Found** – zamówienie nie istnieje
@@ -176,8 +168,6 @@ Usuwa zamówienie.
 > Uwaga: Usunięcie zamówienia jest trwałe.
 
 ---
-
-## 5. Przykłady żądań i odpowiedzi
 
 ### Przykład 1: Pobranie listy zamówień
 
@@ -288,8 +278,6 @@ HTTP/1.1 200 OK
 }
 
 ---
-
-## 6. Wdrażanie aplikacji
 
 ### Wymagania:
 - Python 3.9+

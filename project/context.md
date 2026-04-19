@@ -1,5 +1,3 @@
-# System Architecture Analysis
-
 ## Overview
 
 - **Project**: /home/tom/github/semcod/llx
@@ -10,8 +8,6 @@
 - **Total Classes**: 226
 - **Modules**: 212
 - **Entry Points**: 1101
-
-## Architecture by Module
 
 ### llx.tools.config_manager
 - **Functions**: 45
@@ -283,8 +279,6 @@ load_sessions [llx.orchestration.session.manager.SessionManager]
   └─ →> print
 ```
 
-## Key Classes
-
 ### llx.orchestration.routing.engine.RoutingEngine
 > Intelligent routing engine for LLM and VS Code requests.
 - **Methods**: 38
@@ -335,14 +329,6 @@ load_sessions [llx.orchestration.session.manager.SessionManager]
 - **Methods**: 20
 - **Key Methods**: llx.orchestration.session.manager.SessionManager.__init__, llx.orchestration.session.manager.SessionManager.load_sessions, llx.orchestration.session.manager.SessionManager.save_sessions, llx.orchestration.session.manager.SessionManager.create_session, llx.orchestration.session.manager.SessionManager.remove_session, llx.orchestration.session.manager.SessionManager.get_available_session, llx.orchestration.session.manager.SessionManager.request_session, llx.orchestration.session.manager.SessionManager.release_session, llx.orchestration.session.manager.SessionManager.get_session_status, llx.orchestration.session.manager.SessionManager.list_sessions
 
-### llx.prellm.pipeline.PromptPipeline
-> Generic pipeline — executes a sequence of LLM + algorithmic steps.
-
-Usage:
-    pipeline = PromptPipe
-- **Methods**: 18
-- **Key Methods**: llx.prellm.pipeline.PromptPipeline.__init__, llx.prellm.pipeline.PromptPipeline.from_yaml, llx.prellm.pipeline.PromptPipeline.execute, llx.prellm.pipeline.PromptPipeline._execute_llm_step, llx.prellm.pipeline.PromptPipeline._execute_algo_step, llx.prellm.pipeline.PromptPipeline._gather_inputs, llx.prellm.pipeline.PromptPipeline._build_user_message, llx.prellm.pipeline.PromptPipeline._evaluate_condition, llx.prellm.pipeline.PromptPipeline.register_algo_handler, llx.prellm.pipeline.PromptPipeline._algo_domain_rule_matcher
-
 ### llx.tools.docker_manager.DockerManager
 > Manages Docker containers for llx ecosystem.
 - **Methods**: 18
@@ -358,15 +344,6 @@ Usage:
 - **Methods**: 17
 - **Key Methods**: llx.orchestration.ratelimit.limiter.RateLimiter.__init__, llx.orchestration.ratelimit.limiter.RateLimiter.load_limits, llx.orchestration.ratelimit.limiter.RateLimiter.save_limits, llx.orchestration.ratelimit.limiter.RateLimiter._create_default_limits, llx.orchestration.ratelimit.limiter.RateLimiter.add_limit, llx.orchestration.ratelimit.limiter.RateLimiter.remove_limit, llx.orchestration.ratelimit.limiter.RateLimiter.check_rate_limit, llx.orchestration.ratelimit.limiter.RateLimiter.record_request, llx.orchestration.ratelimit.limiter.RateLimiter.release_request, llx.orchestration.ratelimit.limiter.RateLimiter.get_status
 
-### llx.prellm.context.user_memory.UserMemory
-> Stores user query history and learned preferences.
-
-Usage:
-    # SQLite (default, no extra deps)
-   
-- **Methods**: 15
-- **Key Methods**: llx.prellm.context.user_memory.UserMemory.__init__, llx.prellm.context.user_memory.UserMemory._init_sqlite, llx.prellm.context.user_memory.UserMemory._init_chromadb, llx.prellm.context.user_memory.UserMemory.add_interaction, llx.prellm.context.user_memory.UserMemory.get_recent_context, llx.prellm.context.user_memory.UserMemory.get_user_preferences, llx.prellm.context.user_memory.UserMemory.set_preference, llx.prellm.context.user_memory.UserMemory.clear, llx.prellm.context.user_memory.UserMemory.export_session, llx.prellm.context.user_memory.UserMemory.import_session
-
 ### llx.tools.health_checker.HealthChecker
 > Comprehensive health monitoring for llx ecosystem.
 - **Methods**: 15
@@ -376,21 +353,6 @@ Usage:
 > Classifies and filters sensitive data from context before LLM calls.
 - **Methods**: 14
 - **Key Methods**: llx.prellm.context.sensitive_filter.SensitiveDataFilter.__init__, llx.prellm.context.sensitive_filter.SensitiveDataFilter._load_rules, llx.prellm.context.sensitive_filter.SensitiveDataFilter.classify_key, llx.prellm.context.sensitive_filter.SensitiveDataFilter.classify_value, llx.prellm.context.sensitive_filter.SensitiveDataFilter.filter_dict, llx.prellm.context.sensitive_filter.SensitiveDataFilter.filter_context_for_large_llm, llx.prellm.context.sensitive_filter.SensitiveDataFilter.sanitize_text, llx.prellm.context.sensitive_filter.SensitiveDataFilter.get_filter_report, llx.prellm.context.sensitive_filter.SensitiveDataFilter._filter_dict_item, llx.prellm.context.sensitive_filter.SensitiveDataFilter._filter_env_var_item
-
-### llx.prellm.context.codebase_indexer.CodebaseIndexer
-> Index a codebase using tree-sitter for AST-based symbol extraction.
-
-Usage:
-    indexer = CodebaseIn
-- **Methods**: 14
-- **Key Methods**: llx.prellm.context.codebase_indexer.CodebaseIndexer.__init__, llx.prellm.context.codebase_indexer.CodebaseIndexer._check_tree_sitter, llx.prellm.context.codebase_indexer.CodebaseIndexer.index_directory, llx.prellm.context.codebase_indexer.CodebaseIndexer._index_file, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_with_tree_sitter, llx.prellm.context.codebase_indexer.CodebaseIndexer._get_parser, llx.prellm.context.codebase_indexer.CodebaseIndexer._walk_tree, llx.prellm.context.codebase_indexer.CodebaseIndexer._get_line, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_with_regex, llx.prellm.context.codebase_indexer.CodebaseIndexer._extract_imports
-
-### llx.prellm.analyzers.context_engine.ContextEngine
-> Collects context from environment, git, and system for prompt enrichment.
-
-Used by both core Prellm 
-- **Methods**: 13
-- **Key Methods**: llx.prellm.analyzers.context_engine.ContextEngine.__init__, llx.prellm.analyzers.context_engine.ContextEngine.gather, llx.prellm.analyzers.context_engine.ContextEngine.enrich_prompt, llx.prellm.analyzers.context_engine.ContextEngine.gather_runtime, llx.prellm.analyzers.context_engine.ContextEngine._auto_collect_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_process, llx.prellm.analyzers.context_engine.ContextEngine._gather_locale, llx.prellm.analyzers.context_engine.ContextEngine._gather_network, llx.prellm.analyzers.context_engine.ContextEngine._gather_env, llx.prellm.analyzers.context_engine.ContextEngine._gather_git
 
 ### examples.privacy.ml.04_behavioral_learning.BehavioralPasswordDetector
 > Learns and adapts to user coding patterns.
@@ -458,8 +420,6 @@ Returns list of (old_start, old_count, new_lines, removed_lines).
 > Format a value for display in the decision tree — no truncation.
 - **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
-### llx.prellm._get_process_chain
-
 ### llx.prellm.server._parse_model_pair
 > Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
@@ -503,8 +463,6 @@ Args:
 ### llx.prellm.core.preprocess_and_execute
 > One function to preprocess and execute — like litellm.completion() but with small LLM decomposition.
 - **Output to**: llx.prellm.core._resolve_pipeline_name, llx.prellm.core._apply_config_overrides, logger.info, llx.prellm.trace.get_current_trace, llx.prellm.core._trace_preprocess_configuration
-
-## Behavioral Patterns
 
 ### recursion__sanitize
 - **Type**: recursion
@@ -598,14 +556,6 @@ graph TD
     load_vscode_config --> update
     load_vscode_config --> get
 ```
-
-## Reverse Engineering Guidelines
-
-1. **Entry Points**: Start analysis from the entry points listed above
-2. **Core Logic**: Focus on classes with many methods
-3. **Data Flow**: Follow data transformation functions
-4. **Process Flows**: Use the flow diagrams for execution paths
-5. **API Surface**: Public API functions reveal the interface
 
 ## Context for LLM
 

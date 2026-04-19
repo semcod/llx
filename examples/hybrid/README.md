@@ -2,18 +2,12 @@
 
 This example demonstrates how to combine cloud LLMs for design/architecture with local models for implementation, creating an efficient and cost-effective development workflow.
 
-## The Hybrid Approach
-
 ### Why Hybrid?
 - **Cost Optimization**: Use premium cloud models for complex design, cheap/local for implementation
 - **Privacy**: Keep sensitive code local while leveraging cloud for guidance
 - **Speed**: Quick iterations with local models, deep thinking with cloud models
 - **Reliability**: Local models work offline, cloud models for complex tasks
 
-## Workflow Patterns
-
-### 1. **Design in Cloud, Implement Local**
-```bash
 # Phase 1: Architecture design with premium model
 llx chat --model premium --task refactor --prompt "Design microservices architecture for e-commerce platform" --save ./architecture.md
 
@@ -27,8 +21,6 @@ done
 llx chat --model balanced --task refactor --prompt "Create API gateway and service integration" --output ./gateway
 ```
 
-### 2. **Cloud Review, Local Development**
-```bash
 # Continuous development loop
 while true; do
     # Write code locally
@@ -41,8 +33,6 @@ while true; do
 done
 ```
 
-### 3. **Tiered Development Strategy**
-```bash
 # 1. Prototype with local model (fast, free)
 llx chat --local --speed --prompt "Create basic CRUD interface" --execute
 
@@ -53,11 +43,6 @@ llx chat --model balanced --task refactor --prompt "Add proper error handling an
 llx chat --model premium --task review --prompt "Optimize for performance and add advanced features" --execute
 ```
 
-## Real-world Examples
-
-### E-commerce Platform Development
-```bash
-#!/bin/bash
 # Complete e-commerce platform using hybrid approach
 
 echo "🏗️  Phase 1: Cloud Architecture Design"
@@ -135,10 +120,6 @@ Create deployment scripts:
 """ --output deployment
 ```
 
-### Data Science Pipeline
-```bash
-# Hybrid ML pipeline development
-
 # 1. Design architecture with premium model
 llx chat --model premium --task refactor --prompt """
 Design an ML pipeline for fraud detection with:
@@ -181,10 +162,6 @@ Create FastAPI service with:
 """ --output api-service
 ```
 
-### Mobile App Development
-```bash
-# Hybrid mobile app development
-
 # Cloud design for UX/UI
 llx chat --model balanced --provider anthropic --task explain --prompt """
 Design mobile app UI/UX for fitness tracker:
@@ -212,10 +189,6 @@ Optimize Flutter app for:
 """ --output lib/optimization
 ```
 
-## Advanced Patterns
-
-### 1. **Progressive Enhancement**
-```bash
 # Start with basic implementation
 llx chat --local --speed --prompt "Create basic todo app" --execute
 
@@ -226,8 +199,6 @@ llx chat --model balanced --prompt "Add advanced features: categories, filters, 
 llx chat --model premium --task review --prompt "Add animations, gestures, advanced UI patterns" --execute
 ```
 
-### 2. **Cost-Optimized Batch Processing**
-```bash
 # Queue tasks for batch processing with cloud models
 echo "Refactor authentication module" >> ./cloud-tasks.txt
 echo "Optimize database queries" >> ./cloud-tasks.txt
@@ -240,8 +211,6 @@ llx chat --model premium --prompt "Process all tasks in cloud-tasks.txt, generat
 > ./cloud-tasks.txt
 ```
 
-### 3. **Selective Cloud Usage**
-```bash
 # Use cloud only for specific complex tasks
 complex_tasks=("algorithm-optimization" "security-audit" "architecture-review" "performance-tuning")
 
@@ -254,10 +223,6 @@ for task in "${complex_tasks[@]}"; do
 done
 ```
 
-## Tool Integration
-
-### Aider + LLX Hybrid
-```bash
 # Use cloud model for complex refactoring
 llx chat --model premium --provider anthropic --prompt "Plan refactoring of legacy codebase" --save ./refactor-plan.md
 
@@ -268,8 +233,6 @@ aider --message="Implement refactor-plan.md" .
 llx chat --local --task review --prompt "Review refactored code for issues"
 ```
 
-### Claude Code + Local Models
-```bash
 # Quick fixes with local model
 llx chat --local --task quick_fix --prompt "Fix immediate bugs" --execute
 
@@ -277,8 +240,6 @@ llx chat --local --task quick_fix --prompt "Fix immediate bugs" --execute
 llx chat --provider anthropic --model premium --tool claude-code --prompt "Comprehensive codebase refactoring"
 ```
 
-### VS Code + RooCode Integration
-```bash
 # Start VS Code with RooCode
 ./docker-manage.sh dev
 
@@ -289,10 +250,6 @@ llx chat --model premium --prompt "Design and implement complex feature X" --too
 llx chat --local --prompt "Quick fix for minor issue" --tool vscode
 ```
 
-## Cost Management
-
-### Budget-Conscious Development
-```bash
 # Set daily cost limits
 export LLX_DAILY_BUDGET=10
 
@@ -308,8 +265,6 @@ llx chat --model balanced --task refactor --prompt "Improve code structure" --ex
 llx chat --model premium --task review --prompt "Security audit" --execute
 ```
 
-### Smart Caching
-```bash
 # Cache common responses
 llx chat --local --prompt "Generate boilerplate code" --save ./templates/boilerplate
 
@@ -319,10 +274,6 @@ cd new-project
 llx chat --local --prompt "Customize boilerplate for specific needs" --execute
 ```
 
-## Monitoring and Analytics
-
-### Track Usage Patterns
-```bash
 # Log all LLX usage
 llx_log() {
     echo "$(date): $*" >> ~/.llx/usage.log
@@ -334,8 +285,6 @@ cat ~/.llx/usage.log | grep "premium" | wc -l  # Premium usage count
 cat ~/.llx/usage.log | grep "local" | wc -l    # Local usage count
 ```
 
-### Quality Metrics
-```bash
 # Compare quality across tiers
 for tier in cheap balanced premium; do
     echo "Testing $tier tier..."
@@ -343,8 +292,6 @@ for tier in cheap balanced premium; do
     # Run tests and compare results
 done
 ```
-
-## Best Practices
 
 ### 1. **Task Classification**
 - **Local**: Boilerplate, simple fixes, documentation, unit tests
@@ -366,10 +313,6 @@ done
 - Run tests after each generation
 - Use local models for quick validation
 
-## Troubleshooting
-
-### Common Issues
-```bash
 # If local model fails, fallback to cloud
 llx chat --local --prompt "Task" || llx chat --model cheap --prompt "Task"
 

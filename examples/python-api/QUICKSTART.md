@@ -1,28 +1,10 @@
-# LLX Quick Start Guide
-
-## Szybki start z LLX
-
-### 1. Konfiguracja
-```bash
 # Skopiuj plik konfiguracyjny
 cp .env.example .env
-
-# Uzupełnij klucze API (minimum jeden)
-# OpenRouter jest polecany dla darmowych modeli
-nano .env
-```
-
-### 2. Generowanie projektu API
-```bash
-# Interaktywny tryb (z podpowiedziami)
-./run.sh
 
 # Lub bezpośrednio z opisem
 ./run.sh "Zbuduj REST API do zarządzania zamówieniami restauracji"
 ```
 
-### 3. Zarządzanie projektem
-```bash
 # Uruchom aplikację
 llx plan run ./my-api
 
@@ -71,13 +53,6 @@ my-api/
 - Wszystkie ustawienia są w .env
 - Monitorowanie działa automatycznie w tle
 
-## Skróty i Aliasy
-
-### Szybka instalacja aliasów
-```bash
-# Dodaj aliasy do powłoki
-./setup-aliases.sh
-
 # Załaduj aliasy
 source ~/.bashrc  # lub ~/.zshrc
 ```
@@ -92,17 +67,6 @@ llx-api      # Szybki start z uvicorn
 llx-new      # Nowa strategia API
 ```
 
-### Przykładowy workflow z aliasami
-```bash
 # 1. Generuj strategię z opisem
 llx-gen --description "API do zarządzania zadaniami"
 
-# 2. Generuj kod
-llx-code
-
-# 3. Uruchom
-llx-run
-
-# 4. Monitoruj w innym terminalu
-llx-mon
-```

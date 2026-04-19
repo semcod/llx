@@ -1,5 +1,3 @@
-![img.png](img.png)
-
 # llx
 
 **Intelligent LLM model router driven by real code metrics.**
@@ -12,13 +10,13 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.57-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-23.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.31-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-23.9h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (69 commits)
-- 👤 **Human dev:** ~$2347 (23.5h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (70 commits)
+- 👤 **Human dev:** ~$2387 (23.9h @ $100/h, 30min dedup)
 
-Generated on 2026-04-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-04-19 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
@@ -99,17 +97,8 @@ llx exposes its MCP tools through a shared registry in `llx.mcp.tools.MCP_TOOLS`
 By default, the MCP server runs over **stdio** for Claude Desktop. Use SSE only when you need a remote or web client.
 
 ```bash
-# Start MCP server for Claude Desktop (stdio)
-llx mcp start
-
 # Start MCP server over SSE for web/remote clients
 llx mcp start --mode sse --port 8000
-
-# Generate Claude Desktop config
-llx mcp config
-
-# List the live MCP registry
-llx mcp tools
 
 # Direct module entrypoint
 python -m llx.mcp --sse --port 8000
@@ -151,14 +140,9 @@ pip install llx[redup]      # Duplication detection
 pip install llx[vallm]      # Code validation
 ```
 
-## Quick Start
-
 ```bash
 # Analyze project and get model recommendation
 llx analyze ./my-project
-
-# Quick model selection
-llx select .
 
 # With task hint
 llx select . --task refactor
@@ -334,6 +318,3 @@ Full generated API inventory: `docs/README.md`.
 ## License
 
 Licensed under Apache-2.0.
-## Author
-
-Tom Sapletta

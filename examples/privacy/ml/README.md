@@ -10,8 +10,6 @@ These examples demonstrate ML-powered detection of sensitive data using:
 - **Hybrid Systems** - Combining ML + regex for maximum coverage
 - **Behavioral Learning** - Learning from codebase patterns over time
 
-## Examples
-
 ### 1. Entropy ML Detection (`01_entropy_ml_detection.py`)
 
 **Techniques**: Shannon entropy, randomness analysis, entropy-based classification
@@ -156,11 +154,6 @@ False positive learning:
 - `LearnedPattern` - Stored pattern with examples
 - `FalsePositiveRecord` - Tracked false positive
 
-## ML Techniques Explained
-
-### 1. Entropy Analysis
-
-```python
 # Shannon entropy calculation
 def calculate_entropy(text):
     char_counts = Counter(text)
@@ -171,9 +164,6 @@ def calculate_entropy(text):
         entropy -= p * math.log2(p)
     return entropy
 
-# Interpretation:
-# entropy < 3.0  → Low randomness (readable text)
-# entropy 3.0-4.5 → Medium randomness (some passwords)
 # entropy > 4.5  → High randomness (random strings)
 ```
 
@@ -185,20 +175,9 @@ print(f"Entropy: {result.entropy:.2f}")  # 4.48
 print(f"Type: {result.likely_type}")      # api_key
 ```
 
-### 2. Contextual Detection
-
-```python
 # Detects based on surrounding code context
 detector = ContextualPasswordDetector()
 candidates = detector.detect_passwords(code)
-
-# Context types:
-# - assignment:     password = "value"
-# - dict_key:       {"password": "value"}
-# - parameter:      def func(password="value")
-# - instance_var:   self.password = "value"
-# - comment_hint:   # password: value
-```
 
 ### 3. Hybrid Detection
 
@@ -207,12 +186,6 @@ hybrid = HybridAnonymizer()
 
 # Combines multiple methods:
 results = hybrid.hybrid_detect(text)
-
-# Each result has:
-# - detected_by: 'regex', 'ml_entropy', 'ml_context'
-# - confidence: 0.0-1.0
-# - pattern_type: specific classification
-```
 
 ### 4. Behavioral Learning
 
@@ -228,9 +201,6 @@ confidence = detector.calculate_adaptive_confidence(
     var_name="user_password",
     base_confidence=0.7
 )
-# Returns 0.8 (boosted because pattern was learned)
-```
-
 ## Detection Method Comparison
 
 | Method | Catches | Misses | False Positives |
@@ -286,8 +256,6 @@ for file_path, content in result.files.items():
     print(f"{file_path}: {len(ml_findings)} ML-detected items")
 ```
 
-## Advanced Usage
-
 ### Custom Entropy Thresholds
 
 ```python
@@ -325,9 +293,6 @@ detector.report_false_positive(
 
 # Future detections will have lower confidence for similar patterns
 confidence = detector.calculate_adaptive_confidence("test_password", "...", 0.8)
-# Returns ~0.5 (reduced because learned as FP)
-```
-
 ## Performance Considerations
 
 | Method | Speed | Accuracy | Use Case |
@@ -350,17 +315,6 @@ confidence = detector.calculate_adaptive_confidence("test_password", "...", 0.8)
 - Review ML detections before anonymizing
 - Train behavioral detector on your codebase
 - Regularly review and report false positives
-
-## Requirements
-
-```bash
-# No additional dependencies required!
-# All ML examples use only Python standard library:
-# - math (entropy calculation)
-# - collections.Counter (frequency analysis)
-# - re (pattern matching)
-# - json (learning persistence)
-```
 
 ## Next Steps
 

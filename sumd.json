@@ -1,0 +1,406 @@
+{
+  "project_name": "llx",
+  "description": "SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorization",
+  "files": [
+    {
+      "path": "trace.py",
+      "type": "python"
+    },
+    {
+      "path": "simple_generate.py",
+      "type": "python"
+    },
+    {
+      "path": "test-local-chat.py",
+      "type": "python"
+    },
+    {
+      "path": "test_strategy_integration.py",
+      "type": "python"
+    },
+    {
+      "path": "test_aider_docker.py",
+      "type": "python"
+    },
+    {
+      "path": "test_aider_mcp.py",
+      "type": "python"
+    },
+    {
+      "path": "test_cli.py",
+      "type": "python"
+    },
+    {
+      "path": "my-api/test_api.py",
+      "type": "python"
+    },
+    {
+      "path": "my-api/monitoring.py",
+      "type": "python"
+    },
+    {
+      "path": "my-api/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "my-api/models.py",
+      "type": "python"
+    },
+    {
+      "path": "my-api/main.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_mcp.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_prellm_integration.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_core.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_proxym_integration.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_fix_aider_mode.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_detection.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_privacy_project.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_privacy.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_privacy_extended.py",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_aider_mcp.py",
+      "type": "python"
+    },
+    {
+      "path": "scripts/pyqual_auto.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/litellm_config.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/config.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/llm.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/__main__.py",
+      "type": "python"
+    },
+    {
+      "path": "test-api-qwen/test_api.py",
+      "type": "python"
+    },
+    {
+      "path": "test-api-qwen/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "test-api-qwen/models.py",
+      "type": "python"
+    },
+    {
+      "path": "test-api-qwen/main.py",
+      "type": "python"
+    },
+    {
+      "path": "test-api-qwen/tests/test_test_api_qwen.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/commands/_patch_apply.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/commands/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/commands/fix.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/deanonymize_results.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_project_ast.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/streaming.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/project.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_streaming_impl.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_project_anonymizer.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/deanonymize.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/deanonymize_engine.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/__core.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_project_context.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_streaming_chunking.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/deanonymize_utils.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/privacy/_streaming_parallel.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/type_check.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/detect_secrets.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/bump_version.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/publish.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/lint.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/verify_push_publish.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/pyqual_plugins/security_audit.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/examples/utils.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/env_config.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/cli_config.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/cli.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/trace.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/extractors.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/cli_context.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/model_catalog.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/logging_setup.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/server.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/query_decomposer.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/context_ops.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/pipeline_ops.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/prompt_registry.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/cli_query.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/validators.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/models.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/core.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/llm_provider.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/pipeline.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/cli_commands.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/_nfo_compat.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/prellm/budget.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/analysis/runner.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/analysis/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/analysis/collector.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/ai_tools_manager.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/docker_manager.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/cli.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/vscode_manager.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/_utils.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/config_manager.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/health_checker.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/model_manager.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/_docker.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/tools/health_runner.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/cli/app.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/cli/__init__.py",
+      "type": "python"
+    },
+    {
+      "path": "llx/cli/formatters.py",
+      "type": "python"
+    }
+  ]
+}

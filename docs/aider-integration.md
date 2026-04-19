@@ -1,10 +1,6 @@
-# Aider Integration with LLX
-
 ## Overview
 
 LLX now supports Aider as an MCP tool, allowing you to use AI pair programming capabilities directly through LLX with intelligent model selection.
-
-## Installation
 
 ### Option 1: Local Installation
 ```bash
@@ -22,8 +18,6 @@ docker run -d -v ollama:/root/.ollama -p 11434:11434 ollama/ollama
 # Pull a coding model
 docker exec -it <ollama_container> ollama pull qwen2.5-coder:7b
 ```
-
-## Usage
 
 ### 1. Via MCP Server
 
@@ -109,8 +103,6 @@ await session.call_tool('aider', {
 })
 ```
 
-### Adding Type Hints
-
 ```python
 # Ask aider to add type hints to entire project
 await session.call_tool('aider', {
@@ -119,8 +111,6 @@ await session.call_tool('aider', {
     'model': 'ollama/qwen2.5-coder:7b'
 })
 ```
-
-### Writing Tests
 
 ```python
 # Generate unit tests
@@ -146,25 +136,14 @@ await session.call_tool('aider', {
 - **Context Building**: Automatically includes relevant file context
 - **Proxy Support**: Works with LiteLLM proxy for cloud models
 
-## Troubleshooting
-
 ### Aider not found
 ```bash
 pip install aider-chat
-# or use Docker
-```
-
-### Docker connection issues
-```bash
 # Ensure Ollama is accessible from Docker
 docker run --network host paulgauthier/aider --model ollama_chat/qwen2.5-coder:7b
 ```
 
-### Model not available
 ```bash
-# Check available models
-ollama list
-
 # Pull the model
 ollama pull qwen2.5-coder:7b
 ```

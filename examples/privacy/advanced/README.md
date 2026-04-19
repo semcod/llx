@@ -2,8 +2,6 @@
 
 This directory contains advanced, real-world examples demonstrating LLX privacy features in complex scenarios.
 
-## Examples Overview
-
 ### 1. API Integration (`01_api_integration.py`)
 
 **Complexity**: ⭐⭐⭐⭐⭐
@@ -120,8 +118,6 @@ webapp/                       (03_cicd_integration)
     └── secrets.yaml         # Production secrets
 ```
 
-## Sensitive Data Demonstrated
-
 ### Credentials
 - Stripe API keys (`sk_live_...`)
 - Database passwords
@@ -147,11 +143,6 @@ webapp/                       (03_cicd_integration)
 - Discount tiers
 - Competitor monitoring
 
-## Key Concepts Demonstrated
-
-### 1. Simulated API Requests
-
-```python
 # SimulatedLLMAPI class demonstrates:
 class SimulatedLLMAPI:
     def send_prompt(self, anonymized_code: str, prompt: str) -> SimulatedLLMResponse:
@@ -160,9 +151,6 @@ class SimulatedLLMAPI:
         # 3. Response is deanonymized before human review
 ```
 
-### 2. Multi-Level Anonymization
-
-```python
 # Different protection levels:
 levels = {
     "internal": {      # Trust: high → minimal changes
@@ -232,11 +220,6 @@ python3 advanced/02_multi_stage.py
 python3 advanced/03_cicd_integration.py
 ```
 
-## Integration Patterns
-
-### Pattern 1: Pre-Commit Hook
-
-```bash
 # .git/hooks/pre-commit
 #!/bin/bash
 python3 << 'EOF'
@@ -253,17 +236,11 @@ for file in sys.argv[1:]:
 EOF
 ```
 
-### Pattern 2: External Audit Workflow
-
-```python
 # 1. Anonymize for external audit
 ctx = AnonymizationContext(project_path=".")
 anonymizer = ProjectAnonymizer(ctx)
 result = anonymizer.anonymize_project()
 ctx.save("audit_context.json")
-
-# 2. Send anonymized files to auditor
-# (auditor never sees original names)
 
 # 3. Receive anonymized findings
 findings = "Function fn_ABC123 has security issue..."
@@ -271,12 +248,6 @@ findings = "Function fn_ABC123 has security issue..."
 # 4. Deanonymize for internal team
 deanonymizer = ProjectDeanonymizer(ctx)
 restored = deanonymizer.deanonymize_text(findings)
-# "Function process_payment has security issue..."
-```
-
-### Pattern 3: LLM Integration
-
-```python
 # Before sending to LLM
 ctx = AnonymizationContext(project_path=".")
 anonymizer = ProjectAnonymizer(ctx)
@@ -303,9 +274,6 @@ clean_response = deanonymizer.deanonymize_chat_response(llm_response)
 - Using environment variables (utils.py example)
 - Proper deanonymization workflow
 
-## Requirements
-
-```bash
 # All examples require
 pip install -e /path/to/llx
 

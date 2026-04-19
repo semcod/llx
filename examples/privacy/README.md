@@ -12,8 +12,6 @@ privacy/
 └── mcp/            # MCP tool usage documentation
 ```
 
-## Quick Start
-
 ### 1. Basic Text Anonymization
 
 ```bash
@@ -76,8 +74,6 @@ Demonstrates:
 - Chunked processing
 - Streaming LLM response deanonymization
 
-## Common Workflows
-
 ### Workflow 1: Anonymize Before LLM
 
 ```python
@@ -92,9 +88,6 @@ result = anonymizer.anonymize_project()
 
 # 3. Save context
 ctx.save("./my-project.anon.json")
-
-# 4. Send anonymized code to LLM...
-# 5. Receive anonymized response...
 
 # 6. Deanonymize response
 from llx.privacy.deanonymize import ProjectDeanonymizer

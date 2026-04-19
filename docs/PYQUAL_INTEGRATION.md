@@ -9,11 +9,6 @@ Pyqual provides a quality gate system that runs tools in loops until metrics pas
 - Selecting the optimal LLM model based on actual code metrics
 - Generating targeted fixes using the selected model
 
-## Quick Start
-
-### 1. Install both tools
-
-```bash
 # Install llx with preLLM integration
 pip install llx[prellm]
 
@@ -94,9 +89,6 @@ llx fix [workdir] [options]
 - `--dry-run`: Show what would be done without executing
 - `--verbose, -v`: Detailed output
 
-### Examples
-
-```bash
 # Fix using auto-selected model
 llx fix . --errors .pyqual/errors.json
 
@@ -106,8 +98,6 @@ llx fix . --errors .pyqual/errors.json --model claude-sonnet-4-20250514
 # Dry run to see what would be done
 llx fix . --errors .pyqual/errors.json --dry-run --verbose
 ```
-
-## Advanced Configuration
 
 ### Custom Model Thresholds
 
@@ -128,8 +118,6 @@ export LLX_DEFAULT_TIER=balanced  # Default when metrics are unclear
 export LLX_VERBOSE=true           # Detailed logging
 export LLM_MODEL=custom-model     # Override model selection
 ```
-
-## Integration Patterns
 
 ### Pattern 1: Basic Quality Loop
 
@@ -173,8 +161,6 @@ stages:
     when: metrics_fail
 ```
 
-## Error Handling
-
 ### When LLX Cannot Fix
 
 If LLX cannot resolve issues after the maximum iterations:
@@ -197,10 +183,6 @@ The fix command outputs structured suggestions that can be applied manually:
 # Run with dry-run to get suggestions
 llx fix . --errors .pyqual/errors.json --dry-run > fixes.md
 
-# Review and apply selectively
-vim fixes.md
-```
-
 ## Best Practices
 
 1. **Start with dry-run**: Always review fixes before applying
@@ -208,8 +190,6 @@ vim fixes.md
 3. **Adjust thresholds**: Tune model selection for your project
 4. **Monitor costs**: Check LLX model selection decisions
 5. **Iterate gradually**: Fix high-impact issues first
-
-## Troubleshooting
 
 ### Common Issues
 
@@ -227,9 +207,6 @@ vim fixes.md
    - Check error JSON format
    - Verify working directory
 
-### Debug Mode
-
-```bash
 # Enable verbose logging
 export LLX_VERBOSE=true
 
