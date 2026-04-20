@@ -1,0 +1,22 @@
+# redsl | refactor | 2026-04-19
+# mode=dry-run | files=213 | lines=39705
+# CC̄=8.7 | critical=42 | decisions=1
+
+STATUS[planned]
+
+DECISIONS[1]:
+  1. extract_functions → llx/commands/fix.py (score=2.29) Funkcja o CC > 15 — rozbij na mniejsze
+
+METRICS[10]:
+  🟡 trace.py::None CC=11 LOC=49
+  🟢 simple_generate.py::None CC=4 LOC=71
+  🔴 test-local-chat.py::main CC=19 LOC=186
+  🔴 test-local-chat.py::None CC=19 LOC=186
+  🟢 test_strategy_integration.py::None CC=3 LOC=87
+  🟢 test_aider_docker.py::None CC=6 LOC=71
+  🟢 test_aider_mcp.py::None CC=4 LOC=65
+  🟢 test_cli.py::None CC=0 LOC=9
+  🟢 my-api/test_api.py::None CC=4 LOC=98
+  🟢 my-api/monitoring.py::None CC=2 LOC=125
+
+LOG: /home/tom/github/semcod/llx/logs/redsl_20260419_193242.log

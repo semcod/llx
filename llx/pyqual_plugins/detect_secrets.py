@@ -9,11 +9,8 @@ import sys
 from pathlib import Path
 
 
-def run_detect_secrets(output_dir: Path) -> bool:
-    """Run detect-secrets scan and save JSON output."""
-    print("Scanning for hardcoded secrets...")
-    output_file = output_dir / "detect-secrets.json"
-
+def _run_detect_secrets_subprocess(output_file: Path) -> bool:
+    """Execute the detect-secrets subprocess and handle errors."""
     try:
         subprocess.run(
             [
@@ -40,6 +37,13 @@ def run_detect_secrets(output_dir: Path) -> bool:
         # detect-secrets may exit with findings
         print(f"detect-secrets completed - results saved to {output_file}")
         return True
+
+
+def run_detect_secrets(output_dir: Path) -> bool:
+    """Run detect-secrets scan and save JSON output."""
+    print("Scanning for hardcoded secrets...")
+    output_file = output_dir / "detect-secrets.json"
+    return _run_detect_secrets_subprocess(output_file)
 
 
 def main() -> int:

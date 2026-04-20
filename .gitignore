@@ -227,3 +227,5 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 .aider*
+.redsl/
+*.bak

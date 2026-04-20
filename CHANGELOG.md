@@ -1,5 +1,33 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.1.58] - 2026-04-20
+
+### Docs
+- Update README.md
+- Update redsl_refactor_plan.md
+- Update redsl_refactor_report.md
+
+### Test
+- Update tests/test_anonymization_context.py
+- Update tests/test_project_anonymizer.py
+- Update tests/test_project_deanonymizer.py
+
+### Other
+- Update .gitignore
+- Update .redsl/history.jsonl
+- Update examples/privacy/ml/02_hybrid_system.py
+- Update examples/privacy/ml/02_hybrid_system.py.bak
+- Update llx/commands/fix.py
+- Update llx/commands/fix.py.bak
+- Update llx/pyqual_plugins/detect_secrets.py
+- Update llx/tools/ai_tools_manager.py
+- Update llx/utils/aider.py
+- Update llx/utils/formatting.py
+- ... and 5 more files
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),

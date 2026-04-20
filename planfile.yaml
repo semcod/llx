@@ -7,16 +7,15 @@ sources:
 - project/analysis.toon.yaml
 - project/duplication.toon.yaml
 stats:
-  total: 63
-  todo: 63
-  done: 0
-
+  total: 68
+  todo: 65
+  done: 3
 tasks:
 - id: Q01
   title: 'reduce_complexity: collector (CC=10)'
   description: Module 'collector' has cyclomatic complexity CC=10 (482 lines, 1 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/collector.py
+  file: llx/analysis/collector.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -31,7 +30,7 @@ tasks:
   title: 'reduce_complexity: core (CC=10)'
   description: Module 'core' has cyclomatic complexity CC=10 (468 lines, 1 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/core.py
+  file: llx/prellm/core.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -46,7 +45,7 @@ tasks:
   title: 'reduce_complexity: server (CC=12)'
   description: Module 'server' has cyclomatic complexity CC=12 (447 lines, 10 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/server.py
+  file: llx/prellm/server.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -61,7 +60,7 @@ tasks:
   title: 'reduce_complexity: manager (CC=14)'
   description: Module 'manager' has cyclomatic complexity CC=14 (445 lines, 1 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/manager.py
+  file: llx/orchestration/session/manager.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -76,7 +75,7 @@ tasks:
   title: 'reduce_complexity: codebase_indexer (CC=11)'
   description: Module 'codebase_indexer' has cyclomatic complexity CC=11 (418 lines,
     4 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/codebase_indexer.py
+  file: llx/prellm/context/codebase_indexer.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -106,7 +105,7 @@ tasks:
   title: 'reduce_complexity: user_memory (CC=12)'
   description: Module 'user_memory' has cyclomatic complexity CC=12 (361 lines, 1
     complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/user_memory.py
+  file: llx/prellm/context/user_memory.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -121,7 +120,7 @@ tasks:
   title: 'reduce_complexity: formatters (CC=14)'
   description: Module 'formatters' has cyclomatic complexity CC=14 (312 lines, 0 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/formatters.py
+  file: llx/cli/formatters.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -136,11 +135,11 @@ tasks:
   title: 'reduce_complexity: client (CC=11)'
   description: Module 'client' has cyclomatic complexity CC=11 (287 lines, 3 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/client.py
+  file: llx/mcp/client.py
   action: reduce_complexity
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - complexity
@@ -151,7 +150,7 @@ tasks:
   title: 'reduce_complexity: executor_simple (CC=13)'
   description: Module 'executor_simple' has cyclomatic complexity CC=13 (276 lines,
     1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/executor_simple.py
+  file: llx/planfile/executor_simple.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -166,7 +165,7 @@ tasks:
   title: 'reduce_complexity: health_runner (CC=10)'
   description: Module 'health_runner' has cyclomatic complexity CC=10 (266 lines,
     1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/health_runner.py
+  file: llx/tools/health_runner.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -181,11 +180,11 @@ tasks:
   title: 'reduce_complexity: runner (CC=12)'
   description: Module 'runner' has cyclomatic complexity CC=12 (263 lines, 0 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/runner.py
+  file: llx/analysis/runner.py
   action: reduce_complexity
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - complexity
@@ -196,7 +195,7 @@ tasks:
   title: 'reduce_complexity: pipeline_ops (CC=12)'
   description: Module 'pipeline_ops' has cyclomatic complexity CC=12 (257 lines, 0
     complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/pipeline_ops.py
+  file: llx/prellm/pipeline_ops.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -211,7 +210,7 @@ tasks:
   title: 'reduce_complexity: context_engine (CC=13)'
   description: Module 'context_engine' has cyclomatic complexity CC=13 (248 lines,
     1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/context_engine.py
+  file: llx/prellm/analyzers/context_engine.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -226,7 +225,7 @@ tasks:
   title: 'reduce_complexity: _project_ast (CC=10)'
   description: Module '_project_ast' has cyclomatic complexity CC=10 (226 lines, 1
     complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/_project_ast.py
+  file: llx/privacy/_project_ast.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -241,7 +240,7 @@ tasks:
   title: 'reduce_complexity: folder_compressor (CC=11)'
   description: Module 'folder_compressor' has cyclomatic complexity CC=11 (224 lines,
     1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/folder_compressor.py
+  file: llx/prellm/context/folder_compressor.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -256,7 +255,7 @@ tasks:
   title: 'reduce_complexity: validators (CC=14)'
   description: Module 'validators' has cyclomatic complexity CC=14 (212 lines, 3 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/validators.py
+  file: llx/prellm/validators.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -271,7 +270,7 @@ tasks:
   title: 'reduce_complexity: schema_generator (CC=11)'
   description: Module 'schema_generator' has cyclomatic complexity CC=11 (211 lines,
     1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/schema_generator.py
+  file: llx/prellm/context/schema_generator.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -286,7 +285,7 @@ tasks:
   title: 'reduce_complexity: preprocessor (CC=13)'
   description: Module 'preprocessor' has cyclomatic complexity CC=13 (188 lines, 2
     complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/preprocessor.py
+  file: llx/prellm/agents/preprocessor.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -316,7 +315,7 @@ tasks:
   title: 'reduce_complexity: llm_provider (CC=11)'
   description: Module 'llm_provider' has cyclomatic complexity CC=11 (150 lines, 1
     complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/llm_provider.py
+  file: llx/prellm/llm_provider.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -331,11 +330,11 @@ tasks:
   title: 'reduce_complexity: cli (CC=10)'
   description: Module 'cli' has cyclomatic complexity CC=10 (149 lines, 0 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/cli.py
+  file: llx/prellm/cli.py
   action: reduce_complexity
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - complexity
@@ -346,7 +345,7 @@ tasks:
   title: 'reduce_complexity: _project_anonymizer (CC=10)'
   description: Module '_project_anonymizer' has cyclomatic complexity CC=10 (138 lines,
     2 complex functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: llx/_project_anonymizer.py
+  file: llx/privacy/_project_anonymizer.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -361,7 +360,7 @@ tasks:
   title: 'reduce_complexity: trace (CC=11)'
   description: Module 'trace' has cyclomatic complexity CC=11 (49 lines, 0 complex
     functions). Apply guard clauses, extract helpers, reduce nesting.
-  file: ./trace.py
+  file: trace.py
   action: reduce_complexity
   priority: 3
   effort: medium
@@ -379,7 +378,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -392,7 +391,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -405,7 +404,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -418,7 +417,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -431,7 +430,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -444,7 +443,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -457,7 +456,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -470,7 +469,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -483,7 +482,7 @@ tasks:
   action: extract_class
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-class
@@ -496,7 +495,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -509,7 +508,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -522,7 +521,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -535,7 +534,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -548,7 +547,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -561,7 +560,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -574,7 +573,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -587,7 +586,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -600,7 +599,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -613,7 +612,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -626,7 +625,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -639,7 +638,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -652,7 +651,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -678,7 +677,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -691,7 +690,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -704,7 +703,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -717,7 +716,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -743,7 +742,7 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: stale
   labels:
   - refactor
   - extract-function
@@ -757,13 +756,14 @@ tasks:
   action: extract_function
   priority: 2
   effort: low
-  status: todo
+  status: done
   labels:
   - refactor
   - duplication
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: high
+  completed_at: '2026-04-20T06:47:30.694223+00:00'
 - id: D31
   title: 'extract_function: _dispatch (saves 18L)'
   description: 'Duplicated ''_dispatch'': 3 occurrences, 9 lines each, saves 18 lines.
@@ -802,13 +802,14 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: done
   labels:
   - refactor
   - duplication
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  completed_at: '2026-04-20T07:45:11.890599+00:00'
 - id: D34
   title: 'extract_function: main (saves 13L)'
   description: 'Duplicated ''main'': 2 occurrences, 13 lines each, saves 13 lines.
@@ -817,13 +818,14 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: todo
+  status: done
   labels:
   - refactor
   - duplication
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  completed_at: '2026-04-20T10:06:07.294059+00:00'
 - id: D35
   title: 'extract_function: check_version_on_pypi (saves 12L)'
   description: 'Duplicated ''check_version_on_pypi'': 2 occurrences, 12 lines each,
@@ -900,3 +902,58 @@ tasks:
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+- id: refactor-2026-04-20-064
+  title: 'split_module: test_privacy_project.py'
+  status: todo
+  action: split_module
+  file: tests/test_privacy_project.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-066
+  title: 'split_module: test_privacy_extended.py'
+  status: todo
+  action: split_module
+  file: tests/test_privacy_extended.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-068
+  title: 'split_module: trace.py'
+  status: todo
+  action: split_module
+  file: llx/prellm/trace.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-070
+  title: 'split_module: docker_manager.py'
+  status: todo
+  action: split_module
+  file: llx/tools/docker_manager.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-072
+  title: 'split_module: vscode_manager.py'
+  status: todo
+  action: split_module
+  file: llx/tools/vscode_manager.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
