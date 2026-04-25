@@ -1,0 +1,32 @@
+# SCENARIO: Auto-generated API Smoke Tests
+# TYPE: api
+# GENERATED: true
+# DETECTORS: FastAPIDetector, ConfigEndpointDetector
+
+CONFIG[4]{key, value}:
+  base_url, http://localhost:8101
+  timeout_ms, 10000
+  retry_count, 3
+  detected_frameworks, FastAPIDetector, ConfigEndpointDetector
+
+# REST API Endpoints (11 unique)
+API[11]{method, endpoint, expected_status}:
+  GET, /health, 200
+  GET, /users/, 200
+  POST, /users/, 201
+  GET, /products/, 200
+  POST, /products/, 201
+  POST, /items, 201
+  GET, /items, 200
+  GET, /v1/models, 200
+  POST, /v1/chat/completions, 201
+  POST, /v1/batch, 201
+  GET, /, 200
+
+ASSERT[2]{field, operator, expected}:
+  status, <, 500
+  response_time, <, 2000
+
+# Summary by Framework:
+#   fastapi: 19 endpoints
+#   docker: 1 endpoints

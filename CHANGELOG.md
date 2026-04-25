@@ -2,6 +2,35 @@
 
 ## [Unreleased]
 
+## [0.1.59] - 2026-04-25
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update test-local-chat.py
+- Update testql-scenarios/generated-api-integration.testql.toon.yaml
+- Update testql-scenarios/generated-api-smoke.testql.toon.yaml
+- Update testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+### Other
+- Update SUMR.json
+- Update app.doql.less
+- Update llx/commands/_patch_apply.py
+- Update llx/detection/detector.py
+- Update llx/orchestration/ratelimit/limiter.py
+- Update llx/planfile/model_selector.py
+- Update llx/tools/cli.py
+- Update llx/utils/issues.py
+- Update planfile.yaml
+- Update project.sh
+- ... and 17 more files
+
 ## [0.1.58] - 2026-04-20
 
 ### Docs

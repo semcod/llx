@@ -28,40 +28,51 @@ class ProjectTypeDetector:
         
         return None
     
-    def detect_from_files(self, path: Path) -> Optional[str]:
-        """Detect project type from existing files."""
-        # Check for package.json -> webapp
+    def _detect_webapp(self, path: Path) -> Optional[str]:
         if (path / "package.json").exists():
             return "webapp"
-        
-        # Check for setup.py with click -> cli
-        if (path / "setup.py").exists():
-            try:
-                content = (path / "setup.py").read_text(encoding="utf-8")
-                if any(keyword in content for keyword in ["click", "commander", "clap", "argparse"]):
-                    return "cli"
-            except:
-                pass
-        
-        # Check for requirements.txt with web frameworks -> api
-        if (path / "requirements.txt").exists():
-            try:
-                content = (path / "requirements.txt").read_text(encoding="utf-8")
-                if any(framework in content for framework in ["fastapi", "flask", "django", "express"]):
-                    return "api"
-            except:
-                pass
-        
-        # Check for model files -> ml
-        model_extensions = [".pkl", ".joblib", ".h5", ".pth", ".pt", ".onnx"]
-        for ext in model_extensions:
+        return None
+
+    def _detect_cli(self, path: Path) -> Optional[str]:
+        if not (path / "setup.py").exists():
+            return None
+        try:
+            content = (path / "setup.py").read_text(encoding="utf-8")
+            if any(keyword in content for keyword in ("click", "commander", "clap", "argparse")):
+                return "cli"
+        except Exception:
+            pass
+        return None
+
+    def _detect_api(self, path: Path) -> Optional[str]:
+        if not (path / "requirements.txt").exists():
+            return None
+        try:
+            content = (path / "requirements.txt").read_text(encoding="utf-8")
+            if any(framework in content for framework in ("fastapi", "flask", "django", "express")):
+                return "api"
+        except Exception:
+            pass
+        return None
+
+    def _detect_ml(self, path: Path) -> Optional[str]:
+        for ext in (".pkl", ".joblib", ".h5", ".pth", ".pt", ".onnx"):
             if list(path.glob(f"**/*{ext}")):
                 return "ml"
-        
-        # Check for data files -> data
+        return None
+
+    def _detect_data(self, path: Path) -> Optional[str]:
         if (path / "data").exists() or list(path.glob("**/*.csv")) or list(path.glob("**/*.parquet")):
             return "data"
-        
+        return None
+
+    def detect_from_files(self, path: Path) -> Optional[str]:
+        """Detect project type from existing files."""
+        for detector in (self._detect_webapp, self._detect_cli, self._detect_api,
+                           self._detect_ml, self._detect_data):
+            result = detector(path)
+            if result:
+                return result
         return None
     
     def detect_from_config(self, path: Path) -> Optional[str]:

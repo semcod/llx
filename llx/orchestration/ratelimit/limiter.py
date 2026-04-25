@@ -290,6 +290,45 @@ class RateLimiter:
 
     # ── Query methods ───────────────────────────────────────
 
+    @staticmethod
+    def _build_utilization(
+        state: RateLimitState, config: RateLimitConfig
+    ) -> Dict[str, Any]:
+        """Build utilization dict for a rate-limit state/config pair."""
+        utilization: Dict[str, Any] = {}
+        for limit_type, limit in config.limits.items():
+            usage = state.current_usage.get(limit_type, 0)
+            utilization[limit_type.value] = {
+                "used": usage,
+                "limit": limit,
+                "percentage": (usage / limit * 100) if limit > 0 else 0,
+                "remaining": max(0, limit - usage),
+            }
+        return utilization
+
+    @staticmethod
+    def _build_next_reset_times(
+        state: RateLimitState, config: RateLimitConfig, now: datetime
+    ) -> Dict[str, float]:
+        """Build next-reset-times dict for a state/config pair."""
+        next_reset_times: Dict[str, float] = {}
+        for limit_type in config.limits.keys():
+            if limit_type in state.last_reset_times:
+                next_reset = state.last_reset_times[limit_type] + timedelta(hours=1)
+                next_reset_times[limit_type.value] = (
+                    (next_reset - now).total_seconds() if next_reset > now else 0
+                )
+        return next_reset_times
+
+    def _matches_filter(self, key: str, provider: str | None, account: str | None) -> bool:
+        """Check if a provider:account key matches optional filters."""
+        p, a = key.split(":", 1)
+        if provider and p != provider:
+            return False
+        if account and a != account:
+            return False
+        return True
+
     def get_status(self, provider: str = None, account: str = None) -> Dict[str, Any]:
         """Get rate limiting status."""
         with self.lock:
@@ -297,32 +336,10 @@ class RateLimiter:
             results: Dict[str, Any] = {}
 
             for key, config in self.limits.items():
+                if not self._matches_filter(key, provider, account):
+                    continue
                 p, a = key.split(":", 1)
-                if provider and p != provider:
-                    continue
-                if account and a != account:
-                    continue
-
                 state = self.states[key]
-
-                utilization: Dict[str, Any] = {}
-                for limit_type, limit in config.limits.items():
-                    usage = state.current_usage.get(limit_type, 0)
-                    utilization[limit_type.value] = {
-                        "used": usage,
-                        "limit": limit,
-                        "percentage": (usage / limit * 100) if limit > 0 else 0,
-                        "remaining": max(0, limit - usage),
-                    }
-
-                next_reset_times: Dict[str, float] = {}
-                for limit_type in config.limits.keys():
-                    if limit_type in state.last_reset_times:
-                        next_reset = state.last_reset_times[limit_type] + timedelta(hours=1)
-                        if next_reset > now:
-                            next_reset_times[limit_type.value] = (next_reset - now).total_seconds()
-                        else:
-                            next_reset_times[limit_type.value] = 0
 
                 results[key] = {
                     "provider": p,
@@ -339,8 +356,8 @@ class RateLimiter:
                     "concurrent_requests": state.concurrent_requests,
                     "total_requests": state.total_requests,
                     "rejected_requests": state.rejected_requests,
-                    "utilization": utilization,
-                    "next_reset_times": next_reset_times,
+                    "utilization": self._build_utilization(state, config),
+                    "next_reset_times": self._build_next_reset_times(state, config, now),
                     "last_request_time": (
                         state.last_request_time.isoformat() if state.last_request_time else None
                     ),

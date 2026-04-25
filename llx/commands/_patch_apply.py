@@ -55,6 +55,29 @@ def _apply_unified_diff(file_path: Path, patch_text: str) -> bool:
         return False
 
 
+def _finalize_hunk(
+    hunks: list[tuple[int, int, list[str], list[str]]],
+    old_start: int,
+    old_count: int,
+    new_lines: list[str],
+    removed_lines: list[str],
+) -> None:
+    """Append the current hunk if it contains any changes."""
+    if new_lines or removed_lines:
+        hunks.append((old_start, old_count, new_lines, removed_lines))
+
+
+def _classify_line(raw_line: str) -> tuple[str, str] | None:
+    """Classify a unified-diff line. Returns (action, content) or None."""
+    if raw_line.startswith('-') and not raw_line.startswith('---'):
+        return ("remove", raw_line[1:] + '\n')
+    if raw_line.startswith('+') and not raw_line.startswith('+++'):
+        return ("add", raw_line[1:] + '\n')
+    if raw_line.startswith(' '):
+        return ("context", raw_line[1:] + '\n')
+    return None
+
+
 def _parse_unified_hunks(patch_text: str) -> list[tuple[int, int, list[str], list[str]]]:
     """Parse a unified diff into hunks."""
     import re
@@ -71,8 +94,8 @@ def _parse_unified_hunks(patch_text: str) -> list[tuple[int, int, list[str], lis
     for raw_line in patch_text.splitlines():
         m = hunk_header.match(raw_line)
         if m:
-            if in_hunk and (new_lines or removed_lines):
-                hunks.append((current_old_start, current_old_count, new_lines, removed_lines))
+            if in_hunk:
+                _finalize_hunk(hunks, current_old_start, current_old_count, new_lines, removed_lines)
             current_old_start = int(m.group(1))
             current_old_count = int(m.group(2) or '1')
             new_lines = []
@@ -81,16 +104,20 @@ def _parse_unified_hunks(patch_text: str) -> list[tuple[int, int, list[str], lis
             continue
         if not in_hunk:
             continue
-        if raw_line.startswith('-') and not raw_line.startswith('---'):
-            removed_lines.append(raw_line[1:] + '\n')
-        elif raw_line.startswith('+') and not raw_line.startswith('+++'):
-            new_lines.append(raw_line[1:] + '\n')
-        elif raw_line.startswith(' '):
-            removed_lines.append(raw_line[1:] + '\n')
-            new_lines.append(raw_line[1:] + '\n')
+        action = _classify_line(raw_line)
+        if action is None:
+            continue
+        act, content = action
+        if act == "remove":
+            removed_lines.append(content)
+        elif act == "add":
+            new_lines.append(content)
+        else:
+            removed_lines.append(content)
+            new_lines.append(content)
 
-    if in_hunk and (new_lines or removed_lines):
-        hunks.append((current_old_start, current_old_count, new_lines, removed_lines))
+    if in_hunk:
+        _finalize_hunk(hunks, current_old_start, current_old_count, new_lines, removed_lines)
 
     return hunks
 

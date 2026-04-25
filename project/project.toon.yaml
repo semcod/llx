@@ -1,53 +1,53 @@
-# llx | 1255 func | 132f | 37541L | python | 2026-04-09
+# llx | 1914 func | 159f | 92686L | python | 2026-04-25
 
 HEALTH:
-  CC̄=3.7  critical=65 (limit:10)  dup=14  cycles=0
+  CC̄=2.6  critical=69 (limit:10)  dup=15  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     fix = 29 (limit:10)
-  !!! cc_exceeded      fix = 25 (limit:15)
+  !!! high_fan_out     main = 25 (limit:10)
+  !!! high_fan_out     main = 23 (limit:10)
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
   !!! high_fan_out     main = 20 (limit:10)
   !!! high_fan_out     run_llx_fix_workflow = 20 (limit:10)
   !!! high_fan_out     create_service_app = 20 (limit:10)
-  !!  cc_exceeded      _apply_markdown_code_block_strategy = 22 (limit:15)
-  !!  cc_exceeded      _apply_openai_patch = 21 (limit:15)
   !!  cc_exceeded      _collect_file_context = 20 (limit:15)
-  !!  high_fan_out     LlxConfig.load = 18 (limit:10)
+  !!  high_fan_out     main = 19 (limit:10)
+  !!  high_fan_out     main = 19 (limit:10)
+  !!  high_fan_out     main = 18 (limit:10)
 
-MODULES[177] (top by size):
+MODULES[312] (top by size):
+  M[project/calls.yaml] 7235L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/map.toon.yaml] 3106L C:0 F:535 CC↑0 D:58 (yaml)
   M[llx/mcp/tools.py] 995L C:1 F:17 CC↑13 D:0 (python)
+  M[planfile.yaml] 959L C:0 F:0 CC↑0 D:0 (yaml)
   M[llx/tools/config_manager.py] 794L C:1 F:45 CC↑12 D:0 (python)
   M[llx/tools/vscode_manager.py] 791L C:1 F:38 CC↑10 D:0 (python)
   M[llx/tools/model_manager.py] 756L C:1 F:36 CC↑8 D:0 (python)
-  M[llx/commands/fix.py] 712L C:0 F:16 CC↑25 D:0 (python)
-  M[llx/prellm/trace.py] 648L C:2 F:29 CC↑13 D:2 (python)
+  M[llx/prellm/trace.py] 648L C:2 F:29 CC↑13 D:0 (python)
   M[llx/orchestration/llm/orchestrator.py] 642L C:1 F:28 CC↑10 D:0 (python)
   M[llx/orchestration/routing/engine.py] 638L C:1 F:38 CC↑11 D:0 (python)
-  M[llx/tools/ai_tools_manager.py] 597L C:1 F:29 CC↑12 D:0 (python)
+  M[project/calls.toon.yaml] 617L C:0 F:0 CC↑0 D:0 (yaml)
   M[llx/orchestration/vscode/orchestrator.py] 595L C:1 F:27 CC↑12 D:0 (python)
   M[llx/tools/health_checker.py] 589L C:1 F:27 CC↑10 D:0 (python)
   M[llx/orchestration/instances/manager.py] 556L C:1 F:18 CC↑12 D:0 (python)
   M[llx/tools/docker_manager.py] 552L C:1 F:24 CC↑10 D:0 (python)
-  M[llx/orchestration/ratelimit/limiter.py] 508L C:1 F:17 CC↑15 D:0 (python)
-  M[llx/orchestration/queue/manager.py] 495L C:1 F:21 CC↑9 D:0 (python)
-  LANGS: python:169/shell:8
+  LANGS: python:191/yaml:56/shell:31/other:13/yml:10/txt:4/conf:3/json:3/toml:1
 
 HOTSPOTS[10]:
-  ★ fix fan=29  // Fix code issues using LLX-driven model selection.
+  ★ main fan=25  // Orchestrates 25 calls
+  ★ main fan=23  // Orchestrates 23 calls
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
 
 
   ★ main fan=20  // Orchestrates 20 calls
   ★ run_llx_fix_workflow fan=20  // Run the analysis + fix/refactor workflow and save a JSON report.
-  ★ create_service_app fan=20  // Create an ASGI app that exposes the llx MCP server over SSE with health/metrics.
 
 REFACTOR[15]:
-  [1] H/L Split fix (CC=25 → target CC<10)
-  [2] H/H Split god module llx/commands/fix.py (712L, 0 classes)
-  [3] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
+  [1] H/H Split god module examples/privacy/advanced/01_api_integration.py (539L, 2 classes)
+  [2] H/H Split god module llx/orchestration/ratelimit/limiter.py (508L, 1 classes)
+  [3] H/H Split god module examples/privacy/ml/01_entropy_ml_detection.py (506L, 3 classes)
   [4] H/H Split god module llx/mcp/tools.py (995L, 1 classes)
   [5] H/H Split god module llx/prellm/trace.py (648L, 2 classes)
 
 EVOLUTION:
-  2026-04-09 CC̄=3.7 crit=65 37541L // Automated analysis
+  2026-04-25 CC̄=2.6 crit=69 92686L // Automated analysis

@@ -1,0 +1,22 @@
+# SCENARIO: Auto-generated from Python Tests
+# TYPE: integration
+# GENERATED: true
+
+LOG[73]{message}:
+  "Test: test_api_performance"
+  "Test: test_api_scalability"
+  "Test: test_coverage"
+  "Test: test_error_handling"
+  "Test: test_security"
+  "Test: TestMcpProxyStatus_test_proxy_not_running"
+  "Test: TestMcpServerCli_test_mcp_start_sse_routes_to_sse_transport"
+  "Test: test_proxy_not_running"
+  "Test: test_mcp_start_sse_routes_to_sse_transport"
+  "Test: TestProxymClientStructure_test_client_default_url"
+
+INCLUDE[10]{file}:
+  "/home/tom/github/semcod/llx/tests/test_privacy_project.py"
+  "/home/tom/github/semcod/llx/tests/test_privacy_project.py"
+  "/home/tom/github/semcod/llx/tests/test_privacy_extended.py"
+  "/home/tom/github/semcod/llx/tests/test_privacy_extended.py"
+  "/home/tom/github/semcod/llx/tests/test_privacy_extended.py"

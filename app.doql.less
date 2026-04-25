@@ -1,0 +1,833 @@
+// LESS format — define @variables here as needed
+
+app {
+  name: llx;
+  version: 0.1.58;
+}
+
+dependencies {
+  runtime: "typer>=0.24, rich>=13.0, pydantic>=2.0, pydantic-settings>=2.0, pydantic-yaml>=1.0, tomli>=2.0; python_version<'3.11', httpx>=0.27, pyyaml>=6.0, requests>=2.31, docker>=6.0, psutil>=5.9, planfile>=0.1.30";
+  dev: "pytest>=8.0, pytest-cov>=5.0, ruff>=0.5, mypy>=1.10, goal>=2.1.0, costs>=0.1.20, click<8.1.0, pfix>=0.1.60, pyqual>=0.1.36, starlette>=0.37, sse-starlette>=2.0, uvicorn>=0.29";
+}
+
+entity[name="ItemBase"] {
+  title: string!;
+  description: string;
+}
+
+entity[name="ProcessInfo"] {
+  pid: int!;
+  cwd: string!;
+  user: string!;
+  parent_pid: int | None;
+  tty: string!;
+}
+
+entity[name="LocaleInfo"] {
+  lang: string!;
+  lc_all: string!;
+  timezone: string!;
+  encoding: string!;
+}
+
+entity[name="ShellInfo"] {
+  shell: string!;
+  term: string!;
+  columns: int!;
+  lines: int!;
+}
+
+entity[name="NetworkContext"] {
+  hostname: string!;
+  local_ip: string!;
+  dns_suffix: string!;
+}
+
+entity[name="ShellContext"] {
+  env_vars: dict[str, str]!;
+  process: ProcessInfo!;
+  locale: LocaleInfo!;
+  shell: ShellInfo!;
+  network: NetworkContext!;
+  collected_at: datetime!;
+  collection_duration_ms: float!;
+}
+
+entity[name="FilterReport"] {
+  blocked_keys: list[str]!;
+  masked_keys: list[str]!;
+  safe_keys: list[str]!;
+  total_processed: int!;
+}
+
+entity[name="CompressedFolder"] {
+  root: string!;
+  toon_output: string!;
+  dependency_graph: dict[str, list[str]]!;
+  module_summaries: dict[str, str]!;
+  total_modules: int!;
+  total_functions: int!;
+  estimated_tokens: int!;
+}
+
+entity[name="RuntimeContext"] {
+  env_safe: dict[str, str]!;
+  process: dict[str, Any]!;
+  locale: dict[str, str]!;
+  network: dict[str, str]!;
+  git: dict[str, str] | None;
+  system: dict[str, str]!;
+  collected_at: string!;
+  sensitive_blocked_count: int!;
+  token_estimate: int!;
+}
+
+entity[name="SessionSnapshot"] {
+  session_id: string!;
+  interactions: list[dict[str, Any]]!;
+  preferences: dict[str, str]!;
+  runtime_context: RuntimeContext | None;
+  codebase_summary: str | None;
+  created_at: string!;
+  exported_at: string!;
+}
+
+entity[name="BiasPattern"] {
+  regex: string!;
+  action: string!;
+  severity: string!;
+  description: string!;
+}
+
+entity[name="ModelConfig"] {
+  fallback: list[str]!;
+  timeout: int!;
+  max_tokens: int!;
+}
+
+entity[name="GuardConfig"] {
+  bias_patterns: list[BiasPattern]!;
+  clarify_template: string!;
+  max_retries: int!;
+  policy: Policy!;
+  models: ModelConfig!;
+  context_sources: list[dict[str, Any]]!;
+}
+
+entity[name="DomainRule"] {
+  name: string!;
+  keywords: list[str]!;
+  intent: string!;
+  required_fields: list[str]!;
+  enrich_template: string!;
+  severity: string!;
+  strategy: DecompositionStrategy!;
+}
+
+entity[name="LLMProviderConfig"] {
+  model: string!;
+  fallback: list[str]!;
+  max_retries: int!;
+  timeout: int!;
+  max_tokens: int!;
+  temperature: float!;
+}
+
+entity[name="DecompositionPrompts"] {
+  classify_prompt: string!;
+  structure_prompt: string!;
+  enrich_prompt: string!;
+  compose_prompt: string!;
+  split_prompt: string!;
+}
+
+entity[name="PreLLMConfig"] {
+  small_model: LLMProviderConfig!;
+  large_model: LLMProviderConfig!;
+  domain_rules: list[DomainRule]!;
+  prompts: DecompositionPrompts!;
+  default_strategy: DecompositionStrategy!;
+  context_sources: list[dict[str, Any]]!;
+  max_retries: int!;
+  policy: Policy!;
+}
+
+entity[name="ProcessStep"] {
+  name: string!;
+  prompt: string!;
+  policy: Policy!;
+  approval: ApprovalMode!;
+  rollback: bool!;
+  timeout: int!;
+  depends_on: list[str]!;
+  strategy: DecompositionStrategy | None;
+}
+
+entity[name="ProcessConfig"] {
+  process: string!;
+  description: string!;
+  context_sources: list[dict[str, Any]]!;
+  steps: list[ProcessStep]!;
+}
+
+entity[name="AuditEntry"] {
+  timestamp: datetime!;
+  action: string!;
+  query: string!;
+  response_summary: string!;
+  model: string!;
+  policy: Policy!;
+  step_name: str | None;
+  process_name: str | None;
+  metadata: dict[str, Any]!;
+}
+
+entity[name="ModelHints"] {
+  design: ModelTier;
+  implementation: ModelTier;
+  review: ModelTier;
+  triage: ModelTier;
+}
+
+entity[name="TaskPattern"] {
+  id: string!;
+  type: TaskType!;
+  title: string!;
+  description: string!;
+  priority: string;
+  estimate: string;
+  labels: List[str]!;
+  model_hints: ModelHints!;
+  metadata: Dict[str, Any]!;
+}
+
+entity[name="Sprint"] {
+  id: int!;
+  name: string!;
+  length_days: int!;
+  objectives: List[str]!;
+  start_date: string;
+  tasks: List[str]!;
+}
+
+entity[name="Goal"] {
+  short: string!;
+  quality: List[str]!;
+  delivery: List[str]!;
+  metrics: List[str]!;
+}
+
+entity[name="QualityGate"] {
+  name: string!;
+  description: string!;
+  criteria: List[str]!;
+  required: bool!;
+}
+
+entity[name="Strategy"] {
+  name: string!;
+  version: string!;
+  project_type: string!;
+  domain: string!;
+  goal: Goal!;
+  description: string;
+  sprints: List[Sprint]!;
+  tasks: Dict[str, List[TaskPattern]]!;
+  quality_gates: List[QualityGate]!;
+  metadata: Dict[str, Any]!;
+}
+
+database[name="redis"] {
+  type: redis;
+  url: env.REDIS_URL;
+}
+
+database[name="postgres"] {
+  type: postgresql;
+  url: env.DATABASE_URL;
+}
+
+database[name="backup"] {
+  type: postgresql;
+  url: env.DATABASE_URL;
+}
+
+interface[type="api"] {
+  type: rest;
+  framework: fastapi;
+}
+
+interface[type="cli"] {
+  framework: argparse;
+}
+interface[type="cli"] page[name="llx"] {
+
+}
+
+integration[name="email"] {
+  type: smtp;
+}
+
+workflow[name="install"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Installing llx...";
+  step-2: run cmd=python -m venv .venv;
+  step-3: run cmd=.venv/bin/pip install --upgrade pip;
+  step-4: run cmd=.venv/bin/pip install -e .;
+  step-5: run cmd=.venv/bin/pip install -r requirements-dev.txt;
+  step-6: run cmd=echo "✅ Installation completed!";
+  step-7: run cmd=echo "Run 'source .venv/bin/activate' to activate the virtual environment";
+}
+
+workflow[name="install-tools"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔧 Installing local tools...";
+  step-2: run cmd=if command -v ollama > /dev/null 2>&1; then \;
+  step-3: run cmd=echo "✅ Ollama already installed"; \;
+  step-4: run cmd=else \;
+  step-5: run cmd=echo "📦 Installing Ollama..."; \;
+  step-6: run cmd=curl -fsSL https://ollama.ai/install.sh | sh; \;
+  step-7: run cmd=fi;
+  step-8: run cmd=if command -v redis-cli > /dev/null 2>&1; then \;
+  step-9: run cmd=echo "✅ Redis CLI already installed"; \;
+  step-10: run cmd=else \;
+  step-11: run cmd=echo "📦 Installing Redis CLI..."; \;
+  step-12: run cmd=if command -v apt-get > /dev/null 2>&1; then \;
+  step-13: run cmd=sudo apt-get update && sudo apt-get install -y redis-tools; \;
+  step-14: run cmd=elif command -v brew > /dev/null 2>&1; then \;
+  step-15: run cmd=brew install redis; \;
+  step-16: run cmd=else \;
+  step-17: run cmd=echo "Please install Redis CLI manually"; \;
+  step-18: run cmd=fi; \;
+  step-19: run cmd=fi;
+  step-20: run cmd=echo "✅ Tools installation completed!";
+}
+
+workflow[name="dev"] {
+  trigger: manual;
+  step-1: run cmd=echo "🚀 Starting development environment...";
+  step-2: run cmd=./docker-manage.sh dev;
+}
+
+workflow[name="prod"] {
+  trigger: manual;
+  step-1: run cmd=echo "🚀 Starting production environment...";
+  step-2: run cmd=./docker-manage.sh prod;
+}
+
+workflow[name="test"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧪 Running tests...";
+  step-2: run cmd=.venv/bin/python -m pytest tests/ -v --tb=short;
+}
+
+workflow[name="test-docker"] {
+  trigger: manual;
+  step-1: run cmd=echo "🐳 Running tests in Docker...";
+  step-2: run cmd=docker build -t llx-test .;
+  step-3: run cmd=docker run --rm llx-test .venv/bin/python -m pytest tests/ -v;
+}
+
+workflow[name="lint"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔍 Running linting...";
+  step-2: run cmd=.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503;
+  step-3: run cmd=.venv/bin/python -m mypy llx/ --ignore-missing-imports;
+  step-4: run cmd=.venv/bin/python -m black --check llx/;
+}
+
+workflow[name="format"] {
+  trigger: manual;
+  step-1: run cmd=echo "📝 Formatting code...";
+  step-2: run cmd=.venv/bin/python -m black llx/;
+  step-3: run cmd=.venv/bin/python -m isort llx/;
+}
+
+workflow[name="docker-dev"] {
+  trigger: manual;
+  step-1: run cmd=echo "🐳 Starting development containers...";
+  step-2: run cmd=./docker-manage.sh dev;
+}
+
+workflow[name="docker-prod"] {
+  trigger: manual;
+  step-1: run cmd=echo "🐳 Starting production containers...";
+  step-2: run cmd=./docker-manage.sh prod;
+}
+
+workflow[name="docker-stop"] {
+  trigger: manual;
+  step-1: run cmd=echo "🛑 Stopping all containers...";
+  step-2: run cmd=./docker-manage.sh stop;
+}
+
+workflow[name="docker-clean"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧹 Cleaning Docker resources...";
+  step-2: run cmd=./docker-manage.sh clean;
+}
+
+workflow[name="docker-logs"] {
+  trigger: manual;
+  step-1: run cmd=echo "📋 Showing logs...";
+  step-2: run cmd=./docker-manage.sh logs dev;
+}
+
+workflow[name="docker-status"] {
+  trigger: manual;
+  step-1: run cmd=echo "📊 Container status...";
+  step-2: run cmd=./docker-manage.sh status;
+}
+
+workflow[name="examples-basic"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running basic example...";
+  step-2: run cmd=cd examples/basic && ./run.sh;
+}
+
+workflow[name="examples-proxy"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running proxy example...";
+  step-2: run cmd=cd examples/proxy && timeout 10s ./run.sh || echo "Proxy example completed (timeout expected)";
+}
+
+workflow[name="examples-docker"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running Docker example...";
+  step-2: run cmd=cd examples/docker && ./run.sh;
+}
+
+workflow[name="examples-multi"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running multi-provider example...";
+  step-2: run cmd=cd examples/multi-provider && ./run.sh;
+}
+
+workflow[name="examples-local"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running local models example...";
+  step-2: run cmd=cd examples/local && ./run.sh;
+}
+
+workflow[name="examples-all"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Running all examples...";
+  step-2: run cmd=$(MAKE) examples-basic;
+  step-3: run cmd=$(MAKE) examples-multi;
+  step-4: run cmd=$(MAKE) examples-local;
+  step-5: run cmd=$(MAKE) examples-docker;
+}
+
+workflow[name="clean"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧹 Cleaning temporary files...";
+  step-2: run cmd=find . -type f -name "*.pyc" -delete;
+  step-3: run cmd=find . -type d -name "__pycache__" -delete;
+  step-4: run cmd=find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true;
+  step-5: run cmd=rm -rf build/ dist/ .coverage htmlcov/;
+  step-6: run cmd=echo "✅ Clean completed!";
+}
+
+workflow[name="doctor"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔍 System health check...";
+  step-2: run cmd=echo "";
+  step-3: run cmd=echo "Python:";
+  step-4: run cmd=python --version || echo "❌ Python not found";
+  step-5: run cmd=echo "";
+  step-6: run cmd=echo "Docker:";
+  step-7: run cmd=docker --version || echo "❌ Docker not found";
+  step-8: run cmd=docker info > /dev/null 2>&1 && echo "✅ Docker daemon running" || echo "❌ Docker daemon not running";
+  step-9: run cmd=echo "";
+  step-10: run cmd=echo "Local Tools:";
+  step-11: run cmd=command -v ollama > /dev/null 2>&1 && echo "✅ Ollama installed" || echo "❌ Ollama not installed";
+  step-12: run cmd=ollama list > /dev/null 2>&1 && echo "✅ Ollama running" || echo "❌ Ollama not running";
+  step-13: run cmd=command -v redis-cli > /dev/null 2>&1 && echo "✅ Redis CLI installed" || echo "❌ Redis CLI not installed";
+  step-14: run cmd=echo "";
+  step-15: run cmd=echo "Virtual Environment:";
+  step-16: run cmd=test -d .venv && echo "✅ .venv exists" || echo "❌ .venv not found";
+  step-17: run cmd=test -f .venv/bin/python && echo "✅ Python in .venv" || echo "❌ Python not in .venv";
+  step-18: run cmd=echo "";
+  step-19: run cmd=echo "Configuration Files:";
+  step-20: run cmd=test -f .env && echo "✅ .env exists" || echo "❌ .env not found";
+  step-21: run cmd=test -f llx.yaml && echo "✅ llx.yaml exists" || echo "❌ llx.yaml not found";
+  step-22: run cmd=test -f litellm-config.yaml && echo "✅ litellm-config.yaml exists" || echo "❌ litellm-config.yaml not found";
+  step-23: run cmd=test -f docker-compose.yml && echo "✅ docker-compose.yml exists" || echo "❌ docker-compose.yml not found";
+  step-24: run cmd=echo "";
+  step-25: run cmd=echo "API Keys:";
+  step-26: run cmd=grep -q "ANTHROPIC_API_KEY=" .env && echo "✅ ANTHROPIC_API_KEY configured" || echo "❌ ANTHROPIC_API_KEY not configured";
+  step-27: run cmd=grep -q "OPENROUTER_API_KEY=" .env && echo "✅ OPENROUTER_API_KEY configured" || echo "❌ OPENROUTER_API_KEY not configured";
+  step-28: run cmd=echo "";
+  step-29: run cmd=echo "Docker Services:";
+  step-30: run cmd=docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "llx-|llx_" || echo "❌ No llx containers running";
+  step-31: run cmd=echo "";
+  step-32: run cmd=echo "Local Ollama Models:";
+  step-33: run cmd=ollama list 2>/dev/null | head -5 || echo "❌ No local models";
+}
+
+workflow[name="backup"] {
+  trigger: manual;
+  step-1: run cmd=echo "💾 Creating backups...";
+  step-2: run cmd=./docker-manage.sh backup;
+  step-3: run cmd=echo "✅ Backup completed!";
+}
+
+workflow[name="quick-test"] {
+  trigger: manual;
+  step-1: run cmd=echo "⚡ Quick test...";
+  step-2: run cmd=.venv/bin/python -c "from llx import analyze_project, select_model; print('✅ llx imports working')";
+}
+
+workflow[name="quick-start"] {
+  trigger: manual;
+  step-1: run cmd=echo "⚡ Quick start...";
+  step-2: run cmd=$(MAKE) install;
+  step-3: run cmd=$(MAKE) install-tools;
+  step-4: run cmd=$(MAKE) docker-dev;
+  step-5: run cmd=echo "✅ Quick start completed!";
+  step-6: run cmd=echo "Services: http://localhost:4000 (API), http://localhost:3000 (WebUI)";
+}
+
+workflow[name="ci-install"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔧 CI installation...";
+  step-2: run cmd=python -m venv .venv;
+  step-3: run cmd=.venv/bin/pip install --upgrade pip;
+  step-4: run cmd=.venv/bin/pip install -e .;
+  step-5: run cmd=.venv/bin/pip install -r requirements-dev.txt;
+}
+
+workflow[name="ci-test"] {
+  trigger: manual;
+  step-1: run cmd=echo "🧪 CI testing...";
+  step-2: run cmd=.venv/bin/python -m pytest tests/ -v --cov=llx --cov-report=xml --cov-report=html;
+}
+
+workflow[name="ci-lint"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔍 CI linting...";
+  step-2: run cmd=.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503 --output-format=github;
+  step-3: run cmd=.venv/bin/python -m mypy llx/ --ignore-missing-imports --junit-xml test-results.xml;
+}
+
+workflow[name="ci-build"] {
+  trigger: manual;
+  step-1: run cmd=echo "🐳 CI build...";
+  step-2: run cmd=docker build -t llx:${BUILD_NUMBER:-latest} .;
+  step-3: run cmd=docker tag llx:${BUILD_NUMBER:-latest} llx:latest;
+}
+
+workflow[name="publish"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Publishing to PyPI...";
+  step-2: run cmd=command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build);
+  step-3: run cmd=rm -rf dist/ build/ *.egg-info/;
+  step-4: run cmd=.venv/bin/python -m build;
+  step-5: run cmd=.venv/bin/twine check dist/*;
+  step-6: run cmd=echo "⚡ Ready to upload. Run: make publish-confirm to upload to PyPI";
+}
+
+workflow[name="publish-confirm"] {
+  trigger: manual;
+  step-1: run cmd=echo "🚀 Uploading to PyPI...";
+  step-2: run cmd=.venv/bin/twine upload dist/*;
+}
+
+workflow[name="publish-test"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Publishing to TestPyPI...";
+  step-2: run cmd=command -v .venv/bin/twine > /dev/null 2>&1 || (.venv/bin/pip install --upgrade twine build);
+  step-3: run cmd=rm -rf dist/ build/ *.egg-info/;
+  step-4: run cmd=.venv/bin/python -m build;
+  step-5: run cmd=.venv/bin/twine upload --repository testpypi dist/*;
+}
+
+workflow[name="version"] {
+  trigger: manual;
+  step-1: run cmd=echo "📦 Version information...";
+  step-2: run cmd=.venv/bin/python -c "import llx; print(f'llx version: {llx.__version__}')";
+}
+
+workflow[name="tag"] {
+  trigger: manual;
+  step-1: run cmd=echo "🏷️  Creating git tag...";
+  step-2: run cmd=if [ -z "$(VERSION)" ]; then \;
+  step-3: run cmd=echo "Usage: make tag VERSION=v1.0.0"; \;
+  step-4: run cmd=exit 1; \;
+  step-5: run cmd=fi;
+  step-6: run cmd=git tag $(VERSION);
+  step-7: run cmd=git push origin $(VERSION);
+}
+
+workflow[name="docs"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Building documentation...";
+  step-2: run cmd=.venv/bin/python -m mkdocs build;
+}
+
+workflow[name="docs-serve"] {
+  trigger: manual;
+  step-1: run cmd=echo "📚 Serving documentation...";
+  step-2: run cmd=.venv/bin/python -m mkdocs serve;
+}
+
+workflow[name="profile"] {
+  trigger: manual;
+  step-1: run cmd=echo "📊 Running performance profile...";
+  step-2: run cmd=.venv/bin/python -m cProfile -o profile.stats -m llx analyze .;
+  step-3: run cmd=.venv/bin/python -c "import pstats; p = pstats.Stats('profile.stats'); p.sort_stats('cumulative'); p.print_stats(20)";
+}
+
+workflow[name="security"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔒 Running security scan...";
+  step-2: run cmd=.venv/bin/pip install safety bandit;
+  step-3: run cmd=.venv/bin/safety check;
+  step-4: run cmd=.venv/bin/bandit -r llx/;
+}
+
+workflow[name="db-reset"] {
+  trigger: manual;
+  step-1: run cmd=echo "🗄️  Resetting database...";
+  step-2: run cmd=docker exec llx-postgres-prod psql -U llx -d llx -c "DROP SCHEMA IF EXISTS llx CASCADE; CREATE SCHEMA llx;";
+  step-3: run cmd=docker exec llx-postgres-prod psql -U llx -d llx -f /docker-entrypoint-initdb.d/init.sql;
+}
+
+workflow[name="db-migrate"] {
+  trigger: manual;
+  step-1: run cmd=echo "🗄️  Running database migrations...";
+  step-2: run cmd=# Add migration commands here;
+}
+
+workflow[name="env-dev"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔧 Setting up development environment...";
+  step-2: run cmd=cp .env.example .env.dev;
+  step-3: run cmd=echo "✅ Created .env.dev - please edit with your values";
+}
+
+workflow[name="env-prod"] {
+  trigger: manual;
+  step-1: run cmd=echo "🔧 Setting up production environment...";
+  step-2: run cmd=cp .env.example .env.prod;
+  step-3: run cmd=echo "✅ Created .env.prod - please edit with production values";
+}
+
+workflow[name="up"] {
+  trigger: manual;
+  step-1: depend target=dev;
+}
+
+workflow[name="down"] {
+  trigger: manual;
+  step-1: depend target=docker-stop;
+}
+
+workflow[name="logs"] {
+  trigger: manual;
+  step-1: depend target=docker-logs;
+}
+
+workflow[name="ps"] {
+  trigger: manual;
+  step-1: depend target=docker-status;
+}
+
+workflow[name="fmt"] {
+  trigger: manual;
+  step-1: run cmd=ruff format .;
+}
+
+workflow[name="build"] {
+  trigger: manual;
+  step-1: run cmd=python -m build;
+}
+
+workflow[name="docker-build"] {
+  trigger: manual;
+  step-1: run cmd=docker build -t llx:latest .;
+}
+
+workflow[name="help"] {
+  trigger: manual;
+  step-1: run cmd=echo "🚀 llx Development Commands";
+  step-2: run cmd=echo "==========================";
+  step-3: run cmd=echo "";
+  step-4: run cmd=echo "Setup:";
+  step-5: run cmd=echo "  install          Install llx in development mode";
+  step-6: run cmd=echo "  install-tools    Install local development tools";
+  step-7: run cmd=echo "";
+  step-8: run cmd=echo "Development:";
+  step-9: run cmd=echo "  dev              Start development Docker stack";
+  step-10: run cmd=echo "  prod             Start production Docker stack";
+  step-11: run cmd=echo "  test             Run tests";
+  step-12: run cmd=echo "  lint             Run linting";
+  step-13: run cmd=echo "  format           Format code";
+  step-14: run cmd=echo "";
+  step-15: run cmd=echo "Docker:";
+  step-16: run cmd=echo "  docker-dev       Start development containers";
+  step-17: run cmd=echo "  docker-prod      Start production containers";
+  step-18: run cmd=echo "  docker-stop      Stop all containers";
+  step-19: run cmd=echo "  docker-clean     Clean Docker resources";
+  step-20: run cmd=echo "  docker-logs      Show logs";
+  step-21: run cmd=echo "";
+  step-22: run cmd=echo "Examples:";
+  step-23: run cmd=echo "  examples-basic   Run basic example";
+  step-24: run cmd=echo "  examples-docker  Run Docker example";
+  step-25: run cmd=echo "  examples-proxy   Run proxy example";
+  step-26: run cmd=echo "";
+  step-27: run cmd=echo "Utilities:";
+  step-28: run cmd=echo "  clean            Clean temporary files";
+  step-29: run cmd=echo "  backup           Create backups";
+  step-30: run cmd=echo "  doctor           Check system health";
+}
+
+workflow[name="health"] {
+  trigger: manual;
+  step-1: run cmd=docker compose ps;
+  step-2: run cmd=docker compose exec app echo "Health check passed";
+}
+
+workflow[name="import-makefile-hint"] {
+  trigger: manual;
+  step-1: run cmd=echo 'Run: taskfile import Makefile to import existing targets.';
+}
+
+workflow[name="all"] {
+  trigger: manual;
+  step-1: run cmd=taskfile run install;
+  step-2: run cmd=taskfile run lint;
+  step-3: run cmd=taskfile run test;
+}
+
+workflow[name="sumd"] {
+  trigger: manual;
+  step-1: run cmd=echo "# $(basename $(pwd))" > SUMD.md
+echo "" >> SUMD.md
+echo "$(python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print(d.get('project',{}).get('description','Project description'))" 2>/dev/null || echo 'Project description')" >> SUMD.md
+echo "" >> SUMD.md
+echo "## Contents" >> SUMD.md
+echo "" >> SUMD.md
+echo "- [Metadata](#metadata)" >> SUMD.md
+echo "- [Architecture](#architecture)" >> SUMD.md
+echo "- [Dependencies](#dependencies)" >> SUMD.md
+echo "- [Source Map](#source-map)" >> SUMD.md
+echo "- [Intent](#intent)" >> SUMD.md
+echo "" >> SUMD.md
+echo "## Metadata" >> SUMD.md
+echo "" >> SUMD.md
+echo "- **name**: \`$(basename $(pwd))\`" >> SUMD.md
+echo "- **version**: \`$(python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print(d.get('project',{}).get('version','unknown'))" 2>/dev/null || echo 'unknown')\`" >> SUMD.md
+echo "- **python_requires**: \`>=$(python3 --version 2>/dev/null | cut -d' ' -f2 | cut -d. -f1,2)\`" >> SUMD.md
+echo "- **license**: $(python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print(d.get('project',{}).get('license',{}).get('text','MIT'))" 2>/dev/null || echo 'MIT')" >> SUMD.md
+echo "- **ecosystem**: SUMD + DOQL + testql + taskfile" >> SUMD.md
+echo "- **generated_from**: pyproject.toml, Taskfile.yml, Makefile, src/" >> SUMD.md
+echo "" >> SUMD.md
+echo "## Architecture" >> SUMD.md
+echo "" >> SUMD.md
+echo '```' >> SUMD.md
+echo "SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)" >> SUMD.md
+echo '```' >> SUMD.md
+echo "" >> SUMD.md
+echo "## Source Map" >> SUMD.md
+echo "" >> SUMD.md
+find . -name '*.py' -not -path './.venv/*' -not -path './venv/*' -not -path './__pycache__/*' -not -path './.git/*' | head -50 | sed 's|^./||' | sed 's|^|- |' >> SUMD.md
+echo "Generated SUMD.md";
+  step-2: run cmd=python3 -c "
+import json, os, subprocess
+from pathlib import Path
+project_name = Path.cwd().name
+py_files = list(Path('.').rglob('*.py'))
+py_files = [f for f in py_files if not any(x in str(f) for x in ['.venv', 'venv', '__pycache__', '.git'])]
+data = {
+    'project_name': project_name,
+    'description': 'SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorization',
+    'files': [{'path': str(f), 'type': 'python'} for f in py_files[:100]]
+}
+with open('sumd.json', 'w') as f:
+    json.dump(data, f, indent=2)
+print('Generated sumd.json')
+" 2>/dev/null || echo 'Python generation failed, using fallback';
+}
+
+workflow[name="sumr"] {
+  trigger: manual;
+  step-1: run cmd=echo "# $(basename $(pwd)) - Summary Report" > SUMR.md
+echo "" >> SUMR.md
+echo "SUMR - Summary Report for project analysis" >> SUMR.md
+echo "" >> SUMR.md
+echo "## Contents" >> SUMR.md
+echo "" >> SUMR.md
+echo "- [Metadata](#metadata)" >> SUMR.md
+echo "- [Quality Status](#quality-status)" >> SUMR.md
+echo "- [Metrics](#metrics)" >> SUMR.md
+echo "- [Refactoring Analysis](#refactoring-analysis)" >> SUMR.md
+echo "- [Intent](#intent)" >> SUMR.md
+echo "" >> SUMR.md
+echo "## Metadata" >> SUMR.md
+echo "" >> SUMR.md
+echo "- **name**: \`$(basename $(pwd))\`" >> SUMR.md
+echo "- **version**: \`$(python3 -c "import tomllib; f=open('pyproject.toml','rb'); d=tomllib.load(f); print(d.get('project',{}).get('version','unknown'))" 2>/dev/null || echo 'unknown')\`" >> SUMR.md
+echo "- **generated_at**: \`$(date -Iseconds)\`" >> SUMR.md
+echo "" >> SUMR.md
+echo "## Quality Status" >> SUMR.md
+echo "" >> SUMR.md
+if [ -f pyqual.yaml ]; then
+  echo "- **pyqual_config**: ✅ Present" >> SUMR.md
+  echo "- **last_run**: $(stat -c %y .pyqual/pipeline.db 2>/dev/null | cut -d' ' -f1 || echo 'N/A')" >> SUMR.md
+else
+  echo "- **pyqual_config**: ❌ Missing" >> SUMR.md
+fi
+echo "" >> SUMR.md
+echo "## Metrics" >> SUMR.md
+echo "" >> SUMR.md
+py_files=$(find . -name '*.py' -not -path './.venv/*' -not -path './venv/*' | wc -l)
+echo "- **python_files**: $py_files" >> SUMR.md
+lines=$(find . -name '*.py' -not -path './.venv/*' -not -path './venv/*' -exec cat {} \; 2>/dev/null | wc -l)
+echo "- **total_lines**: $lines" >> SUMR.md
+echo "" >> SUMR.md
+echo "## Refactoring Analysis" >> SUMR.md
+echo "" >> SUMR.md
+echo "Run \`code2llm ./ -f evolution\` for detailed refactoring queue." >> SUMR.md
+echo "Generated SUMR.md";
+  step-2: run cmd=python3 -c "
+import json, os, subprocess
+from pathlib import Path
+from datetime import datetime
+project_name = Path.cwd().name
+py_files = len([f for f in Path('.').rglob('*.py') if not any(x in str(f) for x in ['.venv', 'venv', '__pycache__', '.git'])])
+data = {
+    'project_name': project_name,
+    'report_type': 'SUMR',
+    'generated_at': datetime.now().isoformat(),
+    'metrics': {
+        'python_files': py_files,
+        'has_pyqual_config': Path('pyqual.yaml').exists()
+    }
+}
+with open('SUMR.json', 'w') as f:
+    json.dump(data, f, indent=2)
+print('Generated SUMR.json')
+" 2>/dev/null || echo 'Python generation failed, using fallback';
+}
+
+deploy {
+  target: docker-compose;
+  compose_file: docker-compose.yml;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: .env;
+  python_version: >=3.10;
+}
+
+environment[name="backup"] {
+  runtime: docker-compose;
+  env_file: .env.backup;
+}
+
+environment[name="new"] {
+  runtime: docker-compose;
+  env_file: .env.new;
+}

@@ -1,0 +1,1456 @@
+flowchart TD
+    subgraph Taskfile
+        Taskfile__print["print"]
+    end
+    subgraph ai_tools_manage
+        ai_tools_manage__print_header["print_header"]
+        ai_tools_manage__print_status["print_status"]
+        ai_tools_manage__print_error["print_error"]
+        ai_tools_manage__print_warning["print_warning"]
+        ai_tools_manage__get_compose_cmd["get_compose_cmd"]
+        ai_tools_manage__is_running["is_running"]
+        ai_tools_manage__start_ai_tools["start_ai_tools"]
+        ai_tools_manage__stop_ai_tools["stop_ai_tools"]
+        ai_tools_manage__shell["shell"]
+        ai_tools_manage__status["status"]
+        ai_tools_manage__test["test"]
+        ai_tools_manage__logs["logs"]
+        ai_tools_manage__restart["restart"]
+        ai_tools_manage__quick_chat["quick_chat"]
+        ai_tools_manage__help["help"]
+    end
+    subgraph docker_manage
+        docker_manage__print_header["print_header"]
+        docker_manage__print_status["print_status"]
+        docker_manage__print_warning["print_warning"]
+        docker_manage__print_error["print_error"]
+        docker_manage__check_docker["check_docker"]
+        docker_manage__check_compose["check_compose"]
+        docker_manage__get_compose_cmd["get_compose_cmd"]
+    end
+    subgraph docker__ai_tools
+        docker__ai_tools__entrypoint__hello_world["hello_world"]
+        docker__ai_tools__entrypoint__print["print"]
+    end
+    subgraph docker__vscode
+        docker__vscode__install_extensions__is_extension_installed["is_extension_installed"]
+        docker__vscode__install_extensions__install_extension["install_extension"]
+    end
+    subgraph examples__docker
+        examples__docker__docker__show_help["show_help"]
+        examples__docker__docker__build_docker_cmd["build_docker_cmd"]
+        examples__docker__docker__check_service_health["check_service_health"]
+        examples__docker__docker__check_redis["check_redis"]
+        examples__docker__docker__check_postgres["check_postgres"]
+        examples__docker__docker__docker_start["docker_start"]
+        examples__docker__docker__docker_stop["docker_stop"]
+        examples__docker__docker__docker_status["docker_status"]
+        examples__docker__docker__docker_logs["docker_logs"]
+        examples__docker__docker__docker_exec["docker_exec"]
+        examples__docker__docker__docker_test["docker_test"]
+        examples__docker__docker__docker_clean["docker_clean"]
+        examples__docker__docker__create_compose_file["create_compose_file"]
+        examples__docker__docker__main["main"]
+    end
+    subgraph examples__filtering
+        examples__filtering__filtering__show_help["show_help"]
+        examples__filtering__filtering__select_model["select_model"]
+        examples__filtering__filtering__demo_cost_filtering["demo_cost_filtering"]
+        examples__filtering__filtering__demo_speed_priority["demo_speed_priority"]
+        examples__filtering__filtering__demo_provider_filter["demo_provider_filter"]
+        examples__filtering__filtering__interactive_demo["interactive_demo"]
+        examples__filtering__filtering__main["main"]
+    end
+    subgraph examples__fullstack
+        examples__fullstack__generate_simple__print_error["print_error"]
+        examples__fullstack__generate_simple__print_success["print_success"]
+        examples__fullstack__generate_simple__print_status["print_status"]
+        examples__fullstack__generate_simple__show_help["show_help"]
+        examples__fullstack__generate_simple__get_app_prompt["get_app_prompt"]
+        examples__fullstack__generate_simple__main["main"]
+    end
+    subgraph examples__hybrid
+        examples__hybrid__hybrid__show_help["show_help"]
+        examples__hybrid__hybrid__determine_task_type["determine_task_type"]
+        examples__hybrid__hybrid__build_llx_cmd["build_llx_cmd"]
+    end
+    subgraph examples__privacy
+        examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer__calculate_entropy["calculate_entropy"]
+        examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer__analyze_randomness["analyze_randomness"]
+        examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context("_classify_by_context CC=14")
+        examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer__find_high_entropy_strings["find_high_entropy_strings"]
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer____init__["__init__"]
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer__analyze_with_ml["analyze_with_ml"]
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___entropy_confidence["_entropy_confidence"]
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_contextual_passwords["_detect_contextual_passwords"]
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic("_detect_pii_semantic CC=8")
+        examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer__anonymize_with_ml["anonymize_with_ml"]
+        examples__privacy__ml__01_entropy_ml_detection__create_complex_project["create_complex_project"]
+        examples__privacy__ml__01_entropy_ml_detection__main("main CC=11")
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector____init__["__init__"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector___load_learning["_load_learning"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector___save_learning["_save_learning"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__learn_from_codebase["learn_from_codebase"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector___analyze_file["_analyze_file"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector___update_learned_patterns["_update_learned_patterns"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__report_false_positive["report_false_positive"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__is_false_positive["is_false_positive"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__calculate_adaptive_confidence["calculate_adaptive_confidence"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector___calculate_entropy["_calculate_entropy"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__generate_custom_patterns["generate_custom_patterns"]
+        examples__privacy__ml__04_behavioral_learning__BehavioralPasswordDetector__get_learning_stats["get_learning_stats"]
+        examples__privacy__ml__04_behavioral_learning__create_sample_codebase["create_sample_codebase"]
+        examples__privacy__ml__04_behavioral_learning__main("main CC=11")
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector____init__["__init__"]
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___compile_patterns["_compile_patterns"]
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords("detect_passwords CC=8")
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password("_is_likely_password CC=12")
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence("_calculate_confidence CC=10")
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity("_calculate_password_complexity CC=10")
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_entropy["_calculate_entropy"]
+        examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__analyze_code["analyze_code"]
+        examples__privacy__ml__03_contextual_passwords__create_test_code_samples["create_test_code_samples"]
+        examples__privacy__ml__03_contextual_passwords__main("main CC=11")
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer____init__["__init__"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__calculate_entropy["calculate_entropy"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__detect_with_regex["detect_with_regex"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__detect_ml_entropy["detect_ml_entropy"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__detect_ml_context["detect_ml_context"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string("_classify_entropy_string CC=12")
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__hybrid_detect["hybrid_detect"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results("_merge_results CC=9")
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__sort_detections["sort_detections"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__create_anonymization_mask["create_anonymization_mask"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__perform_anonymization["perform_anonymization"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__collect_anonymization_stats["collect_anonymization_stats"]
+        examples__privacy__ml__02_hybrid_system__HybridAnonymizer__hybrid_anonymize["hybrid_anonymize"]
+        examples__privacy__streaming__01_streaming_anonymization__create_large_project["create_large_project"]
+        examples__privacy__streaming__01_streaming_anonymization__main["main"]
+        examples__privacy__project__02_deanonymize_project__main["main"]
+        examples__privacy__project__01_anonymize_project__create_sample_project["create_sample_project"]
+        examples__privacy__project__01_anonymize_project__main["main"]
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline____init__["__init__"]
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan("step1_pre_commit_scan CC=9")
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline___assess_risk["_assess_risk"]
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step2_anonymize_for_audit["step2_anonymize_for_audit"]
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step3_simulate_audit_response["step3_simulate_audit_response"]
+        examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report("step4_generate_report CC=9")
+    end
+    subgraph examples__run
+        examples__run__show_help["show_help"]
+        examples__run__list_examples["list_examples"]
+        examples__run__run_example["run_example"]
+        examples__run__check_dependencies["check_dependencies"]
+    end
+    subgraph llx__analysis
+        llx__analysis__runner__check_tool["check_tool"]
+        llx__analysis__runner___run_tool["_run_tool"]
+        llx__analysis__runner__run_code2llm["run_code2llm"]
+        llx__analysis__runner__run_redup["run_redup"]
+        llx__analysis__runner__run_vallm["run_vallm"]
+        llx__analysis__runner__run_all_tools["run_all_tools"]
+        llx__analysis__collector__analyze_project["analyze_project"]
+        llx__analysis__collector___collect_filesystem_metrics("_collect_filesystem_metrics CC=9")
+        llx__analysis__collector___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        llx__analysis__collector___apply_analysis_yaml["_apply_analysis_yaml"]
+        llx__analysis__collector___extract_metrics_target["_extract_metrics_target"]
+        llx__analysis__collector___extract_evolution_stats["_extract_evolution_stats"]
+        llx__analysis__collector___extract_evolution_actions["_extract_evolution_actions"]
+        llx__analysis__collector___apply_evolution_yaml["_apply_evolution_yaml"]
+        llx__analysis__collector___apply_evolution_text("_apply_evolution_text CC=10")
+        llx__analysis__collector___apply_map_yaml["_apply_map_yaml"]
+        llx__analysis__collector___parse_map_stats_line("_parse_map_stats_line CC=8")
+        llx__analysis__collector___parse_map_alerts_line["_parse_map_alerts_line"]
+        llx__analysis__collector___parse_map_hotspots_line["_parse_map_hotspots_line"]
+        llx__analysis__collector___count_map_modules["_count_map_modules"]
+        llx__analysis__collector___apply_map_text["_apply_map_text"]
+        llx__analysis__collector___collect_redup_metrics["_collect_redup_metrics"]
+        llx__analysis__collector___collect_vallm_metrics["_collect_vallm_metrics"]
+        llx__analysis__collector___load_file("_load_file CC=8")
+        llx__analysis__collector___extract_cc_value["_extract_cc_value"]
+        llx__analysis__collector___estimate_context_tokens["_estimate_context_tokens"]
+        llx__analysis__collector___classify_scope["_classify_scope"]
+    end
+    subgraph llx__cli
+        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
+        llx__cli__app__analyze["analyze"]
+        llx__cli__app__select["select"]
+        llx__cli__app__chat["chat"]
+        llx__cli__app__proxy_start["proxy_start"]
+        llx__cli__app__proxy_config["proxy_config"]
+        llx__cli__app__proxy_status["proxy_status"]
+        llx__cli__app__mcp_start["mcp_start"]
+        llx__cli__app__plan_generate["plan_generate"]
+        llx__cli__app__plan_review["plan_review"]
+        llx__cli__app__plan_execute["plan_execute"]
+        llx__cli__app__models["models"]
+        llx__cli__app__info["info"]
+        llx__cli__app__fix["fix"]
+        llx__cli__app__init["init"]
+        llx__cli__app___get_model_for_profile["_get_model_for_profile"]
+        llx__cli__app___load_sprint_mapping["_load_sprint_mapping"]
+        llx__cli__app___generate_sprint_code["_generate_sprint_code"]
+        llx__cli__app___plan_code_impl["_plan_code_impl"]
+        llx__cli__formatters__output_rich["output_rich"]
+        llx__cli__formatters__output_json["output_json"]
+        llx__cli__formatters___filter_models("_filter_models CC=9")
+        llx__cli__formatters___build_model_row("_build_model_row CC=14")
+        llx__cli__formatters___render_models_table["_render_models_table"]
+        llx__cli__formatters___build_title["_build_title"]
+        llx__cli__formatters__print_models_table("print_models_table CC=8")
+        llx__cli__formatters___render_tools_table["_render_tools_table"]
+        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
+        llx__cli__formatters___render_agents_table["_render_agents_table"]
+        llx__cli__formatters___render_tags_legend("_render_tags_legend CC=8")
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
+        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
+        llx__cli__commands__analyze__analyze["analyze"]
+        llx__cli__commands__planner___plan_code_impl("_plan_code_impl CC=9")
+    end
+    subgraph llx__commands
+        llx__commands___patch_apply___extract_json_from_content["_extract_json_from_content"]
+        llx__commands___patch_apply___apply_unified_diff["_apply_unified_diff"]
+        llx__commands___patch_apply___parse_unified_hunks{{_parse_unified_hunks CC=16}}
+        llx__commands___patch_apply___find_hunk_position("_find_hunk_position CC=9")
+        llx__commands__fix__apply_code_changes["apply_code_changes"]
+        llx__commands__fix__load_errors_data["load_errors_data"]
+        llx__commands__fix__select_model_for_fix["select_model_for_fix"]
+        llx__commands__fix__display_model_selection_and_metrics["display_model_selection_and_metrics"]
+        llx__commands__fix__prepare_fix_prompt["prepare_fix_prompt"]
+        llx__commands__fix__handle_dry_run["handle_dry_run"]
+        llx__commands__fix__execute_aider_fix["execute_aider_fix"]
+        llx__commands__fix__execute_prellm_fix("execute_prellm_fix CC=8")
+        llx__commands__fix__fix["fix"]
+    end
+    subgraph llx__config
+        llx__config__normalize_litellm_base_url["normalize_litellm_base_url"]
+        llx__config__LlxConfig____post_init__["__post_init__"]
+        llx__config__LlxConfig__load("load CC=8")
+        llx__config___apply_toml("_apply_toml CC=9")
+        llx__config___apply_yaml_thresholds["_apply_yaml_thresholds"]
+        llx__config___apply_yaml_models["_apply_yaml_models"]
+        llx__config___apply_yaml_proxy["_apply_yaml_proxy"]
+        llx__config___apply_yaml("_apply_yaml CC=13")
+        llx__config___apply_env("_apply_env CC=9")
+    end
+    subgraph llx__detection
+        llx__detection__detector__ProjectTypeDetector____init__["__init__"]
+        llx__detection__detector__ProjectTypeDetector__detect_from_path["detect_from_path"]
+        llx__detection__detector__ProjectTypeDetector__detect_from_files{{detect_from_files CC=15}}
+        llx__detection__detector__ProjectTypeDetector__detect_from_config["detect_from_config"]
+        llx__detection__detector__ProjectTypeDetector__get_project_config["get_project_config"]
+        llx__detection__detector__ProjectTypeDetector__get_all_types["get_all_types"]
+        llx__detection__detector__ProjectTypeDetector__detect["detect"]
+    end
+    subgraph llx__examples
+        llx__examples__utils__ExampleHelper__ensure_venv["ensure_venv"]
+        llx__examples__utils__ExampleHelper__check_dependencies["check_dependencies"]
+        llx__examples__utils__ExampleHelper__check_ollama["check_ollama"]
+        llx__examples__utils__ExampleHelper__select_model["select_model"]
+        llx__examples__utils__ExampleHelper__run_llx_chat["run_llx_chat"]
+        llx__examples__utils__ExampleHelper__save_history["save_history"]
+        llx__examples__utils__ExampleHelper__create_project_structure["create_project_structure"]
+        llx__examples__utils__ExampleHelper__get_app_template["get_app_template"]
+        llx__examples__utils__ExampleHelper__setup_project["setup_project"]
+        llx__examples__utils__TaskQueue____init__["__init__"]
+        llx__examples__utils__TaskQueue__add["add"]
+        llx__examples__utils__TaskQueue__process["process"]
+        llx__examples__utils__WorkflowRunner__run_workflow["run_workflow"]
+    end
+    subgraph llx__integrations
+        llx__integrations__proxy__generate_proxy_config["generate_proxy_config"]
+        llx__integrations__proxy__start_proxy["start_proxy"]
+        llx__integrations__proxy__check_proxy["check_proxy"]
+        llx__integrations__proxym___tier_to_proxym["_tier_to_proxym"]
+        llx__integrations__proxym___build_llx_headers["_build_llx_headers"]
+        llx__integrations__proxym__ProxymClient____init__["__init__"]
+        llx__integrations__proxym__ProxymClient__is_available["is_available"]
+        llx__integrations__proxym__ProxymClient__status("status CC=8")
+        llx__integrations__proxym__ProxymClient__chat("chat CC=8")
+        llx__integrations__proxym__ProxymClient__chat_with_analysis["chat_with_analysis"]
+        llx__integrations__proxym__ProxymClient__list_models["list_models"]
+        llx__integrations__proxym__ProxymClient___parse_response["_parse_response"]
+        llx__integrations__proxym__ProxymClient__close["close"]
+        llx__integrations__proxym__ProxymClient____enter__["__enter__"]
+        llx__integrations__proxym__ProxymClient____exit__["__exit__"]
+    end
+    subgraph llx__litellm_config
+        llx__litellm_config__LiteLLMConfig__load["load"]
+        llx__litellm_config__LiteLLMConfig___default_config["_default_config"]
+        llx__litellm_config__LiteLLMConfig__get_model_config["get_model_config"]
+        llx__litellm_config__LiteLLMConfig__get_models_by_tag["get_models_by_tag"]
+        llx__litellm_config__LiteLLMConfig__get_models_by_provider["get_models_by_provider"]
+        llx__litellm_config__LiteLLMConfig__get_models_by_tier["get_models_by_tier"]
+        llx__litellm_config__LiteLLMConfig__resolve_alias["resolve_alias"]
+        llx__litellm_config__LiteLLMConfig__to_llx_models["to_llx_models"]
+        llx__litellm_config__LiteLLMConfig__get_proxy_config["get_proxy_config"]
+        llx__litellm_config__load_litellm_config["load_litellm_config"]
+    end
+    subgraph llx__llm
+        llx__llm___load_dotenv_fallback("_load_dotenv_fallback CC=10")
+        llx__llm___ensure_dotenv_loaded["_ensure_dotenv_loaded"]
+        llx__llm__get_llm_model["get_llm_model"]
+        llx__llm__get_api_key["get_api_key"]
+        llx__llm__LLM____init__["__init__"]
+        llx__llm__LLM__complete["complete"]
+        llx__llm__LLM__fix_code["fix_code"]
+        llx__llm__get_llm["get_llm"]
+    end
+    subgraph llx__mcp
+        llx__mcp__tools___handle_llx_analyze["_handle_llx_analyze"]
+        llx__mcp__tools___handle_llx_select["_handle_llx_select"]
+        llx__mcp__tools___handle_llx_chat["_handle_llx_chat"]
+        llx__mcp__tools___handle_code2llm_analyze["_handle_code2llm_analyze"]
+        llx__mcp__tools___handle_redup_scan["_handle_redup_scan"]
+        llx__mcp__tools___handle_vallm_validate["_handle_vallm_validate"]
+        llx__mcp__tools___handle_llx_preprocess["_handle_llx_preprocess"]
+        llx__mcp__tools___handle_llx_context["_handle_llx_context"]
+        llx__mcp__tools___handle_llx_proxy_status["_handle_llx_proxy_status"]
+        llx__mcp__tools___handle_llx_proxym_status["_handle_llx_proxym_status"]
+        llx__mcp__tools___handle_llx_proxym_chat["_handle_llx_proxym_chat"]
+        llx__mcp__tools___handle_aider("_handle_aider CC=13")
+        llx__mcp__tools___handle_planfile_generate["_handle_planfile_generate"]
+        llx__mcp__tools___handle_planfile_apply["_handle_planfile_apply"]
+        llx__mcp__tools___handle_llx_project_anonymize["_handle_llx_project_anonymize"]
+        llx__mcp__tools___handle_llx_project_deanonymize("_handle_llx_project_deanonymize CC=10")
+        llx__mcp__tools___handle_llx_privacy_scan("_handle_llx_privacy_scan CC=10")
+        llx__mcp__server__list_tools["list_tools"]
+        llx__mcp__server__call_tool["call_tool"]
+        llx__mcp__server__run_stdio_server["run_stdio_server"]
+        llx__mcp__server__create_app["create_app"]
+        llx__mcp__server__run_sse_server["run_sse_server"]
+        llx__mcp__server__build_parser["build_parser"]
+        llx__mcp__server__main["main"]
+        llx__mcp__server__main_sync["main_sync"]
+        llx__mcp__client__LlxMcpClient____init__["__init__"]
+        llx__mcp__client__LlxMcpClient___session["_session"]
+        llx__mcp__client__LlxMcpClient___extract_text_payload["_extract_text_payload"]
+        llx__mcp__client__LlxMcpClient__call_tool["call_tool"]
+        llx__mcp__client__LlxMcpClient__analyze["analyze"]
+        llx__mcp__client__LlxMcpClient__fix_with_aider["fix_with_aider"]
+        llx__mcp__workflows__LlxMcpRunResult__to_dict["to_dict"]
+        llx__mcp__workflows__run_llx_fix_workflow("run_llx_fix_workflow CC=8")
+        llx__mcp__workflows__run_llx_refactor_workflow["run_llx_refactor_workflow"]
+        llx__mcp__service__McpServiceState__mark_request["mark_request"]
+        llx__mcp__service__McpServiceState__mark_session_open["mark_session_open"]
+        llx__mcp__service__McpServiceState__mark_session_close["mark_session_close"]
+        llx__mcp__service__McpServiceState__mark_message["mark_message"]
+        llx__mcp__service__McpServiceState__mark_error["mark_error"]
+        llx__mcp__service__McpServiceState__uptime_seconds["uptime_seconds"]
+        llx__mcp__service__McpServiceState__last_activity_seconds_ago["last_activity_seconds_ago"]
+        llx__mcp__service__McpServiceState__health_payload["health_payload"]
+        llx__mcp__service__McpServiceState__metrics_text["metrics_text"]
+        llx__mcp__service___escape_label_value["_escape_label_value"]
+        llx__mcp__service__create_service_app["create_service_app"]
+        llx__mcp__service__run_service["run_service"]
+        llx__mcp__service__build_parser["build_parser"]
+        llx__mcp__service__main["main"]
+    end
+    subgraph llx__orchestration
+        llx__orchestration__cli___build_parser["_build_parser"]
+        llx__orchestration__cli___handle_status["_handle_status"]
+        llx__orchestration__cli___handle_health["_handle_health"]
+        llx__orchestration__cli___handle_monitor["_handle_monitor"]
+        llx__orchestration__cli___delegate_to_subpackage["_delegate_to_subpackage"]
+        llx__orchestration__cli__main("main CC=8")
+        llx__orchestration___utils__load_json["load_json"]
+        llx__orchestration___utils__save_json["save_json"]
+        llx__orchestration__cli_utils__cmd_remove_wrapper["cmd_remove_wrapper"]
+        llx__orchestration__cli_utils__cmd_remove_pair_wrapper["cmd_remove_pair_wrapper"]
+        llx__orchestration__cli_utils__cmd_status_wrapper["cmd_status_wrapper"]
+        llx__orchestration__cli_utils__cmd_list_wrapper["cmd_list_wrapper"]
+        llx__orchestration__cli_utils__cmd_cleanup_wrapper["cmd_cleanup_wrapper"]
+        llx__orchestration__session__cli___build_parser["_build_parser"]
+        llx__orchestration__session__cli___dispatch["_dispatch"]
+        llx__orchestration__session__cli___cmd_create["_cmd_create"]
+        llx__orchestration__session__cli___cmd_list["_cmd_list"]
+        llx__orchestration__session__cli___cmd_queue["_cmd_queue"]
+        llx__orchestration__session__cli___cmd_cleanup["_cmd_cleanup"]
+        llx__orchestration__session__cli__main["main"]
+        llx__orchestration__session__manager__SessionManager____init__["__init__"]
+        llx__orchestration__session__manager__SessionManager__load_sessions["load_sessions"]
+        llx__orchestration__session__manager__SessionManager__save_sessions["save_sessions"]
+        llx__orchestration__session__manager__SessionManager__create_session["create_session"]
+        llx__orchestration__session__manager__SessionManager__remove_session["remove_session"]
+        llx__orchestration__session__manager__SessionManager__get_available_session("get_available_session CC=14")
+        llx__orchestration__session__manager__SessionManager__request_session["request_session"]
+        llx__orchestration__session__manager__SessionManager__release_session["release_session"]
+        llx__orchestration__session__manager__SessionManager__get_session_status["get_session_status"]
+        llx__orchestration__session__manager__SessionManager__list_sessions["list_sessions"]
+        llx__orchestration__session__manager__SessionManager__get_queue_status("get_queue_status CC=11")
+        llx__orchestration__session__manager__SessionManager___is_rate_limited["_is_rate_limited"]
+        llx__orchestration__session__manager__SessionManager___should_rate_limit["_should_rate_limit"]
+        llx__orchestration__session__manager__SessionManager___get_utilization["_get_utilization"]
+        llx__orchestration__session__manager__SessionManager___get_time_until_available["_get_time_until_available"]
+        llx__orchestration__session__manager__SessionManager___get_next_available_time["_get_next_available_time"]
+        llx__orchestration__session__manager__SessionManager___cleanup_worker["_cleanup_worker"]
+        llx__orchestration__session__manager__SessionManager___cleanup_expired_limits["_cleanup_expired_limits"]
+        llx__orchestration__session__manager__SessionManager___update_session_stats["_update_session_stats"]
+        llx__orchestration__session__manager__SessionManager__print_status_summary("print_status_summary CC=8")
+        llx__orchestration__instances__cli___build_parser["_build_parser"]
+        llx__orchestration__instances__cli___dispatch["_dispatch"]
+        llx__orchestration__instances__cli___cmd_create("_cmd_create CC=10")
+        llx__orchestration__instances__cli___cmd_start["_cmd_start"]
+        llx__orchestration__instances__cli___cmd_stop["_cmd_stop"]
+        llx__orchestration__instances__cli___cmd_list["_cmd_list"]
+        llx__orchestration__instances__cli___cmd_metrics["_cmd_metrics"]
+        llx__orchestration__instances__cli___cmd_health["_cmd_health"]
+        llx__orchestration__instances__cli__main["main"]
+        llx__orchestration__instances__manager__InstanceManager____init__["__init__"]
+        llx__orchestration__instances__manager__InstanceManager__load_instances["load_instances"]
+        llx__orchestration__instances__manager__InstanceManager__save_instances["save_instances"]
+        llx__orchestration__instances__manager__InstanceManager__create_instance["create_instance"]
+        llx__orchestration__instances__manager__InstanceManager__start_instance["start_instance"]
+        llx__orchestration__instances__manager__InstanceManager__stop_instance["stop_instance"]
+        llx__orchestration__instances__manager__InstanceManager__remove_instance["remove_instance"]
+        llx__orchestration__instances__manager__InstanceManager__get_available_instance("get_available_instance CC=12")
+        llx__orchestration__instances__manager__InstanceManager__use_instance["use_instance"]
+        llx__orchestration__instances__manager__InstanceManager__get_instance_status["get_instance_status"]
+        llx__orchestration__instances__manager__InstanceManager__list_instances["list_instances"]
+    end
+    subgraph llx__planfile
+        llx__planfile__generate_strategy___normalize_strategy_data["_normalize_strategy_data"]
+        llx__planfile__generate_strategy___normalize_sprints["_normalize_sprints"]
+        llx__planfile__generate_strategy___normalize_single_sprint("_normalize_single_sprint CC=8")
+        llx__planfile__generate_strategy___extract_sprint_id["_extract_sprint_id"]
+        llx__planfile__generate_strategy___generate_tasks_from_patterns["_generate_tasks_from_patterns"]
+        llx__planfile__generate_strategy___normalize_quality_gates["_normalize_quality_gates"]
+        llx__planfile__generate_strategy___normalize_single_gate["_normalize_single_gate"]
+        llx__planfile__generate_strategy___normalize_goal["_normalize_goal"]
+        llx__planfile__generate_strategy___normalize_metadata["_normalize_metadata"]
+        llx__planfile__generate_strategy__generate_strategy_with_fix["generate_strategy_with_fix"]
+        llx__planfile__generate_strategy___print_generation_info["_print_generation_info"]
+        llx__planfile__generate_strategy___build_strategy_prompt["_build_strategy_prompt"]
+        llx__planfile__generate_strategy___call_llm_for_strategy["_call_llm_for_strategy"]
+        llx__planfile__generate_strategy___parse_and_fix_yaml["_parse_and_fix_yaml"]
+        llx__planfile__generate_strategy___fix_yaml_formatting["_fix_yaml_formatting"]
+        llx__planfile__generate_strategy___fix_list_formatting("_fix_list_formatting CC=9")
+        llx__planfile__generate_strategy___fix_indentation["_fix_indentation"]
+        llx__planfile__generate_strategy__save_fixed_strategy["save_fixed_strategy"]
+        llx__planfile__generate_strategy__main["main"]
+        llx__planfile__config__PlanfileConfig____init__["__init__"]
+        llx__planfile__config__PlanfileConfig__load_config["load_config"]
+        llx__planfile__config__PlanfileConfig___merge_config["_merge_config"]
+        llx__planfile__config__PlanfileConfig__get["get"]
+        llx__planfile__config__PlanfileConfig__save_default_config["save_default_config"]
+        llx__planfile__examples__example_create_strategy["example_create_strategy"]
+        llx__planfile__examples__example_validate_strategy["example_validate_strategy"]
+        llx__planfile__examples__example_run_strategy["example_run_strategy"]
+        llx__planfile__examples__example_verify_strategy["example_verify_strategy"]
+        llx__planfile__examples__example_programmatic_strategy["example_programmatic_strategy"]
+        llx__planfile__runner__load_valid_strategy["load_valid_strategy"]
+        llx__planfile__runner__verify_strategy_post_execution("verify_strategy_post_execution CC=12")
+        llx__planfile__runner__analyze_project_metrics("analyze_project_metrics CC=8")
+        llx__planfile__runner__apply_strategy_to_tickets("apply_strategy_to_tickets CC=8")
+        llx__planfile__runner__run_strategy("run_strategy CC=8")
+        llx__planfile__executor_simple__execute_strategy["execute_strategy"]
+        llx__planfile__executor_simple___load_strategy["_load_strategy"]
+        llx__planfile__executor_simple___normalize_strategy("_normalize_strategy CC=12")
+        llx__planfile__executor_simple___get_sprint_tasks["_get_sprint_tasks"]
+        llx__planfile__executor_simple___execute_task["_execute_task"]
+        llx__planfile__executor_simple___select_model("_select_model CC=13")
+        llx__planfile__executor_simple___build_task_prompt["_build_task_prompt"]
+        llx__planfile__model_selector__ModelFilter__matches["matches"]
+        llx__planfile__model_selector__ModelFilter___matches_provider["_matches_provider"]
+        llx__planfile__model_selector__ModelFilter___matches_tier["_matches_tier"]
+        llx__planfile__model_selector__ModelFilter___matches_api_key_requirement["_matches_api_key_requirement"]
+        llx__planfile__model_selector__ModelFilter___matches_scope["_matches_scope"]
+        llx__planfile__model_selector__ModelFilter___has_api_key["_has_api_key"]
+        llx__planfile__model_selector__ModelSelector____init__["__init__"]
+        llx__planfile__model_selector__ModelSelector___build_model_registry{{_build_model_registry CC=15}}
+        llx__planfile__model_selector__ModelSelector___get_provider["_get_provider"]
+        llx__planfile__model_selector__ModelSelector__select_model("select_model CC=14")
+        llx__planfile__model_selector__ModelSelector__list_models["list_models"]
+        llx__planfile__model_selector__ModelSelector___check_api_key["_check_api_key"]
+        llx__planfile__models__Strategy__validate_sprint_ids["validate_sprint_ids"]
+        llx__planfile__models__Strategy__get_task_patterns["get_task_patterns"]
+        llx__planfile__models__Strategy__get_sprint["get_sprint"]
+        llx__planfile__models__Strategy__model_validate_yaml["model_validate_yaml"]
+        llx__planfile__models__Strategy__model_dump_yaml["model_dump_yaml"]
+    end
+    subgraph llx__prellm
+        llx__prellm__env_config___load_dotenv["_load_dotenv"]
+        llx__prellm__env_config__get_env_config["get_env_config"]
+        llx__prellm__cli_config__config_set_cmd["config_set_cmd"]
+        llx__prellm__cli_config__config_get_cmd["config_get_cmd"]
+        llx__prellm__cli_config___format_config_sections("_format_config_sections CC=9")
+        llx__prellm__cli_config__config_list_cmd["config_list_cmd"]
+        llx__prellm__cli_config__config_show_cmd("config_show_cmd CC=8")
+        llx__prellm__cli_config__config_init_env["config_init_env"]
+        llx__prellm__cli__query["query"]
+        llx__prellm__cli__context["context"]
+        llx__prellm__cli__process["process"]
+        llx__prellm__cli__decompose["decompose"]
+        llx__prellm__cli__init["init"]
+        llx__prellm__cli__serve["serve"]
+        llx__prellm__cli__doctor["doctor"]
+        llx__prellm__cli__budget["budget"]
+        llx__prellm__cli__models["models"]
+        llx__prellm__cli__session_list_cmd["session_list_cmd"]
+        llx__prellm__cli__session_export_cmd["session_export_cmd"]
+        llx__prellm__cli__session_import_cmd["session_import_cmd"]
+        llx__prellm__cli__session_clear_cmd["session_clear_cmd"]
+        llx__prellm__trace__get_current_trace["get_current_trace"]
+        llx__prellm__trace__set_current_trace["set_current_trace"]
+        llx__prellm__trace__TraceRecorder__start["start"]
+        llx__prellm__trace__TraceRecorder__stop["stop"]
+        llx__prellm__trace__TraceRecorder__step["step"]
+        llx__prellm__trace__TraceRecorder__set_result["set_result"]
+        llx__prellm__trace__TraceRecorder___generate_markdown_header["_generate_markdown_header"]
+        llx__prellm__trace__TraceRecorder___generate_markdown_config["_generate_markdown_config"]
+        llx__prellm__trace__TraceRecorder___generate_markdown_step_details("_generate_markdown_step_details CC=8")
+        llx__prellm__trace__TraceRecorder___generate_markdown_decision_path["_generate_markdown_decision_path"]
+        llx__prellm__trace__TraceRecorder___generate_markdown_result["_generate_markdown_result"]
+        llx__prellm__trace__TraceRecorder___generate_markdown_summary["_generate_markdown_summary"]
+        llx__prellm__trace__TraceRecorder__to_markdown["to_markdown"]
+        llx__prellm__trace__TraceRecorder___collect_trace_data("_collect_trace_data CC=9")
+        llx__prellm__trace__TraceRecorder___generate_header["_generate_header"]
+        llx__prellm__trace__TraceRecorder___generate_decision_tree("_generate_decision_tree CC=10")
+        llx__prellm__trace__TraceRecorder___generate_response_section["_generate_response_section"]
+        llx__prellm__trace__TraceRecorder___generate_timing_breakdown["_generate_timing_breakdown"]
+        llx__prellm__trace__TraceRecorder___generate_step_log["_generate_step_log"]
+        llx__prellm__trace__TraceRecorder___generate_footer["_generate_footer"]
+        llx__prellm__trace__TraceRecorder__to_stdout["to_stdout"]
+        llx__prellm__trace__TraceRecorder__save["save"]
+        llx__prellm__trace___step_icon["_step_icon"]
+        llx__prellm__trace___safe_json["_safe_json"]
+        llx__prellm__trace___sanitize("_sanitize CC=13")
+        llx__prellm__trace___compact_value["_compact_value"]
+        llx__prellm__trace___format_tree_value["_format_tree_value"]
+        llx__prellm__trace___extract_prompt_text["_extract_prompt_text"]
+        llx__prellm__trace___wrap_text("_wrap_text CC=9")
+        llx__prellm__extractors__extract_classification_from_state["extract_classification_from_state"]
+        llx__prellm__extractors__extract_structure_from_state["extract_structure_from_state"]
+        llx__prellm__extractors__extract_sub_queries_from_state["extract_sub_queries_from_state"]
+        llx__prellm__extractors__extract_missing_fields_from_state["extract_missing_fields_from_state"]
+        llx__prellm__extractors__extract_matched_rule_from_state["extract_matched_rule_from_state"]
+        llx__prellm__extractors__build_decomposition_result["build_decomposition_result"]
+        llx__prellm__extractors__format_classification_context["format_classification_context"]
+        llx__prellm__extractors__format_context_schema["format_context_schema"]
+        llx__prellm__extractors__format_runtime_context["format_runtime_context"]
+        llx__prellm__extractors__format_user_context["format_user_context"]
+    end
+    subgraph llx__privacy
+        llx__privacy___project_ast__ASTAnonymizer____init__["__init__"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef("visit_FunctionDef CC=10")
+        llx__privacy___project_ast__ASTAnonymizer__visit_ClassDef["visit_ClassDef"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_Name["visit_Name"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_Assign["visit_Assign"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_Attribute["visit_Attribute"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom("visit_ImportFrom CC=8")
+        llx__privacy___project_ast__ASTAnonymizer__visit_Import["visit_Import"]
+        llx__privacy___project_ast__ASTAnonymizer__visit_Constant["visit_Constant"]
+        llx__privacy___project_ast__ASTAnonymizer___is_builtin["_is_builtin"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer____init__["__init__"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer__anonymize_streaming["anonymize_streaming"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___collect_files["_collect_files"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___is_excluded["_is_excluded"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___build_progress["_build_progress"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___iter_batches["_iter_batches"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___process_batch["_process_batch"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___process_file["_process_file"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer___anonymize_large_file["_anonymize_large_file"]
+        llx__privacy___streaming_impl__StreamingProjectAnonymizer__save_context["save_context"]
+        llx__privacy___streaming_impl__StreamingProjectDeanonymizer____init__["__init__"]
+        llx__privacy___streaming_impl__StreamingProjectDeanonymizer__deanonymize_streaming["deanonymize_streaming"]
+        llx__privacy___streaming_impl__StreamingProjectDeanonymizer__deanonymize_files_streaming["deanonymize_files_streaming"]
+        llx__privacy___streaming_impl__anonymize_project_with_progress["anonymize_project_with_progress"]
+        llx__privacy___streaming_impl__deanonymize_response_streaming["deanonymize_response_streaming"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer____init__["__init__"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project("anonymize_project CC=10")
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_file["anonymize_file"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_python["_anonymize_python"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_source_code["_anonymize_source_code"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_config["_anonymize_config"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_generic["_anonymize_generic"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_string["anonymize_string"]
+        llx__privacy__deanonymize__ProjectDeanonymizer____init__["__init__"]
+        llx__privacy__deanonymize__ProjectDeanonymizer___build_reverse_lookup["_build_reverse_lookup"]
+        llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text("deanonymize_text CC=8")
+        llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_file["deanonymize_file"]
+        llx__privacy__deanonymize__ProjectDeanonymizer___restore_imports["_restore_imports"]
+        llx__privacy__deanonymize__ProjectDeanonymizer___restore_decorators["_restore_decorators"]
+        llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_project_files["deanonymize_project_files"]
+        llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_chat_response["deanonymize_chat_response"]
+        llx__privacy__deanonymize__ProjectDeanonymizer__get_symbol_info["get_symbol_info"]
+        llx__privacy__deanonymize__ProjectDeanonymizer__list_all_mappings["list_all_mappings"]
+        llx__privacy__deanonymize__StreamingDeanonymizer____init__["__init__"]
+        llx__privacy__deanonymize__StreamingDeanonymizer__feed_chunk["feed_chunk"]
+        llx__privacy__deanonymize__StreamingDeanonymizer___find_punctuation_boundary["_find_punctuation_boundary"]
+        llx__privacy__deanonymize__StreamingDeanonymizer__finalize["finalize"]
+        llx__privacy__deanonymize__StreamingDeanonymizer__get_stats["get_stats"]
+        llx__privacy__deanonymize__quick_project_deanonymize["quick_project_deanonymize"]
+        llx__privacy__deanonymize_engine__ProjectDeanonymizer____init__["__init__"]
+        llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text["deanonymize_text"]
+        llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file["deanonymize_file"]
+        llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_project_files["deanonymize_project_files"]
+        llx__privacy____core__AnonymizationResult__deanonymize["deanonymize"]
+        llx__privacy____core__Anonymizer____init__["__init__"]
+        llx__privacy____core__Anonymizer___default_patterns["_default_patterns"]
+        llx__privacy____core__Anonymizer___compile_patterns["_compile_patterns"]
+        llx__privacy____core__Anonymizer__anonymize["anonymize"]
+        llx__privacy____core__Anonymizer___generate_token["_generate_token"]
+        llx__privacy____core__Anonymizer__deanonymize["deanonymize"]
+    end
+    subgraph llx__pyqual_plugins
+        llx__pyqual_plugins__type_check__run_mypy["run_mypy"]
+        llx__pyqual_plugins__type_check__main["main"]
+        llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess["_run_detect_secrets_subprocess"]
+        llx__pyqual_plugins__detect_secrets__run_detect_secrets["run_detect_secrets"]
+        llx__pyqual_plugins__detect_secrets__main["main"]
+        llx__pyqual_plugins__bump_version__check_version_on_pypi["check_version_on_pypi"]
+        llx__pyqual_plugins__bump_version__parse_version["parse_version"]
+        llx__pyqual_plugins__bump_version__bump_patch_version["bump_patch_version"]
+        llx__pyqual_plugins__bump_version__update_version_file["update_version_file"]
+        llx__pyqual_plugins__bump_version__update_pyproject_toml["update_pyproject_toml"]
+        llx__pyqual_plugins__bump_version__git_commit_version_bump["git_commit_version_bump"]
+        llx__pyqual_plugins__bump_version__main["main"]
+        llx__pyqual_plugins__publish__get_current_version["get_current_version"]
+        llx__pyqual_plugins__publish__check_version_on_pypi["check_version_on_pypi"]
+        llx__pyqual_plugins__publish__upload_to_pypi["upload_to_pypi"]
+        llx__pyqual_plugins__publish__main["main"]
+        llx__pyqual_plugins__lint__run_ruff_lint["run_ruff_lint"]
+        llx__pyqual_plugins__lint__run_ruff_format_check["run_ruff_format_check"]
+        llx__pyqual_plugins__lint__main["main"]
+        llx__pyqual_plugins__verify_push_publish__get_current_version["get_current_version"]
+        llx__pyqual_plugins__verify_push_publish__verify_push["verify_push"]
+        llx__pyqual_plugins__verify_push_publish__verify_publish["verify_publish"]
+        llx__pyqual_plugins__verify_push_publish__main["main"]
+        llx__pyqual_plugins__security_audit__run_pip_audit["run_pip_audit"]
+        llx__pyqual_plugins__security_audit__run_bandit["run_bandit"]
+        llx__pyqual_plugins__security_audit__main["main"]
+    end
+    subgraph llx__routing
+        llx__routing__client__ChatResponse__deanonymize["deanonymize"]
+        llx__routing__client__LlxClient____init__["__init__"]
+        llx__routing__client__LlxClient__chat("chat CC=11")
+        llx__routing__client__LlxClient__chat_with_context["chat_with_context"]
+        llx__routing__client__LlxClient___build_payload["_build_payload"]
+        llx__routing__client__LlxClient___parse_response["_parse_response"]
+        llx__routing__client__LlxClient___fallback_direct["_fallback_direct"]
+        llx__routing__client__LlxClient___metrics_headers["_metrics_headers"]
+        llx__routing__client__LlxClient__close["close"]
+        llx__routing__client__LlxClient____enter__["__enter__"]
+        llx__routing__client__LlxClient____exit__["__exit__"]
+        llx__routing__selector__SelectionResult__explain["explain"]
+        llx__routing__selector__select_model["select_model"]
+        llx__routing__selector___count_premium_signals("_count_premium_signals CC=8")
+        llx__routing__selector___count_balanced_signals["_count_balanced_signals"]
+        llx__routing__selector___apply_task_adjustment["_apply_task_adjustment"]
+        llx__routing__selector___compute_tier["_compute_tier"]
+        llx__routing__selector___compute_alternative["_compute_alternative"]
+        llx__routing__selector__check_context_fit["check_context_fit"]
+        llx__routing__selector__select_with_context_check["select_with_context_check"]
+    end
+    subgraph llx__tools
+        llx__tools__ai_tools_manager__AIToolsManager____init__["__init__"]
+        llx__tools__ai_tools_manager__AIToolsManager__is_container_running["is_container_running"]
+        llx__tools__ai_tools_manager__AIToolsManager___ensure_llx_api_running["_ensure_llx_api_running"]
+        llx__tools__ai_tools_manager__AIToolsManager___start_ai_tools_container["_start_ai_tools_container"]
+        llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools["start_ai_tools"]
+        llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools["stop_ai_tools"]
+        llx__tools__ai_tools_manager__AIToolsManager__restart_ai_tools["restart_ai_tools"]
+        llx__tools__ai_tools_manager__AIToolsManager___print_shell_help["_print_shell_help"]
+        llx__tools__ai_tools_manager__AIToolsManager__access_shell["access_shell"]
+        llx__tools__ai_tools_manager__AIToolsManager__execute_command["execute_command"]
+        llx__tools__ai_tools_manager__AIToolsManager___get_service_statuses["_get_service_statuses"]
+        llx__tools__ai_tools_manager__AIToolsManager___get_tool_statuses["_get_tool_statuses"]
+        llx__tools__ai_tools_manager__AIToolsManager___get_workspace_status["_get_workspace_status"]
+        llx__tools__ai_tools_manager__AIToolsManager__get_status["get_status"]
+        llx__tools__ai_tools_manager__AIToolsManager___test_llx_api_connectivity["_test_llx_api_connectivity"]
+        llx__tools__ai_tools_manager__AIToolsManager___test_ollama_connectivity["_test_ollama_connectivity"]
+        llx__tools__ai_tools_manager__AIToolsManager__test_connectivity["test_connectivity"]
+        llx__tools__docker_manager__DockerManager____init__["__init__"]
+        llx__tools__docker_manager__DockerManager__get_compose_cmd["get_compose_cmd"]
+        llx__tools__docker_manager__DockerManager__run_compose_cmd["run_compose_cmd"]
+        llx__tools__docker_manager__DockerManager__start_environment["start_environment"]
+        llx__tools__docker_manager__DockerManager__stop_environment["stop_environment"]
+        llx__tools__docker_manager__DockerManager__restart_service["restart_service"]
+        llx__tools__docker_manager__DockerManager__get_service_status["get_service_status"]
+        llx__tools__docker_manager__DockerManager__get_service_logs["get_service_logs"]
+        llx__tools__docker_manager__DockerManager__check_service_health["check_service_health"]
+        llx__tools__docker_manager__DockerManager__wait_for_service["wait_for_service"]
+        llx__tools__docker_manager__DockerManager__cleanup_environment["cleanup_environment"]
+        llx__tools__docker_manager__DockerManager__build_images["build_images"]
+        llx__tools__docker_manager__DockerManager__pull_images["pull_images"]
+        llx__tools__docker_manager__DockerManager__get_resource_usage["get_resource_usage"]
+        llx__tools__docker_manager__DockerManager__backup_volumes["backup_volumes"]
+        llx__tools__docker_manager__DockerManager__restore_volumes["restore_volumes"]
+        llx__tools__docker_manager__DockerManager__get_network_info["get_network_info"]
+        llx__tools__docker_manager__DockerManager__print_status_summary("print_status_summary CC=10")
+        llx__tools__docker_manager___build_parser["_build_parser"]
+        llx__tools__docker_manager___dispatch["_dispatch"]
+        llx__tools__docker_manager___handle_restore["_handle_restore"]
+        llx__tools__docker_manager___handle_health["_handle_health"]
+        llx__tools__docker_manager___handle_wait["_handle_wait"]
+        llx__tools__docker_manager__main["main"]
+        llx__tools__cli___build_parser["_build_parser"]
+        llx__tools__cli___delegate["_delegate"]
+        llx__tools__cli___handle_start["_handle_start"]
+        llx__tools__cli___handle_stop["_handle_stop"]
+        llx__tools__cli___handle_status["_handle_status"]
+        llx__tools__cli__main("main CC=8")
+        llx__tools__vscode_manager__VSCodeManager____init__["__init__"]
+        llx__tools__vscode_manager__VSCodeManager__is_vscode_running["is_vscode_running"]
+        llx__tools__vscode_manager__VSCodeManager__start_vscode["start_vscode"]
+        llx__tools__vscode_manager__VSCodeManager__stop_vscode["stop_vscode"]
+        llx__tools__vscode_manager__VSCodeManager__restart_vscode["restart_vscode"]
+        llx__tools__vscode_manager__VSCodeManager__wait_for_vscode_ready["wait_for_vscode_ready"]
+        llx__tools__vscode_manager__VSCodeManager__check_vscode_health["check_vscode_health"]
+        llx__tools__vscode_manager__VSCodeManager__get_vscode_url["get_vscode_url"]
+        llx__tools__vscode_manager__VSCodeManager__get_vscode_password["get_vscode_password"]
+        llx__tools__vscode_manager__VSCodeManager__install_extensions("install_extensions CC=9")
+        llx__tools__vscode_manager__VSCodeManager__list_installed_extensions["list_installed_extensions"]
+        llx__tools__vscode_manager__VSCodeManager__uninstall_extension["uninstall_extension"]
+        llx__tools__vscode_manager__VSCodeManager__update_extensions["update_extensions"]
+    end
+    subgraph llx__utils
+        llx__utils__issues__load_issue_source("load_issue_source CC=9")
+        llx__utils__issues__load_todo_markdown["load_todo_markdown"]
+        llx__utils__issues__resolve_issue_source["resolve_issue_source"]
+        llx__utils__issues__issue_text{{issue_text CC=15}}
+        llx__utils__issues__task_prompt_label["task_prompt_label"]
+        llx__utils__issues__build_fix_prompt("build_fix_prompt CC=11")
+        llx__utils__issues___collect_file_context{{_collect_file_context CC=20}}
+        llx__utils__cli_main__cli_main["cli_main"]
+        llx__utils__formatting___format_selection["_format_selection"]
+        llx__utils__formatting___format_metrics["_format_metrics"]
+        llx__utils__aider___extract_issue_files("_extract_issue_files CC=9")
+        llx__utils__aider___run_aider_fix("_run_aider_fix CC=10")
+        llx__utils__aider___format_aider_result["_format_aider_result"]
+        llx__utils__models___select_small_model["_select_small_model"]
+    end
+    subgraph my_api__main
+        my_api__main__health["health"]
+        my_api__main__read_users["read_users"]
+        my_api__main__read_user["read_user"]
+        my_api__main__create_user["create_user"]
+        my_api__main__update_user["update_user"]
+        my_api__main__delete_user["delete_user"]
+        my_api__main__read_products["read_products"]
+        my_api__main__read_product["read_product"]
+        my_api__main__create_product["create_product"]
+        my_api__main__update_product["update_product"]
+        my_api__main__delete_product["delete_product"]
+    end
+    subgraph my_api__monitoring
+        my_api__monitoring__CustomMetrics____init__["__init__"]
+        my_api__monitoring__CustomMetrics__increment_successful_requests["increment_successful_requests"]
+        my_api__monitoring__CustomMetrics__increment_failed_requests["increment_failed_requests"]
+        my_api__monitoring__CustomMetrics__record_request_latency["record_request_latency"]
+        my_api__monitoring__HealthChecks____init__["__init__"]
+        my_api__monitoring__HealthChecks__check_database_connection["check_database_connection"]
+        my_api__monitoring__HealthChecks__check_api_endpoint["check_api_endpoint"]
+        my_api__monitoring__HealthChecks__register_healthchecks["register_healthchecks"]
+        my_api__monitoring__PrometheusMetrics____init__["__init__"]
+        my_api__monitoring__PrometheusMetrics__register_metrics["register_metrics"]
+        my_api__monitoring__AlertingRules____init__["__init__"]
+        my_api__monitoring__AlertingRules__add_rule["add_rule"]
+        my_api__monitoring__AlertingRules__register_rules["register_rules"]
+        my_api__monitoring__main["main"]
+    end
+    subgraph project__map
+        project__map__toon__load_issue_source["load_issue_source"]
+        project__map__toon__load_todo_markdown["load_todo_markdown"]
+        project__map__toon__resolve_issue_source["resolve_issue_source"]
+        project__map__toon__issue_text["issue_text"]
+        project__map__toon__task_prompt_label["task_prompt_label"]
+        project__map__toon__build_fix_prompt["build_fix_prompt"]
+        project__map__toon___collect_file_context["_collect_file_context"]
+        project__map__toon__test_llx_health["test_llx_health"]
+        project__map__toon__test_ollama_health["test_ollama_health"]
+        project__map__toon__get_available_models["get_available_models"]
+        project__map__toon__test_llx_models["test_llx_models"]
+        project__map__toon__test_chat_completion["test_chat_completion"]
+        project__map__toon__main["main"]
+        project__map__toon___extract_json_from_content["_extract_json_from_content"]
+        project__map__toon___apply_unified_diff["_apply_unified_diff"]
+        project__map__toon___parse_unified_hunks["_parse_unified_hunks"]
+        project__map__toon___find_hunk_position["_find_hunk_position"]
+        project__map__toon__create_realistic_project["create_realistic_project"]
+        project__map__toon__create_complex_project["create_complex_project"]
+        project__map__toon__output_rich["output_rich"]
+        project__map__toon__output_json["output_json"]
+        project__map__toon___filter_models["_filter_models"]
+        project__map__toon___build_model_row["_build_model_row"]
+        project__map__toon___render_models_table["_render_models_table"]
+        project__map__toon___build_title["_build_title"]
+        project__map__toon__print_models_table["print_models_table"]
+        project__map__toon___render_tools_table["_render_tools_table"]
+        project__map__toon___render_tiers_table["_render_tiers_table"]
+        project__map__toon___render_agents_table["_render_agents_table"]
+        project__map__toon___render_tags_legend["_render_tags_legend"]
+        project__map__toon__print_info_tables["print_info_tables"]
+        project__map__toon__normalize_litellm_base_url["normalize_litellm_base_url"]
+        project__map__toon___apply_toml["_apply_toml"]
+        project__map__toon___apply_yaml_thresholds["_apply_yaml_thresholds"]
+        project__map__toon___apply_yaml_models["_apply_yaml_models"]
+        project__map__toon___apply_yaml_proxy["_apply_yaml_proxy"]
+        project__map__toon___apply_yaml["_apply_yaml"]
+        project__map__toon___apply_env["_apply_env"]
+        project__map__toon__get_current_trace["get_current_trace"]
+        project__map__toon__set_current_trace["set_current_trace"]
+        project__map__toon___step_icon["_step_icon"]
+        project__map__toon___safe_json["_safe_json"]
+        project__map__toon___sanitize["_sanitize"]
+        project__map__toon___compact_value["_compact_value"]
+        project__map__toon___format_tree_value["_format_tree_value"]
+        project__map__toon___extract_prompt_text["_extract_prompt_text"]
+        project__map__toon___wrap_text["_wrap_text"]
+        project__map__toon___get_user_memory_class["_get_user_memory_class"]
+        project__map__toon___get_codebase_indexer_class["_get_codebase_indexer_class"]
+        project__map__toon__execute_strategy["execute_strategy"]
+        project__map__toon___load_strategy["_load_strategy"]
+        project__map__toon___normalize_strategy["_normalize_strategy"]
+        project__map__toon___get_sprint_tasks["_get_sprint_tasks"]
+        project__map__toon___execute_task["_execute_task"]
+        project__map__toon___select_model["_select_model"]
+        project__map__toon___build_task_prompt["_build_task_prompt"]
+        project__map__toon___handle_llx_analyze["_handle_llx_analyze"]
+        project__map__toon___handle_llx_select["_handle_llx_select"]
+        project__map__toon___handle_llx_chat["_handle_llx_chat"]
+        project__map__toon___handle_code2llm_analyze["_handle_code2llm_analyze"]
+    end
+    subgraph scripts__pyqual_auto
+        scripts__pyqual_auto__load_pyqual_config["load_pyqual_config"]
+        scripts__pyqual_auto__save_pyqual_config["save_pyqual_config"]
+        scripts__pyqual_auto__set_env_file["set_env_file"]
+        scripts__pyqual_auto__restore_env_file["restore_env_file"]
+        scripts__pyqual_auto__backup_config["backup_config"]
+        scripts__pyqual_auto__set_model["set_model"]
+        scripts__pyqual_auto__force_fix_stage["force_fix_stage"]
+        scripts__pyqual_auto__restore_metrics["restore_metrics"]
+        scripts__pyqual_auto__run_pyqual["run_pyqual"]
+        scripts__pyqual_auto__main("main CC=8")
+    end
+    subgraph simple_generate
+        simple_generate__generate_simple_strategy["generate_simple_strategy"]
+    end
+    subgraph test_api_qwen__main
+        test_api_qwen__main__health_check["health_check"]
+        test_api_qwen__main__create_item["create_item"]
+        test_api_qwen__main__get_items["get_items"]
+        test_api_qwen__main__get_item["get_item"]
+        test_api_qwen__main__update_item["update_item"]
+        test_api_qwen__main__delete_item["delete_item"]
+    end
+    subgraph test_local_chat
+        test_local_chat__test_llx_health["test_llx_health"]
+        test_local_chat__test_ollama_health["test_ollama_health"]
+        test_local_chat__get_available_models["get_available_models"]
+        test_local_chat__test_llx_models["test_llx_models"]
+        test_local_chat__test_chat_completion["test_chat_completion"]
+        test_local_chat__main{{main CC=19}}
+    end
+    subgraph trace
+        trace__test("test CC=11")
+    end
+    trace__test --> project__map__toon___normalize_strategy_data
+    simple_generate__generate_simple_strategy --> project__map__toon__generate_strategy_with_fix
+    simple_generate__generate_simple_strategy --> project__map__toon__save_fixed_strategy
+    test_local_chat__test_chat_completion --> Taskfile__print
+    test_local_chat__main --> Taskfile__print
+    test_local_chat__main --> test_local_chat__test_llx_health
+    test_local_chat__main --> test_local_chat__test_ollama_health
+    test_local_chat__main --> test_local_chat__get_available_models
+    test_local_chat__main --> test_local_chat__test_llx_models
+    examples__privacy__ml__01_entropy_ml_detection__main --> Taskfile__print
+    examples__privacy__ml__04_behavioral_learning__main --> Taskfile__print
+    examples__privacy__ml__04_behavioral_learning__main --> examples__privacy__ml__04_behavioral_learning__create_sample_codebase
+    examples__privacy__ml__03_contextual_passwords__main --> Taskfile__print
+    examples__privacy__ml__03_contextual_passwords__main --> examples__privacy__ml__03_contextual_passwords__create_test_code_samples
+    examples__privacy__streaming__01_streaming_anonymization__main --> Taskfile__print
+    examples__privacy__streaming__01_streaming_anonymization__main --> examples__privacy__streaming__01_streaming_anonymization__create_large_project
+    examples__privacy__project__02_deanonymize_project__main --> Taskfile__print
+    examples__privacy__project__01_anonymize_project__main --> Taskfile__print
+    examples__privacy__project__01_anonymize_project__main --> examples__privacy__project__01_anonymize_project__create_sample_project
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step2_anonymize_for_audit --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step3_simulate_audit_response --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__main --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__main --> examples__privacy__advanced__03_cicd_integration__create_cicd_project
+    examples__privacy__advanced__02_multi_stage__MultiStageAnonymizer__anonymize_for_level --> Taskfile__print
+    examples__privacy__advanced__02_multi_stage__main --> Taskfile__print
+    examples__privacy__advanced__02_multi_stage__main --> examples__privacy__advanced__02_multi_stage__create_business_logic_project
+    examples__privacy__advanced__01_api_integration__main --> Taskfile__print
+    examples__privacy__advanced__01_api_integration__main --> examples__privacy__advanced__01_api_integration__create_realistic_project
+    examples__privacy__basic__01_text_anonymization__main --> Taskfile__print
+    examples__privacy__basic__01_text_anonymization__main --> project__map__toon__quick_anonymize
+    examples__privacy__basic__02_custom_patterns__main --> Taskfile__print
+    scripts__pyqual_auto__run_pyqual --> Taskfile__print
+    scripts__pyqual_auto__main --> Taskfile__print
+    scripts__pyqual_auto__main --> scripts__pyqual_auto__load_pyqual_config
+    scripts__pyqual_auto__main --> scripts__pyqual_auto__backup_config
+    scripts__pyqual_auto__main --> scripts__pyqual_auto__set_model
+    scripts__pyqual_auto__main --> scripts__pyqual_auto__set_env_file
+    llx__config__LlxConfig____post_init__ --> project__map__toon__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> project__map__toon___apply_env
+    llx__config__LlxConfig__load --> project__map__toon__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> project__map__toon___apply_yaml
+    llx__config___apply_yaml --> llx__config___apply_yaml_proxy
+    llx__config___apply_yaml --> llx__config___apply_yaml_thresholds
+    llx__llm___ensure_dotenv_loaded --> llx__llm___load_dotenv_fallback
+    llx__llm__get_llm_model --> llx__llm___ensure_dotenv_loaded
+    llx__llm__get_api_key --> llx__llm___ensure_dotenv_loaded
+    llx__llm__LLM____init__ --> project__map__toon__get_llm_model
+    llx__llm__LLM____init__ --> project__map__toon__get_api_key
+    llx__commands___patch_apply___apply_unified_diff --> llx__commands___patch_apply___parse_unified_hunks
+    llx__commands___patch_apply___apply_unified_diff --> llx__commands___patch_apply___find_hunk_position
+    llx__commands__fix__apply_code_changes --> project__map__toon___apply_json_patch_strategy
+    llx__commands__fix__apply_code_changes --> project__map__toon___apply_openai_patch_strategy
+    llx__commands__fix__apply_code_changes --> project__map__toon___apply_markdown_code_block_strategy
+    llx__commands__fix__load_errors_data --> project__map__toon__load_issue_source
+    llx__commands__fix__select_model_for_fix --> examples__filtering__filtering__select_model
+    llx__commands__fix__display_model_selection_and_metrics --> project__map__toon___format_selection
+    llx__commands__fix__display_model_selection_and_metrics --> project__map__toon___format_metrics
+    llx__commands__fix__prepare_fix_prompt --> project__map__toon__build_fix_prompt
+    llx__commands__fix__execute_aider_fix --> project__map__toon___extract_issue_files
+    llx__commands__fix__execute_aider_fix --> project__map__toon___run_aider_fix
+    llx__commands__fix__execute_aider_fix --> project__map__toon___format_aider_result
+    llx__commands__fix__execute_prellm_fix --> project__map__toon__preprocess_and_execute_sync
+    llx__commands__fix__execute_prellm_fix --> llx__commands__fix__apply_code_changes
+    llx__commands__fix__execute_prellm_fix --> project__map__toon___select_small_model
+    llx__commands__fix__fix --> llx__commands__fix__load_errors_data
+    llx__commands__fix__fix --> project__map__toon__analyze_project
+    llx__commands__fix__fix --> llx__commands__fix__select_model_for_fix
+    llx__commands__fix__fix --> llx__commands__fix__display_model_selection_and_metrics
+    llx__commands__fix__fix --> llx__commands__fix__prepare_fix_prompt
+    llx__commands__fix__fix --> llx__commands__fix__execute_prellm_fix
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer____init__ --> project__map__toon__build_reverse_lookup
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__find_symbol_tokens
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__find_content_tokens
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__get_content_mapping
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> project__map__toon__restore_imports
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> project__map__toon__restore_decorators
+    llx__privacy___project_context__AnonymizationContext___get_mapping_dict --> project__map__toon___mapping_dict_for
+    llx__privacy___project_context__AnonymizationContext___generate_symbol --> project__map__toon___symbol_prefix
+    llx__privacy___project_context__AnonymizationContext__to_dict --> project__map__toon___mappings_to_dict
+    llx__privacy___project_context__AnonymizationContext__from_dict --> project__map__toon___dict_to_mappings
+    llx__pyqual_plugins__type_check__run_mypy --> Taskfile__print
+    llx__pyqual_plugins__type_check__main --> llx__pyqual_plugins__type_check__run_mypy
+    llx__pyqual_plugins__type_check__main --> Taskfile__print
+    llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess --> Taskfile__print
+    llx__pyqual_plugins__detect_secrets__run_detect_secrets --> Taskfile__print
+    llx__pyqual_plugins__detect_secrets__run_detect_secrets --> llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess
+    llx__pyqual_plugins__detect_secrets__main --> llx__pyqual_plugins__detect_secrets__run_detect_secrets
+    llx__pyqual_plugins__detect_secrets__main --> Taskfile__print
+    llx__pyqual_plugins__bump_version__bump_patch_version --> llx__pyqual_plugins__bump_version__parse_version
+    llx__pyqual_plugins__bump_version__update_version_file --> Taskfile__print
+    llx__pyqual_plugins__bump_version__update_pyproject_toml --> Taskfile__print
+    llx__pyqual_plugins__bump_version__git_commit_version_bump --> Taskfile__print
+    llx__pyqual_plugins__bump_version__main --> Taskfile__print
+    llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__update_version_file
+    llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__update_pyproject_toml
+    llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__git_commit_version_bump
+    llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__check_version_on_pypi
+    llx__pyqual_plugins__publish__upload_to_pypi --> Taskfile__print
+    llx__pyqual_plugins__publish__main --> Taskfile__print
+    llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__check_version_on_pypi
+    llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__upload_to_pypi
+    llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__get_current_version
+    llx__pyqual_plugins__lint__run_ruff_lint --> Taskfile__print
+    llx__pyqual_plugins__lint__run_ruff_format_check --> Taskfile__print
+    llx__pyqual_plugins__lint__main --> llx__pyqual_plugins__lint__run_ruff_lint
+    llx__pyqual_plugins__lint__main --> llx__pyqual_plugins__lint__run_ruff_format_check
+    llx__pyqual_plugins__lint__main --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__verify_push --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__verify_publish --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__main --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__verify_publish
+    llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__get_current_version
+    llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__verify_push
+    llx__pyqual_plugins__security_audit__run_pip_audit --> Taskfile__print
+    llx__pyqual_plugins__security_audit__run_bandit --> Taskfile__print
+    llx__pyqual_plugins__security_audit__main --> llx__pyqual_plugins__security_audit__run_pip_audit
+    llx__pyqual_plugins__security_audit__main --> llx__pyqual_plugins__security_audit__run_bandit
+    llx__pyqual_plugins__security_audit__main --> Taskfile__print
+    llx__examples__utils__ExampleHelper__ensure_venv --> Taskfile__print
+    llx__examples__utils__ExampleHelper__check_dependencies --> Taskfile__print
+    llx__examples__utils__ExampleHelper__check_ollama --> Taskfile__print
+    llx__examples__utils__TaskQueue__process --> Taskfile__print
+    llx__examples__utils__WorkflowRunner__run_workflow --> Taskfile__print
+    llx__prellm__env_config__get_env_config --> llx__prellm__env_config___load_dotenv
+    llx__prellm__cli_config__config_list_cmd --> llx__prellm__cli_config___format_config_sections
+    llx__prellm__cli_config__config_show_cmd --> project__map__toon__get_env_config
+    llx__prellm__cli__session_list_cmd --> project__map__toon___init_logging
+    llx__prellm__cli__session_export_cmd --> project__map__toon___init_logging
+    llx__prellm__cli__session_import_cmd --> project__map__toon___init_logging
+    llx__prellm__cli__session_clear_cmd --> project__map__toon___init_logging
+    llx__prellm__trace__TraceRecorder__start --> project__map__toon__set_current_trace
+    llx__prellm__trace__TraceRecorder__stop --> project__map__toon__set_current_trace
+    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> project__map__toon___step_icon
+    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> project__map__toon___safe_json
+    llx__prellm__trace__TraceRecorder___generate_markdown_summary --> project__map__toon___step_icon
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___step_icon
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___extract_prompt_text
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___format_tree_value
+    llx__prellm__trace__TraceRecorder___generate_step_log --> project__map__toon___step_icon
+    llx__prellm__trace___safe_json --> llx__prellm__trace___sanitize
+    llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_classification_from_state
+    llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_structure_from_state
+    llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_sub_queries_from_state
+    llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_missing_fields_from_state
+    llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_matched_rule_from_state
+    llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_classification_context
+    llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_context_schema
+    llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_runtime_context
+    llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_user_context
+    llx__prellm__cli_context__context_show_cmd --> llx__prellm__cli_context__context
+    llx__prellm__logging_setup__setup_logging --> project__map__toon__configure
+    llx__prellm__logging_setup__setup_logging --> llx__prellm__logging_setup___get_version
+    llx__prellm__logging_setup__get_logger --> llx__prellm__logging_setup__setup_logging
+    llx__prellm__server__chat_completions --> llx__prellm__server___parse_model_pair
+    llx__prellm__server__chat_completions --> llx__prellm__server___build_prellm_meta
+    llx__prellm__server__chat_completions --> project__map__toon__preprocess_and_execute
+    llx__prellm__server__chat_completions --> llx__prellm__server___stream_response
+    llx__prellm__server___stream_response --> project__map__toon__preprocess_and_execute
+    llx__prellm__server___stream_response --> llx__prellm__server___build_prellm_meta
+    llx__prellm__server__batch_process --> project__map__toon__preprocess_and_execute
+    llx__prellm__server__batch_process --> llx__prellm__server___build_prellm_meta
+    llx__prellm__server__create_app --> project__map__toon__get_env_config
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__collect_user_context
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__collect_environment_context
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__compress_codebase_folder
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__generate_context_schema
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__build_sensitive_filter
+    llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__initialize_context_components
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__prepare_context
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__build_pipeline_context
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__build_executor_system_prompt
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__get_current_trace
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__pipeline_ops__record_trace
+    llx__prellm__cli_query___init_logging --> project__map__toon__get_env_config
+    llx__prellm__cli_query___init_logging --> project__map__toon__setup_logging
+    llx__prellm__cli_query___handle_query_options --> project__map__toon__get_env_config
+    llx__prellm__cli_query___initialize_execution --> project__map__toon__get_budget_tracker
+    llx__prellm__cli_query___execute_and_format_result --> project__map__toon__preprocess_and_execute
+    llx__prellm__core__preprocess_and_execute --> llx__prellm__core___resolve_pipeline_name
+    llx__prellm__core__preprocess_and_execute --> llx__prellm__core___apply_config_overrides
+    llx__prellm__core__preprocess_and_execute --> project__map__toon__get_current_trace
+    llx__prellm__core__preprocess_and_execute --> llx__prellm__core___trace_preprocess_configuration
+    llx__prellm__core__preprocess_and_execute_sync --> llx__prellm__core__preprocess_and_execute
+    llx__prellm__cli_commands__serve --> project__map__toon__get_env_config
+    llx__prellm__cli_commands__serve --> project__map__toon___init_logging
+    llx__prellm__cli_commands__serve --> project__map__toon__create_app
+    llx__prellm__cli_commands__doctor --> project__map__toon__get_env_config
+    llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_config
+    llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_providers
+    llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_files
+    llx__prellm__cli_commands__budget --> project__map__toon__get_env_config
+    llx__prellm__cli_commands__budget --> project__map__toon__get_budget_tracker
+    llx__prellm__cli_commands__models --> project__map__toon__list_model_pairs
+    llx__prellm__cli_commands__models --> project__map__toon__list_openrouter_models
+    llx__prellm__budget__BudgetTracker___ensure_loaded --> project__map__toon___current_month_key
+    llx__prellm__budget__BudgetTracker__summary --> project__map__toon___current_month_key
+    llx__prellm__budget__BudgetTracker___persist --> project__map__toon___current_month_key
+    llx__prellm__chains__process_chain__ProcessChain___run_engine --> project__map__toon__preprocess_and_execute
+    llx__prellm__context__folder_compressor__FolderCompressor__to_toon --> project__map__toon___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___path_to_module
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___extract_module_from_import
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___path_to_module
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___extract_module_docstring
+    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> project__map__toon__load_pipeline_config
+    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> project__map__toon__build_pipeline
+    llx__prellm__agents__preprocessor___get_user_memory_class --> project__map__toon__lazy_import_global
+    llx__prellm__agents__preprocessor___get_codebase_indexer_class --> project__map__toon__lazy_import_global
+    llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
+    llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
+    llx__analysis__runner__run_vallm --> llx__analysis__runner___run_tool
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_filesystem_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___estimate_context_tokens
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___classify_scope
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_code2llm_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_redup_metrics
+    llx__analysis__collector__analyze_project --> llx__analysis__collector___collect_vallm_metrics
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___load_file
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_analysis_yaml
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_evolution_yaml
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_map_yaml
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_evolution_text
+    llx__analysis__collector___collect_code2llm_metrics --> llx__analysis__collector___apply_map_text
+    llx__analysis__collector___apply_analysis_yaml --> llx__analysis__collector___extract_cc_value
+    llx__analysis__collector___apply_evolution_yaml --> llx__analysis__collector___extract_evolution_actions
+    llx__analysis__collector___apply_evolution_yaml --> llx__analysis__collector___extract_metrics_target
+    llx__analysis__collector___apply_evolution_yaml --> llx__analysis__collector___extract_evolution_stats
+    llx__analysis__collector___apply_map_text --> llx__analysis__collector___count_map_modules
+    llx__analysis__collector___apply_map_text --> llx__analysis__collector___parse_map_stats_line
+    llx__analysis__collector___apply_map_text --> llx__analysis__collector___parse_map_alerts_line
+    llx__analysis__collector___apply_map_text --> llx__analysis__collector___parse_map_hotspots_line
+    llx__analysis__collector___collect_redup_metrics --> llx__analysis__collector___load_file
+    llx__analysis__collector___collect_vallm_metrics --> llx__analysis__collector___load_file
+    llx__tools__ai_tools_manager__AIToolsManager___ensure_llx_api_running --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager___start_ai_tools_container --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__restart_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager___print_shell_help --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__access_shell --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__access_shell --> examples__docker__docker__docker_exec
+    llx__tools__ai_tools_manager__AIToolsManager__execute_command --> examples__docker__docker__docker_exec
+    llx__tools__docker_manager__DockerManager__start_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__stop_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__restart_service --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_service_status --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__check_service_health --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__wait_for_service --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__cleanup_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__build_images --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__pull_images --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_resource_usage --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__backup_volumes --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__restore_volumes --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_network_info --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__print_status_summary --> Taskfile__print
+    llx__tools__docker_manager___dispatch --> Taskfile__print
+    llx__tools__docker_manager___handle_restore --> Taskfile__print
+    llx__tools__docker_manager___handle_health --> Taskfile__print
+    llx__tools__docker_manager___handle_wait --> Taskfile__print
+    llx__tools__docker_manager__main --> project__map__toon__cli_main
+    llx__tools__cli___delegate --> Taskfile__print
+    llx__tools__cli___handle_start --> llx__tools__cli___delegate
+    llx__tools__cli___handle_stop --> llx__tools__cli___delegate
+    llx__tools__cli___handle_status --> llx__tools__cli___delegate
+    llx__tools__cli__main --> llx__tools__cli___build_parser
+    llx__tools__cli__main --> llx__tools__cli___handle_start
+    llx__tools__cli__main --> llx__tools__cli___handle_stop
+    llx__tools__cli__main --> llx__tools__cli___handle_status
+    llx__tools__cli__main --> llx__tools__cli___delegate
+    llx__tools__vscode_manager__VSCodeManager__start_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__stop_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__restart_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__wait_for_vscode_ready --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__install_extensions --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__install_extensions --> examples__docker__docker__docker_exec
+    llx__tools__vscode_manager__VSCodeManager__list_installed_extensions --> examples__docker__docker__docker_exec
+    llx__tools__vscode_manager__VSCodeManager__uninstall_extension --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__uninstall_extension --> examples__docker__docker__docker_exec
+    llx__tools__vscode_manager__VSCodeManager__update_extensions --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__update_extensions --> examples__docker__docker__docker_exec
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> examples__docker__docker__docker_exec
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__backup_settings --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__backup_settings --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__restore_settings --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__restore_settings --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__print_status_summary --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__print_quick_start --> Taskfile__print
+    llx__tools__vscode_manager___cmd_logs --> Taskfile__print
+    llx__tools__vscode_manager___cmd_list_extensions --> Taskfile__print
+    llx__tools__vscode_manager__main --> project__map__toon__cli_main
+    llx__tools__config_manager__ConfigManager__load_config --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__save_config --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__create_default_env --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__remove_model --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__list_models --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__backup_configs --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__restore_configs --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__generate_docker_env_file --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__create_profile --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__load_profile --> Taskfile__print
+    llx__tools__config_manager__ConfigManager___print_config_files_summary --> Taskfile__print
+    llx__tools__config_manager__ConfigManager___print_env_summary --> Taskfile__print
+    llx__tools__config_manager__ConfigManager___print_model_summary --> Taskfile__print
+    llx__tools__config_manager__ConfigManager___print_issue_summary --> Taskfile__print
+    llx__tools__config_manager__ConfigManager___print_profiles_summary --> Taskfile__print
+    llx__tools__config_manager__ConfigManager__print_config_summary --> Taskfile__print
+    llx__tools__config_manager___cmd_load --> Taskfile__print
+    llx__tools__config_manager___cmd_save --> Taskfile__print
+    llx__tools__config_manager___cmd_update_env --> Taskfile__print
+    llx__tools__config_manager___cmd_get_env --> Taskfile__print
+    llx__tools__config_manager___cmd_validate --> Taskfile__print
+    llx__tools__config_manager___cmd_add_model --> Taskfile__print
+    llx__tools__config_manager___cmd_list_profiles --> Taskfile__print
+    llx__tools__config_manager__main --> project__map__toon__cli_main
+    llx__tools__health_checker__HealthChecker__run_quick_health_check --> Taskfile__print
+    llx__tools__health_checker__HealthChecker__monitor_services --> Taskfile__print
+    llx__tools__health_checker___handle_check_command --> llx__tools__health_checker___write_json_output
+    llx__tools__health_checker___handle_monitor_command --> llx__tools__health_checker___write_json_output
+    llx__tools__health_checker___handle_service_command --> Taskfile__print
+    llx__tools__health_checker___handle_container_command --> Taskfile__print
+    llx__tools__health_checker___handle_system_command --> Taskfile__print
+    llx__tools__health_checker___handle_filesystem_command --> Taskfile__print
+    llx__tools__health_checker___handle_network_command --> Taskfile__print
+    llx__tools__health_checker__main --> project__map__toon__cli_main
+    llx__tools__model_manager__ModelManager__pull_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__remove_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__test_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__test_llx_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__get_system_resources --> Taskfile__print
+    llx__tools__model_manager__ModelManager__create_model_profile --> Taskfile__print
+    llx__tools__model_manager__ModelManager__benchmark_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__cleanup_unused_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager__print_model_summary --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_service_status --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_ollama_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_llx_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_system_resources --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_recommendations --> Taskfile__print
+    llx__tools__model_manager___cmd_list --> Taskfile__print
+    llx__tools__model_manager___cmd_pull --> Taskfile__print
+    llx__tools__model_manager___cmd_test --> Taskfile__print
+    llx__tools__model_manager___cmd_info --> Taskfile__print
+    llx__tools__model_manager___cmd_recommend --> Taskfile__print
+    llx__tools__model_manager___cmd_benchmark --> Taskfile__print
+    llx__tools__model_manager___cmd_requirements --> Taskfile__print
+    llx__tools__model_manager__main --> project__map__toon__cli_main
+    llx__tools__health_runner__HealthCheckRunner__run_comprehensive --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_services --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_containers --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_system_resources --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_filesystem --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_network --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___print_health_summary --> Taskfile__print
+    llx__tools__utils___cmd_uninstall_extension__create_simple_handler --> Taskfile__print
+    llx__cli__app___run_analysis_tools --> project__map__toon__run_all_tools
+    llx__cli__app__analyze --> project__map__toon__select_with_context_check
+    llx__cli__app__analyze --> llx__cli__app___run_analysis_tools
+    llx__cli__app__analyze --> project__map__toon__analyze_project
+    llx__cli__app__select --> project__map__toon__analyze_project
+    llx__cli__app__select --> examples__filtering__filtering__select_model
+    llx__cli__app__chat --> project__map__toon__analyze_project
+    llx__cli__app__proxy_start --> project__map__toon__start_proxy
+    llx__cli__app__proxy_config --> project__map__toon__generate_proxy_config
+    llx__cli__app__proxy_status --> project__map__toon__check_proxy
+    llx__cli__app__plan_generate --> llx__cli__app___plan_code_impl
+    llx__cli__app__plan_review --> project__map__toon__load_valid_strategy
+    llx__cli__app__plan_execute --> project__map__toon__run_strategy
+    llx__cli__app__models --> project__map__toon__print_models_table
+    llx__cli__app__info --> project__map__toon__print_info_tables
+    llx__cli__app___plan_code_impl --> llx__cli__app___load_sprint_mapping
+    llx__cli__formatters__print_models_table --> llx__cli__formatters___filter_models
+    llx__cli__formatters__print_models_table --> llx__cli__formatters___build_title
+    llx__cli__formatters__print_models_table --> llx__cli__formatters___render_models_table
+    llx__cli__formatters__print_models_table --> llx__cli__formatters___build_model_row
+    llx__cli__formatters___render_tools_table --> project__map__toon__check_tool
+    llx__cli__formatters___render_tiers_table --> llx__cli__formatters___build_model_row
+    llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tools_table
+    llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tiers_table
+    llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tags_legend
+    llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_agents_table
+    llx__cli__strategy_commands__create_strategy --> Taskfile__print
+    llx__cli__strategy_commands__validate_strategy --> project__map__toon__load_valid_strategy
+    llx__cli__strategy_commands__validate_strategy --> Taskfile__print
+    llx__cli__strategy_commands__run_strategy_command --> Taskfile__print
+    llx__cli__strategy_commands__run_strategy_command --> project__map__toon__run_strategy
+    llx__cli__strategy_commands__verify_strategy --> Taskfile__print
+    llx__cli__strategy_commands__verify_strategy --> project__map__toon__load_valid_strategy
+    llx__cli__strategy_commands__verify_strategy --> project__map__toon__verify_strategy_post_execution
+    llx__cli__commands__analyze__analyze --> project__map__toon__select_with_context_check
+    llx__cli__commands__analyze__analyze --> project__map__toon___run_analysis_tools
+    llx__cli__commands__analyze__analyze --> project__map__toon__analyze_project
+    llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_goal
+    llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_sprints
+    llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_quality_gates
+    llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_metadata
+    llx__planfile__generate_strategy___normalize_sprints --> llx__planfile__generate_strategy___normalize_single_sprint
+    llx__planfile__generate_strategy___normalize_single_sprint --> llx__planfile__generate_strategy___generate_tasks_from_patterns
+    llx__planfile__generate_strategy___normalize_quality_gates --> llx__planfile__generate_strategy___normalize_single_gate
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___print_generation_info
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> project__map__toon__analyze_project
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___build_strategy_prompt
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___call_llm_for_strategy
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___parse_and_fix_yaml
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___normalize_strategy_data
+    llx__planfile__generate_strategy___parse_and_fix_yaml --> llx__planfile__generate_strategy___fix_yaml_formatting
+    llx__planfile__generate_strategy___fix_yaml_formatting --> llx__planfile__generate_strategy___fix_list_formatting
+    llx__planfile__generate_strategy___fix_yaml_formatting --> llx__planfile__generate_strategy___fix_indentation
+    llx__planfile__generate_strategy__main --> llx__planfile__generate_strategy__generate_strategy_with_fix
+    llx__planfile__generate_strategy__main --> llx__planfile__generate_strategy__save_fixed_strategy
+    llx__planfile__examples__example_validate_strategy --> project__map__toon__load_valid_strategy
+    llx__planfile__examples__example_validate_strategy --> Taskfile__print
+    llx__planfile__examples__example_run_strategy --> project__map__toon__run_strategy
+    llx__planfile__examples__example_verify_strategy --> project__map__toon__load_valid_strategy
+    llx__planfile__examples__example_verify_strategy --> project__map__toon__verify_strategy_post_execution
+    llx__planfile__examples__example_verify_strategy --> Taskfile__print
+    llx__planfile__examples__example_programmatic_strategy --> Taskfile__print
+    llx__planfile__runner__load_valid_strategy --> Taskfile__print
+    llx__planfile__runner__verify_strategy_post_execution --> llx__planfile__runner__analyze_project_metrics
+    llx__planfile__runner__apply_strategy_to_tickets --> Taskfile__print
+    llx__planfile__runner__run_strategy --> llx__planfile__runner__load_valid_strategy
+    llx__planfile__runner__run_strategy --> llx__planfile__runner__apply_strategy_to_tickets
+    llx__planfile__runner__run_strategy --> Taskfile__print
+    llx__planfile__runner__run_strategy --> llx__planfile__runner__verify_strategy_post_execution
+    llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___load_strategy
+    llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___normalize_strategy
+    llx__planfile__executor_simple__execute_strategy --> project__map__toon__analyze_project
+    llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___get_sprint_tasks
+    llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___execute_task
+    llx__planfile__executor_simple___execute_task --> llx__planfile__executor_simple___build_task_prompt
+    llx__planfile__executor_simple___execute_task --> llx__planfile__executor_simple___select_model
+    llx__orchestration__cli___handle_status --> Taskfile__print
+    llx__orchestration__cli___handle_health --> Taskfile__print
+    llx__orchestration__cli___handle_monitor --> Taskfile__print
+    llx__orchestration__cli___delegate_to_subpackage --> Taskfile__print
+    llx__orchestration__cli__main --> llx__orchestration__cli___build_parser
+    llx__orchestration__cli__main --> llx__orchestration__cli___handle_status
+    llx__orchestration__cli__main --> llx__orchestration__cli___handle_health
+    llx__orchestration__cli__main --> llx__orchestration__cli___handle_monitor
+    llx__orchestration__cli__main --> llx__orchestration__cli___delegate_to_subpackage
+    llx__orchestration___utils__load_json --> Taskfile__print
+    llx__orchestration___utils__save_json --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_remove_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_remove_pair_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_status_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_list_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_cleanup_wrapper --> Taskfile__print
+    llx__orchestration__session__cli___cmd_create --> Taskfile__print
+    llx__orchestration__session__cli___cmd_list --> Taskfile__print
+    llx__orchestration__session__cli___cmd_queue --> Taskfile__print
+    llx__orchestration__session__cli___cmd_cleanup --> Taskfile__print
+    llx__orchestration__session__cli__main --> project__map__toon__cli_main
+    llx__orchestration__session__manager__SessionManager__load_sessions --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__save_sessions --> project__map__toon__save_json
+    llx__orchestration__session__manager__SessionManager__save_sessions --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__create_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__remove_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__release_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager___cleanup_worker --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager___cleanup_expired_limits --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__print_status_summary --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_create --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_start --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_stop --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_list --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_metrics --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_health --> Taskfile__print
+    llx__orchestration__instances__cli__main --> project__map__toon__cli_main
+    llx__orchestration__instances__manager__InstanceManager____init__ --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__load_instances --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__save_instances --> project__map__toon__save_json
+    llx__orchestration__instances__manager__InstanceManager__save_instances --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__create_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__start_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__stop_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__remove_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__get_instance_metrics --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager___monitor_worker --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager___check_auto_restart --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__print_status_summary --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_add_account --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_list_accounts --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_create --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_start --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_stop --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_list --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_sessions --> Taskfile__print
+    llx__orchestration__vscode__cli__main --> project__map__toon__cli_main
+    llx__orchestration__vscode__config_io__load_vscode_config --> Taskfile__print
+    llx__orchestration__vscode__config_io__save_vscode_config --> project__map__toon__save_json
+    llx__orchestration__vscode__config_io__save_vscode_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__load_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> project__map__toon__save_json
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___create_default_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__stop --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__add_account --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_account --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__create_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__end_session --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___start_browser_for_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___session_cleanup_worker --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___config_save_worker --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__print_status_summary --> Taskfile__print
+    llx__orchestration__llm__cli___dispatch --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_add_provider --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_list_providers --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_list_models --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_model_info --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_complete --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_cancel --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_usage --> Taskfile__print
+    llx__orchestration__llm__cli__main --> project__map__toon__cli_main
+    llx__orchestration__llm__health__perform_health_checks --> Taskfile__print
+    llx__orchestration__llm__health__health_check_worker --> llx__orchestration__llm__health__perform_health_checks
+    llx__orchestration__llm__health__health_check_worker --> Taskfile__print
+    llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_ollama
+    llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_openai
+    llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_anthropic
+    llx__orchestration__llm__executors__execute_ollama --> llx__orchestration__llm__executors__messages_to_prompt
+    llx__orchestration__llm__executors__execute_ollama --> llx__orchestration__llm__executors___failed
+    llx__orchestration__llm__executors__execute_openai --> llx__orchestration__llm__executors___failed
+    llx__orchestration__llm__executors__execute_anthropic --> llx__orchestration__llm__executors___failed
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> project__map__toon__load_json
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> project__map__toon__save_json
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___create_default_config --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> project__map__toon__perform_health_checks
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__stop --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_provider --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__remove_provider --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_model --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__complete_request --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__cancel_request --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___execute_request --> project__map__toon__execute_request
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___config_save_worker --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__print_status_summary --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_usage_stats --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_provider_status --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_model_summary --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_add --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_enqueue --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_dequeue --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_complete --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_status --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_metrics --> Taskfile__print
+    llx__orchestration__queue__cli__main --> project__map__toon__cli_main
+    llx__orchestration__queue__manager__QueueManager__load_queues --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__save_queues --> project__map__toon__save_json
+    llx__orchestration__queue__manager__QueueManager__save_queues --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__start --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__stop --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__add_queue --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__remove_queue --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__enqueue_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__complete_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager___worker_loop --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager___retry_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__print_status_summary --> Taskfile__print
+    llx__orchestration__utils___cmd_cleanup__create_cleanup_handler --> Taskfile__print
+    llx__orchestration__utils___cmd_remove__create_remove_handler --> project__map__toon__cmd_remove_wrapper
+    llx__orchestration__utils___cmd_status__create_status_handler --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__load_limits --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> project__map__toon__save_json
+    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__add_limit --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__remove_limit --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___apply_penalty --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_worker --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_expired_penalties --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__print_status_summary --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_add --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_remove --> project__map__toon__cmd_remove_pair_wrapper
+    llx__orchestration__ratelimit__cli___cmd_check --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_record --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_release --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_status --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_available --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_cleanup --> Taskfile__print
+    llx__orchestration__ratelimit__cli__main --> project__map__toon__cli_main
+    llx__orchestration__ratelimit___persistence__load_limits_from_file --> Taskfile__print
+    llx__orchestration__ratelimit___persistence__save_limits_to_file --> project__map__toon__save_json
+    llx__orchestration__ratelimit___persistence__save_limits_to_file --> Taskfile__print
+    llx__orchestration__ratelimit___crud__add_limit --> Taskfile__print
+    llx__orchestration__ratelimit___crud__remove_limit --> Taskfile__print
+
+    classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
+    class test_local_chat__main,examples__privacy__advanced__01_api_integration__main,llx__commands___patch_apply___parse_unified_hunks,llx__planfile__model_selector__ModelSelector___build_model_registry,llx__detection__detector__ProjectTypeDetector__detect_from_files,llx__orchestration__ratelimit__limiter__RateLimiter__get_status,llx__utils__issues__issue_text,llx__utils__issues___collect_file_context highCC
+    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process,llx__prellm__cli_config___format_config_sections medCC

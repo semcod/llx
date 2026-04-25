@@ -110,98 +110,83 @@ class ModelSelector:
         self.config = LlxConfig.load(config_path or ".")
         self._model_registry = self._build_model_registry()
     
-    def _build_model_registry(self) -> Dict[str, Dict[str, Any]]:
-        """Build registry of available models with metadata."""
-        registry = {}
-        
-        # Add models from config
+    _LITELLM_MODEL_KEYS = frozenset({
+        'nemotron-3-super', 'llama-3.2-3b-instruct', 'mistral-7b-instruct',
+        'qwen2.5-coder:7b', 'deepseek-chat-v3-0324', 'gpt-4o', 'gpt-5.4-mini',
+        'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-haiku-4-5-20251001',
+    })
+
+    def _determine_tier(self, model_id: str, tier_name: str) -> str:
+        """Determine actual tier for a model based on its ID."""
+        if tier_name not in self._LITELLM_MODEL_KEYS:
+            return tier_name
+        if 'nemotron' in model_id or 'llama-3.2-3b-instruct:free' in model_id or 'mistral-7b-instruct:free' in model_id:
+            return 'free'
+        if 'gpt-5.4-mini' in model_id or 'claude-haiku' in model_id:
+            return 'cheap'
+        if 'gpt-4o' in model_id or 'claude-sonnet' in model_id:
+            return 'balanced'
+        if 'claude-opus' in model_id:
+            return 'premium'
+        return tier_name
+
+    def _register_config_models(self, registry: Dict[str, Dict[str, Any]]) -> None:
+        """Add models from config into the registry."""
         for tier_name, model in self.config.models.items():
-            # Special handling for models loaded from LiteLLM config
-            # They might have model_name as key in config.models
-            if tier_name in ['nemotron-3-super', 'llama-3.2-3b-instruct', 'mistral-7b-instruct', 
-                            'qwen2.5-coder:7b', 'deepseek-chat-v3-0324', 'gpt-4o', 'gpt-5.4-mini',
-                            'claude-opus-4-20250514', 'claude-sonnet-4-20250514', 'claude-haiku-4-5-20251001']:
-                # These are from LiteLLM config, determine actual tier
-                if 'nemotron' in model.model_id or 'llama-3.2-3b-instruct:free' in model.model_id or 'mistral-7b-instruct:free' in model.model_id:
-                    actual_tier = 'free'
-                elif 'gpt-5.4-mini' in model.model_id or 'claude-haiku' in model.model_id:
-                    actual_tier = 'cheap'
-                elif 'gpt-4o' in model.model_id or 'claude-sonnet' in model.model_id:
-                    actual_tier = 'balanced'
-                elif 'claude-opus' in model.model_id:
-                    actual_tier = 'premium'
-                else:
-                    actual_tier = tier_name  # fallback
-            else:
-                actual_tier = tier_name  # Standard tiers (free, cheap, balanced, premium, local)
-            
+            actual_tier = self._determine_tier(model.model_id, tier_name)
             registry[model.model_id] = {
                 "tier": actual_tier,
                 "provider": self._get_provider(model.model_id),
                 "cost_per_input": getattr(model, "cost_per_input", None),
                 "cost_per_output": getattr(model, "cost_per_output", None),
             }
-        
-        # Add known free models (only verified working ones) - only if not already in registry
+
+    def _register_hardcoded_models(self, registry: Dict[str, Dict[str, Any]]) -> None:
+        """Add known free and cheap models if not already present."""
         free_models = {
             "openrouter/deepseek/deepseek-chat-v3-0324": {
-                "tier": "free",
-                "provider": "openrouter",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "openrouter",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             },
             "openrouter/meta-llama/llama-3.2-3b-instruct:free": {
-                "tier": "free",
-                "provider": "openrouter",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "openrouter",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             },
             "openrouter/mistral/mistral-7b-instruct:free": {
-                "tier": "free",
-                "provider": "openrouter",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "openrouter",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             },
             "ollama/qwen2.5-coder:7b": {
-                "tier": "free",
-                "provider": "ollama",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "ollama",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             },
             "ollama/llama3.2:3b": {
-                "tier": "free",
-                "provider": "ollama",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "ollama",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             },
             "ollama/deepseek-coder:6.7b": {
-                "tier": "free",
-                "provider": "ollama",
-                "cost_per_input": 0.0,
-                "cost_per_output": 0.0,
+                "tier": "free", "provider": "ollama",
+                "cost_per_input": 0.0, "cost_per_output": 0.0,
             }
         }
-        
-        # Add known cheap models
         cheap_models = {
             "openrouter/meta-llama/llama-3.1-8b-instruct": {
-                "tier": "cheap",
-                "provider": "openrouter",
-                "cost_per_input": 0.00006,
-                "cost_per_output": 0.00006,
+                "tier": "cheap", "provider": "openrouter",
+                "cost_per_input": 0.00006, "cost_per_output": 0.00006,
             }
         }
-        
-        # Only add models not already in registry
         for model_id, info in free_models.items():
             if model_id not in registry:
                 registry[model_id] = info
-        
-        # Add cheap models
         for model_id, info in cheap_models.items():
             if model_id not in registry:
                 registry[model_id] = info
-        
+
+    def _build_model_registry(self) -> Dict[str, Dict[str, Any]]:
+        """Build registry of available models with metadata."""
+        registry: Dict[str, Dict[str, Any]] = {}
+        self._register_config_models(registry)
+        self._register_hardcoded_models(registry)
         return registry
     
     def _get_provider(self, model_id: str) -> str:

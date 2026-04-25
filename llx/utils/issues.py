@@ -113,28 +113,37 @@ def resolve_issue_source(
 # ── Issue formatting ─────────────────────────────────────────────
 
 
+def _append_location(parts: list[str], issue: dict[str, Any]) -> None:
+    """Append file:line location to parts if present."""
+    location = issue.get("file") or issue.get("path")
+    if not location:
+        return
+    loc = str(location)
+    line = issue.get("line") or issue.get("lineno")
+    if line:
+        loc = f"{loc}:{line}"
+    parts.append(loc)
+
+
+def _append_first_present(parts: list[str], issue: dict[str, Any], *keys: str) -> None:
+    """Append the first present value from *keys* in *issue*."""
+    for key in keys:
+        value = issue.get(key)
+        if value:
+            parts.append(str(value))
+            return
+
+
 def issue_text(issue: Any) -> str:
     """Render one issue entry as a compact string."""
     if isinstance(issue, str):
         return issue
     if isinstance(issue, dict):
         parts: list[str] = []
-        location = issue.get("file") or issue.get("path")
-        line = issue.get("line") or issue.get("lineno")
-        if location:
-            loc = str(location)
-            if line:
-                loc = f"{loc}:{line}"
-            parts.append(loc)
-        severity = issue.get("severity") or issue.get("level")
-        if severity:
-            parts.append(str(severity))
-        code = issue.get("code") or issue.get("symbol")
-        if code:
-            parts.append(str(code))
-        message = issue.get("message") or issue.get("msg") or issue.get("description")
-        if message:
-            parts.append(str(message))
+        _append_location(parts, issue)
+        _append_first_present(parts, issue, "severity", "level")
+        _append_first_present(parts, issue, "code", "symbol")
+        _append_first_present(parts, issue, "message", "msg", "description")
         if parts:
             return " - ".join(parts)
     return str(issue)
@@ -213,15 +222,9 @@ _MAX_SNIPPET_LINES = 60
 _MAX_TOTAL_LINES = 300
 
 
-def _collect_file_context(
-    project_path: Path,
-    issues: list[Any],
-    max_snippet: int = _MAX_SNIPPET_LINES,
-    max_total: int = _MAX_TOTAL_LINES,
-) -> str:
-    """Extract file references from issues and include relevant snippets."""
-    refs: dict[str, int | None] = {}  # file -> optional line number
-
+def _extract_file_refs(issues: list[Any]) -> dict[str, int | None]:
+    """Collect file paths and optional line numbers from issues."""
+    refs: dict[str, int | None] = {}
     for issue in issues:
         if isinstance(issue, dict):
             f = issue.get("file") or issue.get("path")
@@ -234,7 +237,47 @@ def _collect_file_context(
             continue
         for m in _FILE_REF_RE.finditer(msg):
             refs.setdefault(m.group(1), None)
+    return refs
 
+
+def _read_snippet(
+    fp: Path,
+    file_rel: str,
+    line_hint: int | None,
+    max_snippet: int,
+    max_total: int,
+    total_lines: int,
+) -> tuple[str, int] | None:
+    """Read a snippet from *fp* and return (text, lines_consumed) or None."""
+    try:
+        content_lines = fp.read_text(errors="replace").splitlines()
+    except OSError:
+        return None
+    if not content_lines:
+        return None
+
+    if line_hint and line_hint > 1:
+        start = max(0, line_hint - max_snippet // 2)
+    else:
+        start = 0
+    end = min(len(content_lines), start + max_snippet)
+    remaining = max_total - total_lines
+    end = min(end, start + remaining)
+
+    snippet = "\n".join(content_lines[start:end])
+    line_info = f" (lines {start + 1}-{end})" if start > 0 or end < len(content_lines) else ""
+    text = f"--- {file_rel}{line_info} ---\n{snippet}"
+    return text, end - start
+
+
+def _collect_file_context(
+    project_path: Path,
+    issues: list[Any],
+    max_snippet: int = _MAX_SNIPPET_LINES,
+    max_total: int = _MAX_TOTAL_LINES,
+) -> str:
+    """Extract file references from issues and include relevant snippets."""
+    refs = _extract_file_refs(issues)
     if not refs:
         return ""
 
@@ -247,25 +290,11 @@ def _collect_file_context(
         fp = project_path / file_rel
         if not fp.is_file():
             continue
-        try:
-            content_lines = fp.read_text(errors="replace").splitlines()
-        except OSError:
+        result = _read_snippet(fp, file_rel, line_hint, max_snippet, max_total, total_lines)
+        if result is None:
             continue
-        if not content_lines:
-            continue
-
-        # Select a window around the hint line, or the start of the file
-        if line_hint and line_hint > 1:
-            start = max(0, line_hint - max_snippet // 2)
-        else:
-            start = 0
-        end = min(len(content_lines), start + max_snippet)
-        remaining = max_total - total_lines
-        end = min(end, start + remaining)
-
-        snippet = "\n".join(content_lines[start:end])
-        line_info = f" (lines {start + 1}-{end})" if start > 0 or end < len(content_lines) else ""
-        blocks.append(f"--- {file_rel}{line_info} ---\n{snippet}")
-        total_lines += end - start
+        text, consumed = result
+        blocks.append(text)
+        total_lines += consumed
 
     return "\n\n".join(blocks)

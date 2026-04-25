@@ -100,6 +100,13 @@ def _handle_status(args):
     return _delegate("docker", ["status", f"--env={args.env}"])
 
 
+_CONVENIENCE_HANDLERS: dict[str, callable] = {
+    "start": _handle_start,
+    "stop": _handle_stop,
+    "status": _handle_status,
+}
+
+
 def main():
     parser = _build_parser()
 
@@ -109,16 +116,10 @@ def main():
 
     component = sys.argv[1]
 
-    # Top-level convenience aliases
-    if component == "start":
+    handler = _CONVENIENCE_HANDLERS.get(component)
+    if handler:
         args = parser.parse_args()
-        success = _handle_start(args)
-    elif component == "stop":
-        args = parser.parse_args()
-        success = _handle_stop(args)
-    elif component == "status":
-        args = parser.parse_args()
-        success = _handle_status(args)
+        success = handler(args)
     elif component in _CLI_MODULES:
         remaining = sys.argv[2:]
         success = _delegate(component, remaining)

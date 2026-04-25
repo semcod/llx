@@ -1,11 +1,9 @@
-# code2llm | 177f 33122L | python:168,shell:8 | 2026-04-09
-# CC̄=3.7 | critical:9/1373 | dups:0 | cycles:0
+# code2llm | 312f 58979L | python:190,yaml:56,shell:31,yml:10,txt:4,json:3,conf:3,toml:1 | 2026-04-25
+# CC̄=2.6 | critical:8/1914 | dups:0 | cycles:0
 
-HEALTH[10]:
+HEALTH[8]:
+  🟡 CC    main CC=19 (limit:15)
   🟡 CC    main CC=15 (limit:15)
-  🟡 CC    fix CC=25 (limit:15)
-  🟡 CC    _apply_markdown_code_block_strategy CC=22 (limit:15)
-  🟡 CC    _apply_openai_patch CC=21 (limit:15)
   🟡 CC    _parse_unified_hunks CC=16 (limit:15)
   🟡 CC    _build_model_registry CC=15 (limit:15)
   🟡 CC    detect_from_files CC=15 (limit:15)
@@ -14,87 +12,91 @@ HEALTH[10]:
   🟡 CC    _collect_file_context CC=20 (limit:15)
 
 REFACTOR[1]:
-  1. split 10 high-CC methods  (CC>15)
+  1. split 8 high-CC methods  (CC>15)
 
-PIPELINES[987]:
-  [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
+PIPELINES[1068]:
+  [1] Src [test]: test → _normalize_strategy_data
       PURITY: 100% pure
-  [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
+  [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix
       PURITY: 100% pure
-  [3] Src [__init__]: __init__
+  [3] Src [main]: main → print
       PURITY: 100% pure
-  [4] Src [increment_successful_requests]: increment_successful_requests
+  [4] Src [__init__]: __init__
       PURITY: 100% pure
-  [5] Src [increment_failed_requests]: increment_failed_requests
+  [5] Src [increment_successful_requests]: increment_successful_requests
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=3.8    ←in:22  →out:0
+  llx/                            CC̄=3.7    ←in:21  →out:12  !! split
   │ !! tools                      995L  1C   17m  CC=13     ←0
   │ !! config_manager             794L  1C   45m  CC=12     ←0
   │ !! vscode_manager             791L  1C   38m  CC=10     ←0
   │ !! model_manager              756L  1C   36m  CC=8      ←0
-  │ !! fix                        712L  0C   16m  CC=25     ←0
-  │ !! trace                      648L  2C   29m  CC=13     ←2
+  │ !! trace                      648L  2C   29m  CC=13     ←0
   │ !! orchestrator               642L  1C   28m  CC=10     ←0
   │ !! engine                     638L  1C   38m  CC=11     ←0
-  │ !! ai_tools_manager           597L  1C   29m  CC=12     ←0
   │ !! orchestrator               595L  1C   27m  CC=12     ←0
   │ !! health_checker             589L  1C   27m  CC=10     ←0
   │ !! manager                    556L  1C   18m  CC=12     ←0
   │ !! docker_manager             552L  1C   24m  CC=10     ←0
   │ !! limiter                    508L  1C   17m  CC=15     ←0
+  │ !! planfile_config.yaml       508L  0C    0m  CC=0.0    ←0
   │ manager                    495L  1C   21m  CC=9      ←0
   │ pipeline                   483L  5C   18m  CC=9      ←1
-  │ collector                  482L  1C   21m  CC=10     ←7
-  │ generate_strategy          470L  0C   19m  CC=9      ←2
-  │ core                       468L  1C   11m  CC=10     ←5
-  │ server                     447L  10C    9m  CC=12     ←2
+  │ collector                  482L  1C   21m  CC=10     ←0
+  │ generate_strategy          470L  0C   19m  CC=9      ←0
+  │ core                       468L  1C   11m  CC=10     ←0
+  │ server                     447L  10C    9m  CC=12     ←1
   │ manager                    445L  1C   20m  CC=14     ←0
   │ models                     432L  33C    2m  CC=1      ←1
-  │ deanonymize                424L  4C   16m  CC=8      ←1
+  │ deanonymize                424L  4C   16m  CC=8      ←0
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
-  │ app                        413L  0C   19m  CC=7      ←1
-  │ config                     376L  4C    9m  CC=13     ←10
+  │ app                        413L  0C   19m  CC=7      ←0
+  │ config                     376L  4C    9m  CC=13     ←9
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
-  │ _streaming_impl            345L  3C   18m  CC=6      ←0
-  │ proxym                     331L  3C   12m  CC=8      ←1
+  │ proxym                     331L  3C   12m  CC=8      ←0
   │ query_decomposer           330L  1C   10m  CC=9      ←0
-  │ formatters                 312L  0C   12m  CC=14     ←2
-  │ __core                     291L  3C   13m  CC=8      ←1
+  │ formatters                 312L  0C   12m  CC=14     ←0
+  │ _streaming_impl            295L  2C   15m  CC=6      ←0
+  │ __core                     291L  3C   13m  CC=8      ←0
   │ client                     287L  3C   11m  CC=11     ←0
-  │ selector                   281L  2C    9m  CC=8      ←5
+  │ selector                   281L  2C    9m  CC=8      ←2
   │ !! model_selector             279L  4C   12m  CC=15     ←0
   │ cli                        278L  0C   13m  CC=3      ←0
-  │ executor_simple            276L  1C    7m  CC=13     ←1
+  │ executor_simple            276L  1C    7m  CC=13     ←0
   │ process_chain              275L  1C   10m  CC=7      ←0
-  │ !! issues                     271L  0C    7m  CC=20     ←2
+  │ !! issues                     271L  0C    7m  CC=20     ←0
   │ health_runner              266L  1C   10m  CC=10     ←0
-  │ runner                     263L  0C    5m  CC=12     ←3
+  │ runner                     263L  0C    5m  CC=12     ←0
   │ sensitive_filter           262L  1C   14m  CC=7      ←0
   │ pipeline_ops               257L  0C    5m  CC=12     ←1
   │ context_engine             248L  1C   13m  CC=13     ←0
   │ service                    243L  1C   14m  CC=4      ←0
-  │ budget                     233L  3C   11m  CC=6      ←2
+  │ ai_tools_manager           241L  1C   17m  CC=5      ←0
+  │ utils                      240L  3C   13m  CC=6      ←0
+  │ budget                     233L  3C   11m  CC=6      ←0
   │ cli_config                 232L  0C    6m  CC=9      ←0
-  │ extractors                 229L  0C   11m  CC=7      ←1
+  │ extractors                 229L  0C   11m  CC=7      ←0
   │ _project_ast               226L  1C   10m  CC=10     ←0
   │ folder_compressor          224L  1C   10m  CC=11     ←0
-  │ executors                  223L  0C    6m  CC=5      ←1
-  │ _nfo_compat                220L  3C   11m  CC=4      ←1
+  │ executors                  223L  0C    6m  CC=5      ←0
+  │ _nfo_compat                220L  3C   11m  CC=4      ←0
+  │ fix                        218L  0C    9m  CC=8      ←0
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
   │ cli                        193L  0C    6m  CC=8      ←0
+  │ aider                      192L  0C    3m  CC=10     ←0
   │ preprocessor               188L  2C    6m  CC=13     ←0
-  │ cli_query                  186L  0C    5m  CC=9      ←2
+  │ cli_query                  186L  0C    5m  CC=9      ←0
   │ _project_context           185L  2C   13m  CC=2      ←3
   │ prompt_registry            185L  5C   11m  CC=6      ←1
   │ cli                        183L  0C   10m  CC=5      ←0
-  │ context_ops                181L  0C    8m  CC=5      ←1
+  │ context_ops                181L  0C    8m  CC=5      ←0
   │ llm                        171L  2C    8m  CC=10     ←0
   │ shell_collector            169L  1C    8m  CC=5      ←0
-  │ cli_utils                  164L  0C    5m  CC=5      ←2
+  │ cli_utils                  164L  0C    5m  CC=5      ←0
+  │ pipelines.yaml             161L  0C    0m  CC=0.0    ←0
   │ models                     159L  8C    5m  CC=6      ←1
   │ cli                        158L  0C   11m  CC=5      ←0
   │ litellm_config             151L  2C   10m  CC=4      ←1
@@ -105,62 +107,81 @@ LAYERS:
   │ workflows                  146L  1C    3m  CC=8      ←0
   │ config_io                  142L  0C    2m  CC=6      ←0
   │ examples                   141L  0C    5m  CC=2      ←0
-  │ server                     141L  0C    8m  CC=2      ←1
+  │ server                     141L  0C    8m  CC=2      ←0
   │ _project_anonymizer        138L  2C    8m  CC=10     ←0
   │ cli                        136L  0C   11m  CC=6      ←0
   │ cli                        133L  0C    6m  CC=8      ←0
-  │ proxy                      131L  0C    3m  CC=7      ←2
+  │ proxy                      131L  0C    3m  CC=7      ←0
+  │ prellm_config.yaml         130L  0C    0m  CC=0.0    ←0
   │ executor                   128L  2C    3m  CC=8      ←0
   │ bump_version               125L  0C    7m  CC=5      ←0
+  │ config.yaml                125L  0C    0m  CC=0.0    ←0
   │ config                     124L  1C    5m  CC=5      ←0
   │ __init__                   121L  0C    1m  CC=1      ←0
   │ cli                        117L  0C    7m  CC=6      ←0
   │ cli                        114L  0C    7m  CC=7      ←0
   │ _persistence               112L  0C    2m  CC=9      ←0
+  │ !! _patch_apply               110L  0C    4m  CC=16     ←0
   │ strategy_commands          110L  0C    5m  CC=6      ←0
+  │ project_types.yaml         109L  0C    0m  CC=0.0    ←0
   │ client                     106L  1C    6m  CC=6      ←0
   │ engine                     105L  1C    5m  CC=9      ←0
   │ verify_push_publish        104L  0C    4m  CC=6      ←0
   │ !! detector                   104L  1C    7m  CC=15     ←0
-  │ logging_setup              103L  0C    3m  CC=5      ←1
+  │ logging_setup              103L  0C    3m  CC=5      ←0
   │ deanonymize_engine         101L  1C    4m  CC=7      ←0
   │ cli_context                101L  0C    2m  CC=9      ←0
   │ models                     101L  6C    0m  CC=0.0    ←0
+  │ prompts.yaml                94L  0C    0m  CC=0.0    ←0
   │ __init__                    89L  0C    0m  CC=0.0    ←0
   │ lint                        86L  0C    3m  CC=6      ←0
   │ security_audit              85L  0C    3m  CC=4      ←0
-  │ runner                      82L  1C    6m  CC=6      ←3
-  │ env_config                  80L  0C    2m  CC=4      ←4
-  │ model_catalog               78L  0C    2m  CC=8      ←1
+  │ formatting                  85L  0C    2m  CC=4      ←0
+  │ devops.yaml                 85L  0C    0m  CC=0.0    ←0
+  │ runner                      82L  1C    6m  CC=6      ←0
+  │ env_config                  80L  0C    2m  CC=4      ←0
+  │ model_catalog               78L  0C    2m  CC=8      ←0
+  │ polish_finance.yaml         78L  0C    0m  CC=0.0    ←0
+  │ embedded.yaml               78L  0C    0m  CC=0.0    ←0
   │ models                      75L  5C    1m  CC=2      ←0
   │ models                      75L  6C    0m  CC=0.0    ←0
+  │ coding.yaml                 75L  0C    0m  CC=0.0    ←0
+  │ embedded.yaml               75L  0C    0m  CC=0.0    ←0
+  │ devops_k8s.yaml             75L  0C    0m  CC=0.0    ←0
   │ publish                     74L  0C    4m  CC=3      ←0
-  │ deanonymize_utils           72L  0C    6m  CC=3      ←1
+  │ deanonymize_utils           72L  0C    6m  CC=3      ←0
   │ type_check                  71L  0C    2m  CC=7      ←0
+  │ business.yaml               67L  0C    0m  CC=0.0    ←0
+  │ detect_secrets              65L  0C    3m  CC=4      ←0
   │ ports                       64L  1C    5m  CC=4      ←0
-  │ loader                      63L  0C    2m  CC=5      ←1
+  │ rules.yaml                  64L  0C    0m  CC=0.0    ←0
+  │ loader                      63L  0C    2m  CC=5      ←0
   │ algo_handlers               62L  1C   12m  CC=3      ←0
-  │ detect_secrets              61L  0C    2m  CC=4      ←0
   │ models                      61L  4C    0m  CC=0.0    ←0
   │ models                      61L  4C    0m  CC=0.0    ←0
   │ __init__                    56L  0C    0m  CC=0.0    ←0
   │ models                      54L  4C    0m  CC=0.0    ←0
-  │ _docker                     53L  0C    3m  CC=3      ←2
+  │ _docker                     53L  0C    3m  CC=3      ←0
+  │ deploy.yaml                 52L  0C    0m  CC=0.0    ←0
+  │ _streaming_parallel         51L  1C    2m  CC=4      ←0
   │ config                      48L  4C    0m  CC=0.0    ←0
+  │ response_schemas.yaml       45L  0C    0m  CC=0.0    ←0
   │ project                     44L  0C    0m  CC=0.0    ←0
   │ ports                       43L  1C    4m  CC=4      ←0
   │ streaming                   43L  0C    0m  CC=0.0    ←0
   │ models                      42L  3C    0m  CC=0.0    ←0
   │ _crud                       41L  0C    3m  CC=3      ←0
   │ _cmd_status                 40L  0C    1m  CC=1      ←0
-  │ _utils                      37L  0C    2m  CC=3      ←9
-  │ health                      36L  0C    2m  CC=5      ←1
+  │ _utils                      37L  0C    2m  CC=3      ←0
+  │ health                      36L  0C    2m  CC=5      ←0
   │ __init__                    36L  0C    0m  CC=0.0    ←0
   │ _cmd_remove                 35L  0C    1m  CC=1      ←0
   │ __init__                    35L  0C    0m  CC=0.0    ←0
+  │ sensitive_rules.yaml        34L  0C    0m  CC=0.0    ←0
   │ _cmd_uninstall_extension    31L  0C    1m  CC=1      ←0
   │ analyze                     31L  0C    1m  CC=5      ←0
-  │ cli_main                    30L  0C    1m  CC=3      ←13
+  │ cli_main                    30L  0C    1m  CC=3      ←0
+  │ models                      29L  0C    1m  CC=4      ←0
   │ __init__                    26L  0C    0m  CC=0.0    ←0
   │ planner                     25L  0C    1m  CC=9      ←0
   │ __init__                    25L  0C    0m  CC=0.0    ←0
@@ -168,7 +189,7 @@ LAYERS:
   │ deanonymize_results         23L  2C    0m  CC=0.0    ←0
   │ defaults                    22L  0C    1m  CC=1      ←0
   │ __init__                    22L  0C    0m  CC=0.0    ←0
-  │ lazy_imports                21L  0C    1m  CC=2      ←1
+  │ lazy_imports                21L  0C    1m  CC=2      ←0
   │ __init__                    21L  0C    0m  CC=0.0    ←0
   │ lazy_loader                 20L  1C    3m  CC=2      ←0
   │ __init__                    17L  0C    0m  CC=0.0    ←0
@@ -193,64 +214,202 @@ LAYERS:
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
+  examples/                       CC̄=3.1    ←in:0  →out:0
+  │ !! 01_api_integration         539L  2C    4m  CC=15     ←0
+  │ !! 01_entropy_ml_detection    506L  3C   12m  CC=14     ←0
+  │ 04_behavioral_learning     482L  3C   14m  CC=11     ←0
+  │ 03_contextual_passwords    462L  2C   10m  CC=12     ←0
+  │ 02_multi_stage             436L  2C    5m  CC=6      ←0
+  │ 03_cicd_integration        406L  2C    8m  CC=9      ←0
+  │ docker.sh                  385L  0C   14m  CC=0.0    ←2
+  │ hybrid.sh                  347L  0C    3m  CC=0.0    ←0
+  │ filtering.sh               294L  0C    7m  CC=0.0    ←5
+  │ generate_simple.sh         276L  0C    6m  CC=0.0    ←0
+  │ 02_hybrid_system           231L  2C   13m  CC=12     ←0
+  │ run.sh                     195L  0C    4m  CC=0.0    ←0
+  │ 01_anonymize_project       177L  0C    2m  CC=4      ←0
+  │ strategy_complete.yaml     164L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml              138L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml              126L  0C    0m  CC=0.0    ←0
+  │ 01_streaming_anonymization   125L  0C    2m  CC=5      ←0
+  │ 02_deanonymize_project     122L  0C    1m  CC=4      ←0
+  │ 02_custom_patterns          86L  0C    1m  CC=3      ←0
+  │ docker-compose.yml          82L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml               80L  0C    0m  CC=0.0    ←0
+  │ 01_text_anonymization       77L  0C    1m  CC=3      ←0
+  │ docker-compose.yml          77L  0C    0m  CC=0.0    ←0
+  │ strategy_cheaper.yaml       73L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          72L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          70L  0C    0m  CC=0.0    ←0
+  │ strategy_desc.yaml          63L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          63L  0C    0m  CC=0.0    ←0
+  │ pyqual-llx.yaml             57L  0C    0m  CC=0.0    ←0
+  │ setup-aliases.sh            56L  0C    0m  CC=0.0    ←0
+  │ pyqual-llx-demo.sh          55L  0C    0m  CC=0.0    ←0
+  │ planfile_config.yaml        48L  0C    0m  CC=0.0    ←0
+  │ run.sh                      43L  0C    0m  CC=0.0    ←0
+  │ run.sh                      42L  0C    0m  CC=0.0    ←0
+  │ run.sh                      42L  0C    0m  CC=0.0    ←0
+  │ run.sh                      41L  0C    0m  CC=0.0    ←0
+  │ run.sh                      32L  0C    0m  CC=0.0    ←0
+  │ run.sh                      32L  0C    0m  CC=0.0    ←0
+  │ run.sh                      31L  0C    0m  CC=0.0    ←0
+  │ run.sh                      31L  0C    0m  CC=0.0    ←0
+  │ run.sh                      28L  0C    0m  CC=0.0    ←0
+  │ proxy-test.yaml             27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      27L  0C    0m  CC=0.0    ←0
+  │ run.sh                      26L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml               25L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml               25L  0C    0m  CC=0.0    ←0
+  │ strategy-FocusArea.COMPLEXITY-20260326-155016.yaml    22L  0C    0m  CC=0.0    ←0
+  │ cleanup.sh                  21L  0C    0m  CC=0.0    ←0
+  │ duplication.json            16L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          16L  0C    0m  CC=0.0    ←0
+  │ duplication.json            16L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml          16L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml               11L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │
   scripts/                        CC̄=2.9    ←in:0  →out:19  !! split
   │ pyqual_auto                257L  0C   10m  CC=8      ←0
+  │
+  test-api-qwen/                  CC̄=1.8    ←in:0  →out:0
+  │ main                       122L  3C    6m  CC=4      ←0
+  │ models                      19L  3C    0m  CC=0.0    ←0
+  │ __init__                     4L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=1.6    ←in:0  →out:0
+  │ !! planfile.yaml              959L  0C    0m  CC=0.0    ←0
+  │ Taskfile.yml               498L  0C    1m  CC=0.0    ←56
+  │ goal.yaml                  429L  0C    0m  CC=0.0    ←0
+  │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
+  │ docker-compose.yml         352L  0C    0m  CC=0.0    ←0
+  │ ai-tools-manage.sh         351L  0C   15m  CC=0.0    ←0
+  │ docker-compose-prod.yml    261L  0C    0m  CC=0.0    ←0
+  │ !! test-local-chat            186L  0C    6m  CC=19     ←0
+  │ docker-compose-dev.yml     156L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             145L  0C    0m  CC=0.0    ←0
+  │ test.yaml                  114L  0C    0m  CC=0.0    ←0
+  │ strategy.yaml              107L  0C    0m  CC=0.0    ←0
+  │ pyqual.yaml                 96L  0C    0m  CC=0.0    ←0
+  │ redsl.yaml                  84L  0C    0m  CC=0.0    ←0
+  │ prefact.yaml                82L  0C    0m  CC=0.0    ←0
+  │ simple_generate             71L  0C    1m  CC=4      ←0
+  │ refactor-strategy.yaml      70L  0C    0m  CC=0.0    ←0
+  │ trace                       49L  0C    1m  CC=11     ←0
+  │ project.sh                  46L  0C    0m  CC=0.0    ←0
+  │ generate.sh                 28L  0C    0m  CC=0.0    ←0
+  │ redsl_refactor_report.toon.yaml    25L  0C    0m  CC=0.0    ←0
+  │ redsl_refactor_plan.toon.yaml    22L  0C    0m  CC=0.0    ←0
+  │ requirements.txt            12L  0C    0m  CC=0.0    ←0
+  │ requirements-dev.txt         9L  0C    0m  CC=0.0    ←0
+  │ github.planfile.yaml         4L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   my-api/                         CC̄=1.5    ←in:0  →out:0
   │ monitoring                 125L  4C   14m  CC=2      ←0
   │ main                       107L  2C   11m  CC=3      ←0
+  │ docker-compose.yml          64L  0C    0m  CC=0.0    ←0
   │ models                      42L  5C    0m  CC=0.0    ←0
+  │ requirements.txt             6L  0C    0m  CC=0.0    ←0
   │ __init__                     4L  0C    0m  CC=0.0    ←0
-  │
-  ./                              CC̄=0.6    ←in:0  →out:0
-  │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
-  │ ai-tools-manage.sh         351L  0C   15m  CC=0.0    ←0
-  │ simple_generate             71L  0C    1m  CC=4      ←0
-  │ trace                       49L  0C    1m  CC=11     ←0
-  │ project.sh                  35L  0C    0m  CC=0.0    ←0
-  │ generate.sh                 28L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
   │ install-tools.sh           369L  0C    0m  CC=0.0    ←0
-  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←56
+  │ llx.conf                   241L  0C    0m  CC=0.0    ←0
+  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←0
+  │ settings.json               98L  0C    0m  CC=0.0    ←0
+  │ redis.conf                  86L  0C    0m  CC=0.0    ←0
+  │ nginx.conf                  81L  0C    0m  CC=0.0    ←0
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
+  project/                        CC̄=0.0    ←in:0  →out:0
+  │ !! calls.yaml                7235L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             3106L  0C  535m  CC=0.0    ←58
+  │ !! calls.toon.yaml            617L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         480L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml      244L  0C    0m  CC=0.0    ←0
+  │ validation.toon.yaml       157L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         70L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           53L  0C    0m  CC=0.0    ←0
+  │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
+  │
+  code2llm_output/                CC̄=0.0    ←in:0  →out:0
+  │ analysis.toon.yaml         217L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         217L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         217L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         70L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         70L  0C    0m  CC=0.0    ←0
+  │
   ── zero ──
+     Dockerfile                                0L
+     Makefile                                  0L
+     examples/basic/my-api/Dockerfile          0L
+     examples/python-api/my-api-complete/Dockerfile  0L
+     examples/python-api/my-api-final/Dockerfile  0L
+     examples/python-api/my-api-restaurant/Dockerfile  0L
+     examples/python-api/test-api/Dockerfile   0L
+     examples/python-api/test-cli-debug/Dockerfile  0L
+     examples/python-api/test-cli-final/Dockerfile  0L
+     examples/python-api/test-cli-v2/Dockerfile  0L
+     examples/python-api/test-cli/Dockerfile   0L
+     examples/python-api/test-project/Dockerfile  0L
      llx/prellm/chains/__init__.py             0L
+     my-api/Dockerfile                         0L
 
 COUPLING:
-                         docker.ai-tools           llx.tools   llx.orchestration  llx.pyqual_plugins             llx.cli        llx.planfile                 llx             llx.mcp           llx.utils             scripts        llx.analysis         llx.routing    llx.integrations        llx.commands          llx.prellm
-     docker.ai-tools                  ──                ←487                ←319                 ←76                 ←24                 ←26                                                                             ←19                                                                                                      hub
-           llx.tools                 487                  ──                                                                                                                                           6                                                                                                                          !! fan-out
-   llx.orchestration                 319                                      ──                                                                                                                       7                                                                                                                          !! fan-out
-  llx.pyqual_plugins                  76                                                          ──                                                                                                                                                                                                                              !! fan-out
-             llx.cli                  24                                                                              ──                   6                  11                                                                               6                   6                   3                                          !! fan-out
-        llx.planfile                  26                                                                              ←6                  ──                   2                  ←1                                                           2                                                                                  hub
-                 llx                                                                                                 ←11                  ←2                  ──                  ←5                                                                              ←1                  ←2                  ←1                      hub
-             llx.mcp                                                                                                                       1                   5                  ──                   3                                       6                   2                   1                                       2  !! fan-out
-           llx.utils                                      ←6                  ←7                                                                                                   1                  ──                                                                                                  ←2                   1  hub
-             scripts                  19                                                                                                                                                                                  ──                                                                                                      !! fan-out
-        llx.analysis                                                                                                  ←6                  ←2                                      ←6                                                          ──                                      ←1                  ←1                      hub
-         llx.routing                                                                                                  ←6                                       1                  ←2                                                                              ──                   1                                          hub
-    llx.integrations                                                                                                  ←3                                       2                  ←1                                                           1                   1                  ──                                          hub
-        llx.commands                                                                                                                                           1                                       2                                       1                                                          ──                   1
-          llx.prellm                                                                                                                                                              ←2                  ←1                                                                                                  ←1                  ──
+                                Taskfile    examples.privacy           llx.tools   llx.orchestration         project.map  llx.pyqual_plugins             llx.cli          llx.prellm     test-local-chat        llx.planfile                 llx             llx.mcp         llx.privacy             scripts        llx.commands
+            Taskfile                  ──                ←435                ←405                ←319                                     ←76                 ←24                                     ←39                 ←26                                                                             ←19                      hub
+    examples.privacy                 435                  ──                                                           3                                                                                                                                                                                                          !! fan-out
+           llx.tools                 405                                      ──                                      10                                                                                                                                                                                                          !! fan-out
+   llx.orchestration                 319                                                          ──                  22                                                                                                                                                                                                          !! fan-out
+         project.map                                      ←3                 ←10                 ←22                  ──                                     ←26                 ←59                                      ←6                 ←12                 ←15                 ←18                                     ←13  hub
+  llx.pyqual_plugins                  76                                                                                                  ──                                                                                                                                                                                      !! fan-out
+             llx.cli                  24                                                                              26                                      ──                                                                              11                                                                                  !! fan-out
+          llx.prellm                                                                                                  59                                                          ──                                                                              ←1                                                              !! fan-out
+     test-local-chat                  39                                                                                                                                                              ──                                                                                                                          !! fan-out
+        llx.planfile                  26                                                                               6                                                                                                  ──                   2                                                                                  !! fan-out
+                 llx                                                                                                  12                                     ←11                                                          ←2                  ──                  ←5                                                          ←1  hub
+             llx.mcp                                                                                                  15                                                           1                                                           5                  ──                   1                                          !! fan-out
+         llx.privacy                                                                                                  18                                                                                                                                          ←1                  ──                                          !! fan-out
+             scripts                  19                                                                                                                                                                                                                                                                  ──                      !! fan-out
+        llx.commands                                                                                                  13                                                                                                                       1                                                                              ──  !! fan-out
   CYCLES: none
-  HUB: llx.planfile/ (fan-in=10)
-  HUB: llx.routing/ (fan-in=9)
-  HUB: llx.integrations/ (fan-in=5)
-  HUB: llx/ (fan-in=22)
-  HUB: llx.analysis/ (fan-in=16)
-  HUB: llx.utils/ (fan-in=18)
-  HUB: docker.ai-tools/ (fan-in=951)
-  SMELL: llx.planfile/ fan-out=30 → split needed
-  SMELL: llx.tools/ fan-out=493 → split needed
-  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
-  SMELL: llx.orchestration/ fan-out=326 → split needed
-  SMELL: llx.mcp/ fan-out=21 → split needed
+  HUB: project.map/ (fan-in=194)
+  HUB: Taskfile/ (fan-in=1355)
+  HUB: examples.docker/ (fan-in=7)
+  HUB: llx/ (fan-in=21)
+  HUB: examples.filtering/ (fan-in=5)
+  SMELL: llx.cli/ fan-out=64 → split needed
+  SMELL: llx.privacy/ fan-out=18 → split needed
+  SMELL: llx.commands/ fan-out=15 → split needed
   SMELL: scripts/ fan-out=19 → split needed
-  SMELL: llx.cli/ fan-out=56 → split needed
+  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
+  SMELL: llx.tools/ fan-out=422 → split needed
+  SMELL: llx.planfile/ fan-out=34 → split needed
+  SMELL: llx.orchestration/ fan-out=341 → split needed
+  SMELL: llx/ fan-out=12 → split needed
+  SMELL: test-local-chat/ fan-out=39 → split needed
+  SMELL: llx.examples/ fan-out=13 → split needed
+  SMELL: llx.mcp/ fan-out=23 → split needed
+  SMELL: examples.privacy/ fan-out=438 → split needed
+  SMELL: llx.prellm/ fan-out=59 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
