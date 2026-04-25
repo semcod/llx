@@ -44,10 +44,15 @@ help:
 # Installation
 install:
 	@echo "📦 Installing llx..."
-	python -m venv .venv
-	.venv/bin/pip install --upgrade pip
-	.venv/bin/pip install -e .
-	.venv/bin/pip install -r requirements-dev.txt
+	@if command -v uv > /dev/null 2>&1; then \
+		uv venv; \
+		.venv/bin/pip install --upgrade pip; \
+		uv pip install -e ".[dev]"; \
+	else \
+		python -m venv .venv; \
+		.venv/bin/pip install --upgrade pip; \
+		.venv/bin/pip install -e ".[dev]"; \
+	fi
 	@echo "✅ Installation completed!"
 	@echo "Run 'source .venv/bin/activate' to activate the virtual environment"
 
@@ -93,15 +98,15 @@ test-docker:
 	docker run --rm llx-test .venv/bin/python -m pytest tests/ -v
 
 lint:
-	@echo "🔍 Running linting..."
-	.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503
+	@echo "🔍 Running linting with ruff..."
+	.venv/bin/python -m ruff check llx/
+	.venv/bin/python -m ruff check tests/
 	.venv/bin/python -m mypy llx/ --ignore-missing-imports
-	.venv/bin/python -m black --check llx/
 
 format:
-	@echo "📝 Formatting code..."
-	.venv/bin/python -m black llx/
-	.venv/bin/python -m isort llx/
+	@echo "📝 Formatting code with ruff..."
+	.venv/bin/python -m ruff format llx/
+	.venv/bin/python -m ruff format tests/
 
 # Docker commands
 docker-dev:
@@ -231,8 +236,8 @@ ci-test:
 	.venv/bin/python -m pytest tests/ -v --cov=llx --cov-report=xml --cov-report=html
 
 ci-lint:
-	@echo "🔍 CI linting..."
-	.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503 --output-format=github
+	@echo "🔍 CI linting with ruff..."
+	.venv/bin/python -m ruff check llx/ --format=github
 	.venv/bin/python -m mypy llx/ --ignore-missing-imports --junit-xml test-results.xml
 
 ci-build:

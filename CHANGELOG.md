@@ -106,6 +106,17 @@
 
 ## [Unreleased]
 
+
+- feat(pyqual): extract pipeline stages to reusable plugins in llx/pyqual_plugins
+- feat(pyqual): make publish idempotent with auto version bump
+- feat(config): deep code analysis engine with supporting modules
+- feat(config): new API capabilities
+- feat(goal): CLI interface improvements
+- test(pyqual): automate pyqual GitHub sync
+- fix(ci): address pyqual CI failures
+- chore(release): bump version for release and add build/publish stages
+- refactor(docs,examples,tests,llx): reorganize code analysis engine, configuration management, and quality metrics modules
+
 ## [0.1.60] - 2026-04-25
 
 ### Docs

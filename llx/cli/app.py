@@ -248,6 +248,74 @@ def plan_execute(
     )
 
 
+@plan_app.command("run")
+def plan_run(
+    strategy: str = typer.Argument(..., help="Strategy YAML file (or 'planfile.yaml')"),
+    project_path: Path = typer.Option(Path("."), "--project", "-p"),
+    sprint: Optional[int] = typer.Option(None, "--sprint", "-s", help="Run specific sprint only"),
+    tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"),
+    dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Simulate without executing"),
+) -> None:
+    """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
+    from llx.planfile.executor_simple import execute_strategy
+    
+    # Auto-detect planfile.yaml if strategy is "."
+    if strategy == ".":
+        strategy = "planfile.yaml"
+    
+    console.print(f"[bold]Running planfile:[/bold] {strategy}")
+    console.print(f"[dim]Project:[/dim] {project_path}")
+    if sprint:
+        console.print(f"[dim]Sprint:[/dim] {sprint}")
+    if tier:
+        console.print(f"[dim]Tier:[/dim] {tier}")
+    if dry_run:
+        console.print(f"[dim]Mode:[/dim] dry-run")
+    
+    # Map tier to model override
+    model_override = None
+    if tier:
+        config = LlxConfig.load(str(project_path))
+        tier_model = config.models.get(tier)
+        if tier_model:
+            model_override = tier_model.model_id
+            console.print(f"[dim]Model:[/dim] {model_override}")
+        else:
+            console.print(f"[yellow]Warning:[/yellow] Tier '{tier}' not found in config")
+    
+    def on_progress(msg: str):
+        console.print(f"[dim]  {msg}[/dim]")
+    
+    try:
+        results = execute_strategy(
+            strategy_path=strategy,
+            project_path=project_path,
+            sprint_filter=sprint,
+            dry_run=dry_run,
+            on_progress=on_progress,
+            model_override=model_override
+        )
+        
+        # Summary
+        console.print("\n[bold]Results:[/bold]")
+        success = sum(1 for r in results if r.status == "success")
+        failed = sum(1 for r in results if r.status == "failed")
+        skipped = sum(1 for r in results if r.status in ["dry_run", "skipped"])
+        
+        console.print(f"  [green]✓ Success:[/green] {success}")
+        console.print(f"  [red]✗ Failed:[/red] {failed}")
+        console.print(f"  [dim]⊘ Skipped:[/dim] {skipped}")
+        
+        if failed > 0:
+            for result in results:
+                if result.status == "failed":
+                    console.print(f"    [red]✗ {result.task_name}:[/red] {result.error}")
+        
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
+
+
 @app.command()
 def models(
     tag: Optional[str] = typer.Argument(None, help="Filter models by tag (e.g., FAST, FREE, PROGRAMMING)"),

@@ -11,8 +11,6 @@
 - [ ] llx/analysis/collector.py:20 - Magic number: 30 - use named constant
 - [ ] llx/analysis/collector.py:22 - Magic number: 20 - use named constant
 - [ ] llx/analysis/collector.py:24 - Magic number: 20 - use named constant
-- [x] llx/analysis/runner.py:14 - Magic number: 120 - use named constant
-- [x] llx/analysis/runner.py:15 - Magic number: 500 - use named constant
 - [ ] llx/cli/formatters.py:117 - String concatenation can be converted to f-string
 - [ ] llx/cli/formatters.py:16 - Magic number: 18 - use named constant
 - [ ] llx/cli/formatters.py:17 - Magic number: 15 - use named constant
@@ -23,7 +21,6 @@
 - [ ] llx/cli/app.py:14 - Unused import: 'annotations'
 - [ ] llx/cli/app.py:152 - Magic number: 4000 - use named constant
 - [ ] llx/cli/app.py:192 - Magic number: 8000 - use named constant
-- [x] llx/cli/strategy_commands.py:8 - Relative import (level=2): '..planfile'
 - [ ] llx/cli/strategy_commands.py:20 - Function 'create_strategy' missing return type (suggested: -> None)
 - [ ] llx/cli/strategy_commands.py:35 - Function 'validate_strategy' missing return type (suggested: -> None)
 - [ ] llx/cli/strategy_commands.py:53 - Function 'run_strategy_command' missing return type (suggested: -> None)
@@ -36,29 +33,6 @@
 - [ ] llx/commands/fix.py:3 - Unused import re
 - [ ] llx/commands/fix.py:3 - Unused import: 're'
 - [ ] llx/commands/fix.py:26 - LLM-style docstring in apply_code_changes
-- [x] llx/detection/__init__.py:3 - Relative import (level=1): '.detector'
-- [x] llx/config.py:33 - Relative import (level=1): '.litellm_config'
-- [x] llx/config.py:13 - Unused import: 'annotations'
-- [x] llx/config.py:26 - Duplicate import: 'tomllib' (first at line 23)
-- [x] llx/config.py:29 - Duplicate import: 'tomllib' (first at line 23)
-- [x] llx/config.py:43 - Magic number: 200000 - use named constant
-- [x] llx/config.py:58 - Magic number: 50 - use named constant
-- [x] llx/config.py:63 - Magic number: 20000 - use named constant
-- [x] llx/integrations/context_builder.py:8 - Unused import: 'annotations'
-- [x] llx/integrations/context_builder.py:108 - Magic number: 20 - use named constant
-- [x] llx/integrations/context_builder.py:144 - Magic number: 15 - use named constant
-- [x] llx/integrations/context_builder.py:120 - Magic number: 3000 - use named constant
-- [x] llx/integrations/context_builder.py:19 - LLM-style docstring in build_context
-- [x] llx/integrations/proxy.py:6 - Unused import: 'annotations'
-- [x] llx/integrations/proxy.py:129 - Magic number in comparison: 200
-- [x] llx/integrations/proxy.py:129 - Magic number: 200 - use named constant
-- [x] llx/integrations/proxy.py:19 - LLM-style docstring in generate_proxy_config
-- [x] llx/integrations/proxy.py:74 - LLM-style docstring in start_proxy
-- [x] llx/llm.py:7 - Unused import: 'annotations'
-- [x] llx/llm.py:22 - Magic number: 2000 - use named constant
-- [x] llx/litellm_config.py:7 - Unused import: 'annotations'
-- [x] llx/litellm_config.py:63 - Magic number: 200000 - use named constant
-- [x] llx/mcp/client.py:7 - Unused import: 'annotations'
 - [ ] llx/integrations/proxym.py:21 - Unused import: 'annotations'
 - [ ] llx/integrations/proxym.py:123 - Magic number: 120.0 - use named constant
 - [x] llx/integrations/proxym.py:138 - Magic number in comparison: 200
@@ -212,3 +186,40 @@
 ---
 
 *To execute all tasks, run: `prefact -a --execute-todos`*
+
+## Discovered
+
+- [ ] Add tests and CI coverage for llx/pyqual_plugins
+- [ ] Verify idempotent publish behaviour for pyqual (auto version bump) in CI
+- [ ] Ensure release/build/publish pipeline is updated to accommodate pyqual auto-versioning
+- [ ] Add/adjust tests for CLI interface improvements (goal/cli)
+
+
+## Done (moved to CHANGELOG)
+
+- [x] llx/analysis/runner.py:14 - Magic number: 120 - use named constant
+- [x] llx/analysis/runner.py:15 - Magic number: 500 - use named constant
+- [x] llx/cli/strategy_commands.py:8 - Relative import (level=2): '..planfile'
+- [x] llx/detection/__init__.py:3 - Relative import (level=1): '.detector'
+- [x] llx/config.py:33 - Relative import (level=1): '.litellm_config'
+- [x] llx/config.py:13 - Unused import: 'annotations'
+- [x] llx/config.py:26 - Duplicate import: 'tomllib' (first at line 23)
+- [x] llx/config.py:29 - Duplicate import: 'tomllib' (first at line 23)
+- [x] llx/config.py:43 - Magic number: 200000 - use named constant
+- [x] llx/config.py:58 - Magic number: 50 - use named constant
+- [x] llx/config.py:63 - Magic number: 20000 - use named constant
+- [x] llx/integrations/context_builder.py:8 - Unused import: 'annotations'
+- [x] llx/integrations/context_builder.py:108 - Magic number: 20 - use named constant
+- [x] llx/integrations/context_builder.py:144 - Magic number: 15 - use named constant
+- [x] llx/integrations/context_builder.py:120 - Magic number: 3000 - use named constant
+- [x] llx/integrations/context_builder.py:19 - LLM-style docstring in build_context
+- [x] llx/integrations/proxy.py:6 - Unused import: 'annotations'
+- [x] llx/integrations/proxy.py:129 - Magic number in comparison: 200
+- [x] llx/integrations/proxy.py:129 - Magic number: 200 - use named constant
+- [x] llx/integrations/proxy.py:19 - LLM-style docstring in generate_proxy_config
+- [x] llx/integrations/proxy.py:74 - LLM-style docstring in start_proxy
+- [x] llx/llm.py:7 - Unused import: 'annotations'
+- [x] llx/llm.py:22 - Magic number: 2000 - use named constant
+- [x] llx/litellm_config.py:7 - Unused import: 'annotations'
+- [x] llx/litellm_config.py:63 - Magic number: 200000 - use named constant
+- [x] llx/mcp/client.py:7 - Unused import: 'annotations'

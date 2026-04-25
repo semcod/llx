@@ -81,6 +81,45 @@ def _load_strategy(path: str | Path) -> dict:
 def _normalize_strategy(strategy: dict) -> dict:
     """Normalize strategy to handle different formats."""
     
+    # Handle planfile.yaml format (redsl-generated)
+    if "tasks" in strategy and isinstance(strategy["tasks"], list):
+        # Build task lookup from flat tasks list
+        task_lookup = {}
+        for task in strategy["tasks"]:
+            task_id = task.get("id")
+            if task_id:
+                task_lookup[task_id] = task
+        
+        # Convert sprint task_patterns to use task data from lookup
+        if "sprints" in strategy:
+            for sprint in strategy.get("sprints", []):
+                if "task_patterns" in sprint:
+                    normalized_patterns = []
+                    for pattern in sprint["task_patterns"]:
+                        pattern_id = pattern.get("id")
+                        if pattern_id and pattern_id in task_lookup:
+                            # Use full task data from lookup
+                            task_data = task_lookup[pattern_id]
+                            normalized_patterns.append({
+                                "name": pattern.get("name", task_data.get("title", pattern_id)),
+                                "description": pattern.get("description", task_data.get("description", "")),
+                                "task_type": _map_action_to_task_type(task_data.get("action", "feature")),
+                                "model_hints": pattern.get("model_hints", {}),
+                                "priority": _map_priority(task_data.get("priority", 3)),
+                                "file": task_data.get("file", ""),
+                                "action": task_data.get("action", "")
+                            })
+                        else:
+                            # Keep pattern as-is if no matching task
+                            normalized_patterns.append({
+                                "name": pattern.get("name", pattern.get("id", "Unnamed")),
+                                "description": pattern.get("description", ""),
+                                "task_type": pattern.get("task_type", "feature"),
+                                "model_hints": pattern.get("model_hints", {}),
+                                "priority": pattern.get("priority", "medium")
+                            })
+                    sprint["task_patterns"] = normalized_patterns
+    
     # Handle V2 format with tasks in sprints
     if "sprints" in strategy:
         for sprint in strategy.get("sprints", []):
@@ -123,6 +162,32 @@ def _normalize_strategy(strategy: dict) -> dict:
                 sprint["task_patterns"] = task_patterns
     
     return strategy
+
+
+def _map_action_to_task_type(action: str) -> str:
+    """Map redsl action to task_type."""
+    action_map = {
+        "reduce_complexity": "refactor",
+        "extract_function": "refactor",
+        "extract_class": "refactor",
+        "split_module": "refactor",
+        "fix": "bugfix",
+        "feature": "feature",
+        "tech_debt": "tech_debt"
+    }
+    return action_map.get(action, "feature")
+
+
+def _map_priority(priority: int) -> str:
+    """Map numeric priority to string."""
+    if priority <= 1:
+        return "high"
+    elif priority <= 2:
+        return "high"
+    elif priority == 3:
+        return "medium"
+    else:
+        return "low"
 
 
 def _get_sprint_tasks(sprint: dict) -> List[dict]:

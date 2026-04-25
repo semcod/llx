@@ -7,6 +7,7 @@ This document describes the simplified planfile integration in LLX.
 The LLX planfile module has been simplified to:
 - Support the new V2 format with embedded tasks
 - Handle both V1 and V2 formats seamlessly
+- Support planfile.yaml format (redsl-generated)
 - Reduce complexity and improve maintainability
 - Use LLX's built-in model selection and routing
 
@@ -18,7 +19,8 @@ The LLX planfile module has been simplified to:
 ### 2. Format Support
 - **V1 Format**: Tasks defined separately in `task_patterns`
 - **V2 Format**: Tasks embedded directly in sprints
-- **Mixed Format**: Handles both in the same strategy
+- **planfile.yaml Format**: Redsl-generated format with flat tasks list and sprint task_patterns
+- **Mixed Format**: Handles all formats in the same strategy
 
 ### 3. Reduced Dependencies
 - Removed dependency on external planfile package
@@ -53,6 +55,48 @@ sprints:
         model_hints: "balanced"
 ```
 
+### planfile.yaml Format Example (redsl-generated)
+```yaml
+schema: '1.0'
+project: llx
+version: 0.1.57
+generated: '2026-04-19'
+generator: redsl planfile sync
+sources:
+- project/analysis.toon.yaml
+stats:
+  total: 68
+  todo: 65
+  done: 3
+tasks:
+- id: Q01
+  title: 'reduce_complexity: collector (CC=10)'
+  description: Module 'collector' has cyclomatic complexity CC=10
+  file: llx/analysis/collector.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+sprints:
+- id: sprint-1
+  name: Code Quality Improvements
+  duration: 2 weeks
+  objectives:
+  - Fix code quality issues
+  task_patterns:
+  - id: ticket-00506015
+    name: Fix magic-numbers issues
+    description: Resolve 17 magic-numbers issues
+    task_type: prefactor
+    priority: high
+    model_hints:
+      planning: balanced
+      implementation: balanced
+```
+
 ### File Structure
 ```
 llx/planfile/
@@ -66,7 +110,7 @@ llx/planfile/
 
 ### Executor Flow
 1. Load YAML strategy
-2. Detect format (V1/V2)
+2. Detect format (V1/V2/planfile.yaml)
 3. Normalize to internal format
 4. Process sprints and tasks
 5. Select model using LLX routing
