@@ -256,6 +256,7 @@ def _execute_task(
             task_name=task_name,
             status="failed",
             model_used=model or "unknown",
+            response="",
             error=str(e),
             execution_time=time.time() - start_time
         )
