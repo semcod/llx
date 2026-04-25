@@ -109,17 +109,21 @@ class LlxClient:
             self._anonymizer = Anonymizer()
 
         headers = {"Content-Type": "application/json"}
-        # Add auth header for proxy
-        if self.config.proxy.master_key:
-            headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
-        # Add auth header for OpenRouter direct API calls
-        elif "openrouter.ai" in self.config.litellm_base_url:
+        
+        # Determine if we are hitting OpenRouter directly or a proxy
+        is_openrouter = "openrouter.ai" in self.config.litellm_base_url
+        
+        # Add auth header for OpenRouter direct API calls (highest priority if hitting OpenRouter)
+        if is_openrouter:
             openrouter_key = os.environ.get("OPENROUTER_API_KEY")
             if openrouter_key:
                 headers["Authorization"] = f"Bearer {openrouter_key}"
             else:
                 headers["HTTP-Referer"] = "https://github.com/wronai/llx"
                 headers["X-Title"] = "LLX"
+        # Add auth header for local proxy
+        elif self.config.proxy.master_key:
+            headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
 
         self._http = httpx.Client(
             base_url=self.config.litellm_base_url,
