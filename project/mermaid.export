@@ -214,7 +214,9 @@ flowchart TD
     subgraph llx__commands
         llx__commands___patch_apply___extract_json_from_content["_extract_json_from_content"]
         llx__commands___patch_apply___apply_unified_diff["_apply_unified_diff"]
-        llx__commands___patch_apply___parse_unified_hunks{{_parse_unified_hunks CC=16}}
+        llx__commands___patch_apply___finalize_hunk["_finalize_hunk"]
+        llx__commands___patch_apply___classify_line["_classify_line"]
+        llx__commands___patch_apply___parse_unified_hunks("_parse_unified_hunks CC=10")
         llx__commands___patch_apply___find_hunk_position("_find_hunk_position CC=9")
         llx__commands__fix__apply_code_changes["apply_code_changes"]
         llx__commands__fix__load_errors_data["load_errors_data"]
@@ -240,7 +242,12 @@ flowchart TD
     subgraph llx__detection
         llx__detection__detector__ProjectTypeDetector____init__["__init__"]
         llx__detection__detector__ProjectTypeDetector__detect_from_path["detect_from_path"]
-        llx__detection__detector__ProjectTypeDetector__detect_from_files{{detect_from_files CC=15}}
+        llx__detection__detector__ProjectTypeDetector___detect_webapp["_detect_webapp"]
+        llx__detection__detector__ProjectTypeDetector___detect_cli["_detect_cli"]
+        llx__detection__detector__ProjectTypeDetector___detect_api["_detect_api"]
+        llx__detection__detector__ProjectTypeDetector___detect_ml["_detect_ml"]
+        llx__detection__detector__ProjectTypeDetector___detect_data["_detect_data"]
+        llx__detection__detector__ProjectTypeDetector__detect_from_files["detect_from_files"]
         llx__detection__detector__ProjectTypeDetector__detect_from_config["detect_from_config"]
         llx__detection__detector__ProjectTypeDetector__get_project_config["get_project_config"]
         llx__detection__detector__ProjectTypeDetector__get_all_types["get_all_types"]
@@ -461,7 +468,10 @@ flowchart TD
         llx__planfile__model_selector__ModelFilter___matches_scope["_matches_scope"]
         llx__planfile__model_selector__ModelFilter___has_api_key["_has_api_key"]
         llx__planfile__model_selector__ModelSelector____init__["__init__"]
-        llx__planfile__model_selector__ModelSelector___build_model_registry{{_build_model_registry CC=15}}
+        llx__planfile__model_selector__ModelSelector___determine_tier("_determine_tier CC=10")
+        llx__planfile__model_selector__ModelSelector___register_config_models["_register_config_models"]
+        llx__planfile__model_selector__ModelSelector___register_hardcoded_models["_register_hardcoded_models"]
+        llx__planfile__model_selector__ModelSelector___build_model_registry["_build_model_registry"]
         llx__planfile__model_selector__ModelSelector___get_provider["_get_provider"]
         llx__planfile__model_selector__ModelSelector__select_model("select_model CC=14")
         llx__planfile__model_selector__ModelSelector__list_models["list_models"]
@@ -470,7 +480,6 @@ flowchart TD
         llx__planfile__models__Strategy__get_task_patterns["get_task_patterns"]
         llx__planfile__models__Strategy__get_sprint["get_sprint"]
         llx__planfile__models__Strategy__model_validate_yaml["model_validate_yaml"]
-        llx__planfile__models__Strategy__model_dump_yaml["model_dump_yaml"]
     end
     subgraph llx__prellm
         llx__prellm__env_config___load_dotenv["_load_dotenv"]
@@ -693,7 +702,7 @@ flowchart TD
         llx__tools__cli___handle_start["_handle_start"]
         llx__tools__cli___handle_stop["_handle_stop"]
         llx__tools__cli___handle_status["_handle_status"]
-        llx__tools__cli__main("main CC=8")
+        llx__tools__cli__main["main"]
         llx__tools__vscode_manager__VSCodeManager____init__["__init__"]
         llx__tools__vscode_manager__VSCodeManager__is_vscode_running["is_vscode_running"]
         llx__tools__vscode_manager__VSCodeManager__start_vscode["start_vscode"]
@@ -712,10 +721,14 @@ flowchart TD
         llx__utils__issues__load_issue_source("load_issue_source CC=9")
         llx__utils__issues__load_todo_markdown["load_todo_markdown"]
         llx__utils__issues__resolve_issue_source["resolve_issue_source"]
-        llx__utils__issues__issue_text{{issue_text CC=15}}
+        llx__utils__issues___append_location["_append_location"]
+        llx__utils__issues___append_first_present["_append_first_present"]
+        llx__utils__issues__issue_text["issue_text"]
         llx__utils__issues__task_prompt_label["task_prompt_label"]
         llx__utils__issues__build_fix_prompt("build_fix_prompt CC=11")
-        llx__utils__issues___collect_file_context{{_collect_file_context CC=20}}
+        llx__utils__issues___extract_file_refs("_extract_file_refs CC=10")
+        llx__utils__issues___read_snippet["_read_snippet"]
+        llx__utils__issues___collect_file_context["_collect_file_context"]
         llx__utils__cli_main__cli_main["cli_main"]
         llx__utils__formatting___format_selection["_format_selection"]
         llx__utils__formatting___format_metrics["_format_metrics"]
@@ -754,66 +767,66 @@ flowchart TD
         my_api__monitoring__main["main"]
     end
     subgraph project__map
-        project__map__toon__load_issue_source["load_issue_source"]
-        project__map__toon__load_todo_markdown["load_todo_markdown"]
-        project__map__toon__resolve_issue_source["resolve_issue_source"]
-        project__map__toon__issue_text["issue_text"]
-        project__map__toon__task_prompt_label["task_prompt_label"]
-        project__map__toon__build_fix_prompt["build_fix_prompt"]
-        project__map__toon___collect_file_context["_collect_file_context"]
-        project__map__toon__test_llx_health["test_llx_health"]
-        project__map__toon__test_ollama_health["test_ollama_health"]
-        project__map__toon__get_available_models["get_available_models"]
-        project__map__toon__test_llx_models["test_llx_models"]
-        project__map__toon__test_chat_completion["test_chat_completion"]
-        project__map__toon__main["main"]
-        project__map__toon___extract_json_from_content["_extract_json_from_content"]
-        project__map__toon___apply_unified_diff["_apply_unified_diff"]
-        project__map__toon___parse_unified_hunks["_parse_unified_hunks"]
-        project__map__toon___find_hunk_position["_find_hunk_position"]
         project__map__toon__create_realistic_project["create_realistic_project"]
+        project__map__toon__main["main"]
+        project__map__toon__create_business_logic_project["create_business_logic_project"]
+        project__map__toon__create_cicd_project["create_cicd_project"]
         project__map__toon__create_complex_project["create_complex_project"]
+        project__map__toon__create_test_code_samples["create_test_code_samples"]
+        project__map__toon__create_sample_codebase["create_sample_codebase"]
+        project__map__toon__create_large_project["create_large_project"]
+        project__map__toon__analyze_project["analyze_project"]
+        project__map__toon___collect_filesystem_metrics["_collect_filesystem_metrics"]
+        project__map__toon___collect_code2llm_metrics["_collect_code2llm_metrics"]
+        project__map__toon___apply_analysis_yaml["_apply_analysis_yaml"]
+        project__map__toon___extract_metrics_target["_extract_metrics_target"]
+        project__map__toon___extract_evolution_stats["_extract_evolution_stats"]
+        project__map__toon___extract_evolution_actions["_extract_evolution_actions"]
+        project__map__toon___apply_evolution_yaml["_apply_evolution_yaml"]
+        project__map__toon___apply_evolution_text["_apply_evolution_text"]
+        project__map__toon___apply_map_yaml["_apply_map_yaml"]
+        project__map__toon___parse_map_stats_line["_parse_map_stats_line"]
+        project__map__toon___parse_map_alerts_line["_parse_map_alerts_line"]
+        project__map__toon___parse_map_hotspots_line["_parse_map_hotspots_line"]
+        project__map__toon___count_map_modules["_count_map_modules"]
+        project__map__toon___apply_map_text["_apply_map_text"]
+        project__map__toon___collect_redup_metrics["_collect_redup_metrics"]
+        project__map__toon___collect_vallm_metrics["_collect_vallm_metrics"]
+        project__map__toon___load_file["_load_file"]
+        project__map__toon___extract_cc_value["_extract_cc_value"]
+        project__map__toon___estimate_context_tokens["_estimate_context_tokens"]
+        project__map__toon___classify_scope["_classify_scope"]
+        project__map__toon__check_tool["check_tool"]
+        project__map__toon___run_tool["_run_tool"]
+        project__map__toon__run_code2llm["run_code2llm"]
+        project__map__toon__run_redup["run_redup"]
+        project__map__toon__run_vallm["run_vallm"]
+        project__map__toon__run_all_tools["run_all_tools"]
+        project__map__toon___run_analysis_tools["_run_analysis_tools"]
+        project__map__toon__analyze["analyze"]
+        project__map__toon__select["select"]
+        project__map__toon__chat["chat"]
+        project__map__toon__proxy_start["proxy_start"]
+        project__map__toon__proxy_config["proxy_config"]
+        project__map__toon__proxy_status["proxy_status"]
+        project__map__toon__mcp_start["mcp_start"]
+        project__map__toon__plan_generate["plan_generate"]
+        project__map__toon__plan_review["plan_review"]
+        project__map__toon__plan_execute["plan_execute"]
+        project__map__toon__models["models"]
+        project__map__toon__info["info"]
+        project__map__toon__fix["fix"]
+        project__map__toon__init["init"]
+        project__map__toon___get_model_for_profile["_get_model_for_profile"]
+        project__map__toon___load_sprint_mapping["_load_sprint_mapping"]
+        project__map__toon___generate_sprint_code["_generate_sprint_code"]
+        project__map__toon___plan_code_impl["_plan_code_impl"]
         project__map__toon__output_rich["output_rich"]
         project__map__toon__output_json["output_json"]
         project__map__toon___filter_models["_filter_models"]
         project__map__toon___build_model_row["_build_model_row"]
         project__map__toon___render_models_table["_render_models_table"]
         project__map__toon___build_title["_build_title"]
-        project__map__toon__print_models_table["print_models_table"]
-        project__map__toon___render_tools_table["_render_tools_table"]
-        project__map__toon___render_tiers_table["_render_tiers_table"]
-        project__map__toon___render_agents_table["_render_agents_table"]
-        project__map__toon___render_tags_legend["_render_tags_legend"]
-        project__map__toon__print_info_tables["print_info_tables"]
-        project__map__toon__normalize_litellm_base_url["normalize_litellm_base_url"]
-        project__map__toon___apply_toml["_apply_toml"]
-        project__map__toon___apply_yaml_thresholds["_apply_yaml_thresholds"]
-        project__map__toon___apply_yaml_models["_apply_yaml_models"]
-        project__map__toon___apply_yaml_proxy["_apply_yaml_proxy"]
-        project__map__toon___apply_yaml["_apply_yaml"]
-        project__map__toon___apply_env["_apply_env"]
-        project__map__toon__get_current_trace["get_current_trace"]
-        project__map__toon__set_current_trace["set_current_trace"]
-        project__map__toon___step_icon["_step_icon"]
-        project__map__toon___safe_json["_safe_json"]
-        project__map__toon___sanitize["_sanitize"]
-        project__map__toon___compact_value["_compact_value"]
-        project__map__toon___format_tree_value["_format_tree_value"]
-        project__map__toon___extract_prompt_text["_extract_prompt_text"]
-        project__map__toon___wrap_text["_wrap_text"]
-        project__map__toon___get_user_memory_class["_get_user_memory_class"]
-        project__map__toon___get_codebase_indexer_class["_get_codebase_indexer_class"]
-        project__map__toon__execute_strategy["execute_strategy"]
-        project__map__toon___load_strategy["_load_strategy"]
-        project__map__toon___normalize_strategy["_normalize_strategy"]
-        project__map__toon___get_sprint_tasks["_get_sprint_tasks"]
-        project__map__toon___execute_task["_execute_task"]
-        project__map__toon___select_model["_select_model"]
-        project__map__toon___build_task_prompt["_build_task_prompt"]
-        project__map__toon___handle_llx_analyze["_handle_llx_analyze"]
-        project__map__toon___handle_llx_select["_handle_llx_select"]
-        project__map__toon___handle_llx_chat["_handle_llx_chat"]
-        project__map__toon___handle_code2llm_analyze["_handle_code2llm_analyze"]
     end
     subgraph scripts__pyqual_auto
         scripts__pyqual_auto__load_pyqual_config["load_pyqual_config"]
@@ -844,20 +857,35 @@ flowchart TD
         test_local_chat__get_available_models["get_available_models"]
         test_local_chat__test_llx_models["test_llx_models"]
         test_local_chat__test_chat_completion["test_chat_completion"]
-        test_local_chat__main{{main CC=19}}
+        test_local_chat___check_services["_check_services"]
+        test_local_chat___print_models["_print_models"]
+        test_local_chat___select_test_models["_select_test_models"]
+        test_local_chat___run_chat_tests["_run_chat_tests"]
+        test_local_chat___print_summary["_print_summary"]
+        test_local_chat__main["main"]
     end
     subgraph trace
         trace__test("test CC=11")
     end
-    trace__test --> project__map__toon___normalize_strategy_data
-    simple_generate__generate_simple_strategy --> project__map__toon__generate_strategy_with_fix
-    simple_generate__generate_simple_strategy --> project__map__toon__save_fixed_strategy
+    trace__test --> llx__planfile__generate_strategy___normalize_strategy_data
+    simple_generate__generate_simple_strategy --> llx__planfile__generate_strategy__generate_strategy_with_fix
+    simple_generate__generate_simple_strategy --> llx__planfile__generate_strategy__save_fixed_strategy
     test_local_chat__test_chat_completion --> Taskfile__print
+    test_local_chat___check_services --> Taskfile__print
+    test_local_chat___check_services --> test_local_chat__test_llx_health
+    test_local_chat___check_services --> test_local_chat__test_ollama_health
+    test_local_chat___print_models --> Taskfile__print
+    test_local_chat___print_models --> test_local_chat__get_available_models
+    test_local_chat___print_models --> test_local_chat__test_llx_models
+    test_local_chat___run_chat_tests --> Taskfile__print
+    test_local_chat___run_chat_tests --> test_local_chat__test_chat_completion
+    test_local_chat___print_summary --> Taskfile__print
     test_local_chat__main --> Taskfile__print
-    test_local_chat__main --> test_local_chat__test_llx_health
-    test_local_chat__main --> test_local_chat__test_ollama_health
-    test_local_chat__main --> test_local_chat__get_available_models
-    test_local_chat__main --> test_local_chat__test_llx_models
+    test_local_chat__main --> test_local_chat___check_services
+    test_local_chat__main --> test_local_chat___print_models
+    test_local_chat__main --> test_local_chat___select_test_models
+    test_local_chat__main --> test_local_chat___run_chat_tests
+    test_local_chat__main --> test_local_chat___print_summary
     examples__privacy__ml__01_entropy_ml_detection__main --> Taskfile__print
     examples__privacy__ml__04_behavioral_learning__main --> Taskfile__print
     examples__privacy__ml__04_behavioral_learning__main --> examples__privacy__ml__04_behavioral_learning__create_sample_codebase
@@ -880,7 +908,7 @@ flowchart TD
     examples__privacy__advanced__01_api_integration__main --> Taskfile__print
     examples__privacy__advanced__01_api_integration__main --> examples__privacy__advanced__01_api_integration__create_realistic_project
     examples__privacy__basic__01_text_anonymization__main --> Taskfile__print
-    examples__privacy__basic__01_text_anonymization__main --> project__map__toon__quick_anonymize
+    examples__privacy__basic__01_text_anonymization__main --> llx__privacy____core__quick_anonymize
     examples__privacy__basic__02_custom_patterns__main --> Taskfile__print
     scripts__pyqual_auto__run_pyqual --> Taskfile__print
     scripts__pyqual_auto__main --> Taskfile__print
@@ -888,49 +916,48 @@ flowchart TD
     scripts__pyqual_auto__main --> scripts__pyqual_auto__backup_config
     scripts__pyqual_auto__main --> scripts__pyqual_auto__set_model
     scripts__pyqual_auto__main --> scripts__pyqual_auto__set_env_file
-    llx__config__LlxConfig____post_init__ --> project__map__toon__normalize_litellm_base_url
-    llx__config__LlxConfig__load --> project__map__toon___apply_env
-    llx__config__LlxConfig__load --> project__map__toon__normalize_litellm_base_url
-    llx__config__LlxConfig__load --> project__map__toon___apply_yaml
+    llx__config__LlxConfig____post_init__ --> llx__config__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> llx__config___apply_env
+    llx__config__LlxConfig__load --> llx__config__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> llx__config___apply_yaml
     llx__config___apply_yaml --> llx__config___apply_yaml_proxy
     llx__config___apply_yaml --> llx__config___apply_yaml_thresholds
     llx__llm___ensure_dotenv_loaded --> llx__llm___load_dotenv_fallback
     llx__llm__get_llm_model --> llx__llm___ensure_dotenv_loaded
     llx__llm__get_api_key --> llx__llm___ensure_dotenv_loaded
-    llx__llm__LLM____init__ --> project__map__toon__get_llm_model
-    llx__llm__LLM____init__ --> project__map__toon__get_api_key
+    llx__llm__LLM____init__ --> llx__llm__get_llm_model
+    llx__llm__LLM____init__ --> llx__llm__get_api_key
     llx__commands___patch_apply___apply_unified_diff --> llx__commands___patch_apply___parse_unified_hunks
     llx__commands___patch_apply___apply_unified_diff --> llx__commands___patch_apply___find_hunk_position
-    llx__commands__fix__apply_code_changes --> project__map__toon___apply_json_patch_strategy
-    llx__commands__fix__apply_code_changes --> project__map__toon___apply_openai_patch_strategy
-    llx__commands__fix__apply_code_changes --> project__map__toon___apply_markdown_code_block_strategy
-    llx__commands__fix__load_errors_data --> project__map__toon__load_issue_source
+    llx__commands___patch_apply___parse_unified_hunks --> llx__commands___patch_apply___classify_line
+    llx__commands___patch_apply___parse_unified_hunks --> llx__commands___patch_apply___finalize_hunk
+    llx__commands__fix__load_errors_data --> llx__utils__issues__load_issue_source
     llx__commands__fix__select_model_for_fix --> examples__filtering__filtering__select_model
-    llx__commands__fix__display_model_selection_and_metrics --> project__map__toon___format_selection
-    llx__commands__fix__display_model_selection_and_metrics --> project__map__toon___format_metrics
-    llx__commands__fix__prepare_fix_prompt --> project__map__toon__build_fix_prompt
-    llx__commands__fix__execute_aider_fix --> project__map__toon___extract_issue_files
-    llx__commands__fix__execute_aider_fix --> project__map__toon___run_aider_fix
-    llx__commands__fix__execute_aider_fix --> project__map__toon___format_aider_result
-    llx__commands__fix__execute_prellm_fix --> project__map__toon__preprocess_and_execute_sync
+    llx__commands__fix__display_model_selection_and_metrics --> llx__utils__formatting___format_selection
+    llx__commands__fix__display_model_selection_and_metrics --> llx__utils__formatting___format_metrics
+    llx__commands__fix__prepare_fix_prompt --> llx__utils__issues__build_fix_prompt
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___extract_issue_files
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___run_aider_fix
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___format_aider_result
+    llx__commands__fix__execute_prellm_fix --> llx__prellm__core__preprocess_and_execute_sync
     llx__commands__fix__execute_prellm_fix --> llx__commands__fix__apply_code_changes
-    llx__commands__fix__execute_prellm_fix --> project__map__toon___select_small_model
+    llx__commands__fix__execute_prellm_fix --> llx__utils__models___select_small_model
     llx__commands__fix__fix --> llx__commands__fix__load_errors_data
-    llx__commands__fix__fix --> project__map__toon__analyze_project
+    llx__commands__fix__fix --> llx__analysis__collector__analyze_project
     llx__commands__fix__fix --> llx__commands__fix__select_model_for_fix
     llx__commands__fix__fix --> llx__commands__fix__display_model_selection_and_metrics
     llx__commands__fix__fix --> llx__commands__fix__prepare_fix_prompt
     llx__commands__fix__fix --> llx__commands__fix__execute_prellm_fix
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer____init__ --> project__map__toon__build_reverse_lookup
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__find_symbol_tokens
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__find_content_tokens
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> project__map__toon__get_content_mapping
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> project__map__toon__restore_imports
-    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> project__map__toon__restore_decorators
-    llx__privacy___project_context__AnonymizationContext___get_mapping_dict --> project__map__toon___mapping_dict_for
-    llx__privacy___project_context__AnonymizationContext___generate_symbol --> project__map__toon___symbol_prefix
-    llx__privacy___project_context__AnonymizationContext__to_dict --> project__map__toon___mappings_to_dict
-    llx__privacy___project_context__AnonymizationContext__from_dict --> project__map__toon___dict_to_mappings
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer____init__ --> llx__privacy__deanonymize_utils__build_reverse_lookup
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> llx__privacy__deanonymize_utils__find_symbol_tokens
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> llx__privacy__deanonymize_utils__find_content_tokens
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_text --> llx__privacy__deanonymize_utils__get_content_mapping
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> llx__privacy__deanonymize_utils__restore_imports
+    llx__privacy__deanonymize_engine__ProjectDeanonymizer__deanonymize_file --> llx__privacy__deanonymize_utils__restore_decorators
+    llx__privacy___project_context__AnonymizationContext___get_mapping_dict --> llx__privacy___project_context___mapping_dict_for
+    llx__privacy___project_context__AnonymizationContext___generate_symbol --> llx__privacy___project_context___symbol_prefix
+    llx__privacy___project_context__AnonymizationContext__to_dict --> llx__privacy___project_context___mappings_to_dict
+    llx__privacy___project_context__AnonymizationContext__from_dict --> llx__privacy___project_context___dict_to_mappings
     llx__pyqual_plugins__type_check__run_mypy --> Taskfile__print
     llx__pyqual_plugins__type_check__main --> llx__pyqual_plugins__type_check__run_mypy
     llx__pyqual_plugins__type_check__main --> Taskfile__print
@@ -976,20 +1003,20 @@ flowchart TD
     llx__examples__utils__WorkflowRunner__run_workflow --> Taskfile__print
     llx__prellm__env_config__get_env_config --> llx__prellm__env_config___load_dotenv
     llx__prellm__cli_config__config_list_cmd --> llx__prellm__cli_config___format_config_sections
-    llx__prellm__cli_config__config_show_cmd --> project__map__toon__get_env_config
-    llx__prellm__cli__session_list_cmd --> project__map__toon___init_logging
-    llx__prellm__cli__session_export_cmd --> project__map__toon___init_logging
-    llx__prellm__cli__session_import_cmd --> project__map__toon___init_logging
-    llx__prellm__cli__session_clear_cmd --> project__map__toon___init_logging
-    llx__prellm__trace__TraceRecorder__start --> project__map__toon__set_current_trace
-    llx__prellm__trace__TraceRecorder__stop --> project__map__toon__set_current_trace
-    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> project__map__toon___step_icon
-    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> project__map__toon___safe_json
-    llx__prellm__trace__TraceRecorder___generate_markdown_summary --> project__map__toon___step_icon
-    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___step_icon
-    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___extract_prompt_text
-    llx__prellm__trace__TraceRecorder___generate_decision_tree --> project__map__toon___format_tree_value
-    llx__prellm__trace__TraceRecorder___generate_step_log --> project__map__toon___step_icon
+    llx__prellm__cli_config__config_show_cmd --> llx__prellm__env_config__get_env_config
+    llx__prellm__cli__session_list_cmd --> llx__prellm__cli_query___init_logging
+    llx__prellm__cli__session_export_cmd --> llx__prellm__cli_query___init_logging
+    llx__prellm__cli__session_import_cmd --> llx__prellm__cli_query___init_logging
+    llx__prellm__cli__session_clear_cmd --> llx__prellm__cli_query___init_logging
+    llx__prellm__trace__TraceRecorder__start --> llx__prellm__trace__set_current_trace
+    llx__prellm__trace__TraceRecorder__stop --> llx__prellm__trace__set_current_trace
+    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> llx__prellm__trace___step_icon
+    llx__prellm__trace__TraceRecorder___generate_markdown_step_details --> llx__prellm__trace___safe_json
+    llx__prellm__trace__TraceRecorder___generate_markdown_summary --> llx__prellm__trace___step_icon
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> llx__prellm__trace___step_icon
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> llx__prellm__trace___extract_prompt_text
+    llx__prellm__trace__TraceRecorder___generate_decision_tree --> llx__prellm__trace___format_tree_value
+    llx__prellm__trace__TraceRecorder___generate_step_log --> llx__prellm__trace___step_icon
     llx__prellm__trace___safe_json --> llx__prellm__trace___sanitize
     llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_classification_from_state
     llx__prellm__extractors__build_decomposition_result --> llx__prellm__extractors__extract_structure_from_state
@@ -1001,65 +1028,65 @@ flowchart TD
     llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_runtime_context
     llx__prellm__extractors__build_executor_system_prompt --> llx__prellm__extractors__format_user_context
     llx__prellm__cli_context__context_show_cmd --> llx__prellm__cli_context__context
-    llx__prellm__logging_setup__setup_logging --> project__map__toon__configure
+    llx__prellm__logging_setup__setup_logging --> llx__prellm___nfo_compat__configure
     llx__prellm__logging_setup__setup_logging --> llx__prellm__logging_setup___get_version
     llx__prellm__logging_setup__get_logger --> llx__prellm__logging_setup__setup_logging
     llx__prellm__server__chat_completions --> llx__prellm__server___parse_model_pair
     llx__prellm__server__chat_completions --> llx__prellm__server___build_prellm_meta
-    llx__prellm__server__chat_completions --> project__map__toon__preprocess_and_execute
+    llx__prellm__server__chat_completions --> llx__prellm__core__preprocess_and_execute
     llx__prellm__server__chat_completions --> llx__prellm__server___stream_response
-    llx__prellm__server___stream_response --> project__map__toon__preprocess_and_execute
+    llx__prellm__server___stream_response --> llx__prellm__core__preprocess_and_execute
     llx__prellm__server___stream_response --> llx__prellm__server___build_prellm_meta
-    llx__prellm__server__batch_process --> project__map__toon__preprocess_and_execute
+    llx__prellm__server__batch_process --> llx__prellm__core__preprocess_and_execute
     llx__prellm__server__batch_process --> llx__prellm__server___build_prellm_meta
-    llx__prellm__server__create_app --> project__map__toon__get_env_config
+    llx__prellm__server__create_app --> llx__prellm__env_config__get_env_config
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__collect_user_context
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__collect_environment_context
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__compress_codebase_folder
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__generate_context_schema
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__build_sensitive_filter
     llx__prellm__context_ops__prepare_context --> llx__prellm__context_ops__initialize_context_components
-    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__prepare_context
-    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__build_pipeline_context
-    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__build_executor_system_prompt
-    llx__prellm__pipeline_ops__execute_v3_pipeline --> project__map__toon__get_current_trace
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__context_ops__prepare_context
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__context_ops__build_pipeline_context
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__extractors__build_executor_system_prompt
+    llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__trace__get_current_trace
     llx__prellm__pipeline_ops__execute_v3_pipeline --> llx__prellm__pipeline_ops__record_trace
-    llx__prellm__cli_query___init_logging --> project__map__toon__get_env_config
-    llx__prellm__cli_query___init_logging --> project__map__toon__setup_logging
-    llx__prellm__cli_query___handle_query_options --> project__map__toon__get_env_config
-    llx__prellm__cli_query___initialize_execution --> project__map__toon__get_budget_tracker
-    llx__prellm__cli_query___execute_and_format_result --> project__map__toon__preprocess_and_execute
+    llx__prellm__cli_query___init_logging --> llx__prellm__env_config__get_env_config
+    llx__prellm__cli_query___init_logging --> llx__prellm__logging_setup__setup_logging
+    llx__prellm__cli_query___handle_query_options --> llx__prellm__env_config__get_env_config
+    llx__prellm__cli_query___initialize_execution --> llx__prellm__budget__get_budget_tracker
+    llx__prellm__cli_query___execute_and_format_result --> llx__prellm__core__preprocess_and_execute
     llx__prellm__core__preprocess_and_execute --> llx__prellm__core___resolve_pipeline_name
     llx__prellm__core__preprocess_and_execute --> llx__prellm__core___apply_config_overrides
-    llx__prellm__core__preprocess_and_execute --> project__map__toon__get_current_trace
+    llx__prellm__core__preprocess_and_execute --> llx__prellm__trace__get_current_trace
     llx__prellm__core__preprocess_and_execute --> llx__prellm__core___trace_preprocess_configuration
     llx__prellm__core__preprocess_and_execute_sync --> llx__prellm__core__preprocess_and_execute
-    llx__prellm__cli_commands__serve --> project__map__toon__get_env_config
-    llx__prellm__cli_commands__serve --> project__map__toon___init_logging
-    llx__prellm__cli_commands__serve --> project__map__toon__create_app
-    llx__prellm__cli_commands__doctor --> project__map__toon__get_env_config
+    llx__prellm__cli_commands__serve --> llx__prellm__env_config__get_env_config
+    llx__prellm__cli_commands__serve --> llx__prellm__cli_query___init_logging
+    llx__prellm__cli_commands__serve --> llx__prellm__server__create_app
+    llx__prellm__cli_commands__doctor --> llx__prellm__env_config__get_env_config
     llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_config
     llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_providers
     llx__prellm__cli_commands__doctor --> llx__prellm__cli_commands___doctor_check_files
-    llx__prellm__cli_commands__budget --> project__map__toon__get_env_config
-    llx__prellm__cli_commands__budget --> project__map__toon__get_budget_tracker
-    llx__prellm__cli_commands__models --> project__map__toon__list_model_pairs
-    llx__prellm__cli_commands__models --> project__map__toon__list_openrouter_models
-    llx__prellm__budget__BudgetTracker___ensure_loaded --> project__map__toon___current_month_key
-    llx__prellm__budget__BudgetTracker__summary --> project__map__toon___current_month_key
-    llx__prellm__budget__BudgetTracker___persist --> project__map__toon___current_month_key
-    llx__prellm__chains__process_chain__ProcessChain___run_engine --> project__map__toon__preprocess_and_execute
-    llx__prellm__context__folder_compressor__FolderCompressor__to_toon --> project__map__toon___relative_path
-    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___relative_path
-    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___path_to_module
-    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> project__map__toon___extract_module_from_import
-    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___relative_path
-    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___path_to_module
-    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> project__map__toon___extract_module_docstring
-    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> project__map__toon__load_pipeline_config
-    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> project__map__toon__build_pipeline
-    llx__prellm__agents__preprocessor___get_user_memory_class --> project__map__toon__lazy_import_global
-    llx__prellm__agents__preprocessor___get_codebase_indexer_class --> project__map__toon__lazy_import_global
+    llx__prellm__cli_commands__budget --> llx__prellm__env_config__get_env_config
+    llx__prellm__cli_commands__budget --> llx__prellm__budget__get_budget_tracker
+    llx__prellm__cli_commands__models --> llx__prellm__model_catalog__list_model_pairs
+    llx__prellm__cli_commands__models --> llx__prellm__model_catalog__list_openrouter_models
+    llx__prellm__budget__BudgetTracker___ensure_loaded --> llx__prellm__budget___current_month_key
+    llx__prellm__budget__BudgetTracker__summary --> llx__prellm__budget___current_month_key
+    llx__prellm__budget__BudgetTracker___persist --> llx__prellm__budget___current_month_key
+    llx__prellm__chains__process_chain__ProcessChain___run_engine --> llx__prellm__core__preprocess_and_execute
+    llx__prellm__context__folder_compressor__FolderCompressor__to_toon --> llx__prellm__context__folder_compressor___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> llx__prellm__context__folder_compressor___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> llx__prellm__context__folder_compressor___path_to_module
+    llx__prellm__context__folder_compressor__FolderCompressor__to_dependency_graph --> llx__prellm__context__folder_compressor___extract_module_from_import
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> llx__prellm__context__folder_compressor___relative_path
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> llx__prellm__context__folder_compressor___path_to_module
+    llx__prellm__context__folder_compressor__FolderCompressor__to_summary --> llx__prellm__context__folder_compressor___extract_module_docstring
+    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> llx__prellm__pipeline__loader__load_pipeline_config
+    llx__prellm__pipeline__engine__PromptPipeline__from_yaml --> llx__prellm__pipeline__loader__build_pipeline
+    llx__prellm__agents__preprocessor___get_user_memory_class --> llx__prellm__utils__lazy_imports__lazy_import_global
+    llx__prellm__agents__preprocessor___get_codebase_indexer_class --> llx__prellm__utils__lazy_imports__lazy_import_global
     llx__analysis__runner___run_tool --> llx__analysis__runner__check_tool
     llx__analysis__runner__run_code2llm --> llx__analysis__runner___run_tool
     llx__analysis__runner__run_redup --> llx__analysis__runner___run_tool
@@ -1113,15 +1140,12 @@ flowchart TD
     llx__tools__docker_manager___handle_restore --> Taskfile__print
     llx__tools__docker_manager___handle_health --> Taskfile__print
     llx__tools__docker_manager___handle_wait --> Taskfile__print
-    llx__tools__docker_manager__main --> project__map__toon__cli_main
+    llx__tools__docker_manager__main --> llx__utils__cli_main__cli_main
     llx__tools__cli___delegate --> Taskfile__print
     llx__tools__cli___handle_start --> llx__tools__cli___delegate
     llx__tools__cli___handle_stop --> llx__tools__cli___delegate
     llx__tools__cli___handle_status --> llx__tools__cli___delegate
     llx__tools__cli__main --> llx__tools__cli___build_parser
-    llx__tools__cli__main --> llx__tools__cli___handle_start
-    llx__tools__cli__main --> llx__tools__cli___handle_stop
-    llx__tools__cli__main --> llx__tools__cli___handle_status
     llx__tools__cli__main --> llx__tools__cli___delegate
     llx__tools__vscode_manager__VSCodeManager__start_vscode --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__stop_vscode --> Taskfile__print
@@ -1136,20 +1160,20 @@ flowchart TD
     llx__tools__vscode_manager__VSCodeManager__update_extensions --> examples__docker__docker__docker_exec
     llx__tools__vscode_manager__VSCodeManager__configure_roocode --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__configure_roocode --> examples__docker__docker__docker_exec
-    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> llx__tools___docker__docker_cp
     llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> Taskfile__print
-    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> llx__tools___docker__docker_cp
     llx__tools__vscode_manager__VSCodeManager__create_launch_config --> Taskfile__print
-    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> llx__tools___docker__docker_cp
     llx__tools__vscode_manager__VSCodeManager__backup_settings --> Taskfile__print
-    llx__tools__vscode_manager__VSCodeManager__backup_settings --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__backup_settings --> llx__tools___docker__docker_cp
     llx__tools__vscode_manager__VSCodeManager__restore_settings --> Taskfile__print
-    llx__tools__vscode_manager__VSCodeManager__restore_settings --> project__map__toon__docker_cp
+    llx__tools__vscode_manager__VSCodeManager__restore_settings --> llx__tools___docker__docker_cp
     llx__tools__vscode_manager__VSCodeManager__print_status_summary --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__print_quick_start --> Taskfile__print
     llx__tools__vscode_manager___cmd_logs --> Taskfile__print
     llx__tools__vscode_manager___cmd_list_extensions --> Taskfile__print
-    llx__tools__vscode_manager__main --> project__map__toon__cli_main
+    llx__tools__vscode_manager__main --> llx__utils__cli_main__cli_main
     llx__tools__config_manager__ConfigManager__load_config --> Taskfile__print
     llx__tools__config_manager__ConfigManager__save_config --> Taskfile__print
     llx__tools__config_manager__ConfigManager__create_default_env --> Taskfile__print
@@ -1173,7 +1197,7 @@ flowchart TD
     llx__tools__config_manager___cmd_validate --> Taskfile__print
     llx__tools__config_manager___cmd_add_model --> Taskfile__print
     llx__tools__config_manager___cmd_list_profiles --> Taskfile__print
-    llx__tools__config_manager__main --> project__map__toon__cli_main
+    llx__tools__config_manager__main --> llx__utils__cli_main__cli_main
     llx__tools__health_checker__HealthChecker__run_quick_health_check --> Taskfile__print
     llx__tools__health_checker__HealthChecker__monitor_services --> Taskfile__print
     llx__tools__health_checker___handle_check_command --> llx__tools__health_checker___write_json_output
@@ -1183,7 +1207,7 @@ flowchart TD
     llx__tools__health_checker___handle_system_command --> Taskfile__print
     llx__tools__health_checker___handle_filesystem_command --> Taskfile__print
     llx__tools__health_checker___handle_network_command --> Taskfile__print
-    llx__tools__health_checker__main --> project__map__toon__cli_main
+    llx__tools__health_checker__main --> llx__utils__cli_main__cli_main
     llx__tools__model_manager__ModelManager__pull_model --> Taskfile__print
     llx__tools__model_manager__ModelManager__remove_model --> Taskfile__print
     llx__tools__model_manager__ModelManager__test_model --> Taskfile__print
@@ -1205,7 +1229,7 @@ flowchart TD
     llx__tools__model_manager___cmd_recommend --> Taskfile__print
     llx__tools__model_manager___cmd_benchmark --> Taskfile__print
     llx__tools__model_manager___cmd_requirements --> Taskfile__print
-    llx__tools__model_manager__main --> project__map__toon__cli_main
+    llx__tools__model_manager__main --> llx__utils__cli_main__cli_main
     llx__tools__health_runner__HealthCheckRunner__run_comprehensive --> Taskfile__print
     llx__tools__health_runner__HealthCheckRunner___check_services --> Taskfile__print
     llx__tools__health_runner__HealthCheckRunner___check_containers --> Taskfile__print
@@ -1214,43 +1238,45 @@ flowchart TD
     llx__tools__health_runner__HealthCheckRunner___check_network --> Taskfile__print
     llx__tools__health_runner__HealthCheckRunner___print_health_summary --> Taskfile__print
     llx__tools__utils___cmd_uninstall_extension__create_simple_handler --> Taskfile__print
-    llx__cli__app___run_analysis_tools --> project__map__toon__run_all_tools
-    llx__cli__app__analyze --> project__map__toon__select_with_context_check
+    llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
+    llx__cli__app__analyze --> llx__routing__selector__select_with_context_check
     llx__cli__app__analyze --> llx__cli__app___run_analysis_tools
-    llx__cli__app__analyze --> project__map__toon__analyze_project
-    llx__cli__app__select --> project__map__toon__analyze_project
+    llx__cli__app__analyze --> llx__analysis__collector__analyze_project
+    llx__cli__app__select --> llx__analysis__collector__analyze_project
     llx__cli__app__select --> examples__filtering__filtering__select_model
-    llx__cli__app__chat --> project__map__toon__analyze_project
-    llx__cli__app__proxy_start --> project__map__toon__start_proxy
-    llx__cli__app__proxy_config --> project__map__toon__generate_proxy_config
-    llx__cli__app__proxy_status --> project__map__toon__check_proxy
+    llx__cli__app__chat --> llx__analysis__collector__analyze_project
+    llx__cli__app__chat --> project__map__toon__build_context
+    llx__cli__app__proxy_start --> llx__integrations__proxy__start_proxy
+    llx__cli__app__proxy_config --> llx__integrations__proxy__generate_proxy_config
+    llx__cli__app__proxy_status --> llx__integrations__proxy__check_proxy
     llx__cli__app__plan_generate --> llx__cli__app___plan_code_impl
-    llx__cli__app__plan_review --> project__map__toon__load_valid_strategy
-    llx__cli__app__plan_execute --> project__map__toon__run_strategy
-    llx__cli__app__models --> project__map__toon__print_models_table
-    llx__cli__app__info --> project__map__toon__print_info_tables
+    llx__cli__app__plan_review --> llx__planfile__runner__load_valid_strategy
+    llx__cli__app__plan_execute --> llx__planfile__runner__run_strategy
+    llx__cli__app__models --> llx__cli__formatters__print_models_table
+    llx__cli__app__info --> llx__cli__formatters__print_info_tables
     llx__cli__app___plan_code_impl --> llx__cli__app___load_sprint_mapping
     llx__cli__formatters__print_models_table --> llx__cli__formatters___filter_models
     llx__cli__formatters__print_models_table --> llx__cli__formatters___build_title
     llx__cli__formatters__print_models_table --> llx__cli__formatters___render_models_table
     llx__cli__formatters__print_models_table --> llx__cli__formatters___build_model_row
-    llx__cli__formatters___render_tools_table --> project__map__toon__check_tool
+    llx__cli__formatters___render_tools_table --> llx__analysis__runner__check_tool
     llx__cli__formatters___render_tiers_table --> llx__cli__formatters___build_model_row
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tools_table
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tiers_table
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tags_legend
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_agents_table
     llx__cli__strategy_commands__create_strategy --> Taskfile__print
-    llx__cli__strategy_commands__validate_strategy --> project__map__toon__load_valid_strategy
+    llx__cli__strategy_commands__create_strategy --> project__map__toon__create_strategy_command
+    llx__cli__strategy_commands__validate_strategy --> llx__planfile__runner__load_valid_strategy
     llx__cli__strategy_commands__validate_strategy --> Taskfile__print
     llx__cli__strategy_commands__run_strategy_command --> Taskfile__print
-    llx__cli__strategy_commands__run_strategy_command --> project__map__toon__run_strategy
+    llx__cli__strategy_commands__run_strategy_command --> llx__planfile__runner__run_strategy
     llx__cli__strategy_commands__verify_strategy --> Taskfile__print
-    llx__cli__strategy_commands__verify_strategy --> project__map__toon__load_valid_strategy
-    llx__cli__strategy_commands__verify_strategy --> project__map__toon__verify_strategy_post_execution
-    llx__cli__commands__analyze__analyze --> project__map__toon__select_with_context_check
-    llx__cli__commands__analyze__analyze --> project__map__toon___run_analysis_tools
-    llx__cli__commands__analyze__analyze --> project__map__toon__analyze_project
+    llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__load_valid_strategy
+    llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__verify_strategy_post_execution
+    llx__cli__commands__analyze__analyze --> llx__routing__selector__select_with_context_check
+    llx__cli__commands__analyze__analyze --> llx__cli__app___run_analysis_tools
+    llx__cli__commands__analyze__analyze --> llx__analysis__collector__analyze_project
     llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_goal
     llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_sprints
     llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_quality_gates
@@ -1259,7 +1285,7 @@ flowchart TD
     llx__planfile__generate_strategy___normalize_single_sprint --> llx__planfile__generate_strategy___generate_tasks_from_patterns
     llx__planfile__generate_strategy___normalize_quality_gates --> llx__planfile__generate_strategy___normalize_single_gate
     llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___print_generation_info
-    llx__planfile__generate_strategy__generate_strategy_with_fix --> project__map__toon__analyze_project
+    llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__analysis__collector__analyze_project
     llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___build_strategy_prompt
     llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___call_llm_for_strategy
     llx__planfile__generate_strategy__generate_strategy_with_fix --> llx__planfile__generate_strategy___parse_and_fix_yaml
@@ -1269,11 +1295,12 @@ flowchart TD
     llx__planfile__generate_strategy___fix_yaml_formatting --> llx__planfile__generate_strategy___fix_indentation
     llx__planfile__generate_strategy__main --> llx__planfile__generate_strategy__generate_strategy_with_fix
     llx__planfile__generate_strategy__main --> llx__planfile__generate_strategy__save_fixed_strategy
-    llx__planfile__examples__example_validate_strategy --> project__map__toon__load_valid_strategy
+    llx__planfile__examples__example_create_strategy --> project__map__toon__create_strategy_command
+    llx__planfile__examples__example_validate_strategy --> llx__planfile__runner__load_valid_strategy
     llx__planfile__examples__example_validate_strategy --> Taskfile__print
-    llx__planfile__examples__example_run_strategy --> project__map__toon__run_strategy
-    llx__planfile__examples__example_verify_strategy --> project__map__toon__load_valid_strategy
-    llx__planfile__examples__example_verify_strategy --> project__map__toon__verify_strategy_post_execution
+    llx__planfile__examples__example_run_strategy --> llx__planfile__runner__run_strategy
+    llx__planfile__examples__example_verify_strategy --> llx__planfile__runner__load_valid_strategy
+    llx__planfile__examples__example_verify_strategy --> llx__planfile__runner__verify_strategy_post_execution
     llx__planfile__examples__example_verify_strategy --> Taskfile__print
     llx__planfile__examples__example_programmatic_strategy --> Taskfile__print
     llx__planfile__runner__load_valid_strategy --> Taskfile__print
@@ -1285,7 +1312,7 @@ flowchart TD
     llx__planfile__runner__run_strategy --> llx__planfile__runner__verify_strategy_post_execution
     llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___load_strategy
     llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___normalize_strategy
-    llx__planfile__executor_simple__execute_strategy --> project__map__toon__analyze_project
+    llx__planfile__executor_simple__execute_strategy --> llx__analysis__collector__analyze_project
     llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___get_sprint_tasks
     llx__planfile__executor_simple__execute_strategy --> llx__planfile__executor_simple___execute_task
     llx__planfile__executor_simple___execute_task --> llx__planfile__executor_simple___build_task_prompt
@@ -1310,9 +1337,9 @@ flowchart TD
     llx__orchestration__session__cli___cmd_list --> Taskfile__print
     llx__orchestration__session__cli___cmd_queue --> Taskfile__print
     llx__orchestration__session__cli___cmd_cleanup --> Taskfile__print
-    llx__orchestration__session__cli__main --> project__map__toon__cli_main
+    llx__orchestration__session__cli__main --> llx__utils__cli_main__cli_main
     llx__orchestration__session__manager__SessionManager__load_sessions --> Taskfile__print
-    llx__orchestration__session__manager__SessionManager__save_sessions --> project__map__toon__save_json
+    llx__orchestration__session__manager__SessionManager__save_sessions --> llx__orchestration___utils__save_json
     llx__orchestration__session__manager__SessionManager__save_sessions --> Taskfile__print
     llx__orchestration__session__manager__SessionManager__create_session --> Taskfile__print
     llx__orchestration__session__manager__SessionManager__remove_session --> Taskfile__print
@@ -1326,10 +1353,10 @@ flowchart TD
     llx__orchestration__instances__cli___cmd_list --> Taskfile__print
     llx__orchestration__instances__cli___cmd_metrics --> Taskfile__print
     llx__orchestration__instances__cli___cmd_health --> Taskfile__print
-    llx__orchestration__instances__cli__main --> project__map__toon__cli_main
+    llx__orchestration__instances__cli__main --> llx__utils__cli_main__cli_main
     llx__orchestration__instances__manager__InstanceManager____init__ --> Taskfile__print
     llx__orchestration__instances__manager__InstanceManager__load_instances --> Taskfile__print
-    llx__orchestration__instances__manager__InstanceManager__save_instances --> project__map__toon__save_json
+    llx__orchestration__instances__manager__InstanceManager__save_instances --> llx__orchestration___utils__save_json
     llx__orchestration__instances__manager__InstanceManager__save_instances --> Taskfile__print
     llx__orchestration__instances__manager__InstanceManager__create_instance --> Taskfile__print
     llx__orchestration__instances__manager__InstanceManager__start_instance --> Taskfile__print
@@ -1346,12 +1373,12 @@ flowchart TD
     llx__orchestration__vscode__cli___cmd_stop --> Taskfile__print
     llx__orchestration__vscode__cli___cmd_list --> Taskfile__print
     llx__orchestration__vscode__cli___cmd_sessions --> Taskfile__print
-    llx__orchestration__vscode__cli__main --> project__map__toon__cli_main
+    llx__orchestration__vscode__cli__main --> llx__utils__cli_main__cli_main
     llx__orchestration__vscode__config_io__load_vscode_config --> Taskfile__print
-    llx__orchestration__vscode__config_io__save_vscode_config --> project__map__toon__save_json
+    llx__orchestration__vscode__config_io__save_vscode_config --> llx__orchestration___utils__save_json
     llx__orchestration__vscode__config_io__save_vscode_config --> Taskfile__print
     llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__load_config --> Taskfile__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> project__map__toon__save_json
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> llx__orchestration___utils__save_json
     llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> Taskfile__print
     llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___create_default_config --> Taskfile__print
     llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start --> Taskfile__print
@@ -1374,7 +1401,7 @@ flowchart TD
     llx__orchestration__llm__cli___cmd_complete --> Taskfile__print
     llx__orchestration__llm__cli___cmd_cancel --> Taskfile__print
     llx__orchestration__llm__cli___cmd_usage --> Taskfile__print
-    llx__orchestration__llm__cli__main --> project__map__toon__cli_main
+    llx__orchestration__llm__cli__main --> llx__utils__cli_main__cli_main
     llx__orchestration__llm__health__perform_health_checks --> Taskfile__print
     llx__orchestration__llm__health__health_check_worker --> llx__orchestration__llm__health__perform_health_checks
     llx__orchestration__llm__health__health_check_worker --> Taskfile__print
@@ -1385,12 +1412,12 @@ flowchart TD
     llx__orchestration__llm__executors__execute_ollama --> llx__orchestration__llm__executors___failed
     llx__orchestration__llm__executors__execute_openai --> llx__orchestration__llm__executors___failed
     llx__orchestration__llm__executors__execute_anthropic --> llx__orchestration__llm__executors___failed
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> project__map__toon__load_json
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> llx__orchestration___utils__load_json
     llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> Taskfile__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> project__map__toon__save_json
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> llx__orchestration___utils__save_json
     llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator___create_default_config --> Taskfile__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> project__map__toon__perform_health_checks
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> llx__orchestration__llm__health__perform_health_checks
     llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__stop --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__add_provider --> Taskfile__print
@@ -1398,7 +1425,7 @@ flowchart TD
     llx__orchestration__llm__orchestrator__LLMOrchestrator__add_model --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__complete_request --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__cancel_request --> Taskfile__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___execute_request --> project__map__toon__execute_request
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___execute_request --> llx__orchestration__llm__executors__execute_request
     llx__orchestration__llm__orchestrator__LLMOrchestrator___config_save_worker --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__print_status_summary --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator___print_usage_stats --> Taskfile__print
@@ -1410,9 +1437,9 @@ flowchart TD
     llx__orchestration__queue__cli___cmd_complete --> Taskfile__print
     llx__orchestration__queue__cli___cmd_status --> Taskfile__print
     llx__orchestration__queue__cli___cmd_metrics --> Taskfile__print
-    llx__orchestration__queue__cli__main --> project__map__toon__cli_main
+    llx__orchestration__queue__cli__main --> llx__utils__cli_main__cli_main
     llx__orchestration__queue__manager__QueueManager__load_queues --> Taskfile__print
-    llx__orchestration__queue__manager__QueueManager__save_queues --> project__map__toon__save_json
+    llx__orchestration__queue__manager__QueueManager__save_queues --> llx__orchestration___utils__save_json
     llx__orchestration__queue__manager__QueueManager__save_queues --> Taskfile__print
     llx__orchestration__queue__manager__QueueManager__start --> Taskfile__print
     llx__orchestration__queue__manager__QueueManager__stop --> Taskfile__print
@@ -1424,10 +1451,10 @@ flowchart TD
     llx__orchestration__queue__manager__QueueManager___retry_request --> Taskfile__print
     llx__orchestration__queue__manager__QueueManager__print_status_summary --> Taskfile__print
     llx__orchestration__utils___cmd_cleanup__create_cleanup_handler --> Taskfile__print
-    llx__orchestration__utils___cmd_remove__create_remove_handler --> project__map__toon__cmd_remove_wrapper
+    llx__orchestration__utils___cmd_remove__create_remove_handler --> llx__orchestration__cli_utils__cmd_remove_wrapper
     llx__orchestration__utils___cmd_status__create_status_handler --> Taskfile__print
     llx__orchestration__ratelimit__limiter__RateLimiter__load_limits --> Taskfile__print
-    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> project__map__toon__save_json
+    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> llx__orchestration___utils__save_json
     llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> Taskfile__print
     llx__orchestration__ratelimit__limiter__RateLimiter__add_limit --> Taskfile__print
     llx__orchestration__ratelimit__limiter__RateLimiter__remove_limit --> Taskfile__print
@@ -1436,21 +1463,12 @@ flowchart TD
     llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_expired_penalties --> Taskfile__print
     llx__orchestration__ratelimit__limiter__RateLimiter__print_status_summary --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_add --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_remove --> project__map__toon__cmd_remove_pair_wrapper
+    llx__orchestration__ratelimit__cli___cmd_remove --> llx__orchestration__cli_utils__cmd_remove_pair_wrapper
     llx__orchestration__ratelimit__cli___cmd_check --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_record --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_release --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_status --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_available --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_cleanup --> Taskfile__print
-    llx__orchestration__ratelimit__cli__main --> project__map__toon__cli_main
-    llx__orchestration__ratelimit___persistence__load_limits_from_file --> Taskfile__print
-    llx__orchestration__ratelimit___persistence__save_limits_to_file --> project__map__toon__save_json
-    llx__orchestration__ratelimit___persistence__save_limits_to_file --> Taskfile__print
-    llx__orchestration__ratelimit___crud__add_limit --> Taskfile__print
-    llx__orchestration__ratelimit___crud__remove_limit --> Taskfile__print
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class test_local_chat__main,examples__privacy__advanced__01_api_integration__main,llx__commands___patch_apply___parse_unified_hunks,llx__planfile__model_selector__ModelSelector___build_model_registry,llx__detection__detector__ProjectTypeDetector__detect_from_files,llx__orchestration__ratelimit__limiter__RateLimiter__get_status,llx__utils__issues__issue_text,llx__utils__issues___collect_file_context highCC
-    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process,llx__prellm__cli_config___format_config_sections medCC
+    class examples__privacy__advanced__01_api_integration__main highCC
+    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___parse_unified_hunks,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process medCC

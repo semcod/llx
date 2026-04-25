@@ -1,12 +1,12 @@
-# redup/duplication | 29 groups | 189f 35511L | 2026-04-25
+# redup/duplication | 29 groups | 189f 35581L | 2026-04-25
 
 SUMMARY:
   files_scanned: 189
-  total_lines:   35511
+  total_lines:   35581
   dup_groups:    29
   dup_fragments: 67
   saved_lines:   423
-  scan_ms:       8579
+  scan_ms:       12120
 
 HOTSPOTS[7] (files with most duplication):
   examples/privacy/advanced/02_multi_stage.py  dup=185L  groups=1  frags=1  (0.5%)

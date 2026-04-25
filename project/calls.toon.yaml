@@ -1,5 +1,5 @@
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 513 | edges: 500 | modules: 83
+# nodes: 493 | edges: 500 | modules: 94
 # CC̄=2.6
 
 HUBS[20]:
@@ -21,8 +21,6 @@ HUBS[20]:
     CC=9  in:1  out:49  total:50
   examples.privacy.streaming.01_streaming_anonymization.main
     CC=5  in:0  out:50  total:50
-  test-local-chat.main
-    CC=19  in:0  out:49  total:49
   examples.privacy.project.02_deanonymize_project.main
     CC=4  in:0  out:45  total:45
   scripts.pyqual_auto.main
@@ -41,7 +39,9 @@ HUBS[20]:
     CC=6  in:0  out:35  total:35
   llx.orchestration.session.manager.SessionManager.load_sessions
     CC=5  in:0  out:34  total:34
-  llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config
+  llx.prellm.env_config.get_env_config
+    CC=3  in:7  out:24  total:31
+  llx.tools.health_checker.HealthChecker.monitor_services
     CC=6  in:0  out:30  total:30
 
 MODULES:
@@ -95,9 +95,10 @@ MODULES:
     _collect_redup_metrics  CC=2  out:5
     _collect_vallm_metrics  CC=3  out:5
     _count_map_modules  CC=2  out:3
-  llx.analysis.runner  [5 funcs]
+  llx.analysis.runner  [6 funcs]
     _run_tool  CC=5  out:9
     check_tool  CC=1  out:1
+    run_all_tools  CC=6  out:3
     run_code2llm  CC=1  out:3
     run_redup  CC=1  out:3
     run_vallm  CC=1  out:2
@@ -128,10 +129,12 @@ MODULES:
     run_strategy_command  CC=1  out:13
     validate_strategy  CC=2  out:16
     verify_strategy  CC=6  out:21
-  llx.commands._patch_apply  [3 funcs]
+  llx.commands._patch_apply  [5 funcs]
     _apply_unified_diff  CC=6  out:14
+    _classify_line  CC=6  out:5
+    _finalize_hunk  CC=3  out:1
     _find_hunk_position  CC=9  out:10
-    _parse_unified_hunks  CC=16  out:18
+    _parse_unified_hunks  CC=10  out:14
   llx.commands.fix  [8 funcs]
     apply_code_changes  CC=3  out:3
     display_model_selection_and_metrics  CC=1  out:7
@@ -141,18 +144,24 @@ MODULES:
     load_errors_data  CC=4  out:9
     prepare_fix_prompt  CC=4  out:1
     select_model_for_fix  CC=3  out:2
-  llx.config  [5 funcs]
+  llx.config  [7 funcs]
     __post_init__  CC=1  out:1
     load  CC=8  out:26
+    _apply_env  CC=9  out:10
     _apply_yaml  CC=13  out:5
     _apply_yaml_proxy  CC=4  out:4
     _apply_yaml_thresholds  CC=4  out:9
+    normalize_litellm_base_url  CC=5  out:8
   llx.examples.utils  [5 funcs]
     check_dependencies  CC=3  out:4
     check_ollama  CC=3  out:6
     ensure_venv  CC=2  out:3
     process  CC=6  out:11
     run_workflow  CC=3  out:3
+  llx.integrations.proxy  [3 funcs]
+    check_proxy  CC=2  out:1
+    generate_proxy_config  CC=7  out:5
+    start_proxy  CC=5  out:11
   llx.llm  [5 funcs]
     __init__  CC=4  out:3
     _ensure_dotenv_loaded  CC=3  out:4
@@ -204,20 +213,13 @@ MODULES:
     _cmd_usage  CC=1  out:3
     _dispatch  CC=2  out:3
     main  CC=1  out:2
-  llx.orchestration.llm.executors  [6 funcs]
-    _failed  CC=1  out:1
-    execute_anthropic  CC=3  out:15
+  llx.orchestration.llm.executors  [3 funcs]
     execute_ollama  CC=3  out:15
     execute_openai  CC=3  out:14
     execute_request  CC=4  out:4
-    messages_to_prompt  CC=5  out:6
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [3 funcs]
-    _create_default_config  CC=2  out:5
-    load_config  CC=6  out:30
-    save_config  CC=5  out:6
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5
@@ -256,7 +258,8 @@ MODULES:
     load_config  CC=6  out:36
     print_status_summary  CC=11  out:25
     remove_account  CC=5  out:4
-  llx.planfile.examples  [4 funcs]
+  llx.planfile.examples  [5 funcs]
+    example_create_strategy  CC=1  out:1
     example_programmatic_strategy  CC=1  out:11
     example_run_strategy  CC=1  out:1
     example_validate_strategy  CC=2  out:5
@@ -286,13 +289,17 @@ MODULES:
     load_valid_strategy  CC=3  out:7
     run_strategy  CC=8  out:23
     verify_strategy_post_execution  CC=12  out:12
+  llx.prellm._nfo_compat  [1 funcs]
+    configure  CC=3  out:4
   llx.prellm.agents.preprocessor  [2 funcs]
     _get_codebase_indexer_class  CC=1  out:2
     _get_user_memory_class  CC=1  out:2
-  llx.prellm.budget  [3 funcs]
+  llx.prellm.budget  [5 funcs]
     _ensure_loaded  CC=5  out:11
     _persist  CC=6  out:9
     summary  CC=2  out:4
+    _current_month_key  CC=1  out:2
+    get_budget_tracker  CC=6  out:1
   llx.prellm.chains.process_chain  [1 funcs]
     _run_engine  CC=7  out:9
   llx.prellm.cli  [4 funcs]
@@ -317,10 +324,13 @@ MODULES:
     _handle_query_options  CC=9  out:6
     _init_logging  CC=1  out:2
     _initialize_execution  CC=4  out:5
-  llx.prellm.context.folder_compressor  [3 funcs]
+  llx.prellm.context.folder_compressor  [6 funcs]
     to_dependency_graph  CC=11  out:14
     to_summary  CC=11  out:8
     to_toon  CC=8  out:17
+    _extract_module_docstring  CC=6  out:11
+    _path_to_module  CC=3  out:5
+    _relative_path  CC=2  out:3
   llx.prellm.context_ops  [7 funcs]
     build_sensitive_filter  CC=4  out:5
     collect_environment_context  CC=4  out:8
@@ -353,8 +363,14 @@ MODULES:
     _get_version  CC=2  out:0
     get_logger  CC=2  out:5
     setup_logging  CC=5  out:8
+  llx.prellm.model_catalog  [2 funcs]
+    list_model_pairs  CC=8  out:4
+    list_openrouter_models  CC=8  out:4
   llx.prellm.pipeline.engine  [1 funcs]
     from_yaml  CC=1  out:2
+  llx.prellm.pipeline.loader  [2 funcs]
+    build_pipeline  CC=2  out:2
+    load_pipeline_config  CC=5  out:20
   llx.prellm.pipeline_ops  [1 funcs]
     execute_v3_pipeline  CC=10  out:27
   llx.prellm.server  [6 funcs]
@@ -364,7 +380,7 @@ MODULES:
     batch_process  CC=3  out:8
     chat_completions  CC=12  out:22
     create_app  CC=7  out:1
-  llx.prellm.trace  [8 funcs]
+  llx.prellm.trace  [11 funcs]
     _generate_decision_tree  CC=10  out:22
     _generate_markdown_step_details  CC=8  out:14
     _generate_markdown_summary  CC=3  out:4
@@ -373,15 +389,32 @@ MODULES:
     stop  CC=1  out:2
     _safe_json  CC=3  out:4
     _sanitize  CC=13  out:17
-  llx.privacy._project_context  [4 funcs]
+    _step_icon  CC=1  out:1
+    get_current_trace  CC=1  out:1
+  llx.prellm.utils.lazy_imports  [1 funcs]
+    lazy_import_global  CC=2  out:3
+  llx.privacy.__core  [1 funcs]
+    quick_anonymize  CC=1  out:2
+  llx.privacy._project_context  [8 funcs]
     _generate_symbol  CC=2  out:4
     _get_mapping_dict  CC=1  out:1
     from_dict  CC=1  out:15
     to_dict  CC=1  out:6
+    _dict_to_mappings  CC=2  out:2
+    _mapping_dict_for  CC=1  out:1
+    _mappings_to_dict  CC=2  out:1
+    _symbol_prefix  CC=1  out:1
   llx.privacy.deanonymize_engine  [3 funcs]
     __init__  CC=1  out:1
     deanonymize_file  CC=3  out:4
     deanonymize_text  CC=7  out:15
+  llx.privacy.deanonymize_utils  [6 funcs]
+    build_reverse_lookup  CC=3  out:1
+    find_content_tokens  CC=1  out:2
+    find_symbol_tokens  CC=1  out:5
+    get_content_mapping  CC=2  out:1
+    restore_decorators  CC=1  out:3
+    restore_imports  CC=1  out:4
   llx.pyqual_plugins.bump_version  [6 funcs]
     bump_patch_version  CC=1  out:1
     git_commit_version_bump  CC=2  out:4
@@ -414,6 +447,8 @@ MODULES:
     main  CC=3  out:6
     verify_publish  CC=6  out:9
     verify_push  CC=3  out:8
+  llx.tools._docker  [1 funcs]
+    docker_cp  CC=1  out:1
   llx.tools.ai_tools_manager  [8 funcs]
     _ensure_llx_api_running  CC=5  out:6
     _print_shell_help  CC=2  out:16
@@ -429,7 +464,7 @@ MODULES:
     _handle_start  CC=2  out:1
     _handle_status  CC=1  out:1
     _handle_stop  CC=2  out:1
-    main  CC=8  out:14
+    main  CC=6  out:11
   llx.tools.config_manager  [24 funcs]
     _print_config_files_summary  CC=4  out:3
     _print_env_summary  CC=4  out:5
@@ -495,42 +530,58 @@ MODULES:
     print_status_summary  CC=10  out:16
     restart_vscode  CC=2  out:4
     restore_settings  CC=8  out:20
-  project.map.toon  [62 funcs]
-    _apply_env  CC=0  out:0
-    _apply_json_patch_strategy  CC=0  out:0
-    _apply_markdown_code_block_strategy  CC=0  out:0
-    _apply_openai_patch_strategy  CC=0  out:0
-    _current_month_key  CC=0  out:0
-    _dict_to_mappings  CC=0  out:0
-    _extract_issue_files  CC=0  out:0
-    _extract_module_docstring  CC=0  out:0
-    _format_metrics  CC=0  out:0
-    _format_selection  CC=0  out:0
+  llx.utils.aider  [2 funcs]
+    _extract_issue_files  CC=9  out:8
+    _run_aider_fix  CC=10  out:19
+  llx.utils.cli_main  [1 funcs]
+    cli_main  CC=3  out:6
+  llx.utils.formatting  [2 funcs]
+    _format_metrics  CC=2  out:24
+    _format_selection  CC=4  out:3
+  llx.utils.issues  [2 funcs]
+    build_fix_prompt  CC=11  out:11
+    load_issue_source  CC=9  out:10
+  project.map.toon  [1 funcs]
+    create_strategy_command  CC=0  out:0
   scripts.pyqual_auto  [2 funcs]
     main  CC=8  out:43
     run_pyqual  CC=3  out:5
   simple_generate  [1 funcs]
     generate_simple_strategy  CC=4  out:18
-  test-local-chat  [6 funcs]
+  test-local-chat  [11 funcs]
+    _check_services  CC=3  out:5
+    _print_models  CC=4  out:12
+    _print_summary  CC=2  out:9
+    _run_chat_tests  CC=4  out:9
+    _select_test_models  CC=7  out:4
     get_available_models  CC=4  out:3
-    main  CC=19  out:49
+    main  CC=4  out:13
     test_chat_completion  CC=4  out:16
     test_llx_health  CC=2  out:1
     test_llx_models  CC=4  out:3
-    test_ollama_health  CC=2  out:1
   trace  [1 funcs]
     test  CC=11  out:10
 
 EDGES:
-  trace.test → project.map.toon._normalize_strategy_data
-  simple_generate.generate_simple_strategy → project.map.toon.generate_strategy_with_fix
-  simple_generate.generate_simple_strategy → project.map.toon.save_fixed_strategy
+  trace.test → llx.planfile.generate_strategy._normalize_strategy_data
+  simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.generate_strategy_with_fix
+  simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.save_fixed_strategy
   test-local-chat.test_chat_completion → Taskfile.print
+  test-local-chat._check_services → Taskfile.print
+  test-local-chat._check_services → test-local-chat.test_llx_health
+  test-local-chat._check_services → test-local-chat.test_ollama_health
+  test-local-chat._print_models → Taskfile.print
+  test-local-chat._print_models → test-local-chat.get_available_models
+  test-local-chat._print_models → test-local-chat.test_llx_models
+  test-local-chat._run_chat_tests → Taskfile.print
+  test-local-chat._run_chat_tests → test-local-chat.test_chat_completion
+  test-local-chat._print_summary → Taskfile.print
   test-local-chat.main → Taskfile.print
-  test-local-chat.main → test-local-chat.test_llx_health
-  test-local-chat.main → test-local-chat.test_ollama_health
-  test-local-chat.main → test-local-chat.get_available_models
-  test-local-chat.main → test-local-chat.test_llx_models
+  test-local-chat.main → test-local-chat._check_services
+  test-local-chat.main → test-local-chat._print_models
+  test-local-chat.main → test-local-chat._select_test_models
+  test-local-chat.main → test-local-chat._run_chat_tests
+  test-local-chat.main → test-local-chat._print_summary
   examples.privacy.ml.01_entropy_ml_detection.main → Taskfile.print
   examples.privacy.ml.04_behavioral_learning.main → Taskfile.print
   examples.privacy.ml.03_contextual_passwords.main → Taskfile.print
@@ -552,23 +603,13 @@ EDGES:
   examples.privacy.advanced.01_api_integration.main → Taskfile.print
   examples.privacy.advanced.01_api_integration.main → examples.privacy.advanced.01_api_integration.create_realistic_project
   examples.privacy.basic.01_text_anonymization.main → Taskfile.print
-  examples.privacy.basic.01_text_anonymization.main → project.map.toon.quick_anonymize
+  examples.privacy.basic.01_text_anonymization.main → llx.privacy.__core.quick_anonymize
   examples.privacy.basic.02_custom_patterns.main → Taskfile.print
   scripts.pyqual_auto.run_pyqual → Taskfile.print
   scripts.pyqual_auto.main → Taskfile.print
-  llx.config.LlxConfig.__post_init__ → project.map.toon.normalize_litellm_base_url
-  llx.config.LlxConfig.load → project.map.toon._apply_env
-  llx.config.LlxConfig.load → project.map.toon.normalize_litellm_base_url
+  llx.config.LlxConfig.__post_init__ → llx.config.normalize_litellm_base_url
+  llx.config.LlxConfig.load → llx.config._apply_env
+  llx.config.LlxConfig.load → llx.config.normalize_litellm_base_url
   llx.config._apply_yaml → llx.config._apply_yaml_proxy
   llx.config._apply_yaml → llx.config._apply_yaml_thresholds
   llx.llm._ensure_dotenv_loaded → llx.llm._load_dotenv_fallback
-  llx.llm.get_llm_model → llx.llm._ensure_dotenv_loaded
-  llx.llm.get_api_key → llx.llm._ensure_dotenv_loaded
-  llx.llm.LLM.__init__ → project.map.toon.get_llm_model
-  llx.llm.LLM.__init__ → project.map.toon.get_api_key
-  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._parse_unified_hunks
-  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._find_hunk_position
-  llx.commands.fix.apply_code_changes → project.map.toon._apply_json_patch_strategy
-  llx.commands.fix.apply_code_changes → project.map.toon._apply_openai_patch_strategy
-  llx.commands.fix.apply_code_changes → project.map.toon._apply_markdown_code_block_strategy
-  llx.commands.fix.load_errors_data → project.map.toon.load_issue_source

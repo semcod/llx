@@ -3,56 +3,68 @@ flowchart TD
     examples__docker["examples.docker<br/>14 funcs"]
     examples__filtering["examples.filtering<br/>7 funcs"]
     examples__privacy["examples.privacy<br/>73 funcs"]
+    llx__analysis["llx.analysis<br/>27 funcs"]
     llx__cli["llx.cli<br/>38 funcs"]
-    llx__commands["llx.commands<br/>13 funcs"]
+    llx__commands["llx.commands<br/>15 funcs"]
     llx__config["llx.config<br/>9 funcs"]
     llx__examples["llx.examples<br/>13 funcs"]
     llx__integrations["llx.integrations<br/>15 funcs"]
-    llx__llm["llx.llm<br/>8 funcs"]
     llx__mcp["llx.mcp<br/>48 funcs"]
-    llx__orchestration["llx.orchestration<br/>275 funcs"]
-    llx__planfile["llx.planfile<br/>58 funcs"]
+    llx__orchestration["llx.orchestration<br/>278 funcs"]
+    llx__planfile["llx.planfile<br/>61 funcs"]
     llx__prellm["llx.prellm<br/>316 funcs"]
     llx__privacy["llx.privacy<br/>92 funcs"]
     llx__pyqual_plugins["llx.pyqual_plugins<br/>26 funcs"]
     llx__routing["llx.routing<br/>20 funcs"]
     llx__tools["llx.tools<br/>207 funcs"]
-    llx__utils["llx.utils<br/>14 funcs"]
-    project__map["project.map<br/>535 funcs"]
+    llx__utils["llx.utils<br/>18 funcs"]
+    project__map["project.map<br/>502 funcs"]
     scripts__pyqual_auto["scripts.pyqual_auto<br/>10 funcs"]
     simple_generate["simple_generate<br/>1 funcs"]
-    test_local_chat["test-local-chat<br/>6 funcs"]
+    test_local_chat["test-local-chat<br/>11 funcs"]
     trace["trace<br/>1 funcs"]
     examples__privacy ==>|435| Taskfile
     llx__tools ==>|405| Taskfile
     llx__orchestration ==>|319| Taskfile
     llx__pyqual_plugins ==>|76| Taskfile
-    llx__prellm ==>|59| project__map
     test_local_chat ==>|39| Taskfile
-    llx__cli ==>|26| project__map
     llx__planfile ==>|26| Taskfile
     llx__cli ==>|24| Taskfile
-    llx__orchestration ==>|22| project__map
     scripts__pyqual_auto ==>|19| Taskfile
-    llx__privacy ==>|18| project__map
-    llx__mcp ==>|15| project__map
-    llx__commands ==>|13| project__map
     llx__examples ==>|12| Taskfile
-    llx__config ==>|10| project__map
-    llx__tools ==>|10| project__map
+    llx__commands ==>|8| llx__utils
     llx__tools ==>|7| examples__docker
-    llx__planfile ==>|6| project__map
-    llx__integrations ==>|4| project__map
-    examples__privacy -->|3| project__map
-    simple_generate -->|2| project__map
-    llx__llm -->|2| project__map
-    llx__routing -->|2| project__map
-    trace -->|1| project__map
+    llx__orchestration ==>|7| llx__utils
+    llx__cli ==>|6| llx__analysis
+    llx__cli ==>|6| llx__planfile
+    llx__mcp ==>|6| llx__analysis
+    llx__tools ==>|5| llx__utils
+    llx__cli ==>|4| llx__routing
+    examples__privacy -->|3| llx__privacy
+    llx__cli -->|3| llx__integrations
+    llx__mcp -->|3| llx__utils
+    simple_generate -->|2| llx__planfile
+    llx__cli -->|2| project__map
+    llx__planfile -->|2| llx__analysis
+    llx__mcp -->|2| llx__routing
+    llx__mcp -->|2| llx__prellm
+    trace -->|1| llx__planfile
     llx__commands -->|1| examples__filtering
+    llx__commands -->|1| llx__prellm
+    llx__commands -->|1| llx__analysis
     llx__cli -->|1| examples__filtering
-    llx__utils -->|1| project__map
+    llx__planfile -->|1| project__map
+    llx__utils -->|1| llx__mcp
     llx__utils -->|1| llx__prellm
     llx__mcp -->|1| examples__filtering
-    llx__mcp -->|1| llx__prellm
+    llx__mcp -->|1| project__map
+    llx__mcp -->|1| llx__integrations
+    llx__mcp -->|1| llx__planfile
+    llx__integrations -->|1| llx__config
     llx__integrations -->|1| examples__filtering
+    llx__integrations -->|1| llx__analysis
+    llx__integrations -->|1| llx__routing
+    llx__integrations -->|1| project__map
+    llx__routing -->|1| llx__config
     llx__routing -->|1| examples__filtering
+    llx__routing -->|1| llx__integrations

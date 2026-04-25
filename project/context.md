@@ -4,17 +4,17 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 190, yaml: 56, shell: 31, yml: 10, txt: 4
+- **Languages**: python: 190, yaml: 59, shell: 32, yml: 10, txt: 4
 - **Analysis Mode**: static
-- **Total Functions**: 1914
+- **Total Functions**: 1903
 - **Total Classes**: 232
-- **Modules**: 311
-- **Entry Points**: 1624
+- **Modules**: 315
+- **Entry Points**: 1619
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 1901
+- **Functions**: 609
 - **File**: `map.toon.yaml`
 
 ### llx.tools.config_manager
@@ -77,6 +77,11 @@
 - **Classes**: 1
 - **File**: `manager.py`
 
+### llx.orchestration.ratelimit.limiter
+- **Functions**: 20
+- **Classes**: 1
+- **File**: `limiter.py`
+
 ### llx.cli.app
 - **Functions**: 19
 - **File**: `app.py`
@@ -94,11 +99,6 @@
 - **Functions**: 17
 - **Classes**: 1
 - **File**: `ai_tools_manager.py`
-
-### llx.orchestration.ratelimit.limiter
-- **Functions**: 17
-- **Classes**: 1
-- **File**: `limiter.py`
 
 ### llx.mcp.tools
 - **Functions**: 17
@@ -134,9 +134,6 @@ Main execution flows into the system:
 
 ### examples.privacy.streaming.01_streaming_anonymization.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.streaming.01_streaming_anonymization.create_large_project
-
-### test-local-chat.main
-- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, test-local-chat.test_llx_health, test-local-chat.test_ollama_health, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### examples.privacy.project.02_deanonymize_project.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, src_file.write_text, Taskfile.print, Taskfile.print
@@ -189,7 +186,7 @@ Main execution flows into the system:
 
 ### llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config
 > Load LLM orchestration configuration.
-- **Calls**: project.map.toon.load_json, self.config.update, data.get, Taskfile.print, Taskfile.print, self._create_default_config, Taskfile.print, data.get
+- **Calls**: llx.orchestration._utils.load_json, self.config.update, data.get, Taskfile.print, Taskfile.print, self._create_default_config, Taskfile.print, data.get
 
 ### llx.orchestration.queue.manager.QueueManager.print_status_summary
 > Print comprehensive status summary.
@@ -222,6 +219,10 @@ v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
 ### llx.tools.docker_manager.DockerManager.print_status_summary
 > Print comprehensive status summary.
 - **Calls**: Taskfile.print, Taskfile.print, self.get_service_status, Taskfile.print, status.items, Taskfile.print, self.services.keys, self.get_resource_usage
+
+### llx.config.LlxConfig.load
+> Load configuration from llx.yaml, llx.toml, or pyproject.toml.
+- **Calls**: None.resolve, cls, LiteLLMConfig.load, yaml_path.exists, pyproject.exists, llx.config._apply_env, llx.config.normalize_litellm_base_url, toml_path.exists
 
 ## Process Flows
 
@@ -286,6 +287,13 @@ load_queues [llx.orchestration.queue.manager.QueueManager]
   └─ →> print
 ```
 
+### Flow 10: monitor_services
+```
+monitor_services [llx.tools.health_checker.HealthChecker]
+  └─ →> print
+  └─ →> print
+```
+
 ## Key Classes
 
 ### llx.orchestration.routing.engine.RoutingEngine
@@ -333,6 +341,11 @@ load_queues [llx.orchestration.queue.manager.QueueManager]
 - **Methods**: 20
 - **Key Methods**: llx.orchestration.session.manager.SessionManager.__init__, llx.orchestration.session.manager.SessionManager.load_sessions, llx.orchestration.session.manager.SessionManager.save_sessions, llx.orchestration.session.manager.SessionManager.create_session, llx.orchestration.session.manager.SessionManager.remove_session, llx.orchestration.session.manager.SessionManager.get_available_session, llx.orchestration.session.manager.SessionManager.request_session, llx.orchestration.session.manager.SessionManager.release_session, llx.orchestration.session.manager.SessionManager.get_session_status, llx.orchestration.session.manager.SessionManager.list_sessions
 
+### llx.orchestration.ratelimit.limiter.RateLimiter
+> Manages rate limiting for multiple providers and accounts.
+- **Methods**: 20
+- **Key Methods**: llx.orchestration.ratelimit.limiter.RateLimiter.__init__, llx.orchestration.ratelimit.limiter.RateLimiter.load_limits, llx.orchestration.ratelimit.limiter.RateLimiter.save_limits, llx.orchestration.ratelimit.limiter.RateLimiter._create_default_limits, llx.orchestration.ratelimit.limiter.RateLimiter.add_limit, llx.orchestration.ratelimit.limiter.RateLimiter.remove_limit, llx.orchestration.ratelimit.limiter.RateLimiter.check_rate_limit, llx.orchestration.ratelimit.limiter.RateLimiter.record_request, llx.orchestration.ratelimit.limiter.RateLimiter.release_request, llx.orchestration.ratelimit.limiter.RateLimiter._build_utilization
+
 ### llx.prellm.pipeline.PromptPipeline
 > Generic pipeline — executes a sequence of LLM + algorithmic steps.
 
@@ -355,11 +368,6 @@ Usage:
 > Manages AI tools container and operations.
 - **Methods**: 17
 - **Key Methods**: llx.tools.ai_tools_manager.AIToolsManager.__init__, llx.tools.ai_tools_manager.AIToolsManager.is_container_running, llx.tools.ai_tools_manager.AIToolsManager._ensure_llx_api_running, llx.tools.ai_tools_manager.AIToolsManager._start_ai_tools_container, llx.tools.ai_tools_manager.AIToolsManager.start_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.stop_ai_tools, llx.tools.ai_tools_manager.AIToolsManager.restart_ai_tools, llx.tools.ai_tools_manager.AIToolsManager._print_shell_help, llx.tools.ai_tools_manager.AIToolsManager.access_shell, llx.tools.ai_tools_manager.AIToolsManager.execute_command
-
-### llx.orchestration.ratelimit.limiter.RateLimiter
-> Manages rate limiting for multiple providers and accounts.
-- **Methods**: 17
-- **Key Methods**: llx.orchestration.ratelimit.limiter.RateLimiter.__init__, llx.orchestration.ratelimit.limiter.RateLimiter.load_limits, llx.orchestration.ratelimit.limiter.RateLimiter.save_limits, llx.orchestration.ratelimit.limiter.RateLimiter._create_default_limits, llx.orchestration.ratelimit.limiter.RateLimiter.add_limit, llx.orchestration.ratelimit.limiter.RateLimiter.remove_limit, llx.orchestration.ratelimit.limiter.RateLimiter.check_rate_limit, llx.orchestration.ratelimit.limiter.RateLimiter.record_request, llx.orchestration.ratelimit.limiter.RateLimiter.release_request, llx.orchestration.ratelimit.limiter.RateLimiter.get_status
 
 ### llx.prellm.context.user_memory.UserMemory
 > Stores user query history and learned preferences.
@@ -404,55 +412,107 @@ Used by both core Prellm
 
 Key functions that process and transform data:
 
-### project.map.toon._parse_unified_hunks
+### llx.commands._patch_apply._parse_unified_hunks
+> Parse a unified diff into hunks.
+- **Output to**: re.compile, patch_text.splitlines, hunk_header.match, llx.commands._patch_apply._classify_line, llx.commands._patch_apply._finalize_hunk
 
-### project.map.toon._format_tree_value
+### llx.privacy._streaming_impl.StreamingProjectAnonymizer._process_batch
+- **Output to**: self._process_file, progress_callback
 
-### project.map.toon._handle_vallm_validate
+### llx.privacy._streaming_impl.StreamingProjectAnonymizer._process_file
+- **Output to**: str, file_path.relative_to, sum, self._anonymize_large_file, self.anonymizer.anonymize_file
 
-### project.map.toon._handle_llx_preprocess
+### llx.privacy._streaming_chunking.ChunkedProcessor.process_file
+- **Output to**: Path, file_path.stat, self._split_and_process, self._process_small_file
 
-### project.map.toon._parse_model_pair
+### llx.privacy._streaming_chunking.ChunkedProcessor._process_small_file
+- **Output to**: file_path.read_text, anonymizer_func, ChunkResult
 
-### project.map.toon.batch_process
+### llx.privacy._streaming_chunking.ChunkedProcessor._split_and_process
+- **Output to**: open, len, anonymizer_func, line.encode, line.encode
 
-### project.map.toon.run_preprocessing
+### llx.pyqual_plugins.detect_secrets._run_detect_secrets_subprocess
+> Execute the detect-secrets subprocess and handle errors.
+- **Output to**: subprocess.run, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
-### project.map.toon._cmd_validate
+### llx.pyqual_plugins.bump_version.parse_version
+> Parse version string into components.
+- **Output to**: re.match, ValueError, int, int, int
 
-### project.map.toon._build_parser
+### llx.pyqual_plugins.lint.run_ruff_format_check
+> Run ruff format check.
+- **Output to**: Taskfile.print, subprocess.run, Taskfile.print, Taskfile.print, Taskfile.print
 
-### project.map.toon._trace_preprocess_configuration
+### llx.examples.utils.TaskQueue.process
+> Process all tasks in queue.
+- **Output to**: os.remove, Taskfile.print, os.path.exists, Taskfile.print, open
 
-### project.map.toon.preprocess_and_execute
+### llx.prellm.cli_config._format_config_sections
+> Group config entries into categorized sections for display.
+- **Output to**: entries.items, None.append, None.append, var.startswith, None.append
 
-### project.map.toon.preprocess_and_execute_sync
+### llx.prellm.cli.process
+> Execute a DevOps process chain.
+- **Output to**: app.command, typer.Argument, typer.Option, typer.Option, typer.Option
 
-### project.map.toon._parse_map_stats_line
+### llx.prellm.trace._format_tree_value
+> Format a value for display in the decision tree — no truncation.
+- **Output to**: isinstance, str, isinstance, json.dumps, val.replace
 
-### project.map.toon._parse_map_alerts_line
+### llx.prellm.extractors.format_classification_context
+> Extract and format classification context from preprocessing result.
+- **Output to**: state.get, isinstance, state.get, classification.get, classification.get
 
-### project.map.toon._parse_map_hotspots_line
+### llx.prellm.extractors.format_context_schema
+> Extract and format context schema information.
+- **Output to**: extra_context.get, schema_data.get, schema_data.get, schema_data.get, isinstance
 
-### project.map.toon._format_aider_result
+### llx.prellm.extractors.format_runtime_context
+> Extract and format runtime context information.
+- **Output to**: extra_context.get, runtime.get, runtime.get, sys_info.get, sys_info.get
 
-### project.map.toon._format_config_sections
+### llx.prellm.extractors.format_user_context
+> Extract and format user context information.
+- **Output to**: extra_context.get, parts.append
 
-### project.map.toon._execute_and_format_result
+### llx.prellm.server._parse_model_pair
+> Parse 'prellm:qwen→claude' or 'prellm:small→large' into (small, large) model strings.
 
-### project.map.toon._parse_and_fix_yaml
+Special cases
+- **Output to**: model_str.split, None.lower, pair.split, len, pair.split
 
-### project.map.toon._fix_yaml_formatting
+### llx.prellm.server.batch_process
+> Process multiple queries in parallel.
+- **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
-### project.map.toon._fix_list_formatting
+### llx.prellm._get_process_chain
 
-### project.map.toon.process
+### llx.prellm.pipeline_ops.run_preprocessing
+> Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
+- **Output to**: time.time, preprocessor.preprocess, time.time
 
-### project.map.toon.format_classification_context
+### llx.prellm.prompt_registry.PromptRegistry.validate
+> Validate that all prompts have non-empty templates. Returns list of error messages.
+- **Output to**: self._ensure_loaded, set, self._entries.items, self._entries.keys, errors.append
 
-### project.map.toon.format_context_schema
+### llx.prellm.cli_query._execute_and_format_result
+> Execute the query and format output.
+- **Output to**: asyncio.run, llx.prellm.core.preprocess_and_execute, recorder.stop, typer.echo, recorder.save
 
-### project.map.toon.format_runtime_context
+### llx.prellm.validators.ResponseValidator.validate
+> Validate a dict against a named schema.
+
+Args:
+    data: The data dict to validate (typically parsed
+- **Output to**: self._ensure_loaded, self._schemas.get, schema.types.items, schema.constraints.items, ValidationResult
+
+### llx.prellm.validators.ResponseValidator.validate_or_retry
+> Validate, and if invalid, call retry_fn and try again.
+
+Args:
+    data: Initial data to validate.
+  
+- **Output to**: self.validate, logger.info, retry_fn, self.validate
 
 ## Behavioral Patterns
 
@@ -492,7 +552,6 @@ Functions exposed as public API (no underscore prefix):
 - `examples.privacy.ml.03_contextual_passwords.main` - 64 calls
 - `examples.privacy.project.01_anonymize_project.main` - 52 calls
 - `examples.privacy.streaming.01_streaming_anonymization.main` - 50 calls
-- `test-local-chat.main` - 49 calls
 - `llx.prellm.cli_context.context` - 49 calls
 - `examples.privacy.project.02_deanonymize_project.main` - 45 calls
 - `scripts.pyqual_auto.main` - 43 calls
@@ -525,6 +584,7 @@ Functions exposed as public API (no underscore prefix):
 - `examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan` - 24 calls
 - `llx.prellm.env_config.get_env_config` - 24 calls
 - `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
+- `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
 
 ## System Interactions
 
@@ -538,8 +598,6 @@ graph TD
     main --> MLBasedAnonymizer
     main --> ContextualPasswordDe
     main --> create_test_code_sam
-    main --> test_llx_health
-    main --> test_ollama_health
     main --> ArgumentParser
     main --> add_argument
     load_instances --> exists
@@ -552,6 +610,10 @@ graph TD
     load_config --> exists
     load_config --> update
     load_config --> get
+    load_limits --> exists
+    load_limits --> get
+    load_limits --> print
+    load_limits --> _create_default_limi
 ```
 
 ## Reverse Engineering Guidelines
