@@ -275,8 +275,19 @@ def plan_run(
     # Map tier to model override
     model_override = None
     if tier:
+        # Normalize tier name (handle common aliases)
+        tier_aliases = {
+            "balance": "balanced",
+            "free": "free",
+            "cheap": "cheap",
+            "premium": "premium",
+            "local": "local",
+            "openrouter": "openrouter",
+        }
+        normalized_tier = tier_aliases.get(tier, tier)
+
         config = LlxConfig.load(str(project_path))
-        tier_model = config.models.get(tier)
+        tier_model = config.models.get(normalized_tier)
         if tier_model:
             model_override = tier_model.model_id
             console.print(f"[dim]Model:[/dim] {model_override}")
@@ -406,10 +417,6 @@ port = 4000
 # budget_limit = 50.0
 '''
 
-
-def main() -> None:
-    """Entry point for the llx CLI."""
-    app()
 
 
 def _get_model_for_profile(profile: Optional[str], selector: ModelSelector) -> str:
