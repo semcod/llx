@@ -10,6 +10,7 @@ Both modes support the OpenAI-compatible API format.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Iterator
 
@@ -100,18 +101,26 @@ class LlxClient:
     def __init__(self, config: LlxConfig | None = None, *, anonymize: bool = False):
         self.config = config or LlxConfig()
         self.config.litellm_base_url = normalize_litellm_base_url(self.config.litellm_base_url)
-        
+
         # Initialize anonymizer if requested and available
         self._anonymize = anonymize and PRIVACY_AVAILABLE
         self._anonymizer: Anonymizer | None = None
         if self._anonymize:
             self._anonymizer = Anonymizer()
-        
+
         headers = {"Content-Type": "application/json"}
         # Add auth header for proxy
         if self.config.proxy.master_key:
             headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
-        
+        # Add auth header for OpenRouter direct API calls
+        elif "openrouter.ai" in self.config.litellm_base_url:
+            openrouter_key = os.environ.get("OPENROUTER_API_KEY")
+            if openrouter_key:
+                headers["Authorization"] = f"Bearer {openrouter_key}"
+            else:
+                headers["HTTP-Referer"] = "https://github.com/wronai/llx"
+                headers["X-Title"] = "LLX"
+
         self._http = httpx.Client(
             base_url=self.config.litellm_base_url,
             timeout=120.0,
