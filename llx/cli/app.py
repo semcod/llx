@@ -407,6 +407,11 @@ port = 4000
 '''
 
 
+def main() -> None:
+    """Entry point for the llx CLI."""
+    app()
+
+
 def _get_model_for_profile(profile: Optional[str], selector: ModelSelector) -> str:
     """Get model for profile (free/cheap/balanced/local)."""
     profile_map = {"free": FREE_FILTER, "cheap": CHEAP_FILTER, "balanced": BALANCED_FILTER, "local": LOCAL_FILTER}
