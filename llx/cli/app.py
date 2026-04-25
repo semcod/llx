@@ -255,14 +255,16 @@ def plan_run(
     sprint: Optional[int] = typer.Option(None, "--sprint", "-s", help="Run specific sprint only"),
     tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"),
     dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Simulate without executing"),
+    auto_start_proxy: bool = typer.Option(True, "--no-auto-start-proxy", help="Disable automatic proxy startup"),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
-    
+    from llx.integrations.proxy import check_proxy
+
     # Auto-detect planfile.yaml if strategy is "."
     if strategy == ".":
         strategy = "planfile.yaml"
-    
+
     console.print(f"[bold]Running planfile:[/bold] {strategy}")
     console.print(f"[dim]Project:[/dim] {project_path}")
     if sprint:
@@ -271,6 +273,28 @@ def plan_run(
         console.print(f"[dim]Tier:[/dim] {tier}")
     if dry_run:
         console.print(f"[dim]Mode:[/dim] dry-run")
+
+    # Check proxy status before execution (unless dry-run)
+    config = LlxConfig.load(str(project_path))
+    proxy_url = config.litellm_base_url
+
+    if not dry_run and auto_start_proxy:
+        if not check_proxy(proxy_url):
+            console.print(f"[yellow]⚠ LiteLLM proxy not running at {proxy_url}[/yellow]")
+            console.print("[dim]Attempting to start proxy automatically...[/dim]")
+            try:
+                from llx.integrations.proxy import start_proxy
+                proc = start_proxy(config, background=True)
+                if proc:
+                    console.print(f"[green]✓ Proxy started (PID {proc.pid})[/green]")
+                else:
+                    console.print("[red]✗ Failed to start proxy[/red]")
+                    console.print(f"[dim]Run manually: llx proxy start[/dim]")
+                    raise typer.Exit(1)
+            except Exception as e:
+                console.print(f"[red]✗ Failed to start proxy: {e}[/red]")
+                console.print(f"[dim]Run manually: llx proxy start[/dim]")
+                raise typer.Exit(1)
     
     # Map tier to model override
     model_override = None

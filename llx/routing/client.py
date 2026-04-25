@@ -193,13 +193,20 @@ class LlxClient:
             # Special case: if localhost returns 404, it might be another service (like Express)
             # instead of LiteLLM proxy. Fallback to direct call.
             if response.status_code == 404 and self.is_localhost:
+                if model.startswith("openrouter/"):
+                    return self._direct_openrouter_call(payload, anonymization_mapping)
                 return self._fallback_direct(payload, model, anonymization_mapping)
                 
             response.raise_for_status()
             data = response.json()
             return self._parse_response(data, model, anonymization_mapping)
         except httpx.ConnectError:
-            # Proxy not running — try litellm direct if available
+            # Proxy not running — try direct OpenRouter if applicable, else litellm direct
+            if model.startswith("openrouter/"):
+                try:
+                    return self._direct_openrouter_call(payload, anonymization_mapping)
+                except Exception:
+                    pass
             return self._fallback_direct(payload, model, anonymization_mapping)
         except httpx.HTTPStatusError as e:
             raise RuntimeError(
@@ -237,6 +244,11 @@ class LlxClient:
         max_tokens: int,
         system: str | None,
     ) -> dict[str, Any]:
+        # Strip 'openrouter/' prefix if hitting OpenRouter directly or via proxy
+        # OpenRouter itself doesn't want the prefix in the model ID
+        if model.startswith("openrouter/"):
+            model = model[len("openrouter/"):]
+
         msg_list = []
         if system:
             msg_list.append({"role": "system", "content": system})
@@ -248,6 +260,34 @@ class LlxClient:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
+
+    def _direct_openrouter_call(self, payload: dict[str, Any], anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
+        """Call OpenRouter API directly using httpx."""
+        key = os.environ.get("OPENROUTER_API_KEY")
+        headers = {
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/wronai/llx",
+            "X-Title": "LLX",
+        }
+        if key:
+            headers["Authorization"] = f"Bearer {key}"
+        
+        # OpenRouter direct API doesn't need the 'openrouter/' prefix
+        direct_model = payload["model"]
+        if direct_model.startswith("openrouter/"):
+            direct_model = direct_model[len("openrouter/"):]
+        
+        payload = payload.copy()
+        payload["model"] = direct_model
+        
+        with httpx.Client(timeout=120.0) as client:
+            resp = client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                json=payload,
+                headers=headers
+            )
+            resp.raise_for_status()
+            return self._parse_response(resp.json(), payload["model"], anonymization_mapping)
 
     def _parse_response(self, data: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
         """Parse API response with optional anonymization mapping."""

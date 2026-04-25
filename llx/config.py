@@ -91,7 +91,7 @@ DEFAULT_MODELS: dict[str, ModelConfig] = {
     ),
     "balanced": ModelConfig(
         name="balanced", provider="openrouter",
-        model_id="openrouter/qwen/qwen3-coder-next",
+        model_id="openrouter/qwen/qwen-2.5-coder-32b-instruct",
         max_context=200_000, cost_per_1k_input=0.003, cost_per_1k_output=0.015,
         tags=["PROGRAMMING", "GENERATING", "ANALYSIS", "DEBUGGING", "FAST", "RELIABLE"]
     ),

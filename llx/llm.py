@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - optional dependency
     load_dotenv = None
 
 DEFAULT_MAX_TOKENS = 2000
-DEFAULT_MODEL = "openrouter/qwen/qwen3-coder-next"
+DEFAULT_MODEL = "openrouter/qwen/qwen-2.5-coder-32b-instruct"
 
 try:
     from litellm import completion
