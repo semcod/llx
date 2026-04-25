@@ -66,7 +66,34 @@ analysis:
 selection:
   # Default model tier
   default_tier: "balanced"
-  
+
+  # Model tier definitions
+  models:
+    premium:
+      provider: anthropic
+      model_id: claude-opus-4-20250514
+      max_context: 200000
+    balanced:
+      provider: anthropic
+      model_id: claude-sonnet-4-20250514
+      max_context: 200000
+    cheap:
+      provider: anthropic
+      model_id: claude-haiku-4-5-20251001
+      max_context: 200000
+    free:
+      provider: openrouter
+      model_id: openrouter/nvidia/nemotron-3-super-120b-a12b:free
+      max_context: 32000
+    local:
+      provider: ollama
+      model_id: ollama/qwen2.5-coder:7b
+      max_context: 32000
+    openrouter:
+      provider: openrouter
+      model_id: openrouter/deepseek/deepseek-chat-v3-0324
+      max_context: 128000
+
   # Task-specific model preferences
   task_mapping:
     refactoring: "premium"

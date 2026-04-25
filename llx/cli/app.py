@@ -484,3 +484,8 @@ def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Opt
 
     (out / "requirements.txt").write_text("fastapi\nuvicorn[standard]\npydantic>=2.0\n", encoding="utf-8")
     console.print(f"\n[bold green]✅ Code generated in {out.resolve()}[/bold green]")
+
+
+def main() -> None:
+    """CLI entry point for llx."""
+    app()

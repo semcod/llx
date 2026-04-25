@@ -111,6 +111,7 @@ class LlxClient:
         headers = {"Content-Type": "application/json"}
         
         # Determine if we are hitting OpenRouter directly or a proxy
+        self.is_localhost = "localhost" in self.config.litellm_base_url or "127.0.0.1" in self.config.litellm_base_url
         is_openrouter = "openrouter.ai" in self.config.litellm_base_url
         
         # Add auth header for OpenRouter direct API calls (highest priority if hitting OpenRouter)
@@ -122,7 +123,7 @@ class LlxClient:
                 headers["HTTP-Referer"] = "https://github.com/wronai/llx"
                 headers["X-Title"] = "LLX"
         # Add auth header for local proxy
-        elif self.config.proxy.master_key:
+        elif self.is_localhost and self.config.proxy.master_key:
             headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
 
         self._http = httpx.Client(
@@ -188,6 +189,12 @@ class LlxClient:
 
         try:
             response = self._http.post("/v1/chat/completions", json=payload, headers=extra_headers)
+            
+            # Special case: if localhost returns 404, it might be another service (like Express)
+            # instead of LiteLLM proxy. Fallback to direct call.
+            if response.status_code == 404 and self.is_localhost:
+                return self._fallback_direct(payload, model, anonymization_mapping)
+                
             response.raise_for_status()
             data = response.json()
             return self._parse_response(data, model, anonymization_mapping)
