@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.60"
+version = "0.1.61"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 license = "Apache-2.0"
@@ -66,7 +66,7 @@ ci = [
 
 # Lightweight dev – fast install (<60s)
 dev = [
-    "llx[test,lint]",
+    "llx[test,lint,mcp]",
 ]
 
 # Full dev – with CI tools and MCP
@@ -101,7 +101,7 @@ monitoring = [
 ]
 
 # Code analysis integrations
-code2llm = ["code2llm>=0.9"]
+code2llm = ["code2llm>=0.5"]
 redup = ["redup>=0.4"]
 vallm = ["vallm>=0.1"]
 

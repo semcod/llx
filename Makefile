@@ -1,7 +1,7 @@
 # Makefile for llx
 # Provides convenient commands for development, testing, and deployment
 
-.PHONY: help install dev prod test clean docker docker-dev docker-prod
+.PHONY: help install install-dev install-full install-ci dev prod test clean docker docker-dev docker-prod
 
 # Default target
 help:
@@ -9,8 +9,11 @@ help:
 	@echo "=========================="
 	@echo ""
 	@echo "Setup:"
-	@echo "  install          Install llx in development mode"
-	@echo "  install-tools    Install local development tools"
+	@echo "  install          Install llx in development mode (with uv if available)"
+	@echo "  install-dev      Fast dev install - test + lint only (< 60s)"
+	@echo "  install-full     Full dev install with CI tools and MCP (< 2 min)"
+	@echo "  install-ci       CI install with all dependencies"
+	@echo "  install-tools    Install local development tools (Ollama, Redis)"
 	@echo ""
 	@echo "Development:"
 	@echo "  dev              Start development Docker stack"
@@ -41,12 +44,11 @@ help:
 	@echo "  publish-confirm  Upload to PyPI"
 	@echo "  publish-test     Upload to TestPyPI"
 
-# Installation
+# Installation (with uv for speed)
 install:
-	@echo "📦 Installing llx..."
+	@echo "📦 Installing llx with uv..."
 	@if command -v uv > /dev/null 2>&1; then \
 		uv venv; \
-		.venv/bin/pip install --upgrade pip; \
 		uv pip install -e ".[dev]"; \
 	else \
 		python -m venv .venv; \
@@ -55,6 +57,23 @@ install:
 	fi
 	@echo "✅ Installation completed!"
 	@echo "Run 'source .venv/bin/activate' to activate the virtual environment"
+
+install-dev:
+	@echo "📦 Fast dev install (< 60s)..."
+	@uv venv 2>/dev/null || python -m venv .venv
+	@uv pip install -e ".[dev]" 2>/dev/null || .venv/bin/pip install -e ".[dev]"
+	@echo "✅ Dev installation completed!"
+
+install-full:
+	@echo "📦 Full dev install with CI tools (< 2 min)..."
+	@uv venv 2>/dev/null || python -m venv .venv
+	@uv pip install -e ".[dev-full]" 2>/dev/null || .venv/bin/pip install -e ".[dev-full]"
+	@echo "✅ Full installation completed!"
+
+install-ci:
+	@echo "📦 CI install with all tools..."
+	@uv pip install -e ".[all]" 2>/dev/null || .venv/bin/pip install -e ".[all]"
+	@echo "✅ CI installation completed!"
 
 install-tools:
 	@echo "🔧 Installing local tools..."

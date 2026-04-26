@@ -106,16 +106,61 @@
 
 ## [Unreleased]
 
+### Added
+- feat(planfile): add "cancelled" task status for issues not found in codebase
+- feat(planfile): detailed task validation messages explaining why code changes were not made
+- feat(planfile): automatic planfile update when tasks are cancelled with comments
+- feat(config): YAML model configuration loading with _apply_yaml_models function
+- feat(cli): tier aliases mapping (balance -> balanced) in model selection
 
-- feat(pyqual): extract pipeline stages to reusable plugins in llx/pyqual_plugins
-- feat(pyqual): make publish idempotent with auto version bump
-- feat(config): deep code analysis engine with supporting modules
-- feat(config): new API capabilities
-- feat(goal): CLI interface improvements
-- test(pyqual): automate pyqual GitHub sync
-- fix(ci): address pyqual CI failures
-- chore(release): bump version for release and add build/publish stages
-- refactor(docs,examples,tests,llx): reorganize code analysis engine, configuration management, and quality metrics modules
+### Fixed
+- fix(planfile): backend detection now excludes IDEs (Cursor, Windsurf, Claude Code)
+- fix(planfile): ModelConfig initialization now includes required 'name' parameter
+- fix(config): models section from YAML now properly applied to LlxConfig
+- fix(goal): pytest command now ignores subprojects to avoid test failures
+- fix(subprojects): corrected TOML syntax errors in pyproject.toml files
+
+### Changed
+- refactor(planfile): improved task validation with detailed explanation extraction
+- refactor(cli): added 'cancelled' status to results display with detailed messages
+- refactor(docs): updated README.md with model configuration examples
+
+### Docs
+- Update README.md with model tier configuration examples
+- Update examples/planfile/README.md with backend system documentation
+
+## [0.1.61] - 2026-04-26
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update test-api-qwen/pyproject.toml
+- Update test-api-qwen/src/test_api_qwen/__init__.py
+- Update test-api-qwen/src/test_api_qwen/main.py
+- Update test-api-qwen/src/test_api_qwen/models.py
+- Update test-api-qwen/src/test_api_qwen/test_api.py
+- Update tests/test_aider_mcp.py
+- Update tests/test_mcp.py
+
+### Other
+- Update .gitignore
+- Update .idea/llx.iml
+- Update .idea/modules.xml
+- Update .idea/vcs.xml
+- Update Makefile
+- Update Taskfile.yml
+- Update app.doql.less
+- Update llx.yaml
+- Update llx/cli/app.py
+- Update llx/config.py
+- ... and 46 more files
 
 ## [0.1.60] - 2026-04-25
 

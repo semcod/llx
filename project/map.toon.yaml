@@ -1,13 +1,13 @@
-# llx | 252f 45901L | python:218,shell:32,css:1,less:1 | 2026-04-26
-# stats: 623 func | 291 cls | 252 mod | CC̄=3.7 | critical:32 | cycles:0
-# alerts[5]: CC plan_run=42; CC _execute_task=35; CC execute_strategy=34; CC _normalize_strategy=22; CC main=15
-# hotspots[5]: main fan=25; execute_v3_pipeline fan=23; main fan=22; _execute_task fan=22; plan_run fan=21
+# llx | 272f 46220L | python:238,shell:32,css:1,less:1 | 2026-04-26
+# stats: 624 func | 291 cls | 272 mod | CC̄=3.7 | critical:31 | cycles:0
+# alerts[5]: CC plan_run=50; CC execute_strategy=36; CC _execute_task=31; CC _normalize_strategy=22; CC _parse_llm_response=17
+# hotspots[5]: main fan=25; execute_v3_pipeline fan=23; main fan=22; plan_run fan=22; create_service_app fan=20
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[252]:
+M[272]:
   ai-tools-manage.sh,352
   app.doql.css,562
-  app.doql.less,839
+  app.doql.less,861
   docker/ai-tools/entrypoint.sh,176
   docker/ai-tools/install-tools.sh,370
   docker/ollama/entrypoint.sh,32
@@ -53,7 +53,7 @@ M[252]:
   llx/analysis/collector.py,483
   llx/analysis/runner.py,83
   llx/cli/__init__.py,4
-  llx/cli/app.py,598
+  llx/cli/app.py,624
   llx/cli/commands/analyze.py,31
   llx/cli/commands/planner.py,25
   llx/cli/formatters.py,313
@@ -61,7 +61,7 @@ M[252]:
   llx/commands/__init__.py,2
   llx/commands/_patch_apply.py,138
   llx/commands/fix.py,218
-  llx/config.py,377
+  llx/config.py,392
   llx/detection/__init__.py,6
   llx/detection/detector.py,116
   llx/examples/utils.py,241
@@ -76,7 +76,17 @@ M[252]:
   llx/mcp/client.py,107
   llx/mcp/server.py,142
   llx/mcp/service.py,244
-  llx/mcp/tools.py,996
+  llx/mcp/tools/__init__.py,85
+  llx/mcp/tools/analysis.py,111
+  llx/mcp/tools/base.py,13
+  llx/mcp/tools/code_edit.py,90
+  llx/mcp/tools/core.py,132
+  llx/mcp/tools/planfile.py,136
+  llx/mcp/tools/preprocessing.py,117
+  llx/mcp/tools/privacy.py,232
+  llx/mcp/tools/proxym.py,131
+  llx/mcp/tools/registry.py,30
+  llx/mcp/tools.py,61
   llx/mcp/workflows.py,147
   llx/orchestration/__init__.py,36
   llx/orchestration/_utils.py,38
@@ -126,7 +136,12 @@ M[252]:
   llx/planfile/builder_simple.py,267
   llx/planfile/config.py,125
   llx/planfile/examples.py,142
-  llx/planfile/executor_simple.py,1130
+  llx/planfile/executor/__init__.py,59
+  llx/planfile/executor/backends.py,261
+  llx/planfile/executor/base.py,32
+  llx/planfile/executor/strategy.py,336
+  llx/planfile/executor/task.py,427
+  llx/planfile/executor_simple.py,53
   llx/planfile/generate_strategy.py,471
   llx/planfile/model_selector.py,265
   llx/planfile/models.py,160
@@ -206,31 +221,36 @@ M[252]:
   llx/tools/_utils.py,7
   llx/tools/ai_tools_manager.py,242
   llx/tools/cli.py,135
-  llx/tools/config_manager.py,795
+  llx/tools/config/__init__.py,10
+  llx/tools/config/cli.py,200
+  llx/tools/config/manager.py,615
+  llx/tools/config_manager.py,15
   llx/tools/docker_manager.py,553
   llx/tools/health_checker.py,590
   llx/tools/health_runner.py,267
   llx/tools/model_manager.py,757
   llx/tools/utils/_cmd_uninstall_extension.py,32
   llx/tools/vscode_manager.py,792
-  llx/utils/aider.py,193
+  llx/utils/aider.py,220
   llx/utils/cli_main.py,31
   llx/utils/formatting.py,86
   llx/utils/issues.py,301
   llx/utils/models.py,30
   my-api/__init__.py,5
-  my-api/main.py,107
-  my-api/models.py,42
-  my-api/monitoring.py,125
-  my-api/test_api.py,98
+  my-api/src/my_api/__init__.py,2
+  my-api/src/my_api/main.py,107
+  my-api/src/my_api/models.py,42
+  my-api/src/my_api/monitoring.py,125
+  my-api/src/my_api/test_api.py,98
   my-api/tests/test_my_api.py,12
   project.sh,48
   scripts/pyqual_auto.py,258
   simple_generate.py,72
   test-api-qwen/__init__.py,5
-  test-api-qwen/main.py,122
-  test-api-qwen/models.py,19
-  test-api-qwen/test_api.py,170
+  test-api-qwen/src/test_api_qwen/__init__.py,2
+  test-api-qwen/src/test_api_qwen/main.py,122
+  test-api-qwen/src/test_api_qwen/models.py,19
+  test-api-qwen/src/test_api_qwen/test_api.py,170
   test-api-qwen/tests/test_test_api_qwen.py,12
   test-local-chat.py,196
   test_aider_docker.py,72
@@ -418,7 +438,7 @@ D:
     execute_prellm_fix(workdir_path;prompt;selected_model_id;config;apply;verbose;console)
     fix(workdir;errors;apply;model;dry_run;verbose)
   llx/config.py:
-    e: normalize_litellm_base_url,_apply_toml,_apply_yaml_thresholds,_apply_yaml_models,_apply_yaml_proxy,_apply_yaml,_apply_env,ModelConfig,TierThresholds,ProxyConfig,LlxConfig
+    e: normalize_litellm_base_url,_apply_toml,_apply_yaml_thresholds,_apply_yaml_models,_apply_yaml_proxy,_apply_yaml_models,_apply_yaml,_apply_env,ModelConfig,TierThresholds,ProxyConfig,LlxConfig
     ModelConfig:  # Configuration for a single model tier.
     TierThresholds:  # Thresholds that determine which model tier to use.
     ProxyConfig:  # LiteLLM proxy settings.
@@ -428,6 +448,7 @@ D:
     _apply_yaml_thresholds(config;thresholds)
     _apply_yaml_models(config;models)
     _apply_yaml_proxy(config;proxy)
+    _apply_yaml_models(config;models)
     _apply_yaml(config;data)
     _apply_env(config)
   llx/detection/__init__.py:
@@ -498,26 +519,43 @@ D:
     run_service(host;port;state)
     build_parser()
     main(argv)
-  llx/mcp/tools.py:
-    e: _handle_llx_analyze,_handle_llx_select,_handle_llx_chat,_handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate,_handle_llx_preprocess,_handle_llx_context,_handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat,_handle_aider,_handle_planfile_generate,_handle_planfile_apply,_handle_llx_project_anonymize,_handle_llx_project_deanonymize,_handle_llx_privacy_scan,McpTool
-    McpTool:
-    _handle_llx_analyze(args)
-    _handle_llx_select(args)
-    _handle_llx_chat(args)
+  llx/mcp/tools/__init__.py:
+  llx/mcp/tools/analysis.py:
+    e: _handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate
     _handle_code2llm_analyze(args)
     _handle_redup_scan(args)
     _handle_vallm_validate(args)
-    _handle_llx_preprocess(args)
-    _handle_llx_context(args)
-    _handle_llx_proxy_status(args)
-    _handle_llx_proxym_status(args)
-    _handle_llx_proxym_chat(args)
+  llx/mcp/tools/base.py:
+    e: McpTool
+    McpTool:
+  llx/mcp/tools/code_edit.py:
+    e: _handle_aider
     _handle_aider(args)
+  llx/mcp/tools/core.py:
+    e: _handle_llx_analyze,_handle_llx_select,_handle_llx_chat
+    _handle_llx_analyze(args)
+    _handle_llx_select(args)
+    _handle_llx_chat(args)
+  llx/mcp/tools/planfile.py:
+    e: _handle_planfile_generate,_handle_planfile_apply
     _handle_planfile_generate(args)
     _handle_planfile_apply(args)
+  llx/mcp/tools/preprocessing.py:
+    e: _handle_llx_preprocess,_handle_llx_context
+    _handle_llx_preprocess(args)
+    _handle_llx_context(args)
+  llx/mcp/tools/privacy.py:
+    e: _handle_llx_project_anonymize,_handle_llx_project_deanonymize,_handle_llx_privacy_scan
     _handle_llx_project_anonymize(args)
     _handle_llx_project_deanonymize(args)
     _handle_llx_privacy_scan(args)
+  llx/mcp/tools/proxym.py:
+    e: _handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat
+    _handle_llx_proxy_status(args)
+    _handle_llx_proxym_status(args)
+    _handle_llx_proxym_chat(args)
+  llx/mcp/tools/registry.py:
+  llx/mcp/tools.py:
   llx/mcp/workflows.py:
     e: run_llx_fix_workflow,run_llx_refactor_workflow,LlxMcpRunResult
     LlxMcpRunResult: to_dict(0)  # Result of an llx MCP fix/refactor workflow.
@@ -757,29 +795,37 @@ D:
     example_run_strategy()
     example_verify_strategy()
     example_programmatic_strategy()
-  llx/planfile/executor_simple.py:
-    e: _detect_available_backends,_discover_mcp_services,_select_best_backend,_run_cursor_edit,_run_windsurf_edit,_run_claude_code_edit,_apply_code_changes,_get_file_hash,_analyze_llm_response,execute_strategy,_save_strategy,_load_strategy,_normalize_strategy,_map_action_to_task_type,_map_priority,_get_sprint_tasks,_execute_task,_select_model,_build_task_prompt,BackendType,TaskResult
-    BackendType:  # Available backend types for code editing.
-    TaskResult:  # Result of executing a task.
+  llx/planfile/executor/__init__.py:
+  llx/planfile/executor/backends.py:
+    e: _detect_available_backends,_discover_mcp_services,_select_best_backend,_run_cursor_edit,_run_windsurf_edit,_run_claude_code_edit
     _detect_available_backends()
     _discover_mcp_services()
     _select_best_backend(backends)
     _run_cursor_edit(workdir;prompt;model;files)
     _run_windsurf_edit(workdir;prompt;model;files)
     _run_claude_code_edit(workdir;prompt;model;files)
-    _apply_code_changes(response;project_path;target_file)
-    _get_file_hash(file_path)
-    _analyze_llm_response(response)
-    execute_strategy(strategy_path;project_path)
-    _save_strategy(path;strategy)
+  llx/planfile/executor/base.py:
+    e: BackendType,TaskResult
+    BackendType:  # Available backend types for code editing.
+    TaskResult:  # Result of executing a task.
+  llx/planfile/executor/strategy.py:
+    e: _load_strategy,_save_strategy,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_normalize_strategy,execute_strategy
     _load_strategy(path)
-    _normalize_strategy(strategy)
+    _save_strategy(path;strategy)
+    _update_task_in_planfile(planfile_path;task_id;status;comment)
     _map_action_to_task_type(action)
     _map_priority(priority)
-    _get_sprint_tasks(sprint)
-    _execute_task(task;project_path;config;metrics;dry_run;model_override;backend)
+    _normalize_strategy(strategy)
+    execute_strategy(strategy_path;project_path)
+  llx/planfile/executor/task.py:
+    e: _map_action_to_task_type,_map_priority,_parse_llm_response,_select_model,_build_task_prompt,_execute_task
+    _map_action_to_task_type(action)
+    _map_priority(priority)
+    _parse_llm_response(response)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
+    _execute_task(task;config;metrics;model_override;dry_run;backend;project_root)
+  llx/planfile/executor_simple.py:
   llx/planfile/generate_strategy.py:
     e: _normalize_strategy_data,_normalize_sprints,_normalize_single_sprint,_extract_sprint_id,_generate_tasks_from_patterns,_normalize_quality_gates,_normalize_single_gate,_normalize_goal,_normalize_metadata,generate_strategy_with_fix,_print_generation_info,_build_strategy_prompt,_call_llm_for_strategy,_parse_and_fix_yaml,_fix_yaml_formatting,_fix_list_formatting,_fix_indentation,save_fixed_strategy,main
     _normalize_strategy_data(data)
@@ -1241,9 +1287,9 @@ D:
     _handle_stop(args)
     _handle_status(args)
     main()
-  llx/tools/config_manager.py:
-    e: _cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_backup,_cmd_docker_env,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main,ConfigManager
-    ConfigManager: __init__(1),load_config(1),save_config(2),_load_env_file(1),_save_env_file(2),create_default_env(1),update_env_var(2),get_env_var(2),validate_env_config(0),get_llx_config(0),update_llx_config(1),get_model_config(0),add_model(2),remove_model(1),list_models(0),backup_configs(1),restore_configs(1),generate_docker_env_file(1),validate_docker_configs(0),create_profile(2),load_profile(1),list_profiles(0),get_config_summary(0),_print_config_files_summary(1),_print_env_summary(1),_print_model_summary(1),_count_summary_issues(1),_print_issue_summary(1),_print_profiles_summary(1),print_config_summary(0)  # Manages llx configuration files and settings.
+  llx/tools/config/__init__.py:
+  llx/tools/config/cli.py:
+    e: _cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_backup,_cmd_docker_env,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main
     _cmd_load(args;manager)
     _cmd_save(args;manager)
     _cmd_create_env(args;manager)
@@ -1259,6 +1305,10 @@ D:
     _build_parser()
     _dispatch(args;manager)
     main()
+  llx/tools/config/manager.py:
+    e: ConfigManager
+    ConfigManager: __init__(1),load_config(1),save_config(2),_load_env_file(1),_save_env_file(2),create_default_env(1),update_env_var(2),get_env_var(2),validate_env_config(0),get_llx_config(0),update_llx_config(1),get_model_config(0),add_model(2),remove_model(1),list_models(0),backup_configs(1),restore_configs(1),generate_docker_env_file(1),validate_docker_configs(0),create_profile(2),load_profile(1),list_profiles(0),get_config_summary(0),_print_config_files_summary(1),_print_env_summary(1),_print_model_summary(1),_count_summary_issues(1),_print_issue_summary(1),_print_profiles_summary(1),print_config_summary(0)  # Manages llx configuration files and settings.
+  llx/tools/config_manager.py:
   llx/tools/docker_manager.py:
     e: _build_parser,_dispatch,_handle_restore,_handle_health,_handle_wait,main,DockerManager
     DockerManager: __init__(1),get_compose_cmd(0),run_compose_cmd(2),start_environment(2),stop_environment(2),restart_service(2),get_service_status(1),get_service_logs(3),check_service_health(2),wait_for_service(3),cleanup_environment(2),build_images(2),pull_images(2),get_resource_usage(1),backup_volumes(2),restore_volumes(2),get_network_info(1),print_status_summary(1)  # Manages Docker containers for llx ecosystem.
@@ -1352,7 +1402,8 @@ D:
     e: _select_small_model
     _select_small_model(config)
   my-api/__init__.py:
-  my-api/main.py:
+  my-api/src/my_api/__init__.py:
+  my-api/src/my_api/main.py:
     e: health,read_users,read_user,create_user,update_user,delete_user,read_products,read_product,create_product,update_product,delete_product,User,Product
     User:
     Product:
@@ -1367,21 +1418,21 @@ D:
     create_product(product)
     update_product(product_id;product)
     delete_product(product_id)
-  my-api/models.py:
+  my-api/src/my_api/models.py:
     e: SmoketestRequest,SmoketestResponse,SmoketestDBSchema,SmoketestDBSchemaRequest,SmoketestDBSchemaResponse
     SmoketestRequest:
     SmoketestResponse:
     SmoketestDBSchema:
     SmoketestDBSchemaRequest:
     SmoketestDBSchemaResponse:
-  my-api/monitoring.py:
+  my-api/src/my_api/monitoring.py:
     e: main,CustomMetrics,HealthChecks,PrometheusMetrics,AlertingRules
     CustomMetrics: __init__(0),increment_successful_requests(0),increment_failed_requests(0),record_request_latency(1)
     HealthChecks: __init__(0),check_database_connection(0),check_api_endpoint(0),register_healthchecks(1)
     PrometheusMetrics: __init__(0),register_metrics(1)
     AlertingRules: __init__(0),add_rule(3),register_rules(1)
     main()
-  my-api/test_api.py:
+  my-api/src/my_api/test_api.py:
     e: client,test_get_users,test_get_user,test_create_user,test_update_user,test_delete_user,test_api_performance,test_api_scalability,test_coverage,test_error_handling,test_security
     client()
     test_get_users(client)
@@ -1414,7 +1465,8 @@ D:
     e: generate_simple_strategy
     generate_simple_strategy(project_path;output)
   test-api-qwen/__init__.py:
-  test-api-qwen/main.py:
+  test-api-qwen/src/test_api_qwen/__init__.py:
+  test-api-qwen/src/test_api_qwen/main.py:
     e: health_check,create_item,get_items,get_item,update_item,delete_item,Item,ItemResponse,ItemUpdate
     Item:
     ItemResponse:
@@ -1425,12 +1477,12 @@ D:
     get_item(item_id)
     update_item(item_id;item_update)
     delete_item(item_id)
-  test-api-qwen/models.py:
+  test-api-qwen/src/test_api_qwen/models.py:
     e: ItemBase,ItemCreate,Item
     ItemBase:
     ItemCreate:
     Item:
-  test-api-qwen/test_api.py:
+  test-api-qwen/src/test_api_qwen/test_api.py:
     e: test_read_root,test_read_health_check,test_create_item,test_get_item,test_get_item_not_found,test_get_items,test_update_item,test_update_item_not_found,test_delete_item,test_delete_item_not_found,test_invalid_item_data,test_create_item_parametrized,test_read_users,test_create_user,test_get_user,test_get_user_not_found
     test_read_root()
     test_read_health_check()

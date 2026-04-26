@@ -976,8 +976,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: invalid
-    validation_message: No changes made to code
   - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
     task_type: prefactor

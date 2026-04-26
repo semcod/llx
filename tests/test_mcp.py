@@ -8,11 +8,11 @@ from unittest.mock import patch
 import llx.mcp.server as mcp_server
 from llx.cli.app import mcp_start
 from llx.mcp.server import build_parser
-from llx.mcp.tools import (
+from llx.mcp.tools.core import (
     _handle_llx_analyze,
     _handle_llx_select,
-    _handle_llx_proxy_status,
 )
+from llx.mcp.tools.proxym import _handle_llx_proxy_status
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ class TestMcpProxyStatus:
         result = event_loop.run_until_complete(
             _handle_llx_proxy_status({"url": "http://localhost:19999"})
         )
-        assert result["running"] is False
+        assert result["healthy"] is False
 
 
 class TestMcpServerCli:

@@ -223,7 +223,7 @@ git:
     format: '{prefix}{version}'
 strategies:
   python:
-    test: pytest tests/ -v
+    test: pytest tests/ -v --ignore=my-api --ignore=my_api --ignore=test-api-qwen --ignore=test_api_qwen
     build: python -m build
     publish: twine upload dist/llx-{version}*
     publish_enabled: true

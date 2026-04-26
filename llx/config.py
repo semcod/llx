@@ -312,6 +312,19 @@ def _apply_yaml_proxy(config: LlxConfig, proxy: dict) -> None:
         config.proxy.redis_url = cache.get("redis_url", config.proxy.redis_url)
 
 
+def _apply_yaml_models(config: LlxConfig, models: dict) -> None:
+    """Apply model configurations from YAML."""
+    for tier_name, tier_config in models.items():
+        if isinstance(tier_config, dict):
+            model_config = ModelConfig(
+                name=tier_name,
+                provider=tier_config.get("provider", "unknown"),
+                model_id=tier_config.get("model_id", ""),
+                max_context=tier_config.get("max_context", 128000),
+            )
+            config.models[tier_name] = model_config
+
+
 def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
     """Apply YAML data to config."""
     # Apply basic settings
@@ -322,6 +335,8 @@ def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
         if "context" in selection:
             context = selection["context"]
             config.litellm_base_url = context.get("base_url", config.litellm_base_url)
+        if "models" in selection:
+            _apply_yaml_models(config, selection["models"])
     
     # Apply proxy settings
     if "proxy" in data:

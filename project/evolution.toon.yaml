@@ -1,49 +1,53 @@
-# code2llm/evolution | 1828 func | 140f | 2026-04-26
+# code2llm/evolution | 1801 func | 149f | 2026-04-26
 
-NEXT[8] (ranked by impact):
-  [1] !! SPLIT           llx/planfile/executor_simple.py
-      WHY: 878L, 2 classes, max CC=34
-      EFFORT: ~4h  IMPACT: 29852
+NEXT[9] (ranked by impact):
+  [1] !! SPLIT           llx/prellm/trace.py
+      WHY: 648L, 2 classes, max CC=13
+      EFFORT: ~4h  IMPACT: 8424
 
-  [2] !! SPLIT           llx/mcp/tools.py
-      WHY: 995L, 1 classes, max CC=13
-      EFFORT: ~4h  IMPACT: 12935
+  [2] !! SPLIT           llx/tools/vscode_manager.py
+      WHY: 791L, 1 classes, max CC=10
+      EFFORT: ~4h  IMPACT: 7910
 
-  [3] !! SPLIT           llx/tools/config_manager.py
-      WHY: 794L, 1 classes, max CC=12
-      EFFORT: ~4h  IMPACT: 9528
+  [3] !! SPLIT           llx/tools/model_manager.py
+      WHY: 756L, 1 classes, max CC=8
+      EFFORT: ~4h  IMPACT: 6048
 
-  [4] !! SPLIT-FUNC      plan_run  CC=42  fan=22
-      WHY: CC=42 exceeds 15
-      EFFORT: ~1h  IMPACT: 924
+  [4] !! SPLIT-FUNC      plan_run  CC=50  fan=23
+      WHY: CC=50 exceeds 15
+      EFFORT: ~1h  IMPACT: 1150
 
-  [5] !! SPLIT-FUNC      execute_strategy  CC=34  fan=24
-      WHY: CC=34 exceeds 15
-      EFFORT: ~1h  IMPACT: 816
+  [5] !! SPLIT-FUNC      execute_strategy  CC=36  fan=22
+      WHY: CC=36 exceeds 15
+      EFFORT: ~1h  IMPACT: 792
 
-  [6] !! SPLIT-FUNC      _execute_task  CC=26  fan=20
-      WHY: CC=26 exceeds 15
-      EFFORT: ~1h  IMPACT: 520
+  [6] !! SPLIT-FUNC      _execute_task  CC=31  fan=23
+      WHY: CC=31 exceeds 15
+      EFFORT: ~1h  IMPACT: 713
 
   [7] !  SPLIT-FUNC      LlxClient.chat  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
-  [8] !  SPLIT-FUNC      _normalize_strategy  CC=22  fan=9
+  [8] !  SPLIT-FUNC      _parse_llm_response  CC=17  fan=12
+      WHY: CC=17 exceeds 15
+      EFFORT: ~1h  IMPACT: 204
+
+  [9] !  SPLIT-FUNC      _normalize_strategy  CC=22  fan=9
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 198
 
 
 RISKS[3]:
-  ⚠ Splitting llx/mcp/tools.py may break 17 import paths
-  ⚠ Splitting llx/planfile/executor_simple.py may break 15 import paths
-  ⚠ Splitting llx/tools/config_manager.py may break 45 import paths
+  ⚠ Splitting llx/tools/vscode_manager.py may break 38 import paths
+  ⚠ Splitting llx/tools/model_manager.py may break 36 import paths
+  ⚠ Splitting llx/prellm/trace.py may break 29 import paths
 
 METRICS-TARGET:
   CC̄:          2.6 → ≤1.8
-  max-CC:      42 → ≤20
-  god-modules: 14 → 0
-  high-CC(≥15): 5 → ≤2
+  max-CC:      50 → ≤20
+  god-modules: 12 → 0
+  high-CC(≥15): 6 → ≤3
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -71,4 +75,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=2.5 → now CC̄=2.6
+  prev CC̄=2.6 → now CC̄=2.6

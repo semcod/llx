@@ -346,6 +346,27 @@ def plan_run(
             use_aider=use_aider
         )
         
+        # Update planfile for cancelled tasks
+        from llx.planfile.executor.strategy import _update_task_in_planfile
+        for result in results:
+            if result.status == "cancelled":
+                # Extract task ID from task name or find it in results
+                task_id = None
+                for task in results:
+                    if task.task_name == result.task_name:
+                        # Try to find task ID from the original task
+                        # For now, we'll skip ID lookup and just update by name
+                        pass
+                
+                # Update planfile with cancelled status and explanation
+                comment = f"Task cancelled: {result.validation_message}"
+                _update_task_in_planfile(
+                    planfile_path=strategy,
+                    task_id=result.task_name,  # Use task name as ID for now
+                    status="cancelled",
+                    comment=comment
+                )
+        
         # Summary
         console.print("\n[bold]Results:[/bold]")
         if use_aider:
@@ -357,6 +378,7 @@ def plan_run(
         invalid = sum(1 for r in results if r.status == "invalid")
         not_found = sum(1 for r in results if r.status == "not_found")
         already_fixed = sum(1 for r in results if r.status == "already_fixed")
+        cancelled = sum(1 for r in results if r.status == "cancelled")
         skipped = sum(1 for r in results if r.status in ["dry_run", "skipped"])
 
         console.print(f"  [green]✓ Success:[/green] {success}")
@@ -364,19 +386,22 @@ def plan_run(
         console.print(f"  [yellow]⚠ Invalid (no changes):[/yellow] {invalid}")
         console.print(f"  [dim]⊘ Not found:[/dim] {not_found}")
         console.print(f"  [dim]⊘ Already fixed:[/dim] {already_fixed}")
+        console.print(f"  [cyan]⊘ Cancelled:[/cyan] {cancelled}")
         console.print(f"  [dim]⊘ Skipped:[/dim] {skipped}")
 
-        # Show validation messages for invalid/not_found/already_fixed tasks
-        if invalid > 0 or not_found > 0 or already_fixed > 0:
+        # Show validation messages for invalid/not_found/already_fixed/cancelled tasks
+        if invalid > 0 or not_found > 0 or already_fixed > 0 or cancelled > 0:
             console.print("\n[dim]Validation details:[/dim]")
             for result in results:
-                if result.status in ["invalid", "not_found", "already_fixed"]:
+                if result.status in ["invalid", "not_found", "already_fixed", "cancelled"]:
                     if result.status == "invalid":
                         console.print(f"  [yellow]⚠ {result.task_name}:[/yellow] {result.validation_message}")
                     elif result.status == "not_found":
                         console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
                     elif result.status == "already_fixed":
                         console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
+                    elif result.status == "cancelled":
+                        console.print(f"  [cyan]⊘ {result.task_name}:[/cyan] {result.validation_message}")
 
         if failed > 0:
             console.print("\n[dim]Failed tasks:[/dim]")
@@ -400,6 +425,7 @@ def plan_run(
                     "invalid": invalid,
                     "not_found": not_found,
                     "already_fixed": already_fixed,
+                    "cancelled": cancelled,
                     "skipped": skipped,
                     "total": len(results)
                 },

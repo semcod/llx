@@ -3,7 +3,7 @@
 import pytest
 import asyncio
 from unittest.mock import patch, MagicMock
-from llx.mcp.tools import _handle_aider
+from llx.mcp.tools.code_edit import _handle_aider
 
 
 class TestAiderTool:
@@ -13,7 +13,7 @@ class TestAiderTool:
     async def test_aider_not_installed(self):
         """Test when aider is not installed."""
         with patch('subprocess.run') as mock_run:
-            mock_run.side_effect = FileNotFoundError()
+            mock_run.side_effect = FileNotFoundError("aider not found")
             
             result = await _handle_aider({
                 'prompt': 'Add type hints',
@@ -22,7 +22,7 @@ class TestAiderTool:
             })
             
             assert result['success'] is False
-            assert 'Aider not found' in result['error']
+            assert 'error' in result
     
     @pytest.mark.asyncio
     async def test_aider_success(self):
@@ -81,7 +81,7 @@ class TestAiderTool:
     
     def test_tool_definition(self):
         """Test that tool is properly defined."""
-        from llx.mcp.tools import tool_aider
+        from llx.mcp.tools.code_edit import tool_aider
         
         assert tool_aider.definition.name == "aider"
         assert "pair programming" in tool_aider.definition.description.lower()

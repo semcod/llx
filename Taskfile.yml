@@ -27,21 +27,38 @@ pipeline:
 
 tasks:
   install:
-    desc: Install Python dependencies (editable)
+    desc: Install Python dependencies (editable) with uv if available
     cmds:
-    - pip install -e .[dev]
+    - uv pip install -e ".[dev]" 2>/dev/null || pip install -e ".[dev]"
+
+  install-dev:
+    desc: Fast dev install - test + lint only (< 60s)
+    cmds:
+    - uv venv 2>/dev/null || python -m venv .venv
+    - uv pip install -e ".[dev]" 2>/dev/null || .venv/bin/pip install -e ".[dev]"
+
+  install-full:
+    desc: Full dev install with CI tools and MCP (< 2 min)
+    cmds:
+    - uv venv 2>/dev/null || python -m venv .venv
+    - uv pip install -e ".[dev-full]" 2>/dev/null || .venv/bin/pip install -e ".[dev-full]"
+
+  install-ci:
+    desc: CI install with all dependencies
+    cmds:
+    - uv pip install -e ".[all]" 2>/dev/null || pip install -e ".[all]"
   test:
     desc: Run pytest suite
     cmds:
-    - pytest -q
+    - .venv/bin/pytest -q 2>/dev/null || pytest -q
   lint:
     desc: Run ruff lint check
     cmds:
-    - ruff check .
+    - .venv/bin/ruff check . 2>/dev/null || ruff check .
   fmt:
     desc: Auto-format with ruff
     cmds:
-    - ruff format .
+    - .venv/bin/ruff format . 2>/dev/null || ruff format .
   build:
     desc: Build wheel + sdist
     cmds:

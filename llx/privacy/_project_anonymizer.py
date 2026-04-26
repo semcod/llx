@@ -89,13 +89,18 @@ class ProjectAnonymizer:
             transformer = ASTAnonymizer(self.context, file_path)
             transformed = transformer.visit(tree)
 
+            transformed = ast.fix_missing_locations(transformed)
+
+            if hasattr(ast, "unparse"):
+                return ast.unparse(transformed)
+
             import astor  # type: ignore
 
             return astor.to_source(transformed)
-        except ImportError:
-            return self._anonymize_source_code(content, file_path)
         except SyntaxError:
             return self._anonymize_generic(content, file_path)
+        except Exception:
+            return self._anonymize_source_code(content, file_path)
 
     def _anonymize_source_code(self, content: str, file_path: str) -> str:
         result = content

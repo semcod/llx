@@ -65,15 +65,42 @@ def _run_aider_fix(
     
     # Try Docker first if requested
     if use_docker:
-        docker_cmd = [
-            "docker", "run", "--rm",
-            "-v", f"{workdir}:/app",
-            "-w", "/app",
-            "-e", "OLLAMA_API_BASE=http://172.17.0.1:11434",
-            "paulgauthier/aider",
-            "--model", model.replace("ollama/", "ollama_chat/"),
-            "--message", prompt
-        ]
+        import os
+
+        # Detect model type and configure accordingly
+        if "openrouter" in model:
+            # OpenRouter configuration
+            docker_cmd = [
+                "docker", "run", "--rm",
+                "-v", f"{workdir}:/app",
+                "-w", "/app",
+                "-e", "OPENROUTER_API_KEY=" + os.getenv("OPENROUTER_API_KEY", ""),
+                "-e", "OPENAI_API_BASE=https://openrouter.ai/api/v1",
+                "paulgauthier/aider",
+                "--model", model,
+                "--message", prompt
+            ]
+        elif "ollama" in model:
+            # Ollama configuration
+            docker_cmd = [
+                "docker", "run", "--rm",
+                "-v", f"{workdir}:/app",
+                "-w", "/app",
+                "-e", "OLLAMA_API_BASE=http://172.17.0.1:11434",
+                "paulgauthier/aider",
+                "--model", model.replace("ollama/", "ollama_chat/"),
+                "--message", prompt
+            ]
+        else:
+            # Default configuration
+            docker_cmd = [
+                "docker", "run", "--rm",
+                "-v", f"{workdir}:/app",
+                "-w", "/app",
+                "paulgauthier/aider",
+                "--model", model,
+                "--message", prompt
+            ]
         
         # Add specific files if provided
         if files:
