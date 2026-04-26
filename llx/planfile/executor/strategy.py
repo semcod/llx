@@ -358,9 +358,26 @@ def _select_execution_backend(use_aider: bool) -> str:
     return selected
 
 
+def _extract_sprint_number(sprint: dict) -> int:
+    """Extract numeric sprint number from sprint dict.
+    
+    Tries 'sprint' field first, then extracts number from 'id' like 'sprint-1'.
+    """
+    if "sprint" in sprint:
+        return int(sprint["sprint"])
+    # Extract number from id like "sprint-1" -> 1
+    sid = str(sprint.get("id", ""))
+    if sid.startswith("sprint-"):
+        try:
+            return int(sid.split("-")[1])
+        except (IndexError, ValueError):
+            pass
+    return 0
+
+
 def _should_skip_sprint(sprint: dict, sprint_filter: Optional[int], on_progress: Any) -> bool:
     """Return True if sprint should be skipped due to filter."""
-    sprint_num = sprint.get("sprint", 0)
+    sprint_num = _extract_sprint_number(sprint)
     if sprint_filter is not None and sprint_num != sprint_filter:
         if on_progress:
             on_progress(f"[dim]Skipping sprint {sprint_num} (filtered)[/dim]")
