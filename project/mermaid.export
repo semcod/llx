@@ -191,6 +191,12 @@ flowchart TD
         llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
         llx__cli__commands__analyze__analyze["analyze"]
         llx__cli__commands__planner___plan_code_impl("_plan_code_impl CC=9")
+        llx__cli__version_check__get_current_version["get_current_version"]
+        llx__cli__version_check__get_pypi_version["get_pypi_version"]
+        llx__cli__version_check__compare_versions["compare_versions"]
+        llx__cli__version_check__check_version["check_version"]
+        llx__cli__version_check__get_update_command["get_update_command"]
+        llx__cli__app___show_version_banner["_show_version_banner"]
         llx__cli__app___run_analysis_tools["_run_analysis_tools"]
         llx__cli__app__analyze["analyze"]
         llx__cli__app__select["select"]
@@ -202,7 +208,7 @@ flowchart TD
         llx__cli__app__plan_generate["plan_generate"]
         llx__cli__app__plan_review["plan_review"]
         llx__cli__app__plan_execute["plan_execute"]
-        llx__cli__app__plan_run{{plan_run CC=50}}
+        llx__cli__app__plan_run{{plan_run CC=51}}
         llx__cli__app__models["models"]
         llx__cli__app__info["info"]
         llx__cli__app__fix["fix"]
@@ -351,13 +357,13 @@ flowchart TD
         llx__mcp__tools__core___handle_llx_chat["_handle_llx_chat"]
         llx__mcp__tools__planfile___handle_planfile_generate["_handle_planfile_generate"]
         llx__mcp__tools__planfile___handle_planfile_apply("_handle_planfile_apply CC=9")
+        llx__mcp__tools__privacy___handle_llx_project_anonymize("_handle_llx_project_anonymize CC=10")
+        llx__mcp__tools__privacy___handle_llx_project_deanonymize("_handle_llx_project_deanonymize CC=10")
+        llx__mcp__tools__privacy___handle_llx_privacy_scan("_handle_llx_privacy_scan CC=10")
         llx__mcp__tools__code_edit___handle_aider("_handle_aider CC=8")
         llx__mcp__tools__proxym___handle_llx_proxy_status["_handle_llx_proxy_status"]
         llx__mcp__tools__proxym___handle_llx_proxym_status["_handle_llx_proxym_status"]
         llx__mcp__tools__proxym___handle_llx_proxym_chat["_handle_llx_proxym_chat"]
-        llx__mcp__tools__privacy___handle_llx_project_anonymize("_handle_llx_project_anonymize CC=10")
-        llx__mcp__tools__privacy___handle_llx_project_deanonymize("_handle_llx_project_deanonymize CC=10")
-        llx__mcp__tools__privacy___handle_llx_privacy_scan("_handle_llx_privacy_scan CC=10")
     end
     subgraph llx__orchestration
         llx__orchestration__cli___build_parser["_build_parser"]
@@ -476,12 +482,12 @@ flowchart TD
         llx__planfile__models__Strategy__get_sprint["get_sprint"]
         llx__planfile__models__Strategy__model_validate_yaml["model_validate_yaml"]
         llx__planfile__models__Strategy__model_dump_yaml["model_dump_yaml"]
-        llx__planfile__executor__task___map_action_to_task_type["_map_action_to_task_type"]
-        llx__planfile__executor__task___map_priority["_map_priority"]
-        llx__planfile__executor__task___parse_llm_response{{_parse_llm_response CC=17}}
-        llx__planfile__executor__task___select_model["_select_model"]
-        llx__planfile__executor__task___build_task_prompt("_build_task_prompt CC=8")
-        llx__planfile__executor__task___execute_task{{_execute_task CC=31}}
+        llx__planfile__executor__backends___detect_available_backends["_detect_available_backends"]
+        llx__planfile__executor__backends___discover_mcp_services("_discover_mcp_services CC=10")
+        llx__planfile__executor__backends___select_best_backend["_select_best_backend"]
+        llx__planfile__executor__backends___run_cursor_edit["_run_cursor_edit"]
+        llx__planfile__executor__backends___run_windsurf_edit["_run_windsurf_edit"]
+        llx__planfile__executor__backends___run_claude_code_edit["_run_claude_code_edit"]
     end
     subgraph llx__prellm
         llx__prellm__env_config___load_dotenv["_load_dotenv"]
@@ -571,14 +577,6 @@ flowchart TD
         llx__privacy___streaming_impl__StreamingProjectDeanonymizer__deanonymize_files_streaming["deanonymize_files_streaming"]
         llx__privacy___streaming_impl__anonymize_project_with_progress["anonymize_project_with_progress"]
         llx__privacy___streaming_impl__deanonymize_response_streaming["deanonymize_response_streaming"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer____init__["__init__"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project("anonymize_project CC=10")
-        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_file["anonymize_file"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_python["_anonymize_python"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_source_code["_anonymize_source_code"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_config["_anonymize_config"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_generic["_anonymize_generic"]
-        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_string["anonymize_string"]
         llx__privacy__deanonymize__ProjectDeanonymizer____init__["__init__"]
         llx__privacy__deanonymize__ProjectDeanonymizer___build_reverse_lookup["_build_reverse_lookup"]
         llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text("deanonymize_text CC=8")
@@ -606,6 +604,14 @@ flowchart TD
         llx__privacy____core__Anonymizer__anonymize["anonymize"]
         llx__privacy____core__Anonymizer___generate_token["_generate_token"]
         llx__privacy____core__Anonymizer__deanonymize["deanonymize"]
+        llx__privacy____core__Anonymizer__scan("scan CC=8")
+        llx__privacy____core__Anonymizer__add_pattern["add_pattern"]
+        llx__privacy____core__Anonymizer__disable_pattern["disable_pattern"]
+        llx__privacy____core__Anonymizer__enable_pattern["enable_pattern"]
+        llx__privacy____core__quick_anonymize["quick_anonymize"]
+        llx__privacy____core__quick_deanonymize["quick_deanonymize"]
+        llx__privacy___project_context___default_salt["_default_salt"]
+        llx__privacy___project_context___mapping_dict_for["_mapping_dict_for"]
     end
     subgraph llx__pyqual_plugins
         llx__pyqual_plugins__type_check__run_mypy["run_mypy"]
@@ -735,37 +741,39 @@ flowchart TD
         llx__utils__cli_main__cli_main["cli_main"]
         llx__utils__formatting___format_selection["_format_selection"]
         llx__utils__formatting___format_metrics["_format_metrics"]
-        llx__utils__models___select_small_model["_select_small_model"]
         llx__utils__aider___extract_issue_files("_extract_issue_files CC=9")
         llx__utils__aider___run_aider_fix("_run_aider_fix CC=12")
         llx__utils__aider___format_aider_result["_format_aider_result"]
+        llx__utils__models___select_small_model["_select_small_model"]
     end
-    subgraph my_api__src
-        my_api__src__my_api__monitoring__CustomMetrics____init__["__init__"]
-        my_api__src__my_api__monitoring__CustomMetrics__increment_successful_requests["increment_successful_requests"]
-        my_api__src__my_api__monitoring__CustomMetrics__increment_failed_requests["increment_failed_requests"]
-        my_api__src__my_api__monitoring__CustomMetrics__record_request_latency["record_request_latency"]
-        my_api__src__my_api__monitoring__HealthChecks____init__["__init__"]
-        my_api__src__my_api__monitoring__HealthChecks__check_database_connection["check_database_connection"]
-        my_api__src__my_api__monitoring__HealthChecks__check_api_endpoint["check_api_endpoint"]
-        my_api__src__my_api__monitoring__HealthChecks__register_healthchecks["register_healthchecks"]
-        my_api__src__my_api__monitoring__PrometheusMetrics____init__["__init__"]
-        my_api__src__my_api__monitoring__PrometheusMetrics__register_metrics["register_metrics"]
-        my_api__src__my_api__monitoring__AlertingRules____init__["__init__"]
-        my_api__src__my_api__monitoring__AlertingRules__add_rule["add_rule"]
-        my_api__src__my_api__monitoring__AlertingRules__register_rules["register_rules"]
-        my_api__src__my_api__monitoring__main["main"]
-        my_api__src__my_api__main__health["health"]
-        my_api__src__my_api__main__read_users["read_users"]
-        my_api__src__my_api__main__read_user["read_user"]
-        my_api__src__my_api__main__create_user["create_user"]
-        my_api__src__my_api__main__update_user["update_user"]
-        my_api__src__my_api__main__delete_user["delete_user"]
-        my_api__src__my_api__main__read_products["read_products"]
-        my_api__src__my_api__main__read_product["read_product"]
-        my_api__src__my_api__main__create_product["create_product"]
-        my_api__src__my_api__main__update_product["update_product"]
-        my_api__src__my_api__main__delete_product["delete_product"]
+    subgraph my_api__main
+        my_api__main__health["health"]
+        my_api__main__read_users["read_users"]
+        my_api__main__read_user["read_user"]
+        my_api__main__create_user["create_user"]
+        my_api__main__update_user["update_user"]
+        my_api__main__delete_user["delete_user"]
+        my_api__main__read_products["read_products"]
+        my_api__main__read_product["read_product"]
+        my_api__main__create_product["create_product"]
+        my_api__main__update_product["update_product"]
+        my_api__main__delete_product["delete_product"]
+    end
+    subgraph my_api__monitoring
+        my_api__monitoring__CustomMetrics____init__["__init__"]
+        my_api__monitoring__CustomMetrics__increment_successful_requests["increment_successful_requests"]
+        my_api__monitoring__CustomMetrics__increment_failed_requests["increment_failed_requests"]
+        my_api__monitoring__CustomMetrics__record_request_latency["record_request_latency"]
+        my_api__monitoring__HealthChecks____init__["__init__"]
+        my_api__monitoring__HealthChecks__check_database_connection["check_database_connection"]
+        my_api__monitoring__HealthChecks__check_api_endpoint["check_api_endpoint"]
+        my_api__monitoring__HealthChecks__register_healthchecks["register_healthchecks"]
+        my_api__monitoring__PrometheusMetrics____init__["__init__"]
+        my_api__monitoring__PrometheusMetrics__register_metrics["register_metrics"]
+        my_api__monitoring__AlertingRules____init__["__init__"]
+        my_api__monitoring__AlertingRules__add_rule["add_rule"]
+        my_api__monitoring__AlertingRules__register_rules["register_rules"]
+        my_api__monitoring__main["main"]
     end
     subgraph project__map
         project__map__toon__create_realistic_project["create_realistic_project"]
@@ -844,13 +852,13 @@ flowchart TD
     subgraph simple_generate
         simple_generate__generate_simple_strategy["generate_simple_strategy"]
     end
-    subgraph test_api_qwen__src
-        test_api_qwen__src__test_api_qwen__main__health_check["health_check"]
-        test_api_qwen__src__test_api_qwen__main__create_item["create_item"]
-        test_api_qwen__src__test_api_qwen__main__get_items["get_items"]
-        test_api_qwen__src__test_api_qwen__main__get_item["get_item"]
-        test_api_qwen__src__test_api_qwen__main__update_item["update_item"]
-        test_api_qwen__src__test_api_qwen__main__delete_item["delete_item"]
+    subgraph test_api_qwen__main
+        test_api_qwen__main__health_check["health_check"]
+        test_api_qwen__main__create_item["create_item"]
+        test_api_qwen__main__get_items["get_items"]
+        test_api_qwen__main__get_item["get_item"]
+        test_api_qwen__main__update_item["update_item"]
+        test_api_qwen__main__delete_item["delete_item"]
     end
     subgraph test_local_chat
         test_local_chat__test_llx_health["test_llx_health"]
@@ -871,52 +879,59 @@ flowchart TD
     trace__test --> llx__planfile__generate_strategy___normalize_strategy_data
     simple_generate__generate_simple_strategy --> llx__planfile__generate_strategy__generate_strategy_with_fix
     simple_generate__generate_simple_strategy --> llx__planfile__generate_strategy__save_fixed_strategy
-    test_local_chat__test_chat_completion --> docker__ai_tools__entrypoint__print
-    test_local_chat___check_services --> docker__ai_tools__entrypoint__print
+    test_local_chat__test_chat_completion --> Taskfile__print
+    test_local_chat___check_services --> Taskfile__print
     test_local_chat___check_services --> test_local_chat__test_llx_health
     test_local_chat___check_services --> test_local_chat__test_ollama_health
-    test_local_chat___print_models --> docker__ai_tools__entrypoint__print
+    test_local_chat___print_models --> Taskfile__print
     test_local_chat___print_models --> test_local_chat__get_available_models
     test_local_chat___print_models --> test_local_chat__test_llx_models
-    test_local_chat___run_chat_tests --> docker__ai_tools__entrypoint__print
+    test_local_chat___run_chat_tests --> Taskfile__print
     test_local_chat___run_chat_tests --> test_local_chat__test_chat_completion
-    test_local_chat___print_summary --> docker__ai_tools__entrypoint__print
-    test_local_chat__main --> docker__ai_tools__entrypoint__print
+    test_local_chat___print_summary --> Taskfile__print
+    test_local_chat__main --> Taskfile__print
     test_local_chat__main --> test_local_chat___check_services
     test_local_chat__main --> test_local_chat___print_models
     test_local_chat__main --> test_local_chat___select_test_models
     test_local_chat__main --> test_local_chat___run_chat_tests
     test_local_chat__main --> test_local_chat___print_summary
-    examples__privacy__ml__01_entropy_ml_detection__main --> docker__ai_tools__entrypoint__print
-    examples__privacy__ml__04_behavioral_learning__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__ml__01_entropy_ml_detection__main --> Taskfile__print
+    examples__privacy__ml__04_behavioral_learning__main --> Taskfile__print
     examples__privacy__ml__04_behavioral_learning__main --> examples__privacy__ml__04_behavioral_learning__create_sample_codebase
-    examples__privacy__ml__03_contextual_passwords__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__ml__03_contextual_passwords__main --> Taskfile__print
     examples__privacy__ml__03_contextual_passwords__main --> examples__privacy__ml__03_contextual_passwords__create_test_code_samples
-    examples__privacy__streaming__01_streaming_anonymization__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__streaming__01_streaming_anonymization__main --> Taskfile__print
     examples__privacy__streaming__01_streaming_anonymization__main --> examples__privacy__streaming__01_streaming_anonymization__create_large_project
-    examples__privacy__project__02_deanonymize_project__main --> docker__ai_tools__entrypoint__print
-    examples__privacy__project__01_anonymize_project__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__project__02_deanonymize_project__main --> Taskfile__print
+    examples__privacy__project__01_anonymize_project__main --> Taskfile__print
     examples__privacy__project__01_anonymize_project__main --> examples__privacy__project__01_anonymize_project__create_sample_project
-    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan --> docker__ai_tools__entrypoint__print
-    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step2_anonymize_for_audit --> docker__ai_tools__entrypoint__print
-    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step3_simulate_audit_response --> docker__ai_tools__entrypoint__print
-    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report --> docker__ai_tools__entrypoint__print
-    examples__privacy__advanced__03_cicd_integration__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step2_anonymize_for_audit --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step3_simulate_audit_response --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report --> Taskfile__print
+    examples__privacy__advanced__03_cicd_integration__main --> Taskfile__print
     examples__privacy__advanced__03_cicd_integration__main --> examples__privacy__advanced__03_cicd_integration__create_cicd_project
-    examples__privacy__advanced__02_multi_stage__MultiStageAnonymizer__anonymize_for_level --> docker__ai_tools__entrypoint__print
-    examples__privacy__advanced__02_multi_stage__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__advanced__02_multi_stage__MultiStageAnonymizer__anonymize_for_level --> Taskfile__print
+    examples__privacy__advanced__02_multi_stage__main --> Taskfile__print
     examples__privacy__advanced__02_multi_stage__main --> examples__privacy__advanced__02_multi_stage__create_business_logic_project
-    examples__privacy__advanced__01_api_integration__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__advanced__01_api_integration__main --> Taskfile__print
     examples__privacy__advanced__01_api_integration__main --> examples__privacy__advanced__01_api_integration__create_realistic_project
-    examples__privacy__basic__01_text_anonymization__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__basic__01_text_anonymization__main --> Taskfile__print
     examples__privacy__basic__01_text_anonymization__main --> llx__privacy____core__quick_anonymize
-    examples__privacy__basic__02_custom_patterns__main --> docker__ai_tools__entrypoint__print
-    scripts__pyqual_auto__run_pyqual --> docker__ai_tools__entrypoint__print
-    scripts__pyqual_auto__main --> docker__ai_tools__entrypoint__print
+    examples__privacy__basic__02_custom_patterns__main --> Taskfile__print
+    scripts__pyqual_auto__run_pyqual --> Taskfile__print
+    scripts__pyqual_auto__main --> Taskfile__print
     scripts__pyqual_auto__main --> scripts__pyqual_auto__load_pyqual_config
     scripts__pyqual_auto__main --> scripts__pyqual_auto__backup_config
     scripts__pyqual_auto__main --> scripts__pyqual_auto__set_model
     scripts__pyqual_auto__main --> scripts__pyqual_auto__set_env_file
+    llx__config__LlxConfig____post_init__ --> llx__config__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> llx__config___apply_env
+    llx__config__LlxConfig__load --> llx__config__normalize_litellm_base_url
+    llx__config__LlxConfig__load --> llx__config___apply_yaml
+    llx__config___apply_yaml --> llx__config___apply_yaml_proxy
+    llx__config___apply_yaml --> llx__config___apply_yaml_models
+    llx__config___apply_yaml --> llx__config___apply_yaml_thresholds
     llx__llm___ensure_dotenv_loaded --> llx__llm___load_dotenv_fallback
     llx__llm__get_llm_model --> llx__llm___ensure_dotenv_loaded
     llx__llm__get_api_key --> llx__llm___ensure_dotenv_loaded
@@ -931,9 +946,9 @@ flowchart TD
     llx__commands__fix__display_model_selection_and_metrics --> llx__utils__formatting___format_selection
     llx__commands__fix__display_model_selection_and_metrics --> llx__utils__formatting___format_metrics
     llx__commands__fix__prepare_fix_prompt --> llx__utils__issues__build_fix_prompt
-    llx__commands__fix__execute_aider_fix --> project__map__toon___extract_issue_files
-    llx__commands__fix__execute_aider_fix --> project__map__toon___run_aider_fix
-    llx__commands__fix__execute_aider_fix --> project__map__toon___format_aider_result
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___extract_issue_files
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___run_aider_fix
+    llx__commands__fix__execute_aider_fix --> llx__utils__aider___format_aider_result
     llx__commands__fix__execute_prellm_fix --> llx__prellm__core__preprocess_and_execute_sync
     llx__commands__fix__execute_prellm_fix --> llx__commands__fix__apply_code_changes
     llx__commands__fix__execute_prellm_fix --> llx__utils__models___select_small_model
@@ -953,49 +968,49 @@ flowchart TD
     llx__privacy___project_context__AnonymizationContext___generate_symbol --> llx__privacy___project_context___symbol_prefix
     llx__privacy___project_context__AnonymizationContext__to_dict --> llx__privacy___project_context___mappings_to_dict
     llx__privacy___project_context__AnonymizationContext__from_dict --> llx__privacy___project_context___dict_to_mappings
-    llx__pyqual_plugins__type_check__run_mypy --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__type_check__run_mypy --> Taskfile__print
     llx__pyqual_plugins__type_check__main --> llx__pyqual_plugins__type_check__run_mypy
-    llx__pyqual_plugins__type_check__main --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__detect_secrets__run_detect_secrets --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__type_check__main --> Taskfile__print
+    llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess --> Taskfile__print
+    llx__pyqual_plugins__detect_secrets__run_detect_secrets --> Taskfile__print
     llx__pyqual_plugins__detect_secrets__run_detect_secrets --> llx__pyqual_plugins__detect_secrets___run_detect_secrets_subprocess
     llx__pyqual_plugins__detect_secrets__main --> llx__pyqual_plugins__detect_secrets__run_detect_secrets
-    llx__pyqual_plugins__detect_secrets__main --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__detect_secrets__main --> Taskfile__print
     llx__pyqual_plugins__bump_version__bump_patch_version --> llx__pyqual_plugins__bump_version__parse_version
-    llx__pyqual_plugins__bump_version__update_version_file --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__bump_version__update_pyproject_toml --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__bump_version__git_commit_version_bump --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__bump_version__main --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__bump_version__update_version_file --> Taskfile__print
+    llx__pyqual_plugins__bump_version__update_pyproject_toml --> Taskfile__print
+    llx__pyqual_plugins__bump_version__git_commit_version_bump --> Taskfile__print
+    llx__pyqual_plugins__bump_version__main --> Taskfile__print
     llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__update_version_file
     llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__update_pyproject_toml
     llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__git_commit_version_bump
     llx__pyqual_plugins__bump_version__main --> llx__pyqual_plugins__bump_version__check_version_on_pypi
-    llx__pyqual_plugins__publish__upload_to_pypi --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__publish__main --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__publish__upload_to_pypi --> Taskfile__print
+    llx__pyqual_plugins__publish__main --> Taskfile__print
     llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__check_version_on_pypi
     llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__upload_to_pypi
     llx__pyqual_plugins__publish__main --> llx__pyqual_plugins__publish__get_current_version
-    llx__pyqual_plugins__lint__run_ruff_lint --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__lint__run_ruff_format_check --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__lint__run_ruff_lint --> Taskfile__print
+    llx__pyqual_plugins__lint__run_ruff_format_check --> Taskfile__print
     llx__pyqual_plugins__lint__main --> llx__pyqual_plugins__lint__run_ruff_lint
     llx__pyqual_plugins__lint__main --> llx__pyqual_plugins__lint__run_ruff_format_check
-    llx__pyqual_plugins__lint__main --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__verify_push_publish__verify_push --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__verify_push_publish__verify_publish --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__verify_push_publish__main --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__lint__main --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__verify_push --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__verify_publish --> Taskfile__print
+    llx__pyqual_plugins__verify_push_publish__main --> Taskfile__print
     llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__verify_publish
     llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__get_current_version
     llx__pyqual_plugins__verify_push_publish__main --> llx__pyqual_plugins__verify_push_publish__verify_push
-    llx__pyqual_plugins__security_audit__run_pip_audit --> docker__ai_tools__entrypoint__print
-    llx__pyqual_plugins__security_audit__run_bandit --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__security_audit__run_pip_audit --> Taskfile__print
+    llx__pyqual_plugins__security_audit__run_bandit --> Taskfile__print
     llx__pyqual_plugins__security_audit__main --> llx__pyqual_plugins__security_audit__run_pip_audit
     llx__pyqual_plugins__security_audit__main --> llx__pyqual_plugins__security_audit__run_bandit
-    llx__pyqual_plugins__security_audit__main --> docker__ai_tools__entrypoint__print
-    llx__examples__utils__ExampleHelper__ensure_venv --> docker__ai_tools__entrypoint__print
-    llx__examples__utils__ExampleHelper__check_dependencies --> docker__ai_tools__entrypoint__print
-    llx__examples__utils__ExampleHelper__check_ollama --> docker__ai_tools__entrypoint__print
-    llx__examples__utils__TaskQueue__process --> docker__ai_tools__entrypoint__print
-    llx__examples__utils__WorkflowRunner__run_workflow --> docker__ai_tools__entrypoint__print
+    llx__pyqual_plugins__security_audit__main --> Taskfile__print
+    llx__examples__utils__ExampleHelper__ensure_venv --> Taskfile__print
+    llx__examples__utils__ExampleHelper__check_dependencies --> Taskfile__print
+    llx__examples__utils__ExampleHelper__check_ollama --> Taskfile__print
+    llx__examples__utils__TaskQueue__process --> Taskfile__print
+    llx__examples__utils__WorkflowRunner__run_workflow --> Taskfile__print
     llx__prellm__env_config__get_env_config --> llx__prellm__env_config___load_dotenv
     llx__prellm__cli_config__config_list_cmd --> llx__prellm__cli_config___format_config_sections
     llx__prellm__cli_config__config_show_cmd --> llx__prellm__env_config__get_env_config
@@ -1108,107 +1123,131 @@ flowchart TD
     llx__analysis__collector___apply_map_text --> llx__analysis__collector___parse_map_hotspots_line
     llx__analysis__collector___collect_redup_metrics --> llx__analysis__collector___load_file
     llx__analysis__collector___collect_vallm_metrics --> llx__analysis__collector___load_file
-    llx__tools__ai_tools_manager__AIToolsManager___ensure_llx_api_running --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager___start_ai_tools_container --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager__restart_ai_tools --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager___print_shell_help --> docker__ai_tools__entrypoint__print
-    llx__tools__ai_tools_manager__AIToolsManager__access_shell --> docker__ai_tools__entrypoint__print
+    llx__tools__ai_tools_manager__AIToolsManager___ensure_llx_api_running --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager___start_ai_tools_container --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__start_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__stop_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__restart_ai_tools --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager___print_shell_help --> Taskfile__print
+    llx__tools__ai_tools_manager__AIToolsManager__access_shell --> Taskfile__print
     llx__tools__ai_tools_manager__AIToolsManager__access_shell --> examples__docker__docker__docker_exec
     llx__tools__ai_tools_manager__AIToolsManager__execute_command --> examples__docker__docker__docker_exec
-    llx__tools__docker_manager__DockerManager__start_environment --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__stop_environment --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__restart_service --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__get_service_status --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__check_service_health --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__wait_for_service --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__cleanup_environment --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__build_images --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__pull_images --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__get_resource_usage --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__backup_volumes --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__restore_volumes --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__get_network_info --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager__DockerManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager___dispatch --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager___handle_restore --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager___handle_health --> docker__ai_tools__entrypoint__print
-    llx__tools__docker_manager___handle_wait --> docker__ai_tools__entrypoint__print
+    llx__tools__docker_manager__DockerManager__start_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__stop_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__restart_service --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_service_status --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__check_service_health --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__wait_for_service --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__cleanup_environment --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__build_images --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__pull_images --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_resource_usage --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__backup_volumes --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__restore_volumes --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__get_network_info --> Taskfile__print
+    llx__tools__docker_manager__DockerManager__print_status_summary --> Taskfile__print
+    llx__tools__docker_manager___dispatch --> Taskfile__print
+    llx__tools__docker_manager___handle_restore --> Taskfile__print
+    llx__tools__docker_manager___handle_health --> Taskfile__print
+    llx__tools__docker_manager___handle_wait --> Taskfile__print
     llx__tools__docker_manager__main --> llx__utils__cli_main__cli_main
-    llx__tools__cli___delegate --> docker__ai_tools__entrypoint__print
+    llx__tools__cli___delegate --> Taskfile__print
     llx__tools__cli___handle_start --> llx__tools__cli___delegate
     llx__tools__cli___handle_stop --> llx__tools__cli___delegate
     llx__tools__cli___handle_status --> llx__tools__cli___delegate
     llx__tools__cli__main --> llx__tools__cli___build_parser
     llx__tools__cli__main --> llx__tools__cli___delegate
-    llx__tools__vscode_manager__VSCodeManager__start_vscode --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager__VSCodeManager__stop_vscode --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager__VSCodeManager__restart_vscode --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager__VSCodeManager__wait_for_vscode_ready --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager__VSCodeManager__install_extensions --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__start_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__stop_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__restart_vscode --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__wait_for_vscode_ready --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__install_extensions --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__install_extensions --> examples__docker__docker__docker_exec
     llx__tools__vscode_manager__VSCodeManager__list_installed_extensions --> examples__docker__docker__docker_exec
-    llx__tools__vscode_manager__VSCodeManager__uninstall_extension --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__uninstall_extension --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__uninstall_extension --> examples__docker__docker__docker_exec
-    llx__tools__vscode_manager__VSCodeManager__update_extensions --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__update_extensions --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__update_extensions --> examples__docker__docker__docker_exec
-    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__configure_roocode --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__configure_roocode --> examples__docker__docker__docker_exec
     llx__tools__vscode_manager__VSCodeManager__configure_roocode --> llx__tools___docker__docker_cp
-    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__create_workspace_tasks --> llx__tools___docker__docker_cp
-    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__create_launch_config --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__create_launch_config --> llx__tools___docker__docker_cp
-    llx__tools__vscode_manager__VSCodeManager__backup_settings --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__backup_settings --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__backup_settings --> llx__tools___docker__docker_cp
-    llx__tools__vscode_manager__VSCodeManager__restore_settings --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__restore_settings --> Taskfile__print
     llx__tools__vscode_manager__VSCodeManager__restore_settings --> llx__tools___docker__docker_cp
-    llx__tools__vscode_manager__VSCodeManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager__VSCodeManager__print_quick_start --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager___cmd_logs --> docker__ai_tools__entrypoint__print
-    llx__tools__vscode_manager___cmd_list_extensions --> docker__ai_tools__entrypoint__print
+    llx__tools__vscode_manager__VSCodeManager__print_status_summary --> Taskfile__print
+    llx__tools__vscode_manager__VSCodeManager__print_quick_start --> Taskfile__print
+    llx__tools__vscode_manager___cmd_logs --> Taskfile__print
+    llx__tools__vscode_manager___cmd_list_extensions --> Taskfile__print
     llx__tools__vscode_manager__main --> llx__utils__cli_main__cli_main
-    llx__tools__health_checker__HealthChecker__run_quick_health_check --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker__HealthChecker__monitor_services --> docker__ai_tools__entrypoint__print
+    llx__tools__health_checker__HealthChecker__run_quick_health_check --> Taskfile__print
+    llx__tools__health_checker__HealthChecker__monitor_services --> Taskfile__print
     llx__tools__health_checker___handle_check_command --> llx__tools__health_checker___write_json_output
     llx__tools__health_checker___handle_monitor_command --> llx__tools__health_checker___write_json_output
-    llx__tools__health_checker___handle_service_command --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker___handle_container_command --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker___handle_system_command --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker___handle_filesystem_command --> docker__ai_tools__entrypoint__print
-    llx__tools__health_checker___handle_network_command --> docker__ai_tools__entrypoint__print
+    llx__tools__health_checker___handle_service_command --> Taskfile__print
+    llx__tools__health_checker___handle_container_command --> Taskfile__print
+    llx__tools__health_checker___handle_system_command --> Taskfile__print
+    llx__tools__health_checker___handle_filesystem_command --> Taskfile__print
+    llx__tools__health_checker___handle_network_command --> Taskfile__print
     llx__tools__health_checker__main --> llx__utils__cli_main__cli_main
-    llx__tools__model_manager__ModelManager__pull_model --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__remove_model --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__test_model --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__test_llx_model --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__get_system_resources --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__create_model_profile --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__benchmark_model --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__cleanup_unused_models --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager__print_model_summary --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager___print_service_status --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager___print_ollama_models --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager___print_llx_models --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager___print_system_resources --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager__ModelManager___print_recommendations --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_list --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_pull --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_test --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_info --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_recommend --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_benchmark --> docker__ai_tools__entrypoint__print
-    llx__tools__model_manager___cmd_requirements --> docker__ai_tools__entrypoint__print
+    llx__tools__model_manager__ModelManager__pull_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__remove_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__test_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__test_llx_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__get_system_resources --> Taskfile__print
+    llx__tools__model_manager__ModelManager__create_model_profile --> Taskfile__print
+    llx__tools__model_manager__ModelManager__benchmark_model --> Taskfile__print
+    llx__tools__model_manager__ModelManager__cleanup_unused_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager__print_model_summary --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_service_status --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_ollama_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_llx_models --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_system_resources --> Taskfile__print
+    llx__tools__model_manager__ModelManager___print_recommendations --> Taskfile__print
+    llx__tools__model_manager___cmd_list --> Taskfile__print
+    llx__tools__model_manager___cmd_pull --> Taskfile__print
+    llx__tools__model_manager___cmd_test --> Taskfile__print
+    llx__tools__model_manager___cmd_info --> Taskfile__print
+    llx__tools__model_manager___cmd_recommend --> Taskfile__print
+    llx__tools__model_manager___cmd_benchmark --> Taskfile__print
+    llx__tools__model_manager___cmd_requirements --> Taskfile__print
     llx__tools__model_manager__main --> llx__utils__cli_main__cli_main
-    llx__tools__health_runner__HealthCheckRunner__run_comprehensive --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___check_services --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___check_containers --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___check_system_resources --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___check_filesystem --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___check_network --> docker__ai_tools__entrypoint__print
-    llx__tools__health_runner__HealthCheckRunner___print_health_summary --> docker__ai_tools__entrypoint__print
-    llx__tools__utils___cmd_uninstall_extension__create_simple_handler --> docker__ai_tools__entrypoint__print
+    llx__tools__health_runner__HealthCheckRunner__run_comprehensive --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_services --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_containers --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_system_resources --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_filesystem --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___check_network --> Taskfile__print
+    llx__tools__health_runner__HealthCheckRunner___print_health_summary --> Taskfile__print
+    llx__tools__config__cli___cmd_load --> Taskfile__print
+    llx__tools__config__cli___cmd_save --> Taskfile__print
+    llx__tools__config__cli___cmd_update_env --> Taskfile__print
+    llx__tools__config__cli___cmd_get_env --> Taskfile__print
+    llx__tools__config__cli___cmd_validate --> Taskfile__print
+    llx__tools__config__cli___cmd_add_model --> Taskfile__print
+    llx__tools__config__cli___cmd_list_profiles --> Taskfile__print
+    llx__tools__config__cli__main --> llx__utils__cli_main__cli_main
+    llx__tools__config__manager__ConfigManager__load_config --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__save_config --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__create_default_env --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__remove_model --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__list_models --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__backup_configs --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__restore_configs --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__generate_docker_env_file --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__create_profile --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__load_profile --> Taskfile__print
+    llx__tools__config__manager__ConfigManager___print_config_files_summary --> Taskfile__print
+    llx__tools__config__manager__ConfigManager___print_env_summary --> Taskfile__print
+    llx__tools__config__manager__ConfigManager___print_model_summary --> Taskfile__print
+    llx__tools__config__manager__ConfigManager___print_issue_summary --> Taskfile__print
+    llx__tools__config__manager__ConfigManager___print_profiles_summary --> Taskfile__print
+    llx__tools__config__manager__ConfigManager__print_config_summary --> Taskfile__print
+    llx__tools__utils___cmd_uninstall_extension__create_simple_handler --> Taskfile__print
     llx__cli__formatters__print_models_table --> llx__cli__formatters___filter_models
     llx__cli__formatters__print_models_table --> llx__cli__formatters___build_title
     llx__cli__formatters__print_models_table --> llx__cli__formatters___render_models_table
@@ -1219,13 +1258,13 @@ flowchart TD
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tiers_table
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_tags_legend
     llx__cli__formatters__print_info_tables --> llx__cli__formatters___render_agents_table
-    llx__cli__strategy_commands__create_strategy --> docker__ai_tools__entrypoint__print
+    llx__cli__strategy_commands__create_strategy --> Taskfile__print
     llx__cli__strategy_commands__create_strategy --> project__map__toon__create_strategy_command
     llx__cli__strategy_commands__validate_strategy --> llx__planfile__runner__load_valid_strategy
-    llx__cli__strategy_commands__validate_strategy --> docker__ai_tools__entrypoint__print
-    llx__cli__strategy_commands__run_strategy_command --> docker__ai_tools__entrypoint__print
+    llx__cli__strategy_commands__validate_strategy --> Taskfile__print
+    llx__cli__strategy_commands__run_strategy_command --> Taskfile__print
     llx__cli__strategy_commands__run_strategy_command --> llx__planfile__runner__run_strategy
-    llx__cli__strategy_commands__verify_strategy --> docker__ai_tools__entrypoint__print
+    llx__cli__strategy_commands__verify_strategy --> Taskfile__print
     llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__load_valid_strategy
     llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__verify_strategy_post_execution
     llx__cli__commands__analyze__analyze --> llx__routing__selector__select_with_context_check
@@ -1251,107 +1290,107 @@ flowchart TD
     llx__planfile__generate_strategy__main --> llx__planfile__generate_strategy__save_fixed_strategy
     llx__planfile__examples__example_create_strategy --> project__map__toon__create_strategy_command
     llx__planfile__examples__example_validate_strategy --> llx__planfile__runner__load_valid_strategy
-    llx__planfile__examples__example_validate_strategy --> docker__ai_tools__entrypoint__print
+    llx__planfile__examples__example_validate_strategy --> Taskfile__print
     llx__planfile__examples__example_run_strategy --> llx__planfile__runner__run_strategy
     llx__planfile__examples__example_verify_strategy --> llx__planfile__runner__load_valid_strategy
     llx__planfile__examples__example_verify_strategy --> llx__planfile__runner__verify_strategy_post_execution
-    llx__planfile__examples__example_verify_strategy --> docker__ai_tools__entrypoint__print
-    llx__planfile__examples__example_programmatic_strategy --> docker__ai_tools__entrypoint__print
-    llx__planfile__runner__load_valid_strategy --> docker__ai_tools__entrypoint__print
+    llx__planfile__examples__example_verify_strategy --> Taskfile__print
+    llx__planfile__examples__example_programmatic_strategy --> Taskfile__print
+    llx__planfile__runner__load_valid_strategy --> Taskfile__print
     llx__planfile__runner__verify_strategy_post_execution --> llx__planfile__runner__analyze_project_metrics
-    llx__planfile__runner__apply_strategy_to_tickets --> docker__ai_tools__entrypoint__print
+    llx__planfile__runner__apply_strategy_to_tickets --> Taskfile__print
     llx__planfile__runner__run_strategy --> llx__planfile__runner__load_valid_strategy
     llx__planfile__runner__run_strategy --> llx__planfile__runner__apply_strategy_to_tickets
-    llx__planfile__runner__run_strategy --> docker__ai_tools__entrypoint__print
+    llx__planfile__runner__run_strategy --> Taskfile__print
     llx__planfile__runner__run_strategy --> llx__planfile__runner__verify_strategy_post_execution
-    llx__orchestration__cli___handle_status --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli___handle_health --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli___handle_monitor --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli___delegate_to_subpackage --> docker__ai_tools__entrypoint__print
+    llx__orchestration__cli___handle_status --> Taskfile__print
+    llx__orchestration__cli___handle_health --> Taskfile__print
+    llx__orchestration__cli___handle_monitor --> Taskfile__print
+    llx__orchestration__cli___delegate_to_subpackage --> Taskfile__print
     llx__orchestration__cli__main --> llx__orchestration__cli___build_parser
     llx__orchestration__cli__main --> llx__orchestration__cli___handle_status
     llx__orchestration__cli__main --> llx__orchestration__cli___handle_health
     llx__orchestration__cli__main --> llx__orchestration__cli___handle_monitor
     llx__orchestration__cli__main --> llx__orchestration__cli___delegate_to_subpackage
-    llx__orchestration___utils__load_json --> docker__ai_tools__entrypoint__print
-    llx__orchestration___utils__save_json --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli_utils__cmd_remove_wrapper --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli_utils__cmd_remove_pair_wrapper --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli_utils__cmd_status_wrapper --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli_utils__cmd_list_wrapper --> docker__ai_tools__entrypoint__print
-    llx__orchestration__cli_utils__cmd_cleanup_wrapper --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__cli___cmd_create --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__cli___cmd_list --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__cli___cmd_queue --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__cli___cmd_cleanup --> docker__ai_tools__entrypoint__print
+    llx__orchestration___utils__load_json --> Taskfile__print
+    llx__orchestration___utils__save_json --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_remove_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_remove_pair_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_status_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_list_wrapper --> Taskfile__print
+    llx__orchestration__cli_utils__cmd_cleanup_wrapper --> Taskfile__print
+    llx__orchestration__session__cli___cmd_create --> Taskfile__print
+    llx__orchestration__session__cli___cmd_list --> Taskfile__print
+    llx__orchestration__session__cli___cmd_queue --> Taskfile__print
+    llx__orchestration__session__cli___cmd_cleanup --> Taskfile__print
     llx__orchestration__session__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__session__manager__SessionManager__load_sessions --> docker__ai_tools__entrypoint__print
+    llx__orchestration__session__manager__SessionManager__load_sessions --> Taskfile__print
     llx__orchestration__session__manager__SessionManager__save_sessions --> llx__orchestration___utils__save_json
-    llx__orchestration__session__manager__SessionManager__save_sessions --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager__create_session --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager__remove_session --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager__release_session --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager___cleanup_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager___cleanup_expired_limits --> docker__ai_tools__entrypoint__print
-    llx__orchestration__session__manager__SessionManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_create --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_list --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_metrics --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__cli___cmd_health --> docker__ai_tools__entrypoint__print
+    llx__orchestration__session__manager__SessionManager__save_sessions --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__create_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__remove_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__release_session --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager___cleanup_worker --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager___cleanup_expired_limits --> Taskfile__print
+    llx__orchestration__session__manager__SessionManager__print_status_summary --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_create --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_start --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_stop --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_list --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_metrics --> Taskfile__print
+    llx__orchestration__instances__cli___cmd_health --> Taskfile__print
     llx__orchestration__instances__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__instances__manager__InstanceManager____init__ --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__load_instances --> docker__ai_tools__entrypoint__print
+    llx__orchestration__instances__manager__InstanceManager____init__ --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__load_instances --> Taskfile__print
     llx__orchestration__instances__manager__InstanceManager__save_instances --> llx__orchestration___utils__save_json
-    llx__orchestration__instances__manager__InstanceManager__save_instances --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__create_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__start_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__stop_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__remove_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__get_instance_metrics --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager___monitor_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager___check_auto_restart --> docker__ai_tools__entrypoint__print
-    llx__orchestration__instances__manager__InstanceManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_add_account --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_list_accounts --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_create --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_list --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__cli___cmd_sessions --> docker__ai_tools__entrypoint__print
+    llx__orchestration__instances__manager__InstanceManager__save_instances --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__create_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__start_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__stop_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__remove_instance --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__get_instance_metrics --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager___monitor_worker --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager___check_auto_restart --> Taskfile__print
+    llx__orchestration__instances__manager__InstanceManager__print_status_summary --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_add_account --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_list_accounts --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_create --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_start --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_stop --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_list --> Taskfile__print
+    llx__orchestration__vscode__cli___cmd_sessions --> Taskfile__print
     llx__orchestration__vscode__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__vscode__config_io__load_vscode_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__vscode__config_io__load_vscode_config --> Taskfile__print
     llx__orchestration__vscode__config_io__save_vscode_config --> llx__orchestration___utils__save_json
-    llx__orchestration__vscode__config_io__save_vscode_config --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__load_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__vscode__config_io__save_vscode_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__load_config --> Taskfile__print
     llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> llx__orchestration___utils__save_json
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___create_default_config --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__add_account --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_account --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__create_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__end_session --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___start_browser_for_instance --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___session_cleanup_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___config_save_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___dispatch --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_add_provider --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_list_providers --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_list_models --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_model_info --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_complete --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_cancel --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__cli___cmd_usage --> docker__ai_tools__entrypoint__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__save_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___create_default_config --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__stop --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__add_account --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_account --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__create_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__remove_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__start_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__end_session --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___start_browser_for_instance --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___session_cleanup_worker --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator___config_save_worker --> Taskfile__print
+    llx__orchestration__vscode__orchestrator__VSCodeOrchestrator__print_status_summary --> Taskfile__print
+    llx__orchestration__llm__cli___dispatch --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_add_provider --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_list_providers --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_list_models --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_model_info --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_complete --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_cancel --> Taskfile__print
+    llx__orchestration__llm__cli___cmd_usage --> Taskfile__print
     llx__orchestration__llm__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__llm__health__perform_health_checks --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__health__perform_health_checks --> Taskfile__print
     llx__orchestration__llm__health__health_check_worker --> llx__orchestration__llm__health__perform_health_checks
-    llx__orchestration__llm__health__health_check_worker --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__health__health_check_worker --> Taskfile__print
     llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_ollama
     llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_openai
     llx__orchestration__llm__executors__execute_request --> llx__orchestration__llm__executors__execute_anthropic
@@ -1360,116 +1399,85 @@ flowchart TD
     llx__orchestration__llm__executors__execute_openai --> llx__orchestration__llm__executors___failed
     llx__orchestration__llm__executors__execute_anthropic --> llx__orchestration__llm__executors___failed
     llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> llx__orchestration___utils__load_json
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__load_config --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> llx__orchestration___utils__save_json
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___create_default_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__save_config --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___create_default_config --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> llx__orchestration__llm__health__perform_health_checks
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_provider --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__remove_provider --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_model --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__complete_request --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__cancel_request --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__start --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__stop --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_provider --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__remove_provider --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__add_model --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__complete_request --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__cancel_request --> Taskfile__print
     llx__orchestration__llm__orchestrator__LLMOrchestrator___execute_request --> llx__orchestration__llm__executors__execute_request
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___config_save_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_usage_stats --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_provider_status --> docker__ai_tools__entrypoint__print
-    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_model_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_add --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_enqueue --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_dequeue --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_complete --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_status --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__cli___cmd_metrics --> docker__ai_tools__entrypoint__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___config_save_worker --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator__print_status_summary --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_usage_stats --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_provider_status --> Taskfile__print
+    llx__orchestration__llm__orchestrator__LLMOrchestrator___print_model_summary --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_add --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_enqueue --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_dequeue --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_complete --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_status --> Taskfile__print
+    llx__orchestration__queue__cli___cmd_metrics --> Taskfile__print
     llx__orchestration__queue__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__queue__manager__QueueManager__load_queues --> docker__ai_tools__entrypoint__print
+    llx__orchestration__queue__manager__QueueManager__load_queues --> Taskfile__print
     llx__orchestration__queue__manager__QueueManager__save_queues --> llx__orchestration___utils__save_json
-    llx__orchestration__queue__manager__QueueManager__save_queues --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__start --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__stop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__add_queue --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__remove_queue --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__enqueue_request --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__complete_request --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager___worker_loop --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager___retry_request --> docker__ai_tools__entrypoint__print
-    llx__orchestration__queue__manager__QueueManager__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__utils___cmd_cleanup__create_cleanup_handler --> docker__ai_tools__entrypoint__print
+    llx__orchestration__queue__manager__QueueManager__save_queues --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__start --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__stop --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__add_queue --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__remove_queue --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__enqueue_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__complete_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager___worker_loop --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager___retry_request --> Taskfile__print
+    llx__orchestration__queue__manager__QueueManager__print_status_summary --> Taskfile__print
+    llx__orchestration__utils___cmd_cleanup__create_cleanup_handler --> Taskfile__print
     llx__orchestration__utils___cmd_remove__create_remove_handler --> llx__orchestration__cli_utils__cmd_remove_wrapper
-    llx__orchestration__utils___cmd_status__create_status_handler --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter__load_limits --> docker__ai_tools__entrypoint__print
+    llx__orchestration__utils___cmd_status__create_status_handler --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__load_limits --> Taskfile__print
     llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> llx__orchestration___utils__save_json
-    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter__add_limit --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter__remove_limit --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter___apply_penalty --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_expired_penalties --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__limiter__RateLimiter__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_add --> docker__ai_tools__entrypoint__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__save_limits --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__add_limit --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__remove_limit --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___apply_penalty --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_worker --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter___cleanup_expired_penalties --> Taskfile__print
+    llx__orchestration__ratelimit__limiter__RateLimiter__print_status_summary --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_add --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_remove --> llx__orchestration__cli_utils__cmd_remove_pair_wrapper
-    llx__orchestration__ratelimit__cli___cmd_check --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_record --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_release --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_status --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_available --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit__cli___cmd_cleanup --> docker__ai_tools__entrypoint__print
+    llx__orchestration__ratelimit__cli___cmd_check --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_record --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_release --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_status --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_available --> Taskfile__print
+    llx__orchestration__ratelimit__cli___cmd_cleanup --> Taskfile__print
     llx__orchestration__ratelimit__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__ratelimit___persistence__load_limits_from_file --> docker__ai_tools__entrypoint__print
+    llx__orchestration__ratelimit___persistence__load_limits_from_file --> Taskfile__print
     llx__orchestration__ratelimit___persistence__save_limits_to_file --> llx__orchestration___utils__save_json
-    llx__orchestration__ratelimit___persistence__save_limits_to_file --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit___crud__add_limit --> docker__ai_tools__entrypoint__print
-    llx__orchestration__ratelimit___crud__remove_limit --> docker__ai_tools__entrypoint__print
+    llx__orchestration__ratelimit___persistence__save_limits_to_file --> Taskfile__print
+    llx__orchestration__ratelimit___crud__add_limit --> Taskfile__print
+    llx__orchestration__ratelimit___crud__remove_limit --> Taskfile__print
     llx__orchestration__routing__engine__RoutingEngine__load_config --> llx__orchestration___utils__load_json
-    llx__orchestration__routing__engine__RoutingEngine__load_config --> docker__ai_tools__entrypoint__print
+    llx__orchestration__routing__engine__RoutingEngine__load_config --> Taskfile__print
     llx__orchestration__routing__engine__RoutingEngine__save_config --> llx__orchestration___utils__save_json
-    llx__orchestration__routing__engine__RoutingEngine__route_request --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__engine__RoutingEngine___metrics_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__engine__RoutingEngine___optimization_worker --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__engine__RoutingEngine___optimize_routing --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__engine__RoutingEngine__print_status_summary --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__cli___cmd_route --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__cli___cmd_status --> docker__ai_tools__entrypoint__print
-    llx__orchestration__routing__cli___cmd_optimize --> docker__ai_tools__entrypoint__print
+    llx__orchestration__routing__engine__RoutingEngine__route_request --> Taskfile__print
+    llx__orchestration__routing__engine__RoutingEngine___metrics_worker --> Taskfile__print
+    llx__orchestration__routing__engine__RoutingEngine___optimization_worker --> Taskfile__print
+    llx__orchestration__routing__engine__RoutingEngine___optimize_routing --> Taskfile__print
+    llx__orchestration__routing__engine__RoutingEngine__print_status_summary --> Taskfile__print
+    llx__orchestration__routing__cli___cmd_route --> Taskfile__print
+    llx__orchestration__routing__cli___cmd_status --> Taskfile__print
+    llx__orchestration__routing__cli___cmd_optimize --> Taskfile__print
     llx__orchestration__routing__cli__main --> llx__utils__cli_main__cli_main
     llx__utils__issues__load_issue_source --> llx__utils__issues__load_todo_markdown
     llx__utils__issues__resolve_issue_source --> llx__utils__issues__load_issue_source
-    llx__utils__issues__resolve_issue_source --> llx__utils__issues__load_todo_markdown
-    llx__utils__issues__issue_text --> llx__utils__issues___append_location
-    llx__utils__issues__issue_text --> llx__utils__issues___append_first_present
-    llx__utils__issues__build_fix_prompt --> llx__utils__issues___collect_file_context
-    llx__utils__issues__build_fix_prompt --> llx__utils__issues__issue_text
-    llx__utils__issues___collect_file_context --> llx__utils__issues___extract_file_refs
-    llx__utils__issues___collect_file_context --> llx__utils__issues___read_snippet
-    llx__utils__cli_main__cli_main --> llx__mcp__server__build_parser
-    llx__utils__cli_main__cli_main --> llx__prellm__server__AuthMiddleware__dispatch
-    llx__mcp__server__run_sse_server --> llx__mcp__server__create_app
-    llx__mcp__server__main --> llx__mcp__server__run_sse_server
-    llx__mcp__server__main --> llx__mcp__server__build_parser
-    llx__mcp__server__main --> llx__mcp__server__run_stdio_server
-    llx__mcp__server__main_sync --> llx__mcp__server__main
-    llx__mcp__workflows__run_llx_fix_workflow --> llx__utils__issues__resolve_issue_source
-    llx__mcp__workflows__run_llx_fix_workflow --> llx__utils__issues__build_fix_prompt
-    llx__mcp__workflows__run_llx_refactor_workflow --> llx__mcp__workflows__run_llx_fix_workflow
-    llx__mcp__service__McpServiceState__metrics_text --> llx__mcp__service___escape_label_value
-    llx__mcp__service__run_service --> llx__mcp__service__create_service_app
-    llx__mcp__service__main --> llx__mcp__service__build_parser
-    llx__mcp__service__main --> llx__mcp__service__run_service
-    llx__integrations__proxy__start_proxy --> llx__integrations__proxy__generate_proxy_config
-    llx__integrations__proxym___build_llx_headers --> llx__integrations__proxym___tier_to_proxym
-    llx__integrations__proxym__ProxymClient____init__ --> project__map__toon__normalize_litellm_base_url
-    llx__integrations__proxym__ProxymClient__chat --> llx__integrations__proxym___build_llx_headers
-    llx__integrations__proxym__ProxymClient__chat --> examples__filtering__filtering__select_model
-    llx__integrations__proxym__ProxymClient__chat_with_analysis --> llx__analysis__collector__analyze_project
-    llx__integrations__proxym__ProxymClient__chat_with_analysis --> llx__routing__selector__select_with_context_check
-    llx__integrations__proxym__ProxymClient__chat_with_analysis --> project__map__toon__build_context
-    llx__routing__client__LlxClient____init__ --> project__map__toon__normalize_litellm_base_url
-    llx__routing__client__LlxClient___metrics_headers --> examples__filtering__filtering__select_model
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class examples__privacy__advanced__01_api_integration__main,llx__routing__client__LlxClient__chat,llx__planfile__executor__task___parse_llm_response,llx__planfile__executor__task___execute_task,llx__planfile__executor__strategy___normalize_strategy,llx__planfile__executor__strategy__execute_strategy,llx__cli__app__plan_run highCC
-    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___parse_unified_hunks,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process,llx__prellm__cli_config___format_config_sections,llx__prellm__cli_config__config_show_cmd,llx__prellm__trace__TraceRecorder___generate_markdown_step_details,llx__prellm__trace__TraceRecorder___collect_trace_data medCC
+    class examples__privacy__advanced__01_api_integration__main,llx__routing__client__LlxClient__chat,llx__planfile__executor__task___parse_llm_response,llx__planfile__executor__task___execute_task,llx__planfile__executor__strategy___update_task_in_planfile,llx__planfile__executor__strategy___normalize_strategy,llx__planfile__executor__strategy__execute_strategy,llx__cli__app__plan_run highCC
+    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___parse_unified_hunks,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process,llx__prellm__cli_config___format_config_sections medCC

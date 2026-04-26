@@ -4,17 +4,17 @@
 
 - **Project**: /home/tom/github/semcod/llx
 - **Primary Language**: python
-- **Languages**: python: 208, yaml: 60, shell: 32, yml: 10, txt: 4
+- **Languages**: python: 210, yaml: 59, shell: 32, yml: 10, txt: 4
 - **Analysis Mode**: static
-- **Total Functions**: 1931
+- **Total Functions**: 1935
 - **Total Classes**: 233
-- **Modules**: 337
-- **Entry Points**: 1636
+- **Modules**: 338
+- **Entry Points**: 1634
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 623
+- **Functions**: 624
 - **File**: `map.toon.yaml`
 
 ### llx.tools.vscode_manager
@@ -62,6 +62,10 @@
 - **Classes**: 1
 - **File**: `docker_manager.py`
 
+### llx.cli.app
+- **Functions**: 22
+- **File**: `app.py`
+
 ### llx.analysis.collector
 - **Functions**: 21
 - **Classes**: 1
@@ -71,10 +75,6 @@
 - **Functions**: 21
 - **Classes**: 1
 - **File**: `manager.py`
-
-### llx.cli.app
-- **Functions**: 21
-- **File**: `app.py`
 
 ### llx.orchestration.session.manager
 - **Functions**: 20
@@ -114,70 +114,75 @@
 Main execution flows into the system:
 
 ### examples.privacy.advanced.01_api_integration.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.advanced.01_api_integration.create_realistic_project
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.advanced.01_api_integration.create_realistic_project
 
 ### examples.privacy.ml.04_behavioral_learning.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### llx.cli.app.plan_run
 > Execute planfile tasks locally with LLM (simpler alternative to 'execute').
 - **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
 
+### llx.planfile.executor.strategy.execute_strategy
+> Execute strategy with simplified format support.
+
+Args:
+    strategy_path: Path to strategy/planfile YAML
+    project_path: Project root directory
+   
+- **Calls**: llx.planfile.executor.strategy._load_strategy, llx.planfile.executor.strategy._normalize_strategy, LlxConfig.load, llx.analysis.collector.analyze_project, strategy.get, llx.planfile.executor.backends._detect_available_backends, llx.planfile.executor.backends._select_best_backend, logger.info
+
 ### examples.privacy.advanced.02_multi_stage.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.advanced.02_multi_stage.create_business_logic_project
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.advanced.02_multi_stage.create_business_logic_project
 
 ### examples.privacy.ml.01_entropy_ml_detection.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, MLBasedAnonymizer, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, MLBasedAnonymizer, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### examples.privacy.ml.03_contextual_passwords.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, ContextualPasswordDetector, examples.privacy.ml.03_contextual_passwords.create_test_code_samples, samples.items, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, ContextualPasswordDetector, examples.privacy.ml.03_contextual_passwords.create_test_code_samples, samples.items, Taskfile.print, Taskfile.print
 
 ### llx.planfile.executor.task._execute_task
 > Execute a single task.
 - **Calls**: Path, time.time, task.get, task.get, llx.planfile.executor.task._build_task_prompt, llx.planfile.executor.task._parse_llm_response, TaskResult, llx.planfile.executor.task._select_model
 
 ### examples.privacy.project.01_anonymize_project.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.project.01_anonymize_project.create_sample_project
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.project.01_anonymize_project.create_sample_project
 
 ### examples.privacy.streaming.01_streaming_anonymization.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.streaming.01_streaming_anonymization.create_large_project
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.streaming.01_streaming_anonymization.create_large_project
 
 ### examples.privacy.project.02_deanonymize_project.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, src_file.write_text, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
-
-### llx.planfile.executor.strategy.execute_strategy
-> Execute strategy with simplified format support.
-- **Calls**: llx.planfile.executor.strategy._load_strategy, llx.planfile.executor.strategy._normalize_strategy, LlxConfig.load, llx.analysis.collector.analyze_project, strategy.get, project.map.toon._detect_available_backends, project.map.toon._select_best_backend, logger.info
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, src_file.write_text, Taskfile.print, Taskfile.print
 
 ### scripts.pyqual_auto.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args
 
 ### llx.orchestration.instances.manager.InstanceManager.load_instances
 > Load instances from configuration file.
-- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, InstanceConfig
+- **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, Taskfile.print, open, json.load, InstanceConfig
 
 ### examples.privacy.advanced.03_cicd_integration.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, tempfile.TemporaryDirectory, project_path.mkdir, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, examples.privacy.advanced.03_cicd_integration.create_cicd_project
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.advanced.03_cicd_integration.create_cicd_project
 
 ### llx.tools.vscode_manager.VSCodeManager.print_quick_start
 > Print quick start guide.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### llx.orchestration.vscode.config_io.load_vscode_config
 > Load VS Code orchestration configuration into an orchestrator instance.
-- **Calls**: orchestrator.config_file.exists, orchestrator.config.update, data.get, data.get, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, orchestrator._create_default_config
+- **Calls**: orchestrator.config_file.exists, orchestrator.config.update, data.get, data.get, data.get, Taskfile.print, Taskfile.print, orchestrator._create_default_config
 
 ### llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
 > Load VS Code orchestration configuration.
-- **Calls**: self.config_file.exists, self.config.update, data.get, data.get, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config
+- **Calls**: self.config_file.exists, self.config.update, data.get, data.get, data.get, Taskfile.print, Taskfile.print, self._create_default_config
 
 ### llx.orchestration.ratelimit.limiter.RateLimiter.load_limits
 > Load rate limits from configuration file.
-- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
+- **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, self._create_default_limits, Taskfile.print, open, json.load
 
 ### llx.orchestration.ratelimit._persistence.load_limits_from_file
 > Load rate limits from configuration file.
-- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_limits, docker.ai-tools.entrypoint.print, open, json.load
+- **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, self._create_default_limits, Taskfile.print, open, json.load
 
 ### llx.planfile.generate_strategy.main
 > Generate a complete strategy using the fixed generator.
@@ -185,23 +190,23 @@ Main execution flows into the system:
 
 ### llx.orchestration.session.manager.SessionManager.load_sessions
 > Load sessions from configuration file.
-- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, SessionConfig
+- **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, Taskfile.print, open, json.load, SessionConfig
 
 ### llx.orchestration.queue.manager.QueueManager.load_queues
 > Load queues from configuration file.
-- **Calls**: self.config_file.exists, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, open, json.load, QueueConfig
+- **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, Taskfile.print, open, json.load, QueueConfig
 
 ### llx.tools.health_checker.HealthChecker.monitor_services
 > Monitor services over time.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, time.time, docker.ai-tools.entrypoint.print, None.analyze_monitoring_data, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, time.time, Taskfile.print, None.analyze_monitoring_data, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### llx.orchestration.llm.orchestrator.LLMOrchestrator.load_config
 > Load LLM orchestration configuration.
-- **Calls**: llx.orchestration._utils.load_json, self.config.update, data.get, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, self._create_default_config, docker.ai-tools.entrypoint.print, data.get
+- **Calls**: llx.orchestration._utils.load_json, self.config.update, data.get, Taskfile.print, Taskfile.print, self._create_default_config, Taskfile.print, data.get
 
 ### llx.orchestration.queue.manager.QueueManager.print_status_summary
 > Print comprehensive status summary.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, sum, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, len, sum, sum, sum, Taskfile.print, Taskfile.print
 
 ### llx.prellm.cli_commands.decompose
 > [v0.2] Decompose a query using small LLM without calling the large model.
@@ -209,13 +214,13 @@ Main execution flows into the system:
 
 ### llx.orchestration.ratelimit.limiter.RateLimiter.print_status_summary
 > Print comprehensive status summary.
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, len, sum, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, len, sum, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### examples.privacy.basic.01_text_anonymization.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### examples.privacy.basic.02_custom_patterns.main
-- **Calls**: docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, Anonymizer, anon.add_pattern, anon.add_pattern, anon.add_pattern, docker.ai-tools.entrypoint.print
+- **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, Anonymizer, anon.add_pattern, anon.add_pattern, anon.add_pattern, Taskfile.print
 
 ### llx.prellm.pipeline_ops.execute_v3_pipeline
 > Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
@@ -239,13 +244,7 @@ main [examples.privacy.advanced.01_api_integration]
 plan_run [llx.cli.app]
 ```
 
-### Flow 3: _execute_task
-```
-_execute_task [llx.planfile.executor.task]
-  └─> _build_task_prompt
-```
-
-### Flow 4: execute_strategy
+### Flow 3: execute_strategy
 ```
 execute_strategy [llx.planfile.executor.strategy]
   └─> _load_strategy
@@ -253,6 +252,12 @@ execute_strategy [llx.planfile.executor.strategy]
   └─ →> analyze_project
       └─> _collect_filesystem_metrics
       └─> _estimate_context_tokens
+```
+
+### Flow 4: _execute_task
+```
+_execute_task [llx.planfile.executor.task]
+  └─> _build_task_prompt
 ```
 
 ### Flow 5: load_instances
@@ -432,7 +437,7 @@ Key functions that process and transform data:
 
 ### llx.pyqual_plugins.detect_secrets._run_detect_secrets_subprocess
 > Execute the detect-secrets subprocess and handle errors.
-- **Output to**: subprocess.run, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Output to**: subprocess.run, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### llx.pyqual_plugins.bump_version.parse_version
 > Parse version string into components.
@@ -440,11 +445,11 @@ Key functions that process and transform data:
 
 ### llx.pyqual_plugins.lint.run_ruff_format_check
 > Run ruff format check.
-- **Output to**: docker.ai-tools.entrypoint.print, subprocess.run, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print, docker.ai-tools.entrypoint.print
+- **Output to**: Taskfile.print, subprocess.run, Taskfile.print, Taskfile.print, Taskfile.print
 
 ### llx.examples.utils.TaskQueue.process
 > Process all tasks in queue.
-- **Output to**: os.remove, docker.ai-tools.entrypoint.print, os.path.exists, docker.ai-tools.entrypoint.print, open
+- **Output to**: os.remove, Taskfile.print, os.path.exists, Taskfile.print, open
 
 ### llx.prellm.cli_config._format_config_sections
 > Group config entries into categorized sections for display.
@@ -484,8 +489,6 @@ Special cases
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
-### llx.prellm._get_process_chain
-
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
 - **Output to**: time.time, preprocessor.preprocess, time.time
@@ -512,6 +515,9 @@ Args:
     data: Initial data to validate.
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
+
+### llx.prellm.core._trace_preprocess_configuration
+- **Output to**: trace.step, str
 
 ## Behavioral Patterns
 
@@ -546,7 +552,8 @@ Functions exposed as public API (no underscore prefix):
 
 - `examples.privacy.advanced.01_api_integration.main` - 90 calls
 - `examples.privacy.ml.04_behavioral_learning.main` - 84 calls
-- `llx.cli.app.plan_run` - 76 calls
+- `llx.cli.app.plan_run` - 78 calls
+- `llx.planfile.executor.strategy.execute_strategy` - 74 calls
 - `examples.privacy.advanced.02_multi_stage.main` - 73 calls
 - `examples.privacy.ml.01_entropy_ml_detection.main` - 65 calls
 - `examples.privacy.ml.03_contextual_passwords.main` - 64 calls
@@ -554,7 +561,6 @@ Functions exposed as public API (no underscore prefix):
 - `examples.privacy.streaming.01_streaming_anonymization.main` - 50 calls
 - `llx.prellm.cli_context.context` - 49 calls
 - `examples.privacy.project.02_deanonymize_project.main` - 45 calls
-- `llx.planfile.executor.strategy.execute_strategy` - 45 calls
 - `scripts.pyqual_auto.main` - 43 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
 - `examples.privacy.advanced.03_cicd_integration.main` - 42 calls
@@ -577,8 +583,8 @@ Functions exposed as public API (no underscore prefix):
 - `llx.prellm.pipeline_ops.execute_v3_pipeline` - 27 calls
 - `llx.tools.docker_manager.DockerManager.print_status_summary` - 27 calls
 - `llx.mcp.service.create_service_app` - 27 calls
-- `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
 - `llx.config.LlxConfig.load` - 26 calls
+- `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
 - `llx.prellm.cli_config.config_show_cmd` - 25 calls
 - `llx.prellm.cli_commands.budget` - 25 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
@@ -597,6 +603,11 @@ graph TD
     plan_run --> command
     plan_run --> Argument
     plan_run --> Option
+    execute_strategy --> _load_strategy
+    execute_strategy --> _normalize_strategy
+    execute_strategy --> load
+    execute_strategy --> analyze_project
+    execute_strategy --> get
     main --> MLBasedAnonymizer
     main --> ContextualPasswordDe
     main --> create_test_code_sam
@@ -604,11 +615,6 @@ graph TD
     _execute_task --> time
     _execute_task --> get
     _execute_task --> _build_task_prompt
-    execute_strategy --> _load_strategy
-    execute_strategy --> _normalize_strategy
-    execute_strategy --> load
-    execute_strategy --> analyze_project
-    execute_strategy --> get
     main --> ArgumentParser
     main --> add_argument
     load_instances --> exists

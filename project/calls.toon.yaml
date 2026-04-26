@@ -1,9 +1,9 @@
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 481 | edges: 500 | modules: 95
-# CC̄=2.6
+# nodes: 484 | edges: 500 | modules: 93
+# CC̄=2.7
 
 HUBS[20]:
-  docker.ai-tools.entrypoint.print
+  Taskfile.print
     CC=0  in:1355  out:0  total:1355
   examples.privacy.advanced.01_api_integration.main
     CC=15  in:0  out:90  total:90
@@ -29,23 +29,23 @@ HUBS[20]:
     CC=8  in:0  out:43  total:43
   examples.privacy.advanced.03_cicd_integration.main
     CC=7  in:0  out:42  total:42
+  llx.orchestration.vscode.config_io.load_vscode_config
+    CC=6  in:0  out:36  total:36
   llx.tools.vscode_manager.VSCodeManager.print_quick_start
     CC=1  in:0  out:36  total:36
   llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
     CC=6  in:0  out:36  total:36
-  llx.orchestration.vscode.config_io.load_vscode_config
-    CC=6  in:0  out:36  total:36
-  llx.orchestration.ratelimit.limiter.RateLimiter.load_limits
-    CC=9  in:0  out:36  total:36
   llx.planfile.generate_strategy.main
     CC=6  in:0  out:35  total:35
-  llx.orchestration.queue.manager.QueueManager.load_queues
-    CC=5  in:0  out:34  total:34
   llx.orchestration.session.manager.SessionManager.load_sessions
     CC=5  in:0  out:34  total:34
+  llx.prellm.env_config.get_env_config
+    CC=3  in:7  out:24  total:31
+  llx.tools.health_checker.HealthChecker.monitor_services
+    CC=6  in:0  out:30  total:30
 
 MODULES:
-  docker.ai-tools.entrypoint  [1 funcs]
+  Taskfile  [1 funcs]
     print  CC=0  out:0
   examples.docker.docker  [1 funcs]
     docker_exec  CC=0  out:0
@@ -132,6 +132,15 @@ MODULES:
     load_errors_data  CC=4  out:9
     prepare_fix_prompt  CC=4  out:1
     select_model_for_fix  CC=3  out:2
+  llx.config  [8 funcs]
+    __post_init__  CC=1  out:1
+    load  CC=8  out:26
+    _apply_env  CC=9  out:10
+    _apply_yaml  CC=14  out:6
+    _apply_yaml_models  CC=3  out:6
+    _apply_yaml_proxy  CC=4  out:4
+    _apply_yaml_thresholds  CC=4  out:9
+    normalize_litellm_base_url  CC=5  out:8
   llx.examples.utils  [5 funcs]
     check_dependencies  CC=3  out:4
     check_ollama  CC=3  out:6
@@ -199,39 +208,17 @@ MODULES:
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [16 funcs]
-    _config_save_worker  CC=3  out:3
+  llx.orchestration.llm.orchestrator  [10 funcs]
     _create_default_config  CC=2  out:5
-    _execute_request  CC=4  out:9
-    _print_model_summary  CC=4  out:6
-    _print_provider_status  CC=2  out:6
-    _print_usage_stats  CC=1  out:7
     add_model  CC=2  out:2
     add_provider  CC=3  out:3
     cancel_request  CC=2  out:1
     complete_request  CC=4  out:11
-  llx.orchestration.queue.cli  [7 funcs]
-    _cmd_add  CC=5  out:4
-    _cmd_complete  CC=2  out:2
-    _cmd_dequeue  CC=3  out:4
-    _cmd_enqueue  CC=6  out:5
-    _cmd_metrics  CC=3  out:5
-    _cmd_status  CC=1  out:3
-    main  CC=1  out:2
-  llx.orchestration.queue.manager  [11 funcs]
-    _retry_request  CC=2  out:2
-    _worker_loop  CC=4  out:10
-    add_queue  CC=4  out:9
-    complete_request  CC=6  out:11
-    enqueue_request  CC=3  out:6
-    load_queues  CC=5  out:34
-    print_status_summary  CC=9  out:30
-    remove_queue  CC=3  out:2
-    save_queues  CC=5  out:7
-    start  CC=4  out:7
-  llx.orchestration.ratelimit.limiter  [2 funcs]
-    load_limits  CC=9  out:36
-    save_limits  CC=9  out:11
+    load_config  CC=6  out:30
+    remove_provider  CC=4  out:3
+    save_config  CC=5  out:6
+    start  CC=2  out:3
+    stop  CC=2  out:4
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5
@@ -247,12 +234,6 @@ MODULES:
     release_session  CC=5  out:4
     remove_session  CC=4  out:2
     save_sessions  CC=5  out:8
-  llx.orchestration.utils._cmd_cleanup  [1 funcs]
-    create_cleanup_handler  CC=1  out:2
-  llx.orchestration.utils._cmd_remove  [1 funcs]
-    create_remove_handler  CC=1  out:3
-  llx.orchestration.utils._cmd_status  [1 funcs]
-    create_status_handler  CC=1  out:6
   llx.orchestration.vscode.cli  [8 funcs]
     _cmd_add_account  CC=5  out:5
     _cmd_create  CC=5  out:4
@@ -475,6 +456,26 @@ MODULES:
     _handle_status  CC=1  out:1
     _handle_stop  CC=2  out:1
     main  CC=6  out:11
+  llx.tools.config.cli  [8 funcs]
+    _cmd_add_model  CC=3  out:5
+    _cmd_get_env  CC=3  out:4
+    _cmd_list_profiles  CC=3  out:4
+    _cmd_load  CC=3  out:4
+    _cmd_save  CC=3  out:5
+    _cmd_update_env  CC=3  out:2
+    _cmd_validate  CC=4  out:10
+    main  CC=1  out:1
+  llx.tools.config.manager  [16 funcs]
+    _print_config_files_summary  CC=4  out:3
+    _print_env_summary  CC=4  out:5
+    _print_issue_summary  CC=6  out:8
+    _print_model_summary  CC=2  out:5
+    _print_profiles_summary  CC=2  out:2
+    backup_configs  CC=7  out:21
+    create_default_env  CC=3  out:3
+    create_profile  CC=4  out:10
+    generate_docker_env_file  CC=3  out:4
+    list_models  CC=3  out:18
   llx.tools.docker_manager  [18 funcs]
     backup_volumes  CC=6  out:17
     build_images  CC=4  out:6
@@ -529,6 +530,9 @@ MODULES:
     print_status_summary  CC=10  out:16
     restart_vscode  CC=2  out:4
     restore_settings  CC=8  out:20
+  llx.utils.aider  [2 funcs]
+    _extract_issue_files  CC=9  out:8
+    _run_aider_fix  CC=12  out:20
   llx.utils.cli_main  [1 funcs]
     cli_main  CC=3  out:6
   llx.utils.formatting  [2 funcs]
@@ -537,9 +541,7 @@ MODULES:
   llx.utils.issues  [2 funcs]
     build_fix_prompt  CC=11  out:11
     load_issue_source  CC=9  out:10
-  project.map.toon  [3 funcs]
-    _extract_issue_files  CC=0  out:0
-    _run_aider_fix  CC=0  out:0
+  project.map.toon  [1 funcs]
     create_strategy_command  CC=0  out:0
   scripts.pyqual_auto  [2 funcs]
     main  CC=8  out:43
@@ -564,50 +566,50 @@ EDGES:
   trace.test → llx.planfile.generate_strategy._normalize_strategy_data
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.generate_strategy_with_fix
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.save_fixed_strategy
-  test-local-chat.test_chat_completion → docker.ai-tools.entrypoint.print
-  test-local-chat._check_services → docker.ai-tools.entrypoint.print
+  test-local-chat.test_chat_completion → Taskfile.print
+  test-local-chat._check_services → Taskfile.print
   test-local-chat._check_services → test-local-chat.test_llx_health
   test-local-chat._check_services → test-local-chat.test_ollama_health
-  test-local-chat._print_models → docker.ai-tools.entrypoint.print
+  test-local-chat._print_models → Taskfile.print
   test-local-chat._print_models → test-local-chat.get_available_models
   test-local-chat._print_models → test-local-chat.test_llx_models
-  test-local-chat._run_chat_tests → docker.ai-tools.entrypoint.print
+  test-local-chat._run_chat_tests → Taskfile.print
   test-local-chat._run_chat_tests → test-local-chat.test_chat_completion
-  test-local-chat._print_summary → docker.ai-tools.entrypoint.print
-  test-local-chat.main → docker.ai-tools.entrypoint.print
+  test-local-chat._print_summary → Taskfile.print
+  test-local-chat.main → Taskfile.print
   test-local-chat.main → test-local-chat._check_services
   test-local-chat.main → test-local-chat._print_models
   test-local-chat.main → test-local-chat._select_test_models
   test-local-chat.main → test-local-chat._run_chat_tests
   test-local-chat.main → test-local-chat._print_summary
-  examples.privacy.ml.01_entropy_ml_detection.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.04_behavioral_learning.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.03_contextual_passwords.main → docker.ai-tools.entrypoint.print
+  examples.privacy.ml.01_entropy_ml_detection.main → Taskfile.print
+  examples.privacy.ml.04_behavioral_learning.main → Taskfile.print
+  examples.privacy.ml.03_contextual_passwords.main → Taskfile.print
   examples.privacy.ml.03_contextual_passwords.main → examples.privacy.ml.03_contextual_passwords.create_test_code_samples
-  examples.privacy.streaming.01_streaming_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.streaming.01_streaming_anonymization.main → Taskfile.print
   examples.privacy.streaming.01_streaming_anonymization.main → examples.privacy.streaming.01_streaming_anonymization.create_large_project
-  examples.privacy.project.02_deanonymize_project.main → docker.ai-tools.entrypoint.print
-  examples.privacy.project.01_anonymize_project.main → docker.ai-tools.entrypoint.print
+  examples.privacy.project.02_deanonymize_project.main → Taskfile.print
+  examples.privacy.project.01_anonymize_project.main → Taskfile.print
   examples.privacy.project.01_anonymize_project.main → examples.privacy.project.01_anonymize_project.create_sample_project
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.main → Taskfile.print
   examples.privacy.advanced.03_cicd_integration.main → examples.privacy.advanced.03_cicd_integration.create_cicd_project
-  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.02_multi_stage.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → Taskfile.print
+  examples.privacy.advanced.02_multi_stage.main → Taskfile.print
   examples.privacy.advanced.02_multi_stage.main → examples.privacy.advanced.02_multi_stage.create_business_logic_project
-  examples.privacy.advanced.01_api_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.01_api_integration.main → Taskfile.print
   examples.privacy.advanced.01_api_integration.main → examples.privacy.advanced.01_api_integration.create_realistic_project
-  examples.privacy.basic.01_text_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.basic.01_text_anonymization.main → Taskfile.print
   examples.privacy.basic.01_text_anonymization.main → llx.privacy.__core.quick_anonymize
-  examples.privacy.basic.02_custom_patterns.main → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.run_pyqual → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.main → docker.ai-tools.entrypoint.print
-  llx.llm._ensure_dotenv_loaded → llx.llm._load_dotenv_fallback
-  llx.llm.get_llm_model → llx.llm._ensure_dotenv_loaded
-  llx.llm.get_api_key → llx.llm._ensure_dotenv_loaded
-  llx.llm.LLM.__init__ → llx.llm.get_llm_model
-  llx.llm.LLM.__init__ → llx.llm.get_api_key
-  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._parse_unified_hunks
+  examples.privacy.basic.02_custom_patterns.main → Taskfile.print
+  scripts.pyqual_auto.run_pyqual → Taskfile.print
+  scripts.pyqual_auto.main → Taskfile.print
+  llx.config.LlxConfig.__post_init__ → llx.config.normalize_litellm_base_url
+  llx.config.LlxConfig.load → llx.config._apply_env
+  llx.config.LlxConfig.load → llx.config.normalize_litellm_base_url
+  llx.config._apply_yaml → llx.config._apply_yaml_proxy
+  llx.config._apply_yaml → llx.config._apply_yaml_models
+  llx.config._apply_yaml → llx.config._apply_yaml_thresholds

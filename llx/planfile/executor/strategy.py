@@ -57,29 +57,51 @@ def _update_task_in_planfile(
     """
     try:
         planfile = _load_strategy(planfile_path)
-        
-        # Find task in planfile
+
+        # Find task in planfile (tasks list or sprint task_patterns)
+        target_task = None
         tasks = planfile.get("tasks", [])
         for task in tasks:
             if task.get("id") == task_id:
-                # Update status
-                task["status"] = status
-                # Add comment with timestamp
-                if "notes" not in task:
-                    task["notes"] = []
-                if not isinstance(task["notes"], list):
-                    task["notes"] = [task["notes"]]
-                from datetime import datetime
-                timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                task["notes"].append(f"[{timestamp}] {comment}")
-                
-                # Save updated planfile
-                _save_strategy(planfile_path, planfile)
-                logger.info(f"Updated task {task_id} in planfile: status={status}")
-                return True
-        
-        logger.warning(f"Task {task_id} not found in planfile")
-        return False
+                target_task = task
+                break
+
+        # Fallback: match by title/name in tasks list
+        if target_task is None:
+            for task in tasks:
+                if task.get("title") == task_id or task.get("name") == task_id:
+                    target_task = task
+                    break
+
+        # Fallback: match by name in sprint task_patterns
+        if target_task is None:
+            for sprint in planfile.get("sprints", []):
+                for pattern in sprint.get("task_patterns", []):
+                    if pattern.get("name") == task_id:
+                        target_task = pattern
+                        break
+                if target_task:
+                    break
+
+        if target_task is None:
+            logger.warning(f"Task {task_id} not found in planfile")
+            return False
+
+        # Update status
+        target_task["status"] = status
+        # Add comment with timestamp
+        if "notes" not in target_task:
+            target_task["notes"] = []
+        if not isinstance(target_task["notes"], list):
+            target_task["notes"] = [target_task["notes"]]
+        from datetime import datetime
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        target_task["notes"].append(f"[{timestamp}] {comment}")
+
+        # Save updated planfile
+        _save_strategy(planfile_path, planfile)
+        logger.info(f"Updated task {task_id} in planfile: status={status}")
+        return True
     except Exception as e:
         logger.error(f"Failed to update task in planfile: {e}")
         return False
@@ -194,6 +216,7 @@ def execute_strategy(
     project_path: str | Path = ".",
     *,
     sprint_filter: Optional[int] = None,
+    ticket_id: Optional[str] = None,
     dry_run: bool = False,
     on_progress: Any = None,
     model_override: Optional[str] = None,
@@ -201,7 +224,20 @@ def execute_strategy(
     max_tasks: Optional[int] = None,
     use_aider: bool = False,
 ) -> List[TaskResult]:
-    """Execute strategy with simplified format support."""
+    """Execute strategy with simplified format support.
+    
+    Args:
+        strategy_path: Path to strategy/planfile YAML
+        project_path: Project root directory
+        sprint_filter: Optional sprint number to filter
+        ticket_id: Optional specific ticket ID from tasks section to execute
+        dry_run: Simulate without executing
+        on_progress: Callback for progress updates
+        model_override: Override model selection
+        max_concurrent: Max concurrent tasks
+        max_tasks: Max total tasks to process
+        use_aider: Use aider for code editing
+    """
 
     # Auto-detect and select best backend for code editing
     selected_backend = BackendType.LLM_CHAT
@@ -221,6 +257,67 @@ def execute_strategy(
     results = []
     total_tasks_processed = 0
 
+    # If ticket_id is specified, execute that specific ticket from tasks section
+    if ticket_id:
+        tasks = strategy.get("tasks", [])
+        ticket = None
+        for task in tasks:
+            if task.get("id") == ticket_id:
+                ticket = task
+                break
+        
+        if not ticket:
+            logger.error(f"Ticket {ticket_id} not found in planfile")
+            if on_progress:
+                on_progress(f"[red]✗ Ticket {ticket_id} not found[/red]")
+            return results
+        
+        if on_progress:
+            on_progress(f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}")
+        
+        # Convert ticket to task format
+        task_dict = {
+            "name": ticket.get("title", ticket_id),
+            "description": ticket.get("description", ""),
+            "task_type": _map_action_to_task_type(ticket.get("action", "feature")),
+            "model_hints": {"tier": "balanced"},
+            "priority": _map_priority(ticket.get("priority", 3)),
+            "file": ticket.get("file", ""),
+            "action": ticket.get("action", "")
+        }
+        
+        try:
+            result = _execute_task(
+                task=task_dict,
+                config=config,
+                metrics=metrics,
+                model_override=model_override,
+                dry_run=dry_run,
+                backend=selected_backend,
+                project_root=Path(project_path).resolve()
+            )
+            results.append(result)
+            
+            if on_progress:
+                if result.status == "success":
+                    on_progress(f"  [green]✓[/green] {ticket_id} ({result.model_used})")
+                elif result.status == "dry_run":
+                    on_progress(f"  [blue]○[/blue] {ticket_id} (dry-run)")
+                else:
+                    on_progress(f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}")
+            
+            # Update ticket status in planfile if not dry_run
+            if not dry_run:
+                _update_task_in_planfile(strategy_path, ticket_id, result.status, result.validation_message or "")
+            
+        except Exception as e:
+            logger.error(f"Ticket execution failed: {e}")
+            if on_progress:
+                on_progress(f"  [red]✗[/red] {ticket_id}: {str(e)}")
+        
+        return results
+
+    # Original sprint-based execution
     for sprint in strategy.get("sprints", []):
         sprint_num = sprint.get("sprint", 0)
         
@@ -316,9 +413,15 @@ def execute_strategy(
                     
                     # Update strategy with results if it's a real execution
                     if not dry_run:
-                        # Mark task as completed in strategy
-                        if "tasks" in task:
-                            task["status"] = result.status
+                        # Mark task status in the sprint pattern
+                        task["status"] = result.status
+                        if "notes" not in task:
+                            task["notes"] = []
+                        if not isinstance(task["notes"], list):
+                            task["notes"] = [task["notes"]]
+                        from datetime import datetime
+                        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        task["notes"].append(f"[{ts}] {result.status}: {result.validation_message or result.error or 'no details'}")
                         _save_strategy(strategy_path, strategy)
                         
                 except Exception as e:

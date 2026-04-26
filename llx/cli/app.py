@@ -47,6 +47,31 @@ app.add_typer(plan_app, name="plan")
 app.add_typer(strategy_app, name="strategy")
 
 
+def _show_version_banner() -> None:
+    """Show version banner if update is available."""
+    try:
+        from llx.cli.version_check import check_version, get_update_command
+        outdated = check_version()
+        if outdated:
+            current, latest = outdated
+            update_cmd = get_update_command()
+            console.print(
+                Panel(
+                    f"[yellow]⚠ Update available:[/yellow] llx {current} → {latest}\n\n"
+                    f"Run: [cyan]{update_cmd}[/cyan]",
+                    title="Version Check",
+                    border_style="yellow"
+                )
+            )
+    except Exception:
+        # Silently fail if version check fails
+        pass
+
+
+# Show version banner on app load
+_show_version_banner()
+
+
 def _run_analysis_tools(project_path: Path, config: LlxConfig) -> None:
     """Run code2llm/redup/vallm analysis tools."""
     from llx.analysis.runner import run_all_tools
@@ -254,6 +279,7 @@ def plan_run(
     strategy: str = typer.Argument(..., help="Strategy YAML file (or 'planfile.yaml')"),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
     sprint: Optional[int] = typer.Option(None, "--sprint", "-s", help="Run specific sprint only"),
+    ticket_id: Optional[str] = typer.Option(None, "--ticket-id", "-i", help="Execute specific ticket ID from tasks section"),
     tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"),
     dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Simulate without executing"),
     auto_start_proxy: bool = typer.Option(True, "--no-auto-start-proxy", help="Disable automatic proxy startup"),
@@ -272,6 +298,8 @@ def plan_run(
 
     console.print(f"[bold]Running planfile:[/bold] {strategy}")
     console.print(f"[dim]Project:[/dim] {project_path}")
+    if ticket_id:
+        console.print(f"[dim]Ticket:[/dim] {ticket_id}")
     if sprint:
         console.print(f"[dim]Sprint:[/dim] {sprint}")
     if tier:
@@ -338,6 +366,7 @@ def plan_run(
             strategy_path=strategy,
             project_path=project_path,
             sprint_filter=sprint,
+            ticket_id=ticket_id,
             dry_run=dry_run,
             on_progress=on_progress,
             model_override=model_override,
@@ -346,24 +375,15 @@ def plan_run(
             use_aider=use_aider
         )
         
-        # Update planfile for cancelled tasks
+        # Update planfile for cancelled / failed tasks so state is persisted
         from llx.planfile.executor.strategy import _update_task_in_planfile
         for result in results:
-            if result.status == "cancelled":
-                # Extract task ID from task name or find it in results
-                task_id = None
-                for task in results:
-                    if task.task_name == result.task_name:
-                        # Try to find task ID from the original task
-                        # For now, we'll skip ID lookup and just update by name
-                        pass
-                
-                # Update planfile with cancelled status and explanation
-                comment = f"Task cancelled: {result.validation_message}"
+            if result.status in ("cancelled", "failed"):
+                comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
                 _update_task_in_planfile(
                     planfile_path=strategy,
-                    task_id=result.task_name,  # Use task name as ID for now
-                    status="cancelled",
+                    task_id=result.task_name,
+                    status=result.status,
                     comment=comment
                 )
         

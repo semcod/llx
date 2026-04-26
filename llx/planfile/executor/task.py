@@ -48,13 +48,17 @@ logger = logging.getLogger(__name__)
 def _parse_llm_response(response: str) -> dict:
     """Parse LLM response to extract structured information."""
     response_lower = response.lower()
-    
+
+    # Presence of a Python code block is strong evidence changes were made
+    has_code_block = "```python" in response_lower
+
     # Check if LLM claims issue doesn't exist
     not_found_indicators = [
         "issue not found",
         "problem not found",
         "no such issue",
         "cannot find",
+        "could not find",
         "doesn't exist",
         "does not exist",
         "already fixed",
@@ -63,6 +67,7 @@ def _parse_llm_response(response: str) -> dict:
         "no changes needed",
         "nothing to fix",
         "not applicable",
+        "already up to date",
     ]
     issue_not_found = any(indicator in response_lower for indicator in not_found_indicators)
 
@@ -71,14 +76,20 @@ def _parse_llm_response(response: str) -> dict:
         "i have modified",
         "i have changed",
         "i've updated",
+        "i updated",
         "here is the modified",
+        "here is the updated",
+        "here is the fixed",
         "changes made",
         "file updated",
         "code changed",
         "i made the following changes",
         "here are the changes",
+        "modified the",
+        "refactored",
+        "rewrote",
     ]
-    changes_made = any(indicator in response_lower for indicator in changes_indicators)
+    changes_made = has_code_block or any(indicator in response_lower for indicator in changes_indicators)
 
     # Check if LLM claims problem was fixed
     fixed_indicators = [
@@ -89,6 +100,8 @@ def _parse_llm_response(response: str) -> dict:
         "fixed the",
         "has been fixed",
         "successfully fixed",
+        "addressed",
+        "eliminated",
     ]
     problem_fixed = any(indicator in response_lower for indicator in fixed_indicators)
 
@@ -359,14 +372,13 @@ def _execute_task(
         
         # Default: use LLM chat
         if not code_changes_applied and backend == BackendType.LLM_CHAT:
-            # Use LLM chat for task execution
             client = LlxClient()
-            
+
             messages = [
                 ChatMessage(role="system", content="You are a helpful coding assistant."),
                 ChatMessage(role="user", content=prompt)
             ]
-            
+
             try:
                 response = client.chat(
                     messages=messages,
@@ -384,10 +396,36 @@ def _execute_task(
                     error=str(e),
                     execution_time=time.time() - start_time
                 )
-        
+
+            # Retry once with stricter prompt if response is unclear
+            validation = _parse_llm_response(response_content)
+            if not validation["issue_not_found"] and not validation["changes_made"] and not validation["problem_fixed"]:
+                logger.warning("LLM response unclear; retrying with stricter instructions")
+                strict_messages = [
+                    ChatMessage(
+                        role="system",
+                        content=(
+                            "You are a precise coding assistant. "
+                            "When you modify code you MUST wrap the full file in a ```python block. "
+                            "If you make no changes, say exactly: 'No action needed'."
+                        )
+                    ),
+                    ChatMessage(role="user", content=prompt)
+                ]
+                try:
+                    retry_response = client.chat(
+                        messages=strict_messages,
+                        model=model,
+                        temperature=0.1
+                    )
+                    response_content = retry_response.content
+                except Exception as e:
+                    logger.error(f"LLM retry failed: {e}")
+                    # Keep original response, mark as failed below
+
         # Parse response for validation
         validation = _parse_llm_response(response_content)
-        
+
         # Determine final status based on validation and changes
         if validation["issue_not_found"]:
             status = "cancelled"
@@ -397,13 +435,9 @@ def _execute_task(
             status = "success"
         else:
             status = "failed"
-        
-        # Build detailed validation message
-        if status == "cancelled":
-            validation_message = validation["message"]
-        else:
-            validation_message = validation["message"]
-        
+
+        validation_message = validation["message"]
+
         return TaskResult(
             task_name=task_name,
             status=status,

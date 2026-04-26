@@ -1,12 +1,12 @@
-# redup/duplication | 32 groups | 208f 36955L | 2026-04-26
+# redup/duplication | 33 groups | 209f 37217L | 2026-04-26
 
 SUMMARY:
-  files_scanned: 208
-  total_lines:   36955
-  dup_groups:    32
-  dup_fragments: 71
-  saved_lines:   495
-  scan_ms:       11555
+  files_scanned: 209
+  total_lines:   37217
+  dup_groups:    33
+  dup_fragments: 73
+  saved_lines:   502
+  scan_ms:       7712
 
 HOTSPOTS[7] (files with most duplication):
   examples/privacy/advanced/02_multi_stage.py  dup=185L  groups=1  frags=1  (0.5%)
@@ -17,7 +17,7 @@ HOTSPOTS[7] (files with most duplication):
   llx/tools/config/cli.py  dup=29L  groups=3  frags=5  (0.1%)
   llx/tools/health_checker.py  dup=27L  groups=3  frags=5  (0.1%)
 
-DUPLICATES[32] (ranked by impact):
+DUPLICATES[33] (ranked by impact):
   [209d7601e17179e8] !! STRU  create_business_logic_project  L=185 N=2 saved=185 sim=1.00
       examples/privacy/advanced/02_multi_stage.py:118-302  (create_business_logic_project)
       examples/privacy/ml/01_entropy_ml_detection.py:310-369  (create_complex_project)
@@ -32,7 +32,7 @@ DUPLICATES[32] (ranked by impact):
       llx/pyqual_plugins/detect_secrets.py:49-61  (main)
       llx/pyqual_plugins/type_check.py:55-67  (main)
   [38c37e9b2acab178]   EXAC  _map_priority  L=12 N=2 saved=12 sim=1.00
-      llx/planfile/executor/strategy.py:101-112  (_map_priority)
+      llx/planfile/executor/strategy.py:123-134  (_map_priority)
       llx/planfile/executor/task.py:22-33  (_map_priority)
   [8593830f9a7b5964]   EXAC  check_version_on_pypi  L=12 N=2 saved=12 sim=1.00
       llx/pyqual_plugins/bump_version.py:13-24  (check_version_on_pypi)
@@ -55,7 +55,7 @@ DUPLICATES[32] (ranked by impact):
       llx/orchestration/ratelimit/_crud.py:19-29  (add_limit)
       llx/orchestration/ratelimit/limiter.py:173-183  (add_limit)
   [29597928ab273483]   EXAC  _map_action_to_task_type  L=11 N=2 saved=11 sim=1.00
-      llx/planfile/executor/strategy.py:88-98  (_map_action_to_task_type)
+      llx/planfile/executor/strategy.py:110-120  (_map_action_to_task_type)
       llx/planfile/executor/task.py:9-19  (_map_action_to_task_type)
   [6a3aad3970abbd84]   EXAC  _is_port_available  L=10 N=2 saved=10 sim=1.00
       llx/orchestration/instances/ports.py:42-51  (_is_port_available)
@@ -78,6 +78,9 @@ DUPLICATES[32] (ranked by impact):
   [b0d59b7862226346]   EXAC  release_port  L=7 N=2 saved=7 sim=1.00
       llx/orchestration/instances/ports.py:34-40  (release_port)
       llx/orchestration/vscode/ports.py:26-32  (release_port)
+  [e95f644755bb2097]   STRU  get_current_version  L=7 N=2 saved=7 sim=1.00
+      llx/cli/version_check.py:9-15  (get_current_version)
+      llx/prellm/logging_setup.py:97-103  (_get_version)
   [17be19fef21a7240]   EXAC  get_current_version  L=6 N=2 saved=6 sim=1.00
       llx/pyqual_plugins/publish.py:12-17  (get_current_version)
       llx/pyqual_plugins/verify_push_publish.py:15-20  (get_current_version)
@@ -122,7 +125,7 @@ DUPLICATES[32] (ranked by impact):
       my-api/src/my_api/main.py:51-53  (create_user)
       my-api/src/my_api/main.py:84-86  (create_product)
 
-REFACTOR[32] (ranked by priority):
+REFACTOR[33] (ranked by priority):
   [1] ◐ extract_module     → examples/privacy/utils/create_business_logic_project.py
       WHY: 2 occurrences of 185-line block across 2 files — saves 185 lines
       FILES: examples/privacy/advanced/02_multi_stage.py, examples/privacy/ml/01_entropy_ml_detection.py
@@ -177,50 +180,53 @@ REFACTOR[32] (ranked by priority):
   [18] ○ extract_function   → llx/orchestration/utils/release_port.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [19] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
+  [19] ○ extract_function   → llx/utils/get_current_version.py
+      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+      FILES: llx/cli/version_check.py, llx/prellm/logging_setup.py
+  [20] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/pyqual_plugins/publish.py, llx/pyqual_plugins/verify_push_publish.py
-  [20] ○ extract_function   → llx/tools/utils/_handle_start.py
+  [21] ○ extract_function   → llx/tools/utils/_handle_start.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: llx/tools/cli.py
-  [21] ○ extract_function   → llx/tools/utils/_cmd_summary.py
+  [22] ○ extract_function   → llx/tools/utils/_cmd_summary.py
       WHY: 3 occurrences of 3-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [22] ○ extract_function   → llx/tools/utils/_dispatch.py
+  [23] ○ extract_function   → llx/tools/utils/_dispatch.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [23] ○ extract_function   → my-api/src/my_api/utils/update_user.py
+  [24] ○ extract_function   → my-api/src/my_api/utils/update_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [24] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
+  [25] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [25] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
+  [26] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: llx/orchestration/ratelimit/cli.py, llx/orchestration/session/cli.py
-  [26] ○ extract_function   → llx/tools/utils/_cmd_pull.py
+  [27] ○ extract_function   → llx/tools/utils/_cmd_pull.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: llx/tools/model_manager.py
-  [27] ○ extract_function   → my-api/src/my_api/utils/read_user.py
+  [28] ○ extract_function   → my-api/src/my_api/utils/read_user.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: my-api/src/my_api/main.py
-  [28] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
+  [29] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/prellm/agents/preprocessor.py
-  [29] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
+  [30] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/tools/health_checker.py
-  [30] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
+  [31] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py
-  [31] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
+  [32] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: llx/tools/config/cli.py
-  [32] ○ extract_function   → my-api/src/my_api/utils/create_user.py
+  [33] ○ extract_function   → my-api/src/my_api/utils/create_user.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: my-api/src/my_api/main.py
 
-QUICK_WINS[23] (low risk, high savings — do first):
+QUICK_WINS[24] (low risk, high savings — do first):
   [2] extract_function   saved=72L  → llx/planfile/executor/utils/_run_cursor_edit.py
       FILES: backends.py
   [3] extract_function   saved=15L  → llx/orchestration/utils/_dispatch.py
@@ -242,7 +248,7 @@ QUICK_WINS[23] (low risk, high savings — do first):
   [11] extract_function   saved=11L  → llx/planfile/executor/utils/_map_action_to_task_type.py
       FILES: strategy.py, task.py
 
-EFFORT_ESTIMATE (total ≈ 20.8h):
+EFFORT_ESTIMATE (total ≈ 21.0h):
   hard   create_business_logic_project       saved=185L  ~555min
   hard   _run_cursor_edit                    saved=72L  ~216min
   medium _dispatch                           saved=15L  ~30min
@@ -253,8 +259,8 @@ EFFORT_ESTIMATE (total ≈ 20.8h):
   easy   main                                saved=12L  ~24min
   easy   _calculate_entropy                  saved=11L  ~22min
   easy   add_limit                           saved=11L  ~22min
-  ... +22 more (~280min)
+  ... +23 more (~294min)
 
 METRICS-TARGET:
-  dup_groups:  32 → 0
-  saved_lines: 495 lines recoverable
+  dup_groups:  33 → 0
+  saved_lines: 502 lines recoverable
