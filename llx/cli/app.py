@@ -345,28 +345,140 @@ def _resolve_tier_override(tier: Optional[str], config: LlxConfig, console: Cons
     return None
 
 
-def _persist_failed_results(results, strategy: str) -> None:
-    """Update planfile for no_changes/failed tasks so state is persisted."""
-    from llx.planfile.executor.strategy import _update_task_in_planfile
-    for result in results:
-        if result.status in ("no_changes", "failed"):
-            comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
-            updated = False
-            if result.ticket_id:
-                updated = _update_task_in_planfile(
-                    planfile_path=strategy,
-                    task_id=result.ticket_id,
-                    status=result.status,
-                    comment=comment,
-                )
+def _map_to_ticket_status(result_status: str, file_changed: bool) -> str:
+    """Map TaskResult status to planfile TicketStatus.
 
-            if not updated:
-                _update_task_in_planfile(
-                    planfile_path=strategy,
-                    task_id=result.task_name,
-                    status=result.status,
-                    comment=comment,
-                )
+    Workflow mapping:
+    - success + file_changed -> done (completed with modifications)
+    - success + !file_changed -> done (verified no changes needed)
+    - no_changes -> canceled (ticket obsolete, issue not found)
+    - failed -> blocked (technical error, retry possible)
+    - invalid -> open (unclear response, needs re-execution)
+    - not_found -> canceled (issue doesn't exist)
+    - already_fixed -> done (previously resolved)
+    """
+    status_map = {
+        "success": "done",
+        "no_changes": "canceled",
+        "failed": "blocked",
+        "invalid": "open",
+        "not_found": "canceled",
+        "already_fixed": "done",
+        "dry_run": "open",
+        "skipped": "open",
+    }
+    return status_map.get(result_status, "open")
+
+
+def _persist_failed_results(results, strategy: str) -> None:
+    """Persist execution results to planfile with proper status mapping.
+
+    Maps TaskResult execution statuses to TicketStatus lifecycle states:
+    - no_changes -> canceled (ticket is obsolete)
+    - failed -> blocked (can retry)
+    - success -> done (already handled during execution)
+
+    Sprint task_patterns are already updated in executor.strategy during execution,
+    so we only update top-level tickets here to prevent noisy "not found" warnings
+    for synthetic task IDs generated at runtime.
+    """
+    from llx.planfile.executor.strategy import _update_task_in_planfile
+
+    if not results:
+        return
+
+    try:
+        strategy_data = _yaml.safe_load(Path(strategy).read_text(encoding="utf-8")) or {}
+    except Exception:
+        strategy_data = {}
+
+    top_level_task_ids = {
+        str(task.get("id"))
+        for task in strategy_data.get("tasks", [])
+        if isinstance(task, dict) and task.get("id")
+    }
+
+    if not top_level_task_ids:
+        return
+
+    for result in results:
+        # Only process final states that need planfile update
+        if result.status not in ("no_changes", "failed"):
+            continue
+
+        if not result.ticket_id or str(result.ticket_id) not in top_level_task_ids:
+            continue
+
+        # Map execution result to ticket lifecycle status
+        ticket_status = _map_to_ticket_status(result.status, result.file_changed)
+
+        # Build contextual comment for the status change
+        if result.status == "no_changes":
+            comment = f"Ticket canceled: {result.validation_message or 'Issue not found in codebase'}"
+        elif result.status == "failed":
+            comment = f"Execution blocked: {result.error or 'Technical error - can retry'}"
+        else:
+            comment = f"Status {result.status}: {result.validation_message or result.error or 'no details'}"
+
+        _update_task_in_planfile(
+            planfile_path=strategy,
+            task_id=result.ticket_id,
+            status=ticket_status,
+            comment=comment,
+        )
+
+
+def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
+    """Print execution results as markdown-formatted table."""
+    summary = payload.get("summary", {})
+    results = payload.get("results", [])
+
+    console.print("\n## Execution Summary\n")
+    console.print(f"- **Strategy:** {payload.get('strategy', 'N/A')}")
+    console.print(f"- **Project:** {payload.get('project', 'N/A')}")
+    if payload.get('sprint') is not None:
+        console.print(f"- **Sprint:** {payload['sprint']}")
+    console.print(f"- **Timestamp:** {payload.get('timestamp', 'N/A')}")
+    console.print(f"- **Total Tasks:** {summary.get('total', 0)}")
+
+    # Status counts as a table
+    console.print("\n### Status Counts\n")
+    console.print("| Status | Count |")
+    console.print("|--------|-------|")
+    status_icons = {
+        "success": "✓ Success",
+        "failed": "✗ Failed",
+        "invalid": "⚠ Invalid",
+        "not_found": "⊘ Not Found",
+        "already_fixed": "⊘ Already Fixed",
+        "no_changes": "⊘ No Changes",
+        "skipped": "⊘ Skipped",
+    }
+    for status, label in status_icons.items():
+        count = summary.get(status, 0)
+        if count > 0:
+            console.print(f"| {label} | {count} |")
+
+    # Results table
+    if results:
+        console.print("\n### Task Results\n")
+        console.print("| Ticket | Task | Status | Model | Time | Changed |")
+        console.print("|----------|------|--------|-------|------|---------|")
+        for r in results:
+            ticket = r.get('ticket_id') or '-'
+            task = r.get('task_name', 'Unknown')[:30]
+            status = r.get('status', 'unknown')
+            model = (r.get('model_used') or '-').split('/')[-1][:20]
+            time_val = f"{r.get('execution_time', 0):.2f}s"
+            changed = "✓" if r.get('file_changed') else "-"
+            console.print(f"| {ticket} | {task} | {status} | {model} | {time_val} | {changed} |")
+
+    # Failed details
+    failed = [r for r in results if r.get('status') == 'failed']
+    if failed:
+        console.print("\n### Failed Tasks\n")
+        for r in failed:
+            console.print(f"- **{r.get('task_name', 'Unknown')}:** {r.get('error', 'No error details')}")
 
 
 def _print_results_summary(results, use_aider: bool, backends, console: Console) -> None:
@@ -510,6 +622,82 @@ def _save_results_yaml(payload: dict[str, Any], output_yaml: str, console: Conso
     console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
 
 
+def _run_plan_testql_workflow(
+    *,
+    scenario: str,
+    strategy: str,
+    project_path: Path,
+    url: str,
+    dry_run: bool,
+    create_tickets: bool,
+    sync_targets: bool,
+    max_tickets: int,
+    testql_bin: str,
+) -> dict[str, Any]:
+    """Run TestQL validation and optional ticket generation/sync through planfile API."""
+    from planfile import (
+        build_testql_tickets,
+        run_testql_validation,
+        sync_testql_tickets,
+        upsert_testql_tickets,
+    )
+
+    validation = run_testql_validation(
+        scenario_path=scenario,
+        project_path=project_path,
+        url=url,
+        dry_run=dry_run,
+        quiet=True,
+        testql_bin=testql_bin,
+    )
+
+    payload: dict[str, Any] = {
+        "scenario": scenario,
+        "strategy": strategy,
+        "project": str(project_path),
+        "dry_run": dry_run,
+        "validation": {
+            "ok": bool(validation.get("ok")),
+            "passed": int(validation.get("passed") or 0),
+            "failed": int(validation.get("failed") or 0),
+            "exit_code": int(validation.get("exit_code") or 0),
+            "source": validation.get("source"),
+            "errors": validation.get("errors") or [],
+            "warnings": validation.get("warnings") or [],
+        },
+        "tickets": {
+            "generated": 0,
+            "created": 0,
+            "skipped": 0,
+            "created_ticket_ids": [],
+            "sync": None,
+        },
+    }
+
+    if create_tickets and not bool(validation.get("ok")):
+        tickets = build_testql_tickets(validation, scenario_path=scenario, max_tickets=max_tickets)
+        payload["tickets"]["generated"] = len(tickets)
+
+        if tickets:
+            upsert_report = upsert_testql_tickets(
+                strategy_path=strategy,
+                tickets=tickets,
+                project_path=project_path,
+            )
+            payload["tickets"]["created"] = int(upsert_report.get("created") or 0)
+            payload["tickets"]["skipped"] = int(upsert_report.get("skipped") or 0)
+            payload["tickets"]["created_ticket_ids"] = upsert_report.get("created_ticket_ids") or []
+
+            if sync_targets:
+                payload["tickets"]["sync"] = sync_testql_tickets(
+                    tickets,
+                    project_path=project_path,
+                    include_configured=True,
+                )
+
+    return payload
+
+
 @plan_app.command("run")
 def plan_run(
     strategy: str = typer.Argument(..., help="Strategy YAML file (or 'planfile.yaml')"),
@@ -523,6 +711,7 @@ def plan_run(
     max_tasks: Optional[int] = typer.Option(None, "--max-tasks", "-n", help="Maximum total number of tasks to process (default: unlimited)"),
     output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to also save YAML results file"),
     use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
+    format: str = typer.Option("markdown", "--format", "-f", help="Output format: yaml, markdown"),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
@@ -572,8 +761,66 @@ def plan_run(
         if output_yaml:
             _save_results_yaml(payload, output_yaml, run_console)
 
+        # Output results in requested format (default: markdown for readability)
+        if format.lower() == "yaml":
+            typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
+        else:
+            _print_results_markdown(payload, run_console)
+
+    except Exception as e:
+        run_console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
+
+
+@plan_app.command("testql")
+def plan_testql(
+    scenario: str = typer.Argument(..., help="Path to .testql.toon.yaml scenario"),
+    strategy: str = typer.Option("planfile.yaml", "--strategy", "-s", help="Target planfile YAML"),
+    project_path: Path = typer.Option(Path("."), "--project", "-p"),
+    url: str = typer.Option("http://localhost:8101", "--url", help="Base API URL for TestQL"),
+    dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Parse/validate scenario without full execution"),
+    create_tickets: bool = typer.Option(True, "--create-tickets/--no-create-tickets", help="Create tickets in planfile.yaml for TestQL failures"),
+    sync_targets: bool = typer.Option(True, "--sync/--no-sync", help="Sync generated tickets to TODO.md first and configured integrations"),
+    max_tickets: int = typer.Option(25, "--max-tickets", help="Maximum tickets generated from one TestQL run"),
+    testql_bin: str = typer.Option("testql", "--testql-bin", help="TestQL CLI executable name/path"),
+    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to save YAML results file"),
+) -> None:
+    """Validate changes with TestQL DSL and optionally create/sync planfile tickets."""
+    run_console = Console(stderr=True)
+
+    try:
+        payload = _run_plan_testql_workflow(
+            scenario=scenario,
+            strategy=strategy,
+            project_path=project_path,
+            url=url,
+            dry_run=dry_run,
+            create_tickets=create_tickets,
+            sync_targets=sync_targets,
+            max_tickets=max_tickets,
+            testql_bin=testql_bin,
+        )
+
+        validation = payload.get("validation", {})
+        run_console.print(
+            f"[bold]TestQL:[/bold] ok={validation.get('ok')} "
+            f"passed={validation.get('passed')} failed={validation.get('failed')} "
+            f"exit_code={validation.get('exit_code')}"
+        )
+        run_console.print(
+            f"[dim]Tickets:[/dim] generated={payload['tickets']['generated']} "
+            f"created={payload['tickets']['created']} skipped={payload['tickets']['skipped']}"
+        )
+
+        if output_yaml:
+            _save_results_yaml(payload, output_yaml, run_console)
+
         typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
 
+        if not bool(validation.get("ok")):
+            raise typer.Exit(1)
+    except typer.Exit:
+        raise
     except Exception as e:
         run_console.print(f"[red]Error:[/red] {e}")
         raise typer.Exit(1)

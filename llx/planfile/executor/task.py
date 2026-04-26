@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Any, Optional
 import logging
+import re
 import time
 
 
@@ -121,6 +122,11 @@ def _extract_explanation(lines: list[str], indicators: list[str]) -> str:
     return ""
 
 
+def _strip_fenced_code_blocks(text: str) -> str:
+    """Remove fenced code blocks so status indicators are parsed from prose only."""
+    return re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+
+
 def _build_message(issue_not_found: bool, changes_made: bool, problem_fixed: bool, explanation: str) -> str:
     """Build human-readable summary message from parsed flags."""
     if issue_not_found:
@@ -138,14 +144,15 @@ def _parse_llm_response(response: str) -> dict:
     """Parse LLM response to extract structured information."""
     response_lower = response.lower()
     has_code_block = "```python" in response_lower
+    prose_only = _strip_fenced_code_blocks(response)
 
-    issue_not_found = _check_indicators(response, _NOT_FOUND_INDICATORS)
-    changes_made = has_code_block or _check_indicators(response, _CHANGES_INDICATORS)
-    problem_fixed = _check_indicators(response, _FIXED_INDICATORS)
+    issue_not_found = _check_indicators(prose_only, _NOT_FOUND_INDICATORS)
+    changes_made = has_code_block or _check_indicators(prose_only, _CHANGES_INDICATORS)
+    problem_fixed = _check_indicators(prose_only, _FIXED_INDICATORS)
 
     detailed_explanation = ""
     if issue_not_found:
-        detailed_explanation = _extract_explanation(response.split('\n'), _NOT_FOUND_INDICATORS)
+        detailed_explanation = _extract_explanation(prose_only.split('\n'), _NOT_FOUND_INDICATORS)
         if not detailed_explanation:
             detailed_explanation = "The issue described in the ticket was not found in the codebase."
 
