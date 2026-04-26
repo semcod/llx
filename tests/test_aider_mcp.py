@@ -1,8 +1,10 @@
 """Unit tests for aider MCP tool."""
 
 import pytest
-import asyncio
 from unittest.mock import patch, MagicMock
+
+pytest.importorskip("mcp", reason="Aider MCP tests require llx[mcp] extras")
+
 from llx.mcp.tools.code_edit import _handle_aider
 
 
@@ -88,8 +90,3 @@ class TestAiderTool:
         assert "prompt" in tool_aider.definition.inputSchema["required"]
         assert "model" in tool_aider.definition.inputSchema["properties"]
         assert tool_aider.definition.inputSchema["properties"]["model"]["default"] == "ollama/qwen2.5-coder:7b"
-
-
-if __name__ == "__main__":
-    # Run tests
-    asyncio.run(test_aider_tool())

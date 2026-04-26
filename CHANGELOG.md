@@ -129,6 +129,15 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.62] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_aider_mcp.py
+- Update tests/test_mcp.py
+
 ## [0.1.61] - 2026-04-26
 
 ### Docs

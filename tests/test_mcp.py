@@ -5,6 +5,9 @@ import sys
 import pytest
 import asyncio
 from unittest.mock import patch
+
+pytest.importorskip("mcp", reason="MCP tests require llx[mcp] extras")
+
 import llx.mcp.server as mcp_server
 from llx.cli.app import mcp_start
 from llx.mcp.server import build_parser
