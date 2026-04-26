@@ -327,12 +327,18 @@ plugins:
 
 # Workflows — sequential task pipelines executed by `llx run [WORKFLOW]`.
 # Each step has a `kind` mapped to a built-in handler:
-#   prefact-scan   – run a prefact code scan
-#   plan-validate  – validate planfile tickets against the prefact scan
-#   plan-run       – execute planfile tasks via LLM (skips stale tickets)
-#   testql         – run a TestQL scenario (planfile bridge)
-#   shell          – run a shell command
-#   python         – call `module:function` with kwargs
+#   prefact-scan      – run a prefact code scan
+#   plan-validate     – validate planfile tickets against the prefact scan
+#   plan-prune-stale  – physically delete stale (and optional unknown) tickets
+#   plan-clean        – status-based cleanup (drop canceled tickets + TODO.md)
+#   plan-run          – execute planfile tasks via LLM (skips stale tickets)
+#   testql            – run a TestQL scenario (planfile bridge)
+#   shell             – run a shell command
+#   python            – call `module:function` with kwargs
+#
+# Recommended post-run maintenance: `llx run cleanup` (or `llx plan clean`)
+# to drop canceled tickets from planfile.yaml AND TODO.md. See
+# docs/PLANFILE_CLEANUP.md for the full lifecycle.
 #
 # Optional per-step keys:
 #   when: "<expr>"          – Python expression evaluated against previous step outputs
@@ -376,6 +382,19 @@ workflows:
         with:
           strategy: planfile.yaml
           fail_on_stale: false
+
+  cleanup:
+    description: "Drop canceled tickets from planfile.yaml AND TODO.md (post-run maintenance)"
+    steps:
+      - name: clean
+        kind: plan-clean
+        with:
+          strategy: planfile.yaml
+          # set true to also drop tickets with status=done (already-completed work)
+          include_done: false
+          # set false to keep TODO.md intact and only mutate planfile
+          update_todo: true
+          backup: true
 
   testql:
     description: "Run a TestQL scenario, generate tickets on failure, then execute fresh tickets"

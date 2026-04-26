@@ -3,18 +3,18 @@
 **Intelligent LLM model router driven by real code metrics.**
 
 [![PyPI](https://img.shields.io/pypi/v/llx)](https://pypi.org/project/llx/)
-[![Version](https://img.shields.io/badge/version-0.1.77-blue)](https://pypi.org/project/llx/)
+[![Version](https://img.shields.io/badge/version-0.1.78-blue)](https://pypi.org/project/llx/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.77-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-35.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.78-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-35.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (101 commits)
-- 👤 **Human dev:** ~$3537 (35.4h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (103 commits)
+- 👤 **Human dev:** ~$3555 (35.6h @ $100/h, 30min dedup)
 
 Generated on 2026-04-26 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -25,6 +25,7 @@ Generated on 2026-04-26 using [openrouter/qwen/qwen3-coder-next](https://openrou
 - `README.md` — project overview, install, and quickstart
 - `docs/README.md` — generated API inventory from source analysis
 - `docs/llx-tools.md` — ecosystem CLI reference
+- `docs/PLANFILE_CLEANUP.md` — ticket lifecycle, freshness, `llx plan clean`, prune flags
 - `docs/PRIVACY.md` — anonymization and sensitive-data handling
 
 **Successor to [preLLM](https://github.com/wronai/prellm)** — rebuilt with modular architecture, no god modules, and metric-driven routing.
@@ -384,6 +385,7 @@ The system automatically detects which backends are installed and selects the be
 
 **Task validation:**
 - `success` - Changes were made to code
+- `no_changes` - Issue not found or already fixed; ticket obsolete (maps to `canceled`)
 - `invalid` - No changes made (backend didn't modify files)
 - `not_found` - Target file doesn't exist
 - `already_fixed` - LLM reports issue not found or already fixed

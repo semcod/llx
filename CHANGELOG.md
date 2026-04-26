@@ -129,6 +129,21 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.78] - 2026-04-26
+
+### Docs
+- Update README.md
+- Update docs/PLANFILE_CLEANUP.md
+
+### Test
+- Update tests/test_ticket_cleaner.py
+- Update tests/test_ticket_pruner.py
+
+### Other
+- Update llx.yaml
+- Update llx/planfile/ticket_pruner.py
+- Update llx/workflows.py
+
 ## [0.1.77] - 2026-04-26
 
 ### Docs

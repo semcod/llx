@@ -319,6 +319,136 @@ def test_workflow_plan_prune_stale_uses_previous_validate_output(monkeypatch, tm
     assert [t["id"] for t in after["tasks"]] == ["K1"]
 
 
+# ---------------------------------------------------------------------------
+# Entry-ref pruning (synthetic IDs from validator for entries lacking `id`)
+# ---------------------------------------------------------------------------
+
+
+def test_prune_by_entry_ref_top_level_tasks_index(tmp_path: Path) -> None:
+    strategy = tmp_path / "planfile.yaml"
+    _write(
+        strategy,
+        {
+            "tasks": [
+                {"name": "no-id zero"},
+                {"name": "no-id one"},
+                {"name": "no-id two"},
+            ]
+        },
+    )
+
+    report = prune_planfile_tickets(
+        strategy, ticket_ids=["tasks[0]", "tasks[2]"], backup=False
+    )
+
+    assert report["removed"] == 2
+    after = _read(strategy)
+    assert after["tasks"] == [{"name": "no-id one"}]
+
+
+def test_prune_by_entry_ref_sprint_task_patterns_descending_safe(tmp_path: Path) -> None:
+    """Indices are popped in DESC order so earlier indices stay valid."""
+    strategy = tmp_path / "planfile.yaml"
+    _write(
+        strategy,
+        {
+            "sprints": [
+                {
+                    "id": 1,
+                    "task_patterns": [
+                        {"name": "p0"},
+                        {"name": "p1"},
+                        {"name": "p2"},
+                        {"name": "p3"},
+                    ],
+                }
+            ]
+        },
+    )
+
+    # Pass refs in mixed order to verify desc-sort safety.
+    report = prune_planfile_tickets(
+        strategy,
+        ticket_ids=[
+            "sprints[0].task_patterns[2]",
+            "sprints[0].task_patterns[0]",
+            "sprints[0].task_patterns[3]",
+        ],
+        backup=False,
+    )
+
+    assert report["removed"] == 3
+    after = _read(strategy)
+    assert [p["name"] for p in after["sprints"][0]["task_patterns"]] == ["p1"]
+
+
+def test_prune_by_entry_ref_sprint_tickets_dict_key(tmp_path: Path) -> None:
+    strategy = tmp_path / "planfile.yaml"
+    _write(
+        strategy,
+        {
+            "sprints": [
+                {
+                    "id": 1,
+                    "tickets": {
+                        "FOO": {"name": "foo"},
+                        "BAR": {"name": "bar"},
+                    },
+                }
+            ]
+        },
+    )
+
+    report = prune_planfile_tickets(
+        strategy,
+        ticket_ids=["sprints[0].tickets[FOO]"],
+        backup=False,
+    )
+
+    assert report["removed"] == 1
+    after = _read(strategy)
+    assert list(after["sprints"][0]["tickets"].keys()) == ["BAR"]
+
+
+def test_prune_mixes_plain_ids_and_entry_refs(tmp_path: Path) -> None:
+    strategy = tmp_path / "planfile.yaml"
+    _write(
+        strategy,
+        {
+            "tasks": [
+                {"id": "Q01", "name": "q1"},
+                {"name": "no-id"},
+                {"id": "Q02", "name": "q2"},
+            ]
+        },
+    )
+
+    report = prune_planfile_tickets(
+        strategy,
+        ticket_ids=["Q01", "tasks[1]"],
+        backup=False,
+    )
+
+    assert report["removed"] == 2
+    after = _read(strategy)
+    assert after["tasks"] == [{"id": "Q02", "name": "q2"}]
+
+
+def test_prune_by_entry_ref_silently_skips_missing_paths(tmp_path: Path) -> None:
+    """Refs that don't resolve (out-of-range, wrong section) just get ignored."""
+    strategy = tmp_path / "planfile.yaml"
+    _write(strategy, {"tasks": [{"id": "Q01"}]})
+
+    report = prune_planfile_tickets(
+        strategy,
+        ticket_ids=["tasks[99]", "sprints[5].task_patterns[0]"],
+        backup=False,
+    )
+
+    assert report["removed"] == 0
+    assert _read(strategy) == {"tasks": [{"id": "Q01"}]}
+
+
 def test_workflow_plan_prune_stale_noop_when_nothing_to_remove(tmp_path: Path) -> None:
     from llx.workflows import Workflow, WorkflowStep, run_workflow
 

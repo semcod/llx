@@ -37,6 +37,8 @@ Built-in step kinds (registered in :data:`BUILTIN_STEP_HANDLERS`):
 - ``prefact-scan``       – run a prefact code scan; outputs ``issues`` count
 - ``plan-validate``      – run prefact-driven ticket-freshness validation
 - ``plan-prune-stale``   – physically remove stale (and optional unknown) tickets
+- ``plan-clean``         – status-based cleanup: remove ``canceled`` tickets and
+                            strip mentioning lines from ``TODO.md``
 - ``plan-run``           – execute planfile tasks (re-uses ``execute_strategy``)
 - ``testql``             – run a TestQL scenario through the planfile bridge
 - ``shell``              – run a shell command via subprocess
@@ -443,6 +445,78 @@ def _step_plan_prune_stale(ctx: StepContext) -> StepOutput:
     )
 
 
+def _step_plan_clean(ctx: StepContext) -> StepOutput:
+    """Status-based cleanup: remove canceled (and optional done) tickets and
+    strip mentioning lines from TODO.md.
+
+    Step parameters (all optional):
+
+    - ``strategy``      – planfile path (default ``planfile.yaml``)
+    - ``project``       – project root (default = workflow project)
+    - ``statuses``      – list/str of ticket statuses considered resolved
+                          (default ``["canceled"]``)
+    - ``include_done``  – also drop ``status: done`` tickets
+    - ``update_todo``   – also strip lines from ``TODO.md`` (default True)
+    - ``todo_path``     – explicit TODO.md path
+    - ``backup``        – write ``.bak.<ts>`` before mutating (default True)
+    - ``dry_run``       – compute counts only, do not modify any file
+    """
+    from llx.planfile.ticket_cleaner import clean_resolved_tickets
+
+    project = _resolve_project_path(ctx, ctx.step.params.get("project"))
+    strategy = str(ctx.step.params.get("strategy") or "planfile.yaml")
+
+    statuses_param = ctx.step.params.get("statuses")
+    if isinstance(statuses_param, str):
+        statuses_iter: Optional[list[str]] = [statuses_param]
+    elif isinstance(statuses_param, (list, tuple, set)):
+        statuses_iter = [str(s) for s in statuses_param if str(s).strip()]
+    else:
+        statuses_iter = None
+
+    if bool(ctx.step.params.get("include_done") or False):
+        statuses_iter = list(statuses_iter or ["canceled"]) + ["done"]
+
+    update_todo = bool(
+        ctx.step.params.get("update_todo")
+        if "update_todo" in ctx.step.params
+        else True
+    )
+    backup = bool(
+        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
+    )
+    dry_run = bool(ctx.step.params.get("dry_run") or False)
+    todo_path = ctx.step.params.get("todo_path")
+
+    report = clean_resolved_tickets(
+        strategy_path=strategy,
+        project_path=project,
+        statuses=statuses_iter,
+        backup=backup,
+        update_todo=update_todo,
+        todo_path=todo_path,
+        dry_run=dry_run,
+    )
+
+    matched = len(report.get("matched_ids") or [])
+    planfile_removed = (report.get("planfile") or {}).get("removed", 0)
+    todo_removed = (report.get("todo") or {}).get("removed_lines", 0) if report.get("todo") else 0
+
+    return StepOutput(
+        status="success",
+        summary=(
+            f"matched={matched} planfile_removed={planfile_removed} "
+            f"todo_lines_removed={todo_removed}"
+        ),
+        data={
+            "report": report,
+            "matched_ids": list(report.get("matched_ids") or []),
+            "planfile_removed": planfile_removed,
+            "todo_lines_removed": todo_removed,
+        },
+    )
+
+
 def _coerce_skip_ids(value: Any) -> Optional[set[str]]:
     if not value:
         return None
@@ -678,6 +752,7 @@ BUILTIN_STEP_HANDLERS: dict[str, StepHandler] = {
     "prefact-scan": _step_prefact_scan,
     "plan-validate": _step_plan_validate,
     "plan-prune-stale": _step_plan_prune_stale,
+    "plan-clean": _step_plan_clean,
     "plan-run": _step_plan_run,
     "testql": _step_testql,
     "shell": _step_shell,

@@ -14,7 +14,7 @@ Usage:
     model = select_model(metrics)
 """
 
-__version__ = "0.1.77"
+__version__ = "0.1.78"
 
 from llx.analysis.collector import ProjectMetrics, analyze_project
 from llx.llm import DEFAULT_MAX_TOKENS, LLM, LLMResponse, get_api_key, get_llm, get_llm_model

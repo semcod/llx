@@ -22,18 +22,77 @@ The pruner walks the same locations as
 - ``sprints[*].tasks: []``
 - ``sprints[*].tickets: {id: {...}}``
 
+In addition to plain ticket IDs the pruner also accepts **synthetic
+entry-ref strings** (``tasks[N]``, ``backlog[N]``,
+``sprints[X].task_patterns[N]``, ``sprints[X].tasks[N]``,
+``sprints[X].tickets[KEY]``). These are emitted by
+``planfile.validate_planfile_tickets`` for entries that lack a real ``id``
+field, so passing them straight through removes the targeted entry by its
+structural position. Index-based removals are applied in reverse order to
+keep earlier indices stable.
+
 When ``backup=True`` (the default), a timestamped ``planfile.yaml.bak.<ts>``
 copy is created before the file is rewritten. Pass ``backup=False`` to skip.
 """
 
 from __future__ import annotations
 
+import re
 import shutil
 import time
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
 import yaml as _yaml
+
+
+# Match synthetic entry refs emitted by planfile validator when an entry has
+# no real id. Examples:
+#   tasks[5]
+#   backlog[2]
+#   sprints[0].task_patterns[42]
+#   sprints[1].tasks[3]
+#   sprints[0].tickets[FOO]
+_ENTRY_REF_RE = re.compile(
+    r"^(?:sprints\[(?P<sprint>\d+)\]\.)?"
+    r"(?P<section>task_patterns|tasks|tickets|backlog)"
+    r"\[(?P<key>[^\]]+)\]$"
+)
+
+
+def _parse_entry_ref(ref: str) -> Optional[dict[str, Any]]:
+    """Parse an ``entry_ref`` string into a structural locator.
+
+    Returns ``None`` when ``ref`` is not a recognised entry-ref pattern, in
+    which case the caller should fall back to id-based matching.
+    """
+    text = (ref or "").strip()
+    match = _ENTRY_REF_RE.match(text)
+    if not match:
+        return None
+
+    sprint_raw = match.group("sprint")
+    section = match.group("section")
+    key = match.group("key")
+
+    # Top-level sections (no sprint prefix) only allow ``tasks`` or ``backlog``.
+    if sprint_raw is None and section not in {"tasks", "backlog"}:
+        return None
+    # Nested sprint sections only allow the per-sprint task buckets.
+    if sprint_raw is not None and section == "backlog":
+        return None
+
+    parsed: dict[str, Any] = {
+        "sprint_idx": int(sprint_raw) if sprint_raw is not None else None,
+        "section": section,
+        "raw_key": key,
+    }
+    try:
+        parsed["index"] = int(key)
+    except ValueError:
+        parsed["index"] = None
+        parsed["dict_key"] = key
+    return parsed
 
 
 def _coerce_id_set(ticket_ids: Iterable[Any] | None) -> set[str]:
@@ -130,6 +189,84 @@ def _make_backup(path: Path) -> Path:
     return backup_path
 
 
+def _resolve_container(
+    strategy: dict[str, Any], sprint_idx: Optional[int], section: str
+) -> Any:
+    """Return the list / dict referenced by ``(sprint_idx, section)``.
+
+    Returns None when the path does not exist in the planfile.
+    """
+    if sprint_idx is None:
+        if section == "tasks":
+            tasks = strategy.get("tasks")
+            return tasks if isinstance(tasks, list) else None
+        if section == "backlog":
+            backlog = strategy.get("backlog")
+            if isinstance(backlog, list):
+                return backlog
+            if isinstance(backlog, dict):
+                tickets = backlog.get("tickets")
+                if isinstance(tickets, (list, dict)):
+                    return tickets
+        return None
+
+    sprints = strategy.get("sprints")
+    if not isinstance(sprints, list) or sprint_idx < 0 or sprint_idx >= len(sprints):
+        return None
+    sprint = sprints[sprint_idx]
+    if not isinstance(sprint, dict):
+        return None
+    return sprint.get(section)
+
+
+def _format_ref(sprint_idx: Optional[int], section: str, key: Any) -> str:
+    if sprint_idx is None:
+        return f"{section}[{key}]"
+    return f"sprints[{sprint_idx}].{section}[{key}]"
+
+
+def _apply_entry_ref_removals(
+    strategy: dict[str, Any],
+    refs: list[dict[str, Any]],
+    removed_log: list[str],
+) -> None:
+    """Remove entries identified by parsed entry-ref locators.
+
+    Index-based removals are batched per ``(sprint_idx, section)`` and applied
+    in **descending order** so earlier indices in the same list stay valid.
+    """
+    grouped: dict[tuple[Optional[int], str], list[dict[str, Any]]] = {}
+    for ref in refs:
+        key = (ref["sprint_idx"], ref["section"])
+        grouped.setdefault(key, []).append(ref)
+
+    for (sprint_idx, section), items in grouped.items():
+        container = _resolve_container(strategy, sprint_idx, section)
+        if container is None:
+            continue
+
+        if isinstance(container, list):
+            indices = sorted(
+                {it["index"] for it in items if it.get("index") is not None},
+                reverse=True,
+            )
+            for idx in indices:
+                if 0 <= idx < len(container):
+                    removed_log.append(_format_ref(sprint_idx, section, idx))
+                    container.pop(idx)
+            continue
+
+        if isinstance(container, dict):
+            for it in items:
+                if it.get("index") is not None:
+                    dkey: Any = str(it["index"])
+                else:
+                    dkey = it.get("dict_key") or it.get("raw_key") or ""
+                if dkey in container:
+                    removed_log.append(_format_ref(sprint_idx, section, dkey))
+                    container.pop(dkey)
+
+
 def prune_planfile_tickets(
     strategy_path: str | Path,
     ticket_ids: Iterable[str] | None,
@@ -140,8 +277,11 @@ def prune_planfile_tickets(
 
     Args:
         strategy_path: Path to the planfile / strategy YAML.
-        ticket_ids: Ticket IDs to remove. Empty / falsy → no-op (still returns
-            a structured report with ``removed: 0``).
+        ticket_ids: Ticket IDs to remove. Each item is matched in two ways:
+            (1) as a plain id against ``id`` / ``ticket_id`` fields and
+            (2) as a synthetic entry-ref pattern (``tasks[N]``,
+            ``sprints[X].task_patterns[N]``, ``sprints[X].tickets[KEY]`` etc.)
+            against the planfile's structural position. Empty / falsy → no-op.
         backup: When True (default) copy the file to ``<path>.bak.<ts>``
             before rewriting. Skipped if the planfile does not exist or no
             tickets were removed.
@@ -185,10 +325,23 @@ def prune_planfile_tickets(
             "backup_path": None,
         }
 
+    # Split requested identifiers into plain IDs vs. structural entry refs.
+    plain_ids: set[str] = set()
+    parsed_refs: list[dict[str, Any]] = []
+    for ident in requested:
+        parsed = _parse_entry_ref(ident)
+        if parsed is not None:
+            parsed_refs.append(parsed)
+        else:
+            plain_ids.add(ident)
+
     removed_log: list[str] = []
-    _prune_tasks_section(raw, requested, removed_log)
-    _prune_backlog(raw, requested, removed_log)
-    _prune_sprints(raw, requested, removed_log)
+    # Apply ref-based deletions first so list indices map correctly to the
+    # original planfile contents (id-based passes filter lists afterwards).
+    _apply_entry_ref_removals(raw, parsed_refs, removed_log)
+    _prune_tasks_section(raw, plain_ids, removed_log)
+    _prune_backlog(raw, plain_ids, removed_log)
+    _prune_sprints(raw, plain_ids, removed_log)
 
     backup_path: Optional[Path] = None
     if removed_log:
