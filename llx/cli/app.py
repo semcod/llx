@@ -876,7 +876,10 @@ def plan_run(
     use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
     format: str = typer.Option("markdown", "--format", "-f", help="Output format: yaml, markdown"),
     validate: bool = typer.Option(True, "--validate/--no-validate", help="Pre-flight: scan code with prefact and skip stale tickets"),
-    cancel_stale: bool = typer.Option(False, "--cancel-stale", help="Mark stale tickets as canceled in the planfile during pre-flight"),
+    cancel_stale: bool = typer.Option(True, "--cancel-stale/--no-cancel-stale", help="Mark stale tickets as canceled in the planfile during pre-flight (default: on)"),
+    prune_stale: bool = typer.Option(False, "--prune-stale", help="Physically delete stale tickets from the planfile during pre-flight"),
+    prune_unknown: bool = typer.Option(False, "--prune-unknown", help="Also delete tickets reported as 'unknown' (insufficient_data) during pre-flight"),
+    backup: bool = typer.Option(True, "--backup/--no-backup", help="Create planfile.yaml.bak.<ts> before pruning (default: on)"),
     prefact_yaml: Optional[str] = typer.Option(None, "--prefact-yaml", help="Optional explicit prefact.yaml for pre-flight scan"),
     prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path for subprocess fallback"),
 ) -> None:
@@ -912,6 +915,7 @@ def plan_run(
         else:
             scan_info = freshness_report.get("scan") or {}
             stale_ids = list(freshness_report.get("stale_ticket_ids") or [])
+            unknown_ids = list(freshness_report.get("review_needed_ticket_ids") or [])
             skip_ticket_ids.update(stale_ids)
             run_console.print(
                 f"[dim]Pre-flight:[/dim] scanner={scan_info.get('backend') or 'unavailable'} "
@@ -920,6 +924,28 @@ def plan_run(
             )
             if cancel_stale and not dry_run and stale_ids:
                 _cancel_stale_tickets_in_planfile(strategy, stale_ids, run_console)
+
+            if (prune_stale or prune_unknown) and not dry_run:
+                from llx.planfile.ticket_pruner import prune_planfile_tickets
+
+                ids_to_prune: set[str] = set()
+                if prune_stale:
+                    ids_to_prune.update(stale_ids)
+                if prune_unknown:
+                    ids_to_prune.update(unknown_ids)
+                    skip_ticket_ids.update(unknown_ids)
+
+                if ids_to_prune:
+                    prune_report = prune_planfile_tickets(
+                        strategy_path=strategy,
+                        ticket_ids=ids_to_prune,
+                        backup=backup,
+                    )
+                    freshness_report["prune"] = prune_report
+                    run_console.print(
+                        f"[dim]Pre-flight prune:[/dim] removed={prune_report['removed']} "
+                        f"backup={prune_report.get('backup_path') or '(no backup)'}"
+                    )
 
     def on_progress(msg: str):
         run_console.print(f"[dim]  {msg}[/dim]")
@@ -981,7 +1007,10 @@ def plan_validate(
     prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path"),
     require_scan: bool = typer.Option(False, "--require-scan", help="Fail if prefact scan cannot run"),
     fail_on_stale: bool = typer.Option(False, "--fail-on-stale", help="Exit non-zero when stale tickets are detected"),
-    cancel_stale: bool = typer.Option(False, "--cancel-stale", help="Mark stale tickets as canceled in the planfile"),
+    cancel_stale: bool = typer.Option(True, "--cancel-stale/--no-cancel-stale", help="Mark stale tickets as canceled in the planfile (default: on)"),
+    prune_stale: bool = typer.Option(False, "--prune-stale", help="Physically delete stale tickets from the planfile"),
+    prune_unknown: bool = typer.Option(False, "--prune-unknown", help="Also delete tickets reported as 'unknown' (insufficient_data)"),
+    backup: bool = typer.Option(True, "--backup/--no-backup", help="Create planfile.yaml.bak.<ts> before pruning (default: on)"),
     fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
 ) -> None:
     """Validate ticket freshness against an actual prefact source-code scan."""
@@ -1004,8 +1033,30 @@ def plan_validate(
         raise typer.Exit(2)
 
     stale_ids = list(report.get("stale_ticket_ids") or [])
+    unknown_ids = list(report.get("review_needed_ticket_ids") or [])
     if cancel_stale and stale_ids:
         _cancel_stale_tickets_in_planfile(strategy, stale_ids, run_console)
+
+    if prune_stale or prune_unknown:
+        from llx.planfile.ticket_pruner import prune_planfile_tickets
+
+        ids_to_prune: set[str] = set()
+        if prune_stale:
+            ids_to_prune.update(stale_ids)
+        if prune_unknown:
+            ids_to_prune.update(unknown_ids)
+
+        if ids_to_prune:
+            prune_report = prune_planfile_tickets(
+                strategy_path=strategy,
+                ticket_ids=ids_to_prune,
+                backup=backup,
+            )
+            report["prune"] = prune_report
+            run_console.print(
+                f"[dim]Prune:[/dim] removed={prune_report['removed']} "
+                f"backup={prune_report.get('backup_path') or '(no backup)'}"
+            )
 
     stdout_console = Console(stderr=False)
     if fmt.lower() == "yaml":

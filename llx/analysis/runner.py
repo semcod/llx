@@ -1,6 +1,6 @@
 """Run external analysis tools and collect fresh output.
 
-Lesson from preLLM: query() function (CC=27) mixed tool invocation
+Lesson from preLLM: query() function mixed tool invocation
 with result processing. Here each tool is a separate function.
 """
 
@@ -13,6 +13,7 @@ from typing import Callable
 # Constants for tool execution
 DEFAULT_TIMEOUT_SECONDS = 120
 MAX_ERROR_LENGTH = 500
+SUCCESS_EXIT_CODE = 0
 
 
 @dataclass
@@ -37,7 +38,7 @@ def _run_tool(
     output_dir.mkdir(parents=True, exist_ok=True)
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        if result.returncode == 0:
+        if result.returncode == SUCCESS_EXIT_CODE:
             return ToolResult(tool=tool, success=True, output_dir=output_dir)
         return ToolResult(tool=tool, success=False, error=result.stderr[:MAX_ERROR_LENGTH])
     except subprocess.TimeoutExpired:

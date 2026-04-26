@@ -567,6 +567,7 @@ llx-tools docker restore --backup-dir ./backups/20240325
 
 ### Documentation
 - [llx Main Documentation](../README.md)
+- [TestQL Integration](TESTQL_INTEGRATION.md)
 - [Docker Integration](../examples/docker/README.md)
 - [AI Tools Examples](../examples/ai-tools/README.md)
 - [VS Code + RooCode](../examples/vscode-roocode/README.md)

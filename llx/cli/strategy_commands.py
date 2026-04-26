@@ -3,13 +3,14 @@ LLX Strategy CLI commands.
 """
 import typer
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
-from llx.planfile import (
+from ..planfile import (
     create_strategy_command,
     load_valid_strategy,
     run_strategy,
-    verify_strategy_post_execution
+    verify_strategy_post_execution,
+    Strategy
 )
 
 # Create strategy app
@@ -37,7 +38,7 @@ def validate_strategy(
 ) -> None:
     """Validate a strategy YAML file."""
     try:
-        strategy = load_valid_strategy(str(strategy_file))
+        strategy: Strategy = load_valid_strategy(str(strategy_file))
         print(f"✅ Strategy '{strategy.name}' is valid!")
         print(f"   - Project type: {strategy.project_type}")
         print(f"   - Domain: {strategy.domain}")
@@ -83,8 +84,8 @@ def verify_strategy(
     print()
     
     try:
-        strategy = load_valid_strategy(str(strategy_file))
-        issues = verify_strategy_post_execution(
+        strategy: Strategy = load_valid_strategy(str(strategy_file))
+        issues: Dict[str, List[str]] = verify_strategy_post_execution(
             strategy=strategy,
             project_path=str(project_path),
             backend=backend
@@ -105,6 +106,8 @@ def verify_strategy(
 
 
 # Add strategy commands to main LLX CLI
-def add_strategy_commands(main_app) -> None:
+def add_strategy_commands(main_app: typer.Typer) -> None:
     """Add strategy commands to main typer app."""
     main_app.add_typer(strategy_app, name="strategy")
+
+

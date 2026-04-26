@@ -129,6 +129,26 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.76] - 2026-04-26
+
+### Docs
+- Update README.md
+- Update docs/TESTQL_INTEGRATION.md
+- Update docs/llx-tools.md
+
+### Test
+- Update tests/test_ticket_pruner.py
+
+### Other
+- Update llx/analysis/runner.py
+- Update llx/cli/app.py
+- Update llx/cli/formatters.py
+- Update llx/cli/strategy_commands.py
+- Update llx/commands/_patch_apply.py
+- Update llx/planfile/ticket_pruner.py
+- Update llx/workflows.py
+- Update planfile.yaml
+
 ## [0.1.75] - 2026-04-26
 
 ### Docs

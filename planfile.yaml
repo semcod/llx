@@ -380,12 +380,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R02
   title: 'extract_function: _dispatch.py'
   description: 2 occurrences of 15-line block across 2 files — saves 15 lines
@@ -393,12 +396,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R03
   title: 'extract_function: main.py'
   description: 6 occurrences of 3-line block across 6 files — saves 15 lines
@@ -406,12 +412,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R04
   title: 'extract_function: main.py'
   description: 2 occurrences of 13-line block across 2 files — saves 13 lines
@@ -419,12 +428,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R05
   title: 'extract_function: check_version_on_pypi.py'
   description: 2 occurrences of 12-line block across 2 files — saves 12 lines
@@ -432,12 +444,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R06
   title: 'extract_function: _cmd_health.py'
   description: 4 occurrences of 4-line block across 4 files — saves 12 lines
@@ -445,12 +460,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R07
   title: 'extract_function: _cmd_list_models.py'
   description: 5 occurrences of 3-line block across 3 files — saves 12 lines
@@ -458,12 +476,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R08
   title: 'extract_function: _calculate_entropy.py'
   description: 2 occurrences of 11-line block across 2 files — saves 11 lines
@@ -471,12 +492,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R09
   title: 'extract_class: add_limit.py'
   description: 2 occurrences of 11-line block across 2 files — saves 11 lines
@@ -484,12 +508,15 @@ tasks:
   action: extract_class
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-class
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R10
   title: 'extract_function: _is_port_available.py'
   description: 2 occurrences of 10-line block across 2 files — saves 10 lines
@@ -497,12 +524,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R11
   title: 'extract_function: _cmd_metrics.py'
   description: 2 occurrences of 10-line block across 2 files — saves 10 lines
@@ -510,12 +540,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R12
   title: 'extract_function: _cmd_save.py'
   description: 2 occurrences of 10-line block across 1 files — saves 10 lines
@@ -523,12 +556,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R13
   title: 'extract_function: _config_save_worker.py'
   description: 2 occurrences of 8-line block across 2 files — saves 8 lines
@@ -536,12 +572,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R14
   title: 'extract_function: _handle_code2llm_analyze.py'
   description: 2 occurrences of 8-line block across 1 files — saves 8 lines
@@ -549,12 +588,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R15
   title: 'extract_function: _cmd_start.py'
   description: 2 occurrences of 8-line block across 1 files — saves 8 lines
@@ -562,12 +604,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R16
   title: 'extract_function: _handle_service_command.py'
   description: 2 occurrences of 8-line block across 1 files — saves 8 lines
@@ -575,12 +620,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R17
   title: 'extract_function: release_port.py'
   description: 2 occurrences of 7-line block across 2 files — saves 7 lines
@@ -588,12 +636,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R18
   title: 'extract_function: get_current_version.py'
   description: 2 occurrences of 6-line block across 2 files — saves 6 lines
@@ -601,12 +652,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R19
   title: 'extract_function: _handle_install.py'
   description: 2 occurrences of 6-line block across 1 files — saves 6 lines
@@ -614,12 +668,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R20
   title: 'extract_function: _handle_start.py'
   description: 2 occurrences of 6-line block across 1 files — saves 6 lines
@@ -627,12 +684,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R21
   title: 'extract_function: update_user.py'
   description: 2 occurrences of 6-line block across 1 files — saves 6 lines
@@ -640,12 +700,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R22
   title: 'extract_function: delete_user.py'
   description: 2 occurrences of 6-line block across 1 files — saves 6 lines
@@ -653,12 +716,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R23
   title: 'extract_function: _cmd_cleanup.py'
   description: 2 occurrences of 5-line block across 2 files — saves 5 lines
@@ -679,12 +745,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R25
   title: 'extract_function: read_user.py'
   description: 2 occurrences of 5-line block across 1 files — saves 5 lines
@@ -692,12 +761,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R26
   title: 'extract_function: _get_user_memory_class.py'
   description: 2 occurrences of 4-line block across 1 files — saves 4 lines
@@ -705,12 +777,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R27
   title: 'extract_function: _handle_filesystem_command.py'
   description: 2 occurrences of 4-line block across 1 files — saves 4 lines
@@ -718,12 +793,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: R28
   title: 'extract_function: _cmd_status.py'
   description: 2 occurrences of 3-line block across 2 files — saves 3 lines
@@ -744,12 +822,15 @@ tasks:
   action: extract_function
   priority: 3
   effort: medium
-  status: stale
+  status: canceled
   labels:
   - refactor
   - extract-function
   source: project/duplication.toon.yaml
   priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:12] Pre-flight validation: prefact scan no longer detects this
+    issue.'
 - id: D30
   title: 'extract_function: create_test_scenarios (saves 66L)'
   description: 'Duplicated ''create_test_scenarios'': 2 occurrences, 66 lines each,
@@ -1177,7 +1258,7 @@ sprints:
     priority: high
     status: success
     notes:
-    - '[2026-04-26 17:34:15] success: LLM reports changes made'
+    - '[2026-04-26 17:44:43] success: LLM reports changes made'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
@@ -1186,6 +1267,9 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
+    status: success
+    notes:
+    - '[2026-04-26 17:44:59] success: LLM reports changes made'
   - id: null
     name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/cli/formatters.py

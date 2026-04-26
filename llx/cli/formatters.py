@@ -24,6 +24,15 @@ CONTEXT_COLUMN_WIDTH = 8
 COST_COLUMN_WIDTH = 14
 TAGS_COLUMN_WIDTH = 30
 
+# Additional constants for magic numbers
+JSON_INDENT = 2
+AVG_CC_DECIMALS = 1
+SCORE_DECIMALS = 0
+COST_DECIMALS = 4
+MIN_PARTS_FOR_SPLIT = 1
+LAST_PART_INDEX = -1
+FIRST_PART_INDEX = 0
+
 console = Console()
 
 
@@ -31,7 +40,7 @@ def output_rich(metrics: ProjectMetrics, result: SelectionResult, verbose: bool)
     """Rich terminal output for analysis results."""
     lines = [
         f"Files: {metrics.total_files}  Lines: {metrics.total_lines:,}  Functions: {metrics.total_functions}",
-        f"CC̄: {metrics.avg_cc:.1f}  Max CC: {metrics.max_cc}  Critical: {metrics.critical_count}",
+        f"CC̄: {metrics.avg_cc:.{AVG_CC_DECIMALS}f}  Max CC: {metrics.max_cc}  Critical: {metrics.critical_count}",
         f"Fan-out: {metrics.max_fan_out}  Cycles: {metrics.dependency_cycles}  God modules: {metrics.god_modules}",
         f"Scope: {metrics.task_scope}  Est. tokens: ~{metrics.estimated_context_tokens:,}",
     ]
@@ -49,7 +58,7 @@ def output_rich(metrics: ProjectMetrics, result: SelectionResult, verbose: bool)
         console.print(f"  • {reason}")
 
     if verbose:
-        console.print(f"\n  [dim]Scores: complexity={result.scores['complexity']:.0f} scale={result.scores['scale']:.0f} coupling={result.scores['coupling']:.0f}[/dim]")
+        console.print(f"\n  [dim]Scores: complexity={result.scores['complexity']:.{SCORE_DECIMALS}f} scale={result.scores['scale']:.{SCORE_DECIMALS}f} coupling={result.scores['coupling']:.{SCORE_DECIMALS}f}[/dim]")
     if result.alternative_tier:
         console.print(f"\n  [dim]Alternative: {result.alternative_tier.value}[/dim]")
 
@@ -79,7 +88,7 @@ def output_json(metrics: ProjectMetrics, result: SelectionResult) -> None:
             "scores": result.scores,
         },
     }
-    console.print(json.dumps(output, indent=2))
+    console.print(json.dumps(output, indent=JSON_INDENT))
 
 
 def _filter_models(
@@ -112,12 +121,12 @@ def _build_model_row(model: any) -> dict[str, str]:
         # Split on first slash or dash to get shorter name
         if '/' in display_name:
             parts = display_name.split('/')
-            if len(parts) > 1:
-                display_name = parts[-1]  # Take last part
+            if len(parts) > MIN_PARTS_FOR_SPLIT:
+                display_name = parts[LAST_PART_INDEX]  # Take last part
         if '-' in display_name and len(display_name) > MAX_DISPLAY_NAME_LENGTH:
-            display_name = display_name.split('-')[0]
+            display_name = display_name.split('-')[FIRST_PART_INDEX]
         if len(display_name) > MAX_DISPLAY_NAME_LENGTH:
-            display_name = display_name[:MAX_DISPLAY_NAME_TRUNCATION] + "..."
+            display_name = f"{display_name[:MAX_DISPLAY_NAME_TRUNCATION]}..."
     
     # Color code tags for better readability
     colored_tags = []
@@ -142,7 +151,7 @@ def _build_model_row(model: any) -> dict[str, str]:
         "display_name": display_name,
         "provider": model.provider,
         "context": f"{model.max_context:,}",
-        "cost": f"${model.cost_per_1k_input:.4f} / ${model.cost_per_1k_output:.4f}",
+        "cost": f"${model.cost_per_1k_input:.{COST_DECIMALS}f} / ${model.cost_per_1k_output:.{COST_DECIMALS}f}",
         "tags_colored": tags_colored,
     }
 

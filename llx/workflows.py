@@ -34,12 +34,13 @@ Schema example::
 
 Built-in step kinds (registered in :data:`BUILTIN_STEP_HANDLERS`):
 
-- ``prefact-scan``    – run a prefact code scan; outputs ``issues`` count
-- ``plan-validate``   – run prefact-driven ticket-freshness validation
-- ``plan-run``        – execute planfile tasks (re-uses ``execute_strategy``)
-- ``testql``          – run a TestQL scenario through the planfile bridge
-- ``shell``           – run a shell command via subprocess
-- ``python``          – call ``module:function`` with kwargs
+- ``prefact-scan``       – run a prefact code scan; outputs ``issues`` count
+- ``plan-validate``      – run prefact-driven ticket-freshness validation
+- ``plan-prune-stale``   – physically remove stale (and optional unknown) tickets
+- ``plan-run``           – execute planfile tasks (re-uses ``execute_strategy``)
+- ``testql``             – run a TestQL scenario through the planfile bridge
+- ``shell``              – run a shell command via subprocess
+- ``python``             – call ``module:function`` with kwargs
 
 Each handler receives a :class:`StepContext` exposing previous step outputs
 (by step name) and is expected to return a :class:`StepOutput`.
@@ -315,13 +316,23 @@ def _step_prefact_scan(ctx: StepContext) -> StepOutput:
 def _step_plan_validate(ctx: StepContext) -> StepOutput:
     from llx.planfile.ticket_freshness import validate_tickets_with_prefact
     from llx.planfile.executor.strategy import _update_task_in_planfile
+    from llx.planfile.ticket_pruner import prune_planfile_tickets
 
     project = _resolve_project_path(ctx, ctx.step.params.get("project"))
     strategy = str(ctx.step.params.get("strategy") or "planfile.yaml")
     ticket_id = ctx.step.params.get("ticket_id")
     require_scan = bool(ctx.step.params.get("require_scan") or False)
     fail_on_stale = bool(ctx.step.params.get("fail_on_stale") or False)
-    cancel_stale = bool(ctx.step.params.get("cancel_stale") or False)
+    cancel_stale = bool(
+        ctx.step.params.get("cancel_stale")
+        if "cancel_stale" in ctx.step.params
+        else True
+    )
+    prune_stale = bool(ctx.step.params.get("prune_stale") or False)
+    prune_unknown = bool(ctx.step.params.get("prune_unknown") or False)
+    backup = bool(
+        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
+    )
 
     report = validate_tickets_with_prefact(
         strategy_path=strategy,
@@ -333,6 +344,7 @@ def _step_plan_validate(ctx: StepContext) -> StepOutput:
     )
 
     stale_ids = list(report.get("stale_ticket_ids") or [])
+    unknown_ids = list(report.get("review_needed_ticket_ids") or [])
     if cancel_stale:
         for tid in stale_ids:
             try:
@@ -345,11 +357,29 @@ def _step_plan_validate(ctx: StepContext) -> StepOutput:
             except Exception:
                 continue
 
+    prune_report: dict[str, Any] | None = None
+    if prune_stale or prune_unknown:
+        ids_to_prune: set[str] = set()
+        if prune_stale:
+            ids_to_prune.update(stale_ids)
+        if prune_unknown:
+            ids_to_prune.update(unknown_ids)
+        if ids_to_prune:
+            prune_report = prune_planfile_tickets(
+                strategy_path=strategy,
+                ticket_ids=ids_to_prune,
+                backup=backup,
+            )
+            report["prune"] = prune_report
+
     summary = (
         f"current={report.get('current', 0)} "
         f"stale={report.get('stale', 0)} "
         f"unknown={report.get('unknown', 0)}"
     )
+    if prune_report:
+        summary += f" pruned={prune_report['removed']}"
+
     output = StepOutput(
         status="success",
         summary=summary,
@@ -359,6 +389,8 @@ def _step_plan_validate(ctx: StepContext) -> StepOutput:
             "stale": int(report.get("stale", 0)),
             "unknown": int(report.get("unknown", 0)),
             "stale_ticket_ids": stale_ids,
+            "unknown_ticket_ids": unknown_ids,
+            "pruned_ids": prune_report["removed_ids"] if prune_report else [],
         },
     )
 
@@ -367,6 +399,48 @@ def _step_plan_validate(ctx: StepContext) -> StepOutput:
         output.error = f"{output.data['stale']} stale ticket(s) detected"
 
     return output
+
+
+def _step_plan_prune_stale(ctx: StepContext) -> StepOutput:
+    """Standalone pruner step: remove specified ticket IDs from the planfile."""
+    from llx.planfile.ticket_pruner import prune_planfile_tickets
+
+    strategy = str(ctx.step.params.get("strategy") or "planfile.yaml")
+    backup = bool(
+        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
+    )
+
+    explicit_ids = ctx.step.params.get("ticket_ids")
+    ids: set[str] = _coerce_skip_ids(explicit_ids) or set()
+
+    # Pull from previous validate-style steps when no explicit IDs given.
+    if not ids:
+        for prev in ctx.outputs.values():
+            data = prev.data or {}
+            if ctx.step.params.get("include_unknown"):
+                ids.update(str(t) for t in (data.get("unknown_ticket_ids") or []))
+            ids.update(str(t) for t in (data.get("stale_ticket_ids") or []))
+
+    if not ids:
+        return StepOutput(
+            status="success",
+            summary="nothing to prune",
+            data={"removed": 0, "removed_ids": []},
+        )
+
+    prune_report = prune_planfile_tickets(
+        strategy_path=strategy,
+        ticket_ids=ids,
+        backup=backup,
+    )
+    return StepOutput(
+        status="success",
+        summary=(
+            f"removed={prune_report['removed']} "
+            f"backup={prune_report.get('backup_path') or '(no backup)'}"
+        ),
+        data=prune_report,
+    )
 
 
 def _coerce_skip_ids(value: Any) -> Optional[set[str]]:
@@ -603,6 +677,7 @@ def _step_python(ctx: StepContext) -> StepOutput:
 BUILTIN_STEP_HANDLERS: dict[str, StepHandler] = {
     "prefact-scan": _step_prefact_scan,
     "plan-validate": _step_plan_validate,
+    "plan-prune-stale": _step_plan_prune_stale,
     "plan-run": _step_plan_run,
     "testql": _step_testql,
     "shell": _step_shell,
