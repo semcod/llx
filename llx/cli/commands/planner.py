@@ -1,8 +1,8 @@
-import os, re, yaml, logging, typer
+import os, yaml, logging, typer
 from pathlib import Path
 from typing import Optional
 from llx.config import LlxConfig
-from llx.routing.client import LlxClient, ChatMessage
+from llx.routing.client import LlxClient
 from llx.planfile.model_selector import ModelSelector, FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER, LOCAL_FILTER
 
 def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Optional[str]) -> None:

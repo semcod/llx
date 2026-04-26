@@ -438,7 +438,7 @@ def _build_results_payload(
         "invalid": sum(1 for r in results if r.status == "invalid"),
         "not_found": sum(1 for r in results if r.status == "not_found"),
         "already_fixed": sum(1 for r in results if r.status == "already_fixed"),
-        "cancelled": sum(1 for r in results if r.status == "cancelled"),
+        "no_changes": sum(1 for r in results if r.status == "no_changes"),
         "skipped": sum(1 for r in results if r.status in ["dry_run", "skipped"]),
     }
 

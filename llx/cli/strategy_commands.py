@@ -5,7 +5,7 @@ import typer
 from pathlib import Path
 from typing import Optional
 
-from ..planfile import (
+from llx.planfile import (
     create_strategy_command,
     load_valid_strategy,
     run_strategy,
@@ -21,7 +21,7 @@ def create_strategy(
     output: str = typer.Option("strategy.yaml", help="Output file path"),
     model: str = typer.Option("qwen2.5:3b", help="LLM model to use"),
     local: bool = typer.Option(True, help="Use local model"),
-):
+) -> None:
     """Create a new strategy interactively with LLM."""
     print("🚀 Starting interactive strategy creation...")
     print(f"Using model: {model} (local: {local})")
@@ -34,7 +34,7 @@ def create_strategy(
 @strategy_app.command("validate")
 def validate_strategy(
     strategy_file: Path = typer.Argument(..., help="Strategy YAML file to validate"),
-):
+) -> None:
     """Validate a strategy YAML file."""
     try:
         strategy = load_valid_strategy(str(strategy_file))
@@ -55,7 +55,7 @@ def run_strategy_command(
     project_path: Path = typer.Argument(..., help="Project directory path"),
     backend: str = typer.Option("github", help="Backend system (github, jira, gitlab)"),
     dry_run: bool = typer.Option(True, help="Simulate without creating tickets"),
-):
+) -> None:
     """Run strategy to create tickets."""
     print(f"🏃 Running strategy: {strategy_file}")
     print(f"Project path: {project_path}")
@@ -76,7 +76,7 @@ def verify_strategy(
     strategy_file: Path = typer.Argument(..., help="Strategy YAML file"),
     project_path: Path = typer.Argument(..., help="Project directory path"),
     backend: Optional[str] = typer.Option(None, help="Backend system for ticket verification"),
-):
+) -> None:
     """Verify strategy execution."""
     print(f"🔍 Verifying strategy: {strategy_file}")
     print(f"Project path: {project_path}")
@@ -105,6 +105,6 @@ def verify_strategy(
 
 
 # Add strategy commands to main LLX CLI
-def add_strategy_commands(main_app):
+def add_strategy_commands(main_app) -> None:
     """Add strategy commands to main typer app."""
     main_app.add_typer(strategy_app, name="strategy")

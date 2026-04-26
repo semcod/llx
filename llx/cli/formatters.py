@@ -16,23 +16,28 @@ from llx.routing.selector import SelectionResult
 MAX_DISPLAY_NAME_LENGTH = 18
 MAX_DISPLAY_NAME_TRUNCATION = 15
 
+# Constants for table column widths
+TIER_COLUMN_WIDTH = 10
+MODEL_COLUMN_WIDTH = 20
+PROVIDER_COLUMN_WIDTH = 12
+CONTEXT_COLUMN_WIDTH = 8
+COST_COLUMN_WIDTH = 14
+TAGS_COLUMN_WIDTH = 30
+
 console = Console()
 
 
 def output_rich(metrics: ProjectMetrics, result: SelectionResult, verbose: bool) -> None:
     """Rich terminal output for analysis results."""
-    metrics_text = (
-        f"Files: {metrics.total_files}  Lines: {metrics.total_lines:,}  "
-        f"Functions: {metrics.total_functions}\n"
-        f"CC̄: {metrics.avg_cc:.1f}  Max CC: {metrics.max_cc}  "
-        f"Critical: {metrics.critical_count}\n"
-        f"Fan-out: {metrics.max_fan_out}  Cycles: {metrics.dependency_cycles}  "
-        f"God modules: {metrics.god_modules}\n"
-        f"Scope: {metrics.task_scope}  "
-        f"Est. tokens: ~{metrics.estimated_context_tokens:,}"
-    )
+    lines = [
+        f"Files: {metrics.total_files}  Lines: {metrics.total_lines:,}  Functions: {metrics.total_functions}",
+        f"CC̄: {metrics.avg_cc:.1f}  Max CC: {metrics.max_cc}  Critical: {metrics.critical_count}",
+        f"Fan-out: {metrics.max_fan_out}  Cycles: {metrics.dependency_cycles}  God modules: {metrics.god_modules}",
+        f"Scope: {metrics.task_scope}  Est. tokens: ~{metrics.estimated_context_tokens:,}",
+    ]
     if metrics.dup_groups > 0:
-        metrics_text += f"\nDuplicate groups: {metrics.dup_groups} ({metrics.dup_saved_lines} lines)"
+        lines.append(f"Duplicate groups: {metrics.dup_groups} ({metrics.dup_saved_lines} lines)")
+    metrics_text = "\n".join(lines)
 
     console.print(Panel(metrics_text, title="Project Metrics", border_style="blue"))
     console.print(Panel(
@@ -147,12 +152,12 @@ def _build_model_row(model: any) -> dict[str, str]:
 def _render_models_table(rows: list[dict[str, str]], title: str) -> None:
     """Render Rich table from pre-built rows."""
     model_table = Table(title=title, show_header=True)
-    model_table.add_column("Tier", style="bold", width=10)
-    model_table.add_column("Model", width=20)
-    model_table.add_column("Provider", width=12)
-    model_table.add_column("Context", justify="right", width=8)
-    model_table.add_column("Cost (1K in/out)", width=14)
-    model_table.add_column("Tags", width=30)
+    model_table.add_column("Tier", style="bold", width=TIER_COLUMN_WIDTH)
+    model_table.add_column("Model", width=MODEL_COLUMN_WIDTH)
+    model_table.add_column("Provider", width=PROVIDER_COLUMN_WIDTH)
+    model_table.add_column("Context", justify="right", width=CONTEXT_COLUMN_WIDTH)
+    model_table.add_column("Cost (1K in/out)", width=COST_COLUMN_WIDTH)
+    model_table.add_column("Tags", width=TAGS_COLUMN_WIDTH)
 
     for row_data in rows:
         model_table.add_row(
@@ -234,12 +239,12 @@ def _render_tools_table() -> None:
 def _render_tiers_table(config) -> None:
     """Render model tiers from config."""
     model_table = Table(title="Model Tiers", show_header=True)
-    model_table.add_column("Tier", style="bold", width=10)
-    model_table.add_column("Model", width=20)
-    model_table.add_column("Provider", width=12)
-    model_table.add_column("Context", justify="right", width=8)
-    model_table.add_column("Cost (1K in/out)", width=14)
-    model_table.add_column("Tags", width=30)
+    model_table.add_column("Tier", style="bold", width=TIER_COLUMN_WIDTH)
+    model_table.add_column("Model", width=MODEL_COLUMN_WIDTH)
+    model_table.add_column("Provider", width=PROVIDER_COLUMN_WIDTH)
+    model_table.add_column("Context", justify="right", width=CONTEXT_COLUMN_WIDTH)
+    model_table.add_column("Cost (1K in/out)", width=COST_COLUMN_WIDTH)
+    model_table.add_column("Tags", width=TAGS_COLUMN_WIDTH)
 
     for tier_name, model in config.models.items():
         row = _build_model_row(model)
@@ -310,3 +315,4 @@ def print_info_tables(config) -> None:
     _render_tiers_table(config)
     _render_tags_legend()
     _render_agents_table()
+

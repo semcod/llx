@@ -393,6 +393,56 @@ def _determine_task_status(validation: dict, code_changes_applied: bool) -> tupl
     return "failed", False, validation["message"]
 
 
+def _run_external_backends(
+    backend: str,
+    target_file: str,
+    prompt: str,
+    model: str,
+    project_root: Path,
+) -> tuple[str, bool, str]:
+    """Run external tool backends (MCP, Cursor, Windsurf, Claude Code, Aider)."""
+    response_content = ""
+    code_changes_applied = False
+    effective_backend = backend
+
+    if backend == BackendType.MCP:
+        response_content, code_changes_applied, effective_backend = _run_mcp_backend(
+            target_file, prompt, model
+        )
+    elif backend == BackendType.CURSOR:
+        response_content, code_changes_applied = _run_cursor_backend(
+            project_root, prompt, model, target_file
+        )
+    elif backend == BackendType.WINDSURF:
+        response_content, code_changes_applied = _run_windsurf_backend(
+            project_root, prompt, model, target_file
+        )
+    elif backend == BackendType.CLAUDE_CODE:
+        response_content, code_changes_applied = _run_claude_code_backend(
+            project_root, prompt, model, target_file
+        )
+    elif backend in (BackendType.LOCAL, BackendType.DOCKER):
+        use_docker = backend == BackendType.DOCKER
+        response_content, code_changes_applied = _run_aider_backend(
+            project_root, prompt, model, target_file, use_docker
+        )
+
+    return response_content, code_changes_applied, effective_backend
+
+
+def _run_llm_chat_backend(
+    prompt: str,
+    model: str,
+    target_file: str,
+) -> tuple[str, bool]:
+    """Run LLM chat backend with retry and code block extraction."""
+    response_content = _run_llm_chat_with_retry(prompt, model)
+    code_changes_applied = False
+    if response_content:
+        code_changes_applied = _apply_llm_code_blocks(response_content, target_file)
+    return response_content, code_changes_applied
+
+
 def _execute_task(
     task: dict,
     config: LlxConfig,
@@ -425,21 +475,16 @@ def _execute_task(
         code_changes_applied = False
         response_content = ""
 
-        if backend == BackendType.MCP and target_file:
-            response_content, code_changes_applied, backend = _run_mcp_backend(str(target_file), prompt, model)
-        elif backend == BackendType.CURSOR and target_file:
-            response_content, code_changes_applied = _run_cursor_backend(project_root, prompt, model, str(target_file))
-        elif backend == BackendType.WINDSURF and target_file:
-            response_content, code_changes_applied = _run_windsurf_backend(project_root, prompt, model, str(target_file))
-        elif backend == BackendType.CLAUDE_CODE and target_file:
-            response_content, code_changes_applied = _run_claude_code_backend(project_root, prompt, model, str(target_file))
-        elif backend in [BackendType.LOCAL, BackendType.DOCKER] and target_file:
-            use_docker = backend == BackendType.DOCKER
-            response_content, code_changes_applied = _run_aider_backend(project_root, prompt, model, str(target_file), use_docker)
+        if target_file and backend != BackendType.LLM_CHAT:
+            response_content, code_changes_applied, backend = _run_external_backends(
+                backend, str(target_file), prompt, model, project_root
+            )
 
         if not code_changes_applied and backend == BackendType.LLM_CHAT:
             try:
-                response_content = _run_llm_chat_with_retry(prompt, model)
+                response_content, code_changes_applied = _run_llm_chat_backend(
+                    prompt, model, target_file or ""
+                )
             except Exception as e:
                 logger.error(f"LLM chat failed: {e}")
                 return TaskResult(
@@ -451,10 +496,6 @@ def _execute_task(
                     error=str(e),
                     execution_time=time.time() - start_time
                 )
-
-            # Extract and apply any code blocks returned by the LLM
-            if response_content:
-                code_changes_applied = _apply_llm_code_blocks(response_content, target_file or "")
 
         validation = _parse_llm_response(response_content)
         status, file_changed, validation_message = _determine_task_status(validation, code_changes_applied)

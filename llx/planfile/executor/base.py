@@ -23,7 +23,7 @@ class TaskResult:
     """Result of executing a task."""
     ticket_id: Optional[str]
     task_name: str
-    status: str  # "success" | "failed" | "skipped" | "dry_run" | "invalid" | "not_found" | "already_fixed" | "cancelled"
+    status: str  # "success" | "failed" | "skipped" | "dry_run" | "invalid" | "not_found" | "already_fixed" | "no_changes"
     model_used: str
     response: str
     error: Optional[str] = None
