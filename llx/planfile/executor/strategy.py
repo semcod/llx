@@ -38,6 +38,35 @@ def _save_strategy(path: str | Path, strategy: dict) -> None:
         logger.error(f"Failed to save strategy: {e}")
 
 
+def _find_task_in_planfile(planfile: dict, task_id: str) -> Optional[dict]:
+    """Find a task in planfile by id, title, name, or sprint pattern name."""
+    tasks = planfile.get("tasks", [])
+    for task in tasks:
+        if task.get("id") == task_id:
+            return task
+
+    for task in tasks:
+        if task.get("title") == task_id or task.get("name") == task_id:
+            return task
+
+    for sprint in planfile.get("sprints", []):
+        for pattern in sprint.get("task_patterns", []):
+            if pattern.get("name") == task_id:
+                return pattern
+    return None
+
+
+def _append_task_note(target_task: dict, comment: str) -> None:
+    """Append a timestamped comment to a task's notes."""
+    if "notes" not in target_task:
+        target_task["notes"] = []
+    if not isinstance(target_task["notes"], list):
+        target_task["notes"] = [target_task["notes"]]
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    target_task["notes"].append(f"[{timestamp}] {comment}")
+
+
 def _update_task_in_planfile(
     planfile_path: str | Path,
     task_id: str,
@@ -45,60 +74,27 @@ def _update_task_in_planfile(
     comment: str
 ) -> bool:
     """Update task status and add comment in planfile.
-    
+
     Args:
         planfile_path: Path to planfile.yaml
         task_id: Task ID to update
         status: New status (e.g., 'cancelled', 'done', 'in_progress')
         comment: Comment explaining the status change
-        
+
     Returns:
         True if task was found and updated, False otherwise
     """
     try:
         planfile = _load_strategy(planfile_path)
-
-        # Find task in planfile (tasks list or sprint task_patterns)
-        target_task = None
-        tasks = planfile.get("tasks", [])
-        for task in tasks:
-            if task.get("id") == task_id:
-                target_task = task
-                break
-
-        # Fallback: match by title/name in tasks list
-        if target_task is None:
-            for task in tasks:
-                if task.get("title") == task_id or task.get("name") == task_id:
-                    target_task = task
-                    break
-
-        # Fallback: match by name in sprint task_patterns
-        if target_task is None:
-            for sprint in planfile.get("sprints", []):
-                for pattern in sprint.get("task_patterns", []):
-                    if pattern.get("name") == task_id:
-                        target_task = pattern
-                        break
-                if target_task:
-                    break
+        target_task = _find_task_in_planfile(planfile, task_id)
 
         if target_task is None:
             logger.warning(f"Task {task_id} not found in planfile")
             return False
 
-        # Update status
         target_task["status"] = status
-        # Add comment with timestamp
-        if "notes" not in target_task:
-            target_task["notes"] = []
-        if not isinstance(target_task["notes"], list):
-            target_task["notes"] = [target_task["notes"]]
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        target_task["notes"].append(f"[{timestamp}] {comment}")
+        _append_task_note(target_task, comment)
 
-        # Save updated planfile
         _save_strategy(planfile_path, planfile)
         logger.info(f"Updated task {task_id} in planfile: status={status}")
         return True
@@ -134,80 +130,92 @@ def _map_priority(priority: int | str) -> str:
     return priority if priority in ["critical", "high", "medium", "low"] else "medium"
 
 
+def _build_task_lookup(strategy: dict) -> dict[str, dict]:
+    """Build a lookup dict mapping task id -> task data."""
+    lookup: dict[str, dict] = {}
+    for task in strategy.get("tasks", []):
+        task_id = task.get("id")
+        if task_id:
+            lookup[task_id] = task
+    return lookup
+
+
+def _normalize_pattern_from_lookup(pattern: dict, task_lookup: dict) -> dict:
+    """Normalize a single pattern using task lookup when available."""
+    pattern_id = pattern.get("id")
+    if pattern_id and pattern_id in task_lookup:
+        task_data = task_lookup[pattern_id]
+        return {
+            "name": pattern.get("name", task_data.get("title", pattern_id)),
+            "description": pattern.get("description", task_data.get("description", "")),
+            "task_type": _map_action_to_task_type(task_data.get("action", "feature")),
+            "model_hints": pattern.get("model_hints", {}),
+            "priority": _map_priority(task_data.get("priority", 3)),
+            "file": task_data.get("file", ""),
+            "action": task_data.get("action", "")
+        }
+    return {
+        "name": pattern.get("name", pattern.get("id", "Unnamed")),
+        "description": pattern.get("description", ""),
+        "task_type": pattern.get("task_type", "feature"),
+        "model_hints": pattern.get("model_hints", {}),
+        "priority": pattern.get("priority", "medium")
+    }
+
+
+def _normalize_v2_task(task: dict | str, strategy: dict) -> Optional[dict]:
+    """Normalize a single V2 sprint task into a task_pattern dict."""
+    if isinstance(task, dict):
+        return {
+            "name": task.get("name", "Unnamed Task"),
+            "description": task.get("description", ""),
+            "task_type": task.get("type", "feature"),
+            "model_hints": task.get("model_hints", {}),
+            "priority": task.get("priority", "medium")
+        }
+    if isinstance(task, str):
+        patterns = strategy.get("tasks", {}).get("patterns", [])
+        for pattern in patterns:
+            if pattern.get("id") == task:
+                return {
+                    "name": pattern.get("name", "Unnamed Task"),
+                    "description": pattern.get("description", ""),
+                    "task_type": pattern.get("type", "feature"),
+                    "model_hints": pattern.get("model_hints", {}),
+                    "priority": pattern.get("priority", "medium")
+                }
+    return None
+
+
+def _normalize_v2_sprints(strategy: dict) -> None:
+    """Convert V2 sprint tasks to task_patterns format (mutates strategy in-place)."""
+    for sprint in strategy.get("sprints", []):
+        if "tasks" in sprint and "task_patterns" not in sprint:
+            task_patterns = []
+            for task in sprint["tasks"]:
+                normalized = _normalize_v2_task(task, strategy)
+                if normalized:
+                    task_patterns.append(normalized)
+            sprint["task_patterns"] = task_patterns
+
+
 def _normalize_strategy(strategy: dict) -> dict:
     """Normalize strategy to handle different formats."""
-    
     # Handle planfile.yaml format (redsl-generated)
     if "tasks" in strategy and isinstance(strategy["tasks"], list):
-        # Build task lookup from flat tasks list
-        task_lookup = {}
-        for task in strategy["tasks"]:
-            task_id = task.get("id")
-            if task_id:
-                task_lookup[task_id] = task
-        
-        # Convert sprint task_patterns to use task data from lookup
+        task_lookup = _build_task_lookup(strategy)
         if "sprints" in strategy:
             for sprint in strategy.get("sprints", []):
                 if "task_patterns" in sprint:
-                    normalized_patterns = []
-                    for pattern in sprint["task_patterns"]:
-                        pattern_id = pattern.get("id")
-                        if pattern_id and pattern_id in task_lookup:
-                            # Use full task data from lookup
-                            task_data = task_lookup[pattern_id]
-                            normalized_patterns.append({
-                                "name": pattern.get("name", task_data.get("title", pattern_id)),
-                                "description": pattern.get("description", task_data.get("description", "")),
-                                "task_type": _map_action_to_task_type(task_data.get("action", "feature")),
-                                "model_hints": pattern.get("model_hints", {}),
-                                "priority": _map_priority(task_data.get("priority", 3)),
-                                "file": task_data.get("file", ""),
-                                "action": task_data.get("action", "")
-                            })
-                        else:
-                            # Keep pattern as-is if no matching task
-                            normalized_patterns.append({
-                                "name": pattern.get("name", pattern.get("id", "Unnamed")),
-                                "description": pattern.get("description", ""),
-                                "task_type": pattern.get("task_type", "feature"),
-                                "model_hints": pattern.get("model_hints", {}),
-                                "priority": pattern.get("priority", "medium")
-                            })
-                    sprint["task_patterns"] = normalized_patterns
-    
+                    sprint["task_patterns"] = [
+                        _normalize_pattern_from_lookup(pattern, task_lookup)
+                        for pattern in sprint["task_patterns"]
+                    ]
+
     # Handle V2 format with tasks in sprints
     if "sprints" in strategy:
-        for sprint in strategy.get("sprints", []):
-            # Convert tasks to task_patterns format for executor
-            if "tasks" in sprint and "task_patterns" not in sprint:
-                task_patterns = []
-                for task in sprint["tasks"]:
-                    if isinstance(task, dict):
-                        # Task is already an object (V2 embedded)
-                        task_patterns.append({
-                            "name": task.get("name", "Unnamed Task"),
-                            "description": task.get("description", ""),
-                            "task_type": task.get("type", "feature"),
-                            "model_hints": task.get("model_hints", {}),
-                            "priority": task.get("priority", "medium")
-                        })
-                    elif isinstance(task, str):
-                        # Task is a reference (V2 with separate definitions)
-                        # Try to find it in tasks.patterns if exists
-                        if "tasks" in strategy and "patterns" in strategy["tasks"]:
-                            for pattern in strategy["tasks"]["patterns"]:
-                                if pattern.get("id") == task:
-                                    task_patterns.append({
-                                        "name": pattern.get("name", "Unnamed Task"),
-                                        "description": pattern.get("description", ""),
-                                        "task_type": pattern.get("type", "feature"),
-                                        "model_hints": pattern.get("model_hints", {}),
-                                        "priority": pattern.get("priority", "medium")
-                                    })
-                                    break
-                sprint["task_patterns"] = task_patterns
-    
+        _normalize_v2_sprints(strategy)
+
     return strategy
 
 

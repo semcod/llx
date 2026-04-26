@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 484 | edges: 500 | modules: 93
-# CC̄=2.7
+# nodes: 494 | edges: 500 | modules: 95
+# CC̄=2.6
 
 HUBS[20]:
   Taskfile.print
@@ -17,10 +17,10 @@ HUBS[20]:
     CC=11  in:0  out:64  total:64
   examples.privacy.project.01_anonymize_project.main
     CC=4  in:0  out:52  total:52
-  llx.prellm.cli_context.context
-    CC=9  in:1  out:49  total:50
   examples.privacy.streaming.01_streaming_anonymization.main
     CC=5  in:0  out:50  total:50
+  llx.prellm.cli_context.context
+    CC=9  in:1  out:49  total:50
   examples.privacy.project.02_deanonymize_project.main
     CC=4  in:0  out:45  total:45
   llx.orchestration.instances.manager.InstanceManager.load_instances
@@ -29,10 +29,10 @@ HUBS[20]:
     CC=8  in:0  out:43  total:43
   examples.privacy.advanced.03_cicd_integration.main
     CC=7  in:0  out:42  total:42
-  llx.orchestration.vscode.config_io.load_vscode_config
-    CC=6  in:0  out:36  total:36
   llx.tools.vscode_manager.VSCodeManager.print_quick_start
     CC=1  in:0  out:36  total:36
+  llx.orchestration.vscode.config_io.load_vscode_config
+    CC=6  in:0  out:36  total:36
   llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
     CC=6  in:0  out:36  total:36
   llx.planfile.generate_strategy.main
@@ -95,12 +95,24 @@ MODULES:
     _collect_redup_metrics  CC=2  out:5
     _collect_vallm_metrics  CC=3  out:5
     _count_map_modules  CC=2  out:3
-  llx.analysis.runner  [5 funcs]
+  llx.analysis.runner  [6 funcs]
     _run_tool  CC=5  out:9
     check_tool  CC=1  out:1
+    run_all_tools  CC=6  out:3
     run_code2llm  CC=1  out:3
     run_redup  CC=1  out:3
     run_vallm  CC=1  out:2
+  llx.cli.app  [13 funcs]
+    _load_sprint_mapping  CC=3  out:7
+    _plan_code_impl  CC=7  out:24
+    _run_analysis_tools  CC=1  out:3
+    _show_version_banner  CC=3  out:4
+    info  CC=1  out:3
+    models  CC=1  out:6
+    plan_execute  CC=1  out:9
+    plan_generate  CC=1  out:7
+    plan_review  CC=2  out:12
+    proxy_config  CC=1  out:6
   llx.cli.formatters  [10 funcs]
     _build_model_row  CC=14  out:13
     _build_title  CC=4  out:5
@@ -117,6 +129,12 @@ MODULES:
     run_strategy_command  CC=1  out:13
     validate_strategy  CC=2  out:16
     verify_strategy  CC=6  out:21
+  llx.cli.version_check  [5 funcs]
+    check_version  CC=4  out:3
+    compare_versions  CC=7  out:12
+    get_current_version  CC=2  out:0
+    get_pypi_version  CC=4  out:6
+    get_update_command  CC=2  out:0
   llx.commands._patch_apply  [5 funcs]
     _apply_unified_diff  CC=6  out:14
     _classify_line  CC=6  out:5
@@ -147,6 +165,10 @@ MODULES:
     ensure_venv  CC=2  out:3
     process  CC=6  out:11
     run_workflow  CC=3  out:3
+  llx.integrations.proxy  [3 funcs]
+    check_proxy  CC=2  out:1
+    generate_proxy_config  CC=7  out:5
+    start_proxy  CC=5  out:11
   llx.llm  [5 funcs]
     __init__  CC=4  out:3
     _ensure_dotenv_loaded  CC=3  out:4
@@ -198,27 +220,14 @@ MODULES:
     _cmd_usage  CC=1  out:3
     _dispatch  CC=2  out:3
     main  CC=1  out:2
-  llx.orchestration.llm.executors  [6 funcs]
-    _failed  CC=1  out:1
+  llx.orchestration.llm.executors  [4 funcs]
     execute_anthropic  CC=3  out:15
     execute_ollama  CC=3  out:15
     execute_openai  CC=3  out:14
     execute_request  CC=4  out:4
-    messages_to_prompt  CC=5  out:6
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [10 funcs]
-    _create_default_config  CC=2  out:5
-    add_model  CC=2  out:2
-    add_provider  CC=3  out:3
-    cancel_request  CC=2  out:1
-    complete_request  CC=4  out:11
-    load_config  CC=6  out:30
-    remove_provider  CC=4  out:3
-    save_config  CC=5  out:6
-    start  CC=2  out:3
-    stop  CC=2  out:4
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5

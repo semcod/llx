@@ -11,14 +11,14 @@ flowchart TD
     llx__integrations["llx.integrations<br/>15 funcs"]
     llx__mcp["llx.mcp<br/>48 funcs"]
     llx__orchestration["llx.orchestration<br/>278 funcs"]
-    llx__planfile["llx.planfile<br/>73 funcs"]
+    llx__planfile["llx.planfile<br/>89 funcs"]
     llx__prellm["llx.prellm<br/>316 funcs"]
     llx__privacy["llx.privacy<br/>92 funcs"]
     llx__pyqual_plugins["llx.pyqual_plugins<br/>26 funcs"]
     llx__routing["llx.routing<br/>21 funcs"]
     llx__tools["llx.tools<br/>207 funcs"]
     llx__utils["llx.utils<br/>18 funcs"]
-    project__map["project.map<br/>513 funcs"]
+    project__map["project.map<br/>518 funcs"]
     scripts__pyqual_auto["scripts.pyqual_auto<br/>10 funcs"]
     simple_generate["simple_generate<br/>1 funcs"]
     test_local_chat["test-local-chat<br/>11 funcs"]
@@ -38,10 +38,10 @@ flowchart TD
     llx__orchestration ==>|7| llx__utils
     llx__cli ==>|6| llx__analysis
     llx__tools ==>|5| llx__utils
-    llx__cli ==>|5| project__map
-    llx__mcp ==>|5| llx__analysis
     llx__cli ==>|5| llx__integrations
+    llx__mcp ==>|5| llx__analysis
     llx__cli ==>|4| llx__routing
+    llx__cli ==>|4| project__map
     examples__privacy -->|3| llx__privacy
     llx__planfile -->|3| project__map
     llx__mcp -->|3| llx__utils
@@ -52,6 +52,7 @@ flowchart TD
     llx__commands -->|1| examples__filtering
     llx__commands -->|1| llx__prellm
     llx__commands -->|1| llx__analysis
+    llx__cli -->|1| examples__filtering
     llx__utils -->|1| llx__mcp
     llx__utils -->|1| llx__prellm
     llx__mcp -->|1| llx__routing
@@ -66,4 +67,3 @@ flowchart TD
     llx__routing -->|1| examples__filtering
     llx__routing -->|1| llx__integrations
     llx__planfile -->|1| llx__utils
-    llx__cli -->|1| examples__filtering

@@ -18,7 +18,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `llx`
-- **version**: `0.1.60`
+- **version**: `0.1.63`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -38,7 +38,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: llx;
-  version: 0.1.60;
+  version: 0.1.63;
 }
 
 dependencies {
@@ -1607,13 +1607,13 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 
 ## Call Graph
 
-*481 nodes · 500 edges · 95 modules · CC̄=2.6*
+*484 nodes · 500 edges · 93 modules · CC̄=2.7*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `print` *(in docker.ai-tools.entrypoint)* | 0 | 1355 | 0 | **1355** |
+| `print` *(in Taskfile)* | 0 | 1355 | 0 | **1355** |
 | `main` *(in examples.privacy.advanced.01_api_integration)* | 15 ⚠ | 0 | 90 | **90** |
 | `main` *(in examples.privacy.ml.04_behavioral_learning)* | 11 ⚠ | 0 | 84 | **84** |
 | `main` *(in examples.privacy.advanced.02_multi_stage)* | 5 | 0 | 73 | **73** |
@@ -1624,11 +1624,11 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 481 | edges: 500 | modules: 95
-# CC̄=2.6
+# nodes: 484 | edges: 500 | modules: 93
+# CC̄=2.7
 
 HUBS[20]:
-  docker.ai-tools.entrypoint.print
+  Taskfile.print
     CC=0  in:1355  out:0  total:1355
   examples.privacy.advanced.01_api_integration.main
     CC=15  in:0  out:90  total:90
@@ -1654,23 +1654,23 @@ HUBS[20]:
     CC=8  in:0  out:43  total:43
   examples.privacy.advanced.03_cicd_integration.main
     CC=7  in:0  out:42  total:42
+  llx.orchestration.vscode.config_io.load_vscode_config
+    CC=6  in:0  out:36  total:36
   llx.tools.vscode_manager.VSCodeManager.print_quick_start
     CC=1  in:0  out:36  total:36
   llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
     CC=6  in:0  out:36  total:36
-  llx.orchestration.vscode.config_io.load_vscode_config
-    CC=6  in:0  out:36  total:36
-  llx.orchestration.ratelimit.limiter.RateLimiter.load_limits
-    CC=9  in:0  out:36  total:36
   llx.planfile.generate_strategy.main
     CC=6  in:0  out:35  total:35
-  llx.orchestration.queue.manager.QueueManager.load_queues
-    CC=5  in:0  out:34  total:34
   llx.orchestration.session.manager.SessionManager.load_sessions
     CC=5  in:0  out:34  total:34
+  llx.prellm.env_config.get_env_config
+    CC=3  in:7  out:24  total:31
+  llx.tools.health_checker.HealthChecker.monitor_services
+    CC=6  in:0  out:30  total:30
 
 MODULES:
-  docker.ai-tools.entrypoint  [1 funcs]
+  Taskfile  [1 funcs]
     print  CC=0  out:0
   examples.docker.docker  [1 funcs]
     docker_exec  CC=0  out:0
@@ -1757,6 +1757,15 @@ MODULES:
     load_errors_data  CC=4  out:9
     prepare_fix_prompt  CC=4  out:1
     select_model_for_fix  CC=3  out:2
+  llx.config  [8 funcs]
+    __post_init__  CC=1  out:1
+    load  CC=8  out:26
+    _apply_env  CC=9  out:10
+    _apply_yaml  CC=14  out:6
+    _apply_yaml_models  CC=3  out:6
+    _apply_yaml_proxy  CC=4  out:4
+    _apply_yaml_thresholds  CC=4  out:9
+    normalize_litellm_base_url  CC=5  out:8
   llx.examples.utils  [5 funcs]
     check_dependencies  CC=3  out:4
     check_ollama  CC=3  out:6
@@ -1824,39 +1833,17 @@ MODULES:
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [16 funcs]
-    _config_save_worker  CC=3  out:3
+  llx.orchestration.llm.orchestrator  [10 funcs]
     _create_default_config  CC=2  out:5
-    _execute_request  CC=4  out:9
-    _print_model_summary  CC=4  out:6
-    _print_provider_status  CC=2  out:6
-    _print_usage_stats  CC=1  out:7
     add_model  CC=2  out:2
     add_provider  CC=3  out:3
     cancel_request  CC=2  out:1
     complete_request  CC=4  out:11
-  llx.orchestration.queue.cli  [7 funcs]
-    _cmd_add  CC=5  out:4
-    _cmd_complete  CC=2  out:2
-    _cmd_dequeue  CC=3  out:4
-    _cmd_enqueue  CC=6  out:5
-    _cmd_metrics  CC=3  out:5
-    _cmd_status  CC=1  out:3
-    main  CC=1  out:2
-  llx.orchestration.queue.manager  [11 funcs]
-    _retry_request  CC=2  out:2
-    _worker_loop  CC=4  out:10
-    add_queue  CC=4  out:9
-    complete_request  CC=6  out:11
-    enqueue_request  CC=3  out:6
-    load_queues  CC=5  out:34
-    print_status_summary  CC=9  out:30
-    remove_queue  CC=3  out:2
-    save_queues  CC=5  out:7
-    start  CC=4  out:7
-  llx.orchestration.ratelimit.limiter  [2 funcs]
-    load_limits  CC=9  out:36
-    save_limits  CC=9  out:11
+    load_config  CC=6  out:30
+    remove_provider  CC=4  out:3
+    save_config  CC=5  out:6
+    start  CC=2  out:3
+    stop  CC=2  out:4
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5
@@ -1872,12 +1859,6 @@ MODULES:
     release_session  CC=5  out:4
     remove_session  CC=4  out:2
     save_sessions  CC=5  out:8
-  llx.orchestration.utils._cmd_cleanup  [1 funcs]
-    create_cleanup_handler  CC=1  out:2
-  llx.orchestration.utils._cmd_remove  [1 funcs]
-    create_remove_handler  CC=1  out:3
-  llx.orchestration.utils._cmd_status  [1 funcs]
-    create_status_handler  CC=1  out:6
   llx.orchestration.vscode.cli  [8 funcs]
     _cmd_add_account  CC=5  out:5
     _cmd_create  CC=5  out:4
@@ -2100,6 +2081,26 @@ MODULES:
     _handle_status  CC=1  out:1
     _handle_stop  CC=2  out:1
     main  CC=6  out:11
+  llx.tools.config.cli  [8 funcs]
+    _cmd_add_model  CC=3  out:5
+    _cmd_get_env  CC=3  out:4
+    _cmd_list_profiles  CC=3  out:4
+    _cmd_load  CC=3  out:4
+    _cmd_save  CC=3  out:5
+    _cmd_update_env  CC=3  out:2
+    _cmd_validate  CC=4  out:10
+    main  CC=1  out:1
+  llx.tools.config.manager  [16 funcs]
+    _print_config_files_summary  CC=4  out:3
+    _print_env_summary  CC=4  out:5
+    _print_issue_summary  CC=6  out:8
+    _print_model_summary  CC=2  out:5
+    _print_profiles_summary  CC=2  out:2
+    backup_configs  CC=7  out:21
+    create_default_env  CC=3  out:3
+    create_profile  CC=4  out:10
+    generate_docker_env_file  CC=3  out:4
+    list_models  CC=3  out:18
   llx.tools.docker_manager  [18 funcs]
     backup_volumes  CC=6  out:17
     build_images  CC=4  out:6
@@ -2154,6 +2155,9 @@ MODULES:
     print_status_summary  CC=10  out:16
     restart_vscode  CC=2  out:4
     restore_settings  CC=8  out:20
+  llx.utils.aider  [2 funcs]
+    _extract_issue_files  CC=9  out:8
+    _run_aider_fix  CC=12  out:20
   llx.utils.cli_main  [1 funcs]
     cli_main  CC=3  out:6
   llx.utils.formatting  [2 funcs]
@@ -2162,9 +2166,7 @@ MODULES:
   llx.utils.issues  [2 funcs]
     build_fix_prompt  CC=11  out:11
     load_issue_source  CC=9  out:10
-  project.map.toon  [3 funcs]
-    _extract_issue_files  CC=0  out:0
-    _run_aider_fix  CC=0  out:0
+  project.map.toon  [1 funcs]
     create_strategy_command  CC=0  out:0
   scripts.pyqual_auto  [2 funcs]
     main  CC=8  out:43
@@ -2189,53 +2191,53 @@ EDGES:
   trace.test → llx.planfile.generate_strategy._normalize_strategy_data
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.generate_strategy_with_fix
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.save_fixed_strategy
-  test-local-chat.test_chat_completion → docker.ai-tools.entrypoint.print
-  test-local-chat._check_services → docker.ai-tools.entrypoint.print
+  test-local-chat.test_chat_completion → Taskfile.print
+  test-local-chat._check_services → Taskfile.print
   test-local-chat._check_services → test-local-chat.test_llx_health
   test-local-chat._check_services → test-local-chat.test_ollama_health
-  test-local-chat._print_models → docker.ai-tools.entrypoint.print
+  test-local-chat._print_models → Taskfile.print
   test-local-chat._print_models → test-local-chat.get_available_models
   test-local-chat._print_models → test-local-chat.test_llx_models
-  test-local-chat._run_chat_tests → docker.ai-tools.entrypoint.print
+  test-local-chat._run_chat_tests → Taskfile.print
   test-local-chat._run_chat_tests → test-local-chat.test_chat_completion
-  test-local-chat._print_summary → docker.ai-tools.entrypoint.print
-  test-local-chat.main → docker.ai-tools.entrypoint.print
+  test-local-chat._print_summary → Taskfile.print
+  test-local-chat.main → Taskfile.print
   test-local-chat.main → test-local-chat._check_services
   test-local-chat.main → test-local-chat._print_models
   test-local-chat.main → test-local-chat._select_test_models
   test-local-chat.main → test-local-chat._run_chat_tests
   test-local-chat.main → test-local-chat._print_summary
-  examples.privacy.ml.01_entropy_ml_detection.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.04_behavioral_learning.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.03_contextual_passwords.main → docker.ai-tools.entrypoint.print
+  examples.privacy.ml.01_entropy_ml_detection.main → Taskfile.print
+  examples.privacy.ml.04_behavioral_learning.main → Taskfile.print
+  examples.privacy.ml.03_contextual_passwords.main → Taskfile.print
   examples.privacy.ml.03_contextual_passwords.main → examples.privacy.ml.03_contextual_passwords.create_test_code_samples
-  examples.privacy.streaming.01_streaming_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.streaming.01_streaming_anonymization.main → Taskfile.print
   examples.privacy.streaming.01_streaming_anonymization.main → examples.privacy.streaming.01_streaming_anonymization.create_large_project
-  examples.privacy.project.02_deanonymize_project.main → docker.ai-tools.entrypoint.print
-  examples.privacy.project.01_anonymize_project.main → docker.ai-tools.entrypoint.print
+  examples.privacy.project.02_deanonymize_project.main → Taskfile.print
+  examples.privacy.project.01_anonymize_project.main → Taskfile.print
   examples.privacy.project.01_anonymize_project.main → examples.privacy.project.01_anonymize_project.create_sample_project
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.main → Taskfile.print
   examples.privacy.advanced.03_cicd_integration.main → examples.privacy.advanced.03_cicd_integration.create_cicd_project
-  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.02_multi_stage.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → Taskfile.print
+  examples.privacy.advanced.02_multi_stage.main → Taskfile.print
   examples.privacy.advanced.02_multi_stage.main → examples.privacy.advanced.02_multi_stage.create_business_logic_project
-  examples.privacy.advanced.01_api_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.01_api_integration.main → Taskfile.print
   examples.privacy.advanced.01_api_integration.main → examples.privacy.advanced.01_api_integration.create_realistic_project
-  examples.privacy.basic.01_text_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.basic.01_text_anonymization.main → Taskfile.print
   examples.privacy.basic.01_text_anonymization.main → llx.privacy.__core.quick_anonymize
-  examples.privacy.basic.02_custom_patterns.main → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.run_pyqual → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.main → docker.ai-tools.entrypoint.print
-  llx.llm._ensure_dotenv_loaded → llx.llm._load_dotenv_fallback
-  llx.llm.get_llm_model → llx.llm._ensure_dotenv_loaded
-  llx.llm.get_api_key → llx.llm._ensure_dotenv_loaded
-  llx.llm.LLM.__init__ → llx.llm.get_llm_model
-  llx.llm.LLM.__init__ → llx.llm.get_api_key
-  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._parse_unified_hunks
+  examples.privacy.basic.02_custom_patterns.main → Taskfile.print
+  scripts.pyqual_auto.run_pyqual → Taskfile.print
+  scripts.pyqual_auto.main → Taskfile.print
+  llx.config.LlxConfig.__post_init__ → llx.config.normalize_litellm_base_url
+  llx.config.LlxConfig.load → llx.config._apply_env
+  llx.config.LlxConfig.load → llx.config.normalize_litellm_base_url
+  llx.config._apply_yaml → llx.config._apply_yaml_proxy
+  llx.config._apply_yaml → llx.config._apply_yaml_models
+  llx.config._apply_yaml → llx.config._apply_yaml_thresholds
 ```
 
 ## Test Contracts
@@ -2271,11 +2273,11 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 481 | edges: 500 | modules: 95
-# CC̄=2.6
+# nodes: 484 | edges: 500 | modules: 93
+# CC̄=2.7
 
 HUBS[20]:
-  docker.ai-tools.entrypoint.print
+  Taskfile.print
     CC=0  in:1355  out:0  total:1355
   examples.privacy.advanced.01_api_integration.main
     CC=15  in:0  out:90  total:90
@@ -2301,23 +2303,23 @@ HUBS[20]:
     CC=8  in:0  out:43  total:43
   examples.privacy.advanced.03_cicd_integration.main
     CC=7  in:0  out:42  total:42
+  llx.orchestration.vscode.config_io.load_vscode_config
+    CC=6  in:0  out:36  total:36
   llx.tools.vscode_manager.VSCodeManager.print_quick_start
     CC=1  in:0  out:36  total:36
   llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
     CC=6  in:0  out:36  total:36
-  llx.orchestration.vscode.config_io.load_vscode_config
-    CC=6  in:0  out:36  total:36
-  llx.orchestration.ratelimit.limiter.RateLimiter.load_limits
-    CC=9  in:0  out:36  total:36
   llx.planfile.generate_strategy.main
     CC=6  in:0  out:35  total:35
-  llx.orchestration.queue.manager.QueueManager.load_queues
-    CC=5  in:0  out:34  total:34
   llx.orchestration.session.manager.SessionManager.load_sessions
     CC=5  in:0  out:34  total:34
+  llx.prellm.env_config.get_env_config
+    CC=3  in:7  out:24  total:31
+  llx.tools.health_checker.HealthChecker.monitor_services
+    CC=6  in:0  out:30  total:30
 
 MODULES:
-  docker.ai-tools.entrypoint  [1 funcs]
+  Taskfile  [1 funcs]
     print  CC=0  out:0
   examples.docker.docker  [1 funcs]
     docker_exec  CC=0  out:0
@@ -2404,6 +2406,15 @@ MODULES:
     load_errors_data  CC=4  out:9
     prepare_fix_prompt  CC=4  out:1
     select_model_for_fix  CC=3  out:2
+  llx.config  [8 funcs]
+    __post_init__  CC=1  out:1
+    load  CC=8  out:26
+    _apply_env  CC=9  out:10
+    _apply_yaml  CC=14  out:6
+    _apply_yaml_models  CC=3  out:6
+    _apply_yaml_proxy  CC=4  out:4
+    _apply_yaml_thresholds  CC=4  out:9
+    normalize_litellm_base_url  CC=5  out:8
   llx.examples.utils  [5 funcs]
     check_dependencies  CC=3  out:4
     check_ollama  CC=3  out:6
@@ -2471,39 +2482,17 @@ MODULES:
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [16 funcs]
-    _config_save_worker  CC=3  out:3
+  llx.orchestration.llm.orchestrator  [10 funcs]
     _create_default_config  CC=2  out:5
-    _execute_request  CC=4  out:9
-    _print_model_summary  CC=4  out:6
-    _print_provider_status  CC=2  out:6
-    _print_usage_stats  CC=1  out:7
     add_model  CC=2  out:2
     add_provider  CC=3  out:3
     cancel_request  CC=2  out:1
     complete_request  CC=4  out:11
-  llx.orchestration.queue.cli  [7 funcs]
-    _cmd_add  CC=5  out:4
-    _cmd_complete  CC=2  out:2
-    _cmd_dequeue  CC=3  out:4
-    _cmd_enqueue  CC=6  out:5
-    _cmd_metrics  CC=3  out:5
-    _cmd_status  CC=1  out:3
-    main  CC=1  out:2
-  llx.orchestration.queue.manager  [11 funcs]
-    _retry_request  CC=2  out:2
-    _worker_loop  CC=4  out:10
-    add_queue  CC=4  out:9
-    complete_request  CC=6  out:11
-    enqueue_request  CC=3  out:6
-    load_queues  CC=5  out:34
-    print_status_summary  CC=9  out:30
-    remove_queue  CC=3  out:2
-    save_queues  CC=5  out:7
-    start  CC=4  out:7
-  llx.orchestration.ratelimit.limiter  [2 funcs]
-    load_limits  CC=9  out:36
-    save_limits  CC=9  out:11
+    load_config  CC=6  out:30
+    remove_provider  CC=4  out:3
+    save_config  CC=5  out:6
+    start  CC=2  out:3
+    stop  CC=2  out:4
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5
@@ -2519,12 +2508,6 @@ MODULES:
     release_session  CC=5  out:4
     remove_session  CC=4  out:2
     save_sessions  CC=5  out:8
-  llx.orchestration.utils._cmd_cleanup  [1 funcs]
-    create_cleanup_handler  CC=1  out:2
-  llx.orchestration.utils._cmd_remove  [1 funcs]
-    create_remove_handler  CC=1  out:3
-  llx.orchestration.utils._cmd_status  [1 funcs]
-    create_status_handler  CC=1  out:6
   llx.orchestration.vscode.cli  [8 funcs]
     _cmd_add_account  CC=5  out:5
     _cmd_create  CC=5  out:4
@@ -2747,6 +2730,26 @@ MODULES:
     _handle_status  CC=1  out:1
     _handle_stop  CC=2  out:1
     main  CC=6  out:11
+  llx.tools.config.cli  [8 funcs]
+    _cmd_add_model  CC=3  out:5
+    _cmd_get_env  CC=3  out:4
+    _cmd_list_profiles  CC=3  out:4
+    _cmd_load  CC=3  out:4
+    _cmd_save  CC=3  out:5
+    _cmd_update_env  CC=3  out:2
+    _cmd_validate  CC=4  out:10
+    main  CC=1  out:1
+  llx.tools.config.manager  [16 funcs]
+    _print_config_files_summary  CC=4  out:3
+    _print_env_summary  CC=4  out:5
+    _print_issue_summary  CC=6  out:8
+    _print_model_summary  CC=2  out:5
+    _print_profiles_summary  CC=2  out:2
+    backup_configs  CC=7  out:21
+    create_default_env  CC=3  out:3
+    create_profile  CC=4  out:10
+    generate_docker_env_file  CC=3  out:4
+    list_models  CC=3  out:18
   llx.tools.docker_manager  [18 funcs]
     backup_volumes  CC=6  out:17
     build_images  CC=4  out:6
@@ -2801,6 +2804,9 @@ MODULES:
     print_status_summary  CC=10  out:16
     restart_vscode  CC=2  out:4
     restore_settings  CC=8  out:20
+  llx.utils.aider  [2 funcs]
+    _extract_issue_files  CC=9  out:8
+    _run_aider_fix  CC=12  out:20
   llx.utils.cli_main  [1 funcs]
     cli_main  CC=3  out:6
   llx.utils.formatting  [2 funcs]
@@ -2809,9 +2815,7 @@ MODULES:
   llx.utils.issues  [2 funcs]
     build_fix_prompt  CC=11  out:11
     load_issue_source  CC=9  out:10
-  project.map.toon  [3 funcs]
-    _extract_issue_files  CC=0  out:0
-    _run_aider_fix  CC=0  out:0
+  project.map.toon  [1 funcs]
     create_strategy_command  CC=0  out:0
   scripts.pyqual_auto  [2 funcs]
     main  CC=8  out:43
@@ -2836,93 +2840,94 @@ EDGES:
   trace.test → llx.planfile.generate_strategy._normalize_strategy_data
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.generate_strategy_with_fix
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.save_fixed_strategy
-  test-local-chat.test_chat_completion → docker.ai-tools.entrypoint.print
-  test-local-chat._check_services → docker.ai-tools.entrypoint.print
+  test-local-chat.test_chat_completion → Taskfile.print
+  test-local-chat._check_services → Taskfile.print
   test-local-chat._check_services → test-local-chat.test_llx_health
   test-local-chat._check_services → test-local-chat.test_ollama_health
-  test-local-chat._print_models → docker.ai-tools.entrypoint.print
+  test-local-chat._print_models → Taskfile.print
   test-local-chat._print_models → test-local-chat.get_available_models
   test-local-chat._print_models → test-local-chat.test_llx_models
-  test-local-chat._run_chat_tests → docker.ai-tools.entrypoint.print
+  test-local-chat._run_chat_tests → Taskfile.print
   test-local-chat._run_chat_tests → test-local-chat.test_chat_completion
-  test-local-chat._print_summary → docker.ai-tools.entrypoint.print
-  test-local-chat.main → docker.ai-tools.entrypoint.print
+  test-local-chat._print_summary → Taskfile.print
+  test-local-chat.main → Taskfile.print
   test-local-chat.main → test-local-chat._check_services
   test-local-chat.main → test-local-chat._print_models
   test-local-chat.main → test-local-chat._select_test_models
   test-local-chat.main → test-local-chat._run_chat_tests
   test-local-chat.main → test-local-chat._print_summary
-  examples.privacy.ml.01_entropy_ml_detection.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.04_behavioral_learning.main → docker.ai-tools.entrypoint.print
-  examples.privacy.ml.03_contextual_passwords.main → docker.ai-tools.entrypoint.print
+  examples.privacy.ml.01_entropy_ml_detection.main → Taskfile.print
+  examples.privacy.ml.04_behavioral_learning.main → Taskfile.print
+  examples.privacy.ml.03_contextual_passwords.main → Taskfile.print
   examples.privacy.ml.03_contextual_passwords.main → examples.privacy.ml.03_contextual_passwords.create_test_code_samples
-  examples.privacy.streaming.01_streaming_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.streaming.01_streaming_anonymization.main → Taskfile.print
   examples.privacy.streaming.01_streaming_anonymization.main → examples.privacy.streaming.01_streaming_anonymization.create_large_project
-  examples.privacy.project.02_deanonymize_project.main → docker.ai-tools.entrypoint.print
-  examples.privacy.project.01_anonymize_project.main → docker.ai-tools.entrypoint.print
+  examples.privacy.project.02_deanonymize_project.main → Taskfile.print
+  examples.privacy.project.01_anonymize_project.main → Taskfile.print
   examples.privacy.project.01_anonymize_project.main → examples.privacy.project.01_anonymize_project.create_sample_project
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.03_cicd_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step2_anonymize_for_audit → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step3_simulate_audit_response → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step4_generate_report → Taskfile.print
+  examples.privacy.advanced.03_cicd_integration.main → Taskfile.print
   examples.privacy.advanced.03_cicd_integration.main → examples.privacy.advanced.03_cicd_integration.create_cicd_project
-  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → docker.ai-tools.entrypoint.print
-  examples.privacy.advanced.02_multi_stage.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.02_multi_stage.MultiStageAnonymizer.anonymize_for_level → Taskfile.print
+  examples.privacy.advanced.02_multi_stage.main → Taskfile.print
   examples.privacy.advanced.02_multi_stage.main → examples.privacy.advanced.02_multi_stage.create_business_logic_project
-  examples.privacy.advanced.01_api_integration.main → docker.ai-tools.entrypoint.print
+  examples.privacy.advanced.01_api_integration.main → Taskfile.print
   examples.privacy.advanced.01_api_integration.main → examples.privacy.advanced.01_api_integration.create_realistic_project
-  examples.privacy.basic.01_text_anonymization.main → docker.ai-tools.entrypoint.print
+  examples.privacy.basic.01_text_anonymization.main → Taskfile.print
   examples.privacy.basic.01_text_anonymization.main → llx.privacy.__core.quick_anonymize
-  examples.privacy.basic.02_custom_patterns.main → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.run_pyqual → docker.ai-tools.entrypoint.print
-  scripts.pyqual_auto.main → docker.ai-tools.entrypoint.print
-  llx.llm._ensure_dotenv_loaded → llx.llm._load_dotenv_fallback
-  llx.llm.get_llm_model → llx.llm._ensure_dotenv_loaded
-  llx.llm.get_api_key → llx.llm._ensure_dotenv_loaded
-  llx.llm.LLM.__init__ → llx.llm.get_llm_model
-  llx.llm.LLM.__init__ → llx.llm.get_api_key
-  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._parse_unified_hunks
+  examples.privacy.basic.02_custom_patterns.main → Taskfile.print
+  scripts.pyqual_auto.run_pyqual → Taskfile.print
+  scripts.pyqual_auto.main → Taskfile.print
+  llx.config.LlxConfig.__post_init__ → llx.config.normalize_litellm_base_url
+  llx.config.LlxConfig.load → llx.config._apply_env
+  llx.config.LlxConfig.load → llx.config.normalize_litellm_base_url
+  llx.config._apply_yaml → llx.config._apply_yaml_proxy
+  llx.config._apply_yaml → llx.config._apply_yaml_models
+  llx.config._apply_yaml → llx.config._apply_yaml_thresholds
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 338f 59934L | python:208,yaml:60,shell:32,yml:10,txt:4,json:4,conf:3,toml:3 | 2026-04-26
-# CC̄=2.6 | critical:7/1931 | dups:0 | cycles:0
+# code2llm | 339f 59548L | python:210,yaml:59,shell:32,yml:10,txt:4,json:4,toml:3,conf:3 | 2026-04-26
+# CC̄=2.7 | critical:8/1935 | dups:0 | cycles:0
 
-HEALTH[7]:
+HEALTH[8]:
   🟡 CC    main CC=15 (limit:15)
   🟡 CC    chat CC=16 (limit:15)
-  🟡 CC    _parse_llm_response CC=17 (limit:15)
-  🟡 CC    _execute_task CC=31 (limit:15)
+  🟡 CC    _parse_llm_response CC=18 (limit:15)
+  🟡 CC    _execute_task CC=34 (limit:15)
+  🟡 CC    _update_task_in_planfile CC=16 (limit:15)
   🟡 CC    _normalize_strategy CC=22 (limit:15)
-  🟡 CC    execute_strategy CC=36 (limit:15)
-  🟡 CC    plan_run CC=50 (limit:15)
+  🟡 CC    execute_strategy CC=53 (limit:15)
+  🟡 CC    plan_run CC=51 (limit:15)
 
 REFACTOR[1]:
-  1. split 7 high-CC methods  (CC>15)
+  1. split 8 high-CC methods  (CC>15)
 
-PIPELINES[1022]:
+PIPELINES[1011]:
   [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
       PURITY: 100% pure
   [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
       PURITY: 100% pure
   [3] Src [main]: main → print
       PURITY: 100% pure
-  [4] Src [calculate_entropy]: calculate_entropy
+  [4] Src [__init__]: __init__
       PURITY: 100% pure
-  [5] Src [analyze_randomness]: analyze_randomness
+  [5] Src [increment_successful_requests]: increment_successful_requests
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=3.8    ←in:23  →out:10  !! split
+  llx/                            CC̄=3.8    ←in:25  →out:0
   │ !! vscode_manager             791L  1C   38m  CC=10     ←0
   │ !! model_manager              756L  1C   36m  CC=8      ←0
   │ !! trace                      648L  2C   29m  CC=13     ←2
+  │ !! app                        644L  0C   22m  CC=51     ←0
   │ !! orchestrator               642L  1C   28m  CC=10     ←0
   │ !! engine                     638L  1C   38m  CC=11     ←0
-  │ !! app                        624L  0C   21m  CC=50     ←0
   │ !! manager                    614L  1C   30m  CC=12     ←0
   │ !! orchestrator               595L  1C   27m  CC=12     ←0
   │ !! health_checker             589L  1C   27m  CC=10     ←0
@@ -2935,17 +2940,17 @@ LAYERS:
   │ collector                  482L  1C   21m  CC=10     ←7
   │ generate_strategy          470L  0C   19m  CC=9      ←2
   │ core                       468L  1C   11m  CC=10     ←5
+  │ !! task                       460L  0C    6m  CC=34     ←0
   │ server                     447L  10C    9m  CC=12     ←2
   │ manager                    445L  1C   20m  CC=14     ←0
+  │ !! strategy                   438L  0C    7m  CC=53     ←0
   │ models                     432L  33C    2m  CC=1      ←1
-  │ !! task                       426L  0C    6m  CC=31     ←0
   │ deanonymize                424L  4C   16m  CC=8      ←1
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
-  │ config                     391L  4C    9m  CC=14     ←10
+  │ config                     391L  4C    9m  CC=14     ←11
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
   │ !! client                     347L  3C   12m  CC=16     ←0
-  │ !! strategy                   335L  0C    7m  CC=36     ←1
   │ proxym                     331L  3C   12m  CC=8      ←1
   │ query_decomposer           330L  1C   10m  CC=9      ←0
   │ formatters                 312L  0C   12m  CC=14     ←2
@@ -2959,7 +2964,7 @@ LAYERS:
   │ model_selector             264L  4C   15m  CC=14     ←0
   │ runner                     263L  0C    5m  CC=12     ←3
   │ sensitive_filter           262L  1C   14m  CC=7      ←0
-  │ backends                   260L  0C    6m  CC=10     ←0
+  │ backends                   260L  0C    6m  CC=10     ←3
   │ pipeline_ops               257L  0C    5m  CC=12     ←1
   │ context_engine             248L  1C   13m  CC=13     ←0
   │ service                    243L  1C   14m  CC=4      ←0
@@ -2973,7 +2978,7 @@ LAYERS:
   │ folder_compressor          224L  1C   10m  CC=11     ←0
   │ executors                  223L  0C    6m  CC=5      ←1
   │ _nfo_compat                220L  3C   11m  CC=4      ←1
-  │ aider                      219L  0C    3m  CC=12     ←0
+  │ aider                      219L  0C    3m  CC=12     ←2
   │ fix                        218L  0C    9m  CC=8      ←0
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
@@ -2997,16 +3002,16 @@ LAYERS:
   │ cli                        149L  0C    9m  CC=6      ←0
   │ _streaming_chunking        148L  4C    5m  CC=8      ←0
   │ workflows                  146L  1C    3m  CC=8      ←0
+  │ _project_anonymizer        143L  2C    8m  CC=10     ←0
   │ config_io                  142L  0C    2m  CC=6      ←0
   │ examples                   141L  0C    5m  CC=2      ←0
   │ server                     141L  0C    8m  CC=2      ←1
-  │ _project_anonymizer        138L  2C    8m  CC=10     ←0
   │ _patch_apply               137L  0C    6m  CC=10     ←0
   │ cli                        136L  0C   11m  CC=6      ←0
   │ planfile                   135L  0C    2m  CC=9      ←0
   │ cli                        134L  0C    6m  CC=6      ←0
-  │ proxy                      131L  0C    3m  CC=7      ←1
   │ core                       131L  0C    3m  CC=4      ←0
+  │ proxy                      131L  0C    3m  CC=7      ←1
   │ proxym                     130L  0C    3m  CC=5      ←0
   │ prellm_config.yaml         130L  0C    0m  CC=0.0    ←0
   │ executor                   128L  2C    3m  CC=8      ←0
@@ -3029,6 +3034,7 @@ LAYERS:
   │ deanonymize_engine         101L  1C    4m  CC=7      ←0
   │ cli_context                101L  0C    2m  CC=9      ←0
   │ models                     101L  6C    0m  CC=0.0    ←0
+  │ version_check               94L  0C    5m  CC=7      ←1
   │ prompts.yaml                94L  0C    0m  CC=0.0    ←0
   │ code_edit                   89L  0C    1m  CC=8      ←0
   │ __init__                    89L  0C    0m  CC=0.0    ←0
@@ -3059,11 +3065,11 @@ LAYERS:
   │ models                      61L  4C    0m  CC=0.0    ←0
   │ models                      61L  4C    0m  CC=0.0    ←0
   │ __init__                    58L  0C    0m  CC=0.0    ←0
+  │ executor_simple             58L  0C    0m  CC=0.0    ←0
   │ __init__                    56L  0C    0m  CC=0.0    ←0
   │ models                      54L  4C    0m  CC=0.0    ←0
   │ _docker                     53L  0C    3m  CC=3      ←1
   │ deploy.yaml                 52L  0C    0m  CC=0.0    ←0
-  │ executor_simple             52L  0C    0m  CC=0.0    ←0
   │ _streaming_parallel         51L  1C    2m  CC=4      ←0
   │ config                      48L  4C    0m  CC=0.0    ←0
   │ response_schemas.yaml       45L  0C    0m  CC=0.0    ←0
@@ -3075,6 +3081,7 @@ LAYERS:
   │ _cmd_status                 40L  0C    1m  CC=1      ←0
   │ _utils                      37L  0C    2m  CC=3      ←9
   │ health                      36L  0C    2m  CC=5      ←1
+  │ __init__                    36L  0C    0m  CC=0.0    ←0
   │ _cmd_remove                 35L  0C    1m  CC=1      ←0
   │ __init__                    35L  0C    0m  CC=0.0    ←0
   │ sensitive_rules.yaml        34L  0C    0m  CC=0.0    ←0
@@ -3095,9 +3102,9 @@ LAYERS:
   │ __init__                    21L  0C    0m  CC=0.0    ←0
   │ lazy_loader                 20L  1C    3m  CC=2      ←0
   │ __init__                    17L  0C    0m  CC=0.0    ←0
-  │ __init__                    14L  0C    0m  CC=0.0    ←0
-  │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ config_manager              14L  0C    0m  CC=0.0    ←0
+  │ __init__                    14L  0C    0m  CC=0.0    ←0
+  │ __init__                    14L  0C    0m  CC=0.0    ←0
   │ __init__                    13L  0C    0m  CC=0.0    ←0
   │ base                        12L  1C    0m  CC=0.0    ←0
   │ __init__                    12L  0C    0m  CC=0.0    ←0
@@ -3192,20 +3199,19 @@ LAYERS:
   │ pyqual_auto                257L  0C   10m  CC=8      ←0
   │
   test-api-qwen/                  CC̄=1.8    ←in:0  →out:0
-  │ main                       122L  3C    6m  CC=4      ←0
   │ pyproject.toml              63L  0C    0m  CC=0.0    ←0
-  │ models                      19L  3C    0m  CC=0.0    ←0
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ main                         0L  3C    6m  CC=4      ←0
+  │ models                       0L  3C    0m  CC=0.0    ←0
   │
   ./                              CC̄=1.5    ←in:0  →out:0
-  │ !! planfile.yaml             1666L  0C    0m  CC=0.0    ←0
-  │ !! Taskfile.yml               515L  0C    1m  CC=0.0    ←0
+  │ !! planfile.yaml             1671L  0C    0m  CC=0.0    ←0
+  │ !! Taskfile.yml               515L  0C    1m  CC=0.0    ←57
   │ goal.yaml                  429L  0C    0m  CC=0.0    ←0
   │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
   │ docker-compose.yml         352L  0C    0m  CC=0.0    ←0
   │ ai-tools-manage.sh         351L  0C   15m  CC=0.0    ←0
-  │ llx.yaml                   344L  0C    0m  CC=0.0    ←0
   │ docker-compose-prod.yml    261L  0C    0m  CC=0.0    ←0
   │ test-local-chat            195L  0C   11m  CC=7      ←0
   │ pyproject.toml             167L  0C    0m  CC=0.0    ←0
@@ -3226,38 +3232,38 @@ LAYERS:
   │ requirements-dev.txt         9L  0C    0m  CC=0.0    ←0
   │ github.planfile.yaml         4L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │ Makefile                     0L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   my-api/                         CC̄=1.5    ←in:0  →out:0
-  │ monitoring                 125L  4C   14m  CC=2      ←0
-  │ main                       107L  2C   11m  CC=3      ←0
   │ docker-compose.yml          64L  0C    0m  CC=0.0    ←0
   │ pyproject.toml              63L  0C    0m  CC=0.0    ←0
-  │ models                      42L  5C    0m  CC=0.0    ←0
   │ requirements.txt             6L  0C    0m  CC=0.0    ←0
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ monitoring                   0L  4C   14m  CC=2      ←0
+  │ main                         0L  2C   11m  CC=3      ←0
+  │ models                       0L  5C    0m  CC=0.0    ←0
   │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
   │
   docker/                         CC̄=0.0    ←in:0  →out:0
   │ install-extensions.sh      409L  0C    2m  CC=0.0    ←0
   │ install-tools.sh           369L  0C    0m  CC=0.0    ←0
   │ llx.conf                   241L  0C    0m  CC=0.0    ←0
-  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←57
+  │ entrypoint.sh              175L  0C    2m  CC=0.0    ←0
   │ settings.json               98L  0C    0m  CC=0.0    ←0
   │ redis.conf                  86L  0C    0m  CC=0.0    ←0
   │ nginx.conf                  81L  0C    0m  CC=0.0    ←0
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                7122L  0C    0m  CC=0.0    ←0
-  │ !! map.toon.yaml             1575L  0C  515m  CC=0.0    ←11
-  │ !! calls.toon.yaml            597L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         426L  0C    0m  CC=0.0    ←0
-  │ duplication.toon.yaml      251L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                7089L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             1627L  0C  513m  CC=0.0    ←7
+  │ !! calls.toon.yaml            613L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         448L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml      260L  0C    0m  CC=0.0    ←0
   │ validation.toon.yaml       157L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         74L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         78L  0C    0m  CC=0.0    ←0
   │ project.toon.yaml           53L  0C    0m  CC=0.0    ←0
   │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
   │
@@ -3291,47 +3297,51 @@ LAYERS:
      examples/python-api/test-project/Dockerfile  0L
      llx/prellm/chains/__init__.py             0L
      my-api/Dockerfile                         0L
+     my-api/main.py                            0L
+     my-api/models.py                          0L
+     my-api/monitoring.py                      0L
+     test-api-qwen/main.py                     0L
+     test-api-qwen/models.py                   0L
 
 COUPLING:
-                         docker.ai-tools    examples.privacy           llx.tools   llx.orchestration  llx.pyqual_plugins             llx.cli        llx.planfile     test-local-chat                 llx         project.map           llx.utils             llx.mcp             scripts        llx.analysis        llx.examples
-     docker.ai-tools                  ──                ←435                ←405                ←319                 ←76                 ←24                 ←26                 ←39                                                                                                 ←19                                     ←12  hub
+                                Taskfile    examples.privacy           llx.tools   llx.orchestration  llx.pyqual_plugins             llx.cli        llx.planfile     test-local-chat           llx.utils                 llx             llx.mcp             scripts        llx.analysis        llx.examples        llx.commands
+            Taskfile                  ──                ←435                ←405                ←319                 ←76                 ←24                 ←26                 ←39                                                                             ←19                                     ←12                      hub
     examples.privacy                 435                  ──                                                                                                                                                                                                                                                                      !! fan-out
-           llx.tools                 405                                      ──                                                                                                                                                               5                                                                                  !! fan-out
-   llx.orchestration                 319                                                          ──                                                                                                                                           7                                                                                  !! fan-out
+           llx.tools                 405                                      ──                                                                                                                       5                                                                                                                          !! fan-out
+   llx.orchestration                 319                                                          ──                                                                                                   7                                                                                                                          !! fan-out
   llx.pyqual_plugins                  76                                                                              ──                                                                                                                                                                                                          !! fan-out
-             llx.cli                  24                                                                                                  ──                   7                                      13                   6                                                                               6                      !! fan-out
-        llx.planfile                  26                                                                                                  ←7                  ──                                       2                   8                                                                               2                      hub
+             llx.cli                  24                                                                                                  ──                   8                                                          13                                                           6                                          !! fan-out
+        llx.planfile                  26                                                                                                  ←8                  ──                                       1                   2                                                           2                                          hub
      test-local-chat                  39                                                                                                                                          ──                                                                                                                                              !! fan-out
-                 llx                                                                                                                     ←13                  ←2                                      ──                  10                                      ←5                                                          ←1  hub
-         project.map                                                                                                                      ←6                  ←8                                     ←10                  ──                                      ←1                                                              hub
-           llx.utils                                                          ←5                  ←7                                                                                                                                          ──                   1                                                              hub
-             llx.mcp                                                                                                                                                                                   5                   1                   3                  ──                                       5                      !! fan-out
-             scripts                  19                                                                                                                                                                                                                                              ──                                          !! fan-out
-        llx.analysis                                                                                                                      ←6                  ←2                                                                                                  ←5                                      ──                      hub
-        llx.examples                  12                                                                                                                                                               1                                                                                                                      ──  !! fan-out
+           llx.utils                                                          ←5                  ←7                                                          ←1                                      ──                                       1                                                                              ←8  hub
+                 llx                                                                                                                     ←13                  ←2                                                          ──                  ←5                                                          ←1                  ←1  hub
+             llx.mcp                                                                                                                                                                                   3                   5                  ──                                       5                                          !! fan-out
+             scripts                  19                                                                                                                                                                                                                          ──                                                              !! fan-out
+        llx.analysis                                                                                                                      ←6                  ←2                                                                              ←5                                      ──                                      ←1  hub
+        llx.examples                  12                                                                                                                                                                                   1                                                                              ──                      !! fan-out
+        llx.commands                                                                                                                                                                                   8                   1                                                           1                                      ──  !! fan-out
   CYCLES: none
-  HUB: llx.planfile/ (fan-in=10)
-  HUB: llx.integrations/ (fan-in=6)
-  HUB: llx.analysis/ (fan-in=15)
-  HUB: docker.ai-tools/ (fan-in=1355)
-  HUB: examples.docker/ (fan-in=7)
-  HUB: llx.utils/ (fan-in=20)
-  HUB: llx/ (fan-in=23)
+  HUB: llx.planfile/ (fan-in=11)
   HUB: examples.filtering/ (fan-in=5)
-  HUB: project.map/ (fan-in=31)
+  HUB: llx.analysis/ (fan-in=15)
+  HUB: project.map/ (fan-in=10)
   HUB: llx.routing/ (fan-in=8)
-  SMELL: llx.planfile/ fan-out=38 → split needed
-  SMELL: llx.mcp/ fan-out=19 → split needed
-  SMELL: scripts/ fan-out=19 → split needed
-  SMELL: llx.cli/ fan-out=68 → split needed
-  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
-  SMELL: llx.orchestration/ fan-out=326 → split needed
-  SMELL: llx/ fan-out=10 → split needed
-  SMELL: llx.commands/ fan-out=12 → split needed
-  SMELL: examples.privacy/ fan-out=438 → split needed
+  HUB: llx.utils/ (fan-in=24)
+  HUB: Taskfile/ (fan-in=1355)
+  HUB: llx.integrations/ (fan-in=6)
+  HUB: llx/ (fan-in=25)
+  HUB: examples.docker/ (fan-in=7)
   SMELL: llx.tools/ fan-out=417 → split needed
-  SMELL: test-local-chat/ fan-out=39 → split needed
+  SMELL: llx.planfile/ fan-out=34 → split needed
   SMELL: llx.examples/ fan-out=13 → split needed
+  SMELL: llx.cli/ fan-out=68 → split needed
+  SMELL: llx.commands/ fan-out=12 → split needed
+  SMELL: llx.mcp/ fan-out=19 → split needed
+  SMELL: llx.orchestration/ fan-out=326 → split needed
+  SMELL: scripts/ fan-out=19 → split needed
+  SMELL: test-local-chat/ fan-out=39 → split needed
+  SMELL: examples.privacy/ fan-out=438 → split needed
+  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
@@ -3341,15 +3351,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 32 groups | 208f 36955L | 2026-04-26
+# redup/duplication | 33 groups | 209f 37217L | 2026-04-26
 
 SUMMARY:
-  files_scanned: 208
-  total_lines:   36955
-  dup_groups:    32
-  dup_fragments: 71
-  saved_lines:   495
-  scan_ms:       11555
+  files_scanned: 209
+  total_lines:   37217
+  dup_groups:    33
+  dup_fragments: 73
+  saved_lines:   502
+  scan_ms:       7712
 
 HOTSPOTS[7] (files with most duplication):
   examples/privacy/advanced/02_multi_stage.py  dup=185L  groups=1  frags=1  (0.5%)
@@ -3360,7 +3370,7 @@ HOTSPOTS[7] (files with most duplication):
   llx/tools/config/cli.py  dup=29L  groups=3  frags=5  (0.1%)
   llx/tools/health_checker.py  dup=27L  groups=3  frags=5  (0.1%)
 
-DUPLICATES[32] (ranked by impact):
+DUPLICATES[33] (ranked by impact):
   [209d7601e17179e8] !! STRU  create_business_logic_project  L=185 N=2 saved=185 sim=1.00
       examples/privacy/advanced/02_multi_stage.py:118-302  (create_business_logic_project)
       examples/privacy/ml/01_entropy_ml_detection.py:310-369  (create_complex_project)
@@ -3375,7 +3385,7 @@ DUPLICATES[32] (ranked by impact):
       llx/pyqual_plugins/detect_secrets.py:49-61  (main)
       llx/pyqual_plugins/type_check.py:55-67  (main)
   [38c37e9b2acab178]   EXAC  _map_priority  L=12 N=2 saved=12 sim=1.00
-      llx/planfile/executor/strategy.py:101-112  (_map_priority)
+      llx/planfile/executor/strategy.py:123-134  (_map_priority)
       llx/planfile/executor/task.py:22-33  (_map_priority)
   [8593830f9a7b5964]   EXAC  check_version_on_pypi  L=12 N=2 saved=12 sim=1.00
       llx/pyqual_plugins/bump_version.py:13-24  (check_version_on_pypi)
@@ -3398,7 +3408,7 @@ DUPLICATES[32] (ranked by impact):
       llx/orchestration/ratelimit/_crud.py:19-29  (add_limit)
       llx/orchestration/ratelimit/limiter.py:173-183  (add_limit)
   [29597928ab273483]   EXAC  _map_action_to_task_type  L=11 N=2 saved=11 sim=1.00
-      llx/planfile/executor/strategy.py:88-98  (_map_action_to_task_type)
+      llx/planfile/executor/strategy.py:110-120  (_map_action_to_task_type)
       llx/planfile/executor/task.py:9-19  (_map_action_to_task_type)
   [6a3aad3970abbd84]   EXAC  _is_port_available  L=10 N=2 saved=10 sim=1.00
       llx/orchestration/instances/ports.py:42-51  (_is_port_available)
@@ -3421,6 +3431,9 @@ DUPLICATES[32] (ranked by impact):
   [b0d59b7862226346]   EXAC  release_port  L=7 N=2 saved=7 sim=1.00
       llx/orchestration/instances/ports.py:34-40  (release_port)
       llx/orchestration/vscode/ports.py:26-32  (release_port)
+  [e95f644755bb2097]   STRU  get_current_version  L=7 N=2 saved=7 sim=1.00
+      llx/cli/version_check.py:9-15  (get_current_version)
+      llx/prellm/logging_setup.py:97-103  (_get_version)
   [17be19fef21a7240]   EXAC  get_current_version  L=6 N=2 saved=6 sim=1.00
       llx/pyqual_plugins/publish.py:12-17  (get_current_version)
       llx/pyqual_plugins/verify_push_publish.py:15-20  (get_current_version)
@@ -3465,7 +3478,7 @@ DUPLICATES[32] (ranked by impact):
       my-api/src/my_api/main.py:51-53  (create_user)
       my-api/src/my_api/main.py:84-86  (create_product)
 
-REFACTOR[32] (ranked by priority):
+REFACTOR[33] (ranked by priority):
   [1] ◐ extract_module     → examples/privacy/utils/create_business_logic_project.py
       WHY: 2 occurrences of 185-line block across 2 files — saves 185 lines
       FILES: examples/privacy/advanced/02_multi_stage.py, examples/privacy/ml/01_entropy_ml_detection.py
@@ -3520,50 +3533,53 @@ REFACTOR[32] (ranked by priority):
   [18] ○ extract_function   → llx/orchestration/utils/release_port.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [19] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
+  [19] ○ extract_function   → llx/utils/get_current_version.py
+      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+      FILES: llx/cli/version_check.py, llx/prellm/logging_setup.py
+  [20] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/pyqual_plugins/publish.py, llx/pyqual_plugins/verify_push_publish.py
-  [20] ○ extract_function   → llx/tools/utils/_handle_start.py
+  [21] ○ extract_function   → llx/tools/utils/_handle_start.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: llx/tools/cli.py
-  [21] ○ extract_function   → llx/tools/utils/_cmd_summary.py
+  [22] ○ extract_function   → llx/tools/utils/_cmd_summary.py
       WHY: 3 occurrences of 3-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [22] ○ extract_function   → llx/tools/utils/_dispatch.py
+  [23] ○ extract_function   → llx/tools/utils/_dispatch.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [23] ○ extract_function   → my-api/src/my_api/utils/update_user.py
+  [24] ○ extract_function   → my-api/src/my_api/utils/update_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [24] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
+  [25] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [25] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
+  [26] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: llx/orchestration/ratelimit/cli.py, llx/orchestration/session/cli.py
-  [26] ○ extract_function   → llx/tools/utils/_cmd_pull.py
+  [27] ○ extract_function   → llx/tools/utils/_cmd_pull.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: llx/tools/model_manager.py
-  [27] ○ extract_function   → my-api/src/my_api/utils/read_user.py
+  [28] ○ extract_function   → my-api/src/my_api/utils/read_user.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: my-api/src/my_api/main.py
-  [28] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
+  [29] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/prellm/agents/preprocessor.py
-  [29] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
+  [30] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/tools/health_checker.py
-  [30] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
+  [31] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py
-  [31] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
+  [32] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: llx/tools/config/cli.py
-  [32] ○ extract_function   → my-api/src/my_api/utils/create_user.py
+  [33] ○ extract_function   → my-api/src/my_api/utils/create_user.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: my-api/src/my_api/main.py
 
-QUICK_WINS[23] (low risk, high savings — do first):
+QUICK_WINS[24] (low risk, high savings — do first):
   [2] extract_function   saved=72L  → llx/planfile/executor/utils/_run_cursor_edit.py
       FILES: backends.py
   [3] extract_function   saved=15L  → llx/orchestration/utils/_dispatch.py
@@ -3585,7 +3601,7 @@ QUICK_WINS[23] (low risk, high savings — do first):
   [11] extract_function   saved=11L  → llx/planfile/executor/utils/_map_action_to_task_type.py
       FILES: strategy.py, task.py
 
-EFFORT_ESTIMATE (total ≈ 20.8h):
+EFFORT_ESTIMATE (total ≈ 21.0h):
   hard   create_business_logic_project       saved=185L  ~555min
   hard   _run_cursor_edit                    saved=72L  ~216min
   medium _dispatch                           saved=15L  ~30min
@@ -3596,19 +3612,19 @@ EFFORT_ESTIMATE (total ≈ 20.8h):
   easy   main                                saved=12L  ~24min
   easy   _calculate_entropy                  saved=11L  ~22min
   easy   add_limit                           saved=11L  ~22min
-  ... +22 more (~280min)
+  ... +23 more (~294min)
 
 METRICS-TARGET:
-  dup_groups:  32 → 0
-  saved_lines: 495 lines recoverable
+  dup_groups:  33 → 0
+  saved_lines: 502 lines recoverable
 ```
 
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 1801 func | 149f | 2026-04-26
+# code2llm/evolution | 1805 func | 150f | 2026-04-26
 
-NEXT[9] (ranked by impact):
+NEXT[10] (ranked by impact):
   [1] !! SPLIT           llx/prellm/trace.py
       WHY: 648L, 2 classes, max CC=13
       EFFORT: ~4h  IMPACT: 8424
@@ -3621,27 +3637,31 @@ NEXT[9] (ranked by impact):
       WHY: 756L, 1 classes, max CC=8
       EFFORT: ~4h  IMPACT: 6048
 
-  [4] !! SPLIT-FUNC      plan_run  CC=50  fan=23
-      WHY: CC=50 exceeds 15
-      EFFORT: ~1h  IMPACT: 1150
+  [4] !! SPLIT-FUNC      execute_strategy  CC=53  fan=30
+      WHY: CC=53 exceeds 15
+      EFFORT: ~1h  IMPACT: 1590
 
-  [5] !! SPLIT-FUNC      execute_strategy  CC=36  fan=22
-      WHY: CC=36 exceeds 15
-      EFFORT: ~1h  IMPACT: 792
+  [5] !! SPLIT-FUNC      plan_run  CC=51  fan=23
+      WHY: CC=51 exceeds 15
+      EFFORT: ~1h  IMPACT: 1173
 
-  [6] !! SPLIT-FUNC      _execute_task  CC=31  fan=23
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 713
+  [6] !! SPLIT-FUNC      _execute_task  CC=34  fan=23
+      WHY: CC=34 exceeds 15
+      EFFORT: ~1h  IMPACT: 782
 
   [7] !  SPLIT-FUNC      LlxClient.chat  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
-  [8] !  SPLIT-FUNC      _parse_llm_response  CC=17  fan=12
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 204
+  [8] !  SPLIT-FUNC      _parse_llm_response  CC=18  fan=12
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 216
 
-  [9] !  SPLIT-FUNC      _normalize_strategy  CC=22  fan=9
+  [9] !  SPLIT-FUNC      _update_task_in_planfile  CC=16  fan=13
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 208
+
+  [10] !  SPLIT-FUNC      _normalize_strategy  CC=22  fan=9
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 198
 
@@ -3653,9 +3673,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          2.6 → ≤1.8
-  max-CC:      50 → ≤20
+  max-CC:      53 → ≤20
   god-modules: 12 → 0
-  high-CC(≥15): 6 → ≤3
+  high-CC(≥15): 7 → ≤3
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

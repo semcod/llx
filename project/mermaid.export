@@ -172,30 +172,6 @@ flowchart TD
         llx__analysis__collector___classify_scope["_classify_scope"]
     end
     subgraph llx__cli
-        llx__cli__formatters__output_rich["output_rich"]
-        llx__cli__formatters__output_json["output_json"]
-        llx__cli__formatters___filter_models("_filter_models CC=9")
-        llx__cli__formatters___build_model_row("_build_model_row CC=14")
-        llx__cli__formatters___render_models_table["_render_models_table"]
-        llx__cli__formatters___build_title["_build_title"]
-        llx__cli__formatters__print_models_table("print_models_table CC=8")
-        llx__cli__formatters___render_tools_table["_render_tools_table"]
-        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
-        llx__cli__formatters___render_agents_table["_render_agents_table"]
-        llx__cli__formatters___render_tags_legend("_render_tags_legend CC=8")
-        llx__cli__formatters__print_info_tables["print_info_tables"]
-        llx__cli__strategy_commands__create_strategy["create_strategy"]
-        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
-        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
-        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
-        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
-        llx__cli__commands__analyze__analyze["analyze"]
-        llx__cli__commands__planner___plan_code_impl("_plan_code_impl CC=9")
-        llx__cli__version_check__get_current_version["get_current_version"]
-        llx__cli__version_check__get_pypi_version["get_pypi_version"]
-        llx__cli__version_check__compare_versions["compare_versions"]
-        llx__cli__version_check__check_version["check_version"]
-        llx__cli__version_check__get_update_command["get_update_command"]
         llx__cli__app___show_version_banner["_show_version_banner"]
         llx__cli__app___run_analysis_tools["_run_analysis_tools"]
         llx__cli__app__analyze["analyze"]
@@ -218,6 +194,30 @@ flowchart TD
         llx__cli__app___generate_sprint_code["_generate_sprint_code"]
         llx__cli__app___plan_code_impl["_plan_code_impl"]
         llx__cli__app__main["main"]
+        llx__cli__version_check__get_current_version["get_current_version"]
+        llx__cli__version_check__get_pypi_version["get_pypi_version"]
+        llx__cli__version_check__compare_versions["compare_versions"]
+        llx__cli__version_check__check_version["check_version"]
+        llx__cli__version_check__get_update_command["get_update_command"]
+        llx__cli__formatters__output_rich["output_rich"]
+        llx__cli__formatters__output_json["output_json"]
+        llx__cli__formatters___filter_models("_filter_models CC=9")
+        llx__cli__formatters___build_model_row("_build_model_row CC=14")
+        llx__cli__formatters___render_models_table["_render_models_table"]
+        llx__cli__formatters___build_title["_build_title"]
+        llx__cli__formatters__print_models_table("print_models_table CC=8")
+        llx__cli__formatters___render_tools_table["_render_tools_table"]
+        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
+        llx__cli__formatters___render_agents_table["_render_agents_table"]
+        llx__cli__formatters___render_tags_legend("_render_tags_legend CC=8")
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        llx__cli__strategy_commands__verify_strategy["verify_strategy"]
+        llx__cli__strategy_commands__add_strategy_commands["add_strategy_commands"]
+        llx__cli__commands__analyze__analyze["analyze"]
+        llx__cli__commands__planner___plan_code_impl("_plan_code_impl CC=9")
     end
     subgraph llx__commands
         llx__commands___patch_apply___extract_json_from_content["_extract_json_from_content"]
@@ -577,6 +577,14 @@ flowchart TD
         llx__privacy___streaming_impl__StreamingProjectDeanonymizer__deanonymize_files_streaming["deanonymize_files_streaming"]
         llx__privacy___streaming_impl__anonymize_project_with_progress["anonymize_project_with_progress"]
         llx__privacy___streaming_impl__deanonymize_response_streaming["deanonymize_response_streaming"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer____init__["__init__"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project("anonymize_project CC=10")
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_file["anonymize_file"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_python["_anonymize_python"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_source_code["_anonymize_source_code"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_config["_anonymize_config"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer___anonymize_generic["_anonymize_generic"]
+        llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_string["anonymize_string"]
         llx__privacy__deanonymize__ProjectDeanonymizer____init__["__init__"]
         llx__privacy__deanonymize__ProjectDeanonymizer___build_reverse_lookup["_build_reverse_lookup"]
         llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text("deanonymize_text CC=8")
@@ -604,14 +612,6 @@ flowchart TD
         llx__privacy____core__Anonymizer__anonymize["anonymize"]
         llx__privacy____core__Anonymizer___generate_token["_generate_token"]
         llx__privacy____core__Anonymizer__deanonymize["deanonymize"]
-        llx__privacy____core__Anonymizer__scan("scan CC=8")
-        llx__privacy____core__Anonymizer__add_pattern["add_pattern"]
-        llx__privacy____core__Anonymizer__disable_pattern["disable_pattern"]
-        llx__privacy____core__Anonymizer__enable_pattern["enable_pattern"]
-        llx__privacy____core__quick_anonymize["quick_anonymize"]
-        llx__privacy____core__quick_deanonymize["quick_deanonymize"]
-        llx__privacy___project_context___default_salt["_default_salt"]
-        llx__privacy___project_context___mapping_dict_for["_mapping_dict_for"]
     end
     subgraph llx__pyqual_plugins
         llx__pyqual_plugins__type_check__run_mypy["run_mypy"]
@@ -811,6 +811,7 @@ flowchart TD
         project__map__toon__run_redup["run_redup"]
         project__map__toon__run_vallm["run_vallm"]
         project__map__toon__run_all_tools["run_all_tools"]
+        project__map__toon___show_version_banner["_show_version_banner"]
         project__map__toon___run_analysis_tools["_run_analysis_tools"]
         project__map__toon__analyze["analyze"]
         project__map__toon__select["select"]
@@ -835,7 +836,6 @@ flowchart TD
         project__map__toon__output_json["output_json"]
         project__map__toon___filter_models["_filter_models"]
         project__map__toon___build_model_row["_build_model_row"]
-        project__map__toon___render_models_table["_render_models_table"]
     end
     subgraph scripts__pyqual_auto
         scripts__pyqual_auto__load_pyqual_config["load_pyqual_config"]
@@ -1248,6 +1248,28 @@ flowchart TD
     llx__tools__config__manager__ConfigManager___print_profiles_summary --> Taskfile__print
     llx__tools__config__manager__ConfigManager__print_config_summary --> Taskfile__print
     llx__tools__utils___cmd_uninstall_extension__create_simple_handler --> Taskfile__print
+    llx__cli__app___show_version_banner --> llx__cli__version_check__check_version
+    llx__cli__app___show_version_banner --> llx__cli__version_check__get_update_command
+    llx__cli__app___run_analysis_tools --> llx__analysis__runner__run_all_tools
+    llx__cli__app__analyze --> llx__routing__selector__select_with_context_check
+    llx__cli__app__analyze --> llx__cli__app___run_analysis_tools
+    llx__cli__app__analyze --> llx__analysis__collector__analyze_project
+    llx__cli__app__select --> llx__analysis__collector__analyze_project
+    llx__cli__app__select --> examples__filtering__filtering__select_model
+    llx__cli__app__chat --> llx__analysis__collector__analyze_project
+    llx__cli__app__chat --> project__map__toon__build_context
+    llx__cli__app__proxy_start --> llx__integrations__proxy__start_proxy
+    llx__cli__app__proxy_config --> llx__integrations__proxy__generate_proxy_config
+    llx__cli__app__proxy_status --> llx__integrations__proxy__check_proxy
+    llx__cli__app__plan_generate --> llx__cli__app___plan_code_impl
+    llx__cli__app__plan_review --> llx__planfile__runner__load_valid_strategy
+    llx__cli__app__plan_execute --> llx__planfile__runner__run_strategy
+    llx__cli__app__models --> llx__cli__formatters__print_models_table
+    llx__cli__app__info --> llx__cli__formatters__print_info_tables
+    llx__cli__app___plan_code_impl --> llx__cli__app___load_sprint_mapping
+    llx__cli__version_check__check_version --> llx__cli__version_check__get_current_version
+    llx__cli__version_check__check_version --> llx__cli__version_check__get_pypi_version
+    llx__cli__version_check__check_version --> llx__cli__version_check__compare_versions
     llx__cli__formatters__print_models_table --> llx__cli__formatters___filter_models
     llx__cli__formatters__print_models_table --> llx__cli__formatters___build_title
     llx__cli__formatters__print_models_table --> llx__cli__formatters___render_models_table
@@ -1268,7 +1290,7 @@ flowchart TD
     llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__load_valid_strategy
     llx__cli__strategy_commands__verify_strategy --> llx__planfile__runner__verify_strategy_post_execution
     llx__cli__commands__analyze__analyze --> llx__routing__selector__select_with_context_check
-    llx__cli__commands__analyze__analyze --> project__map__toon___run_analysis_tools
+    llx__cli__commands__analyze__analyze --> llx__cli__app___run_analysis_tools
     llx__cli__commands__analyze__analyze --> llx__analysis__collector__analyze_project
     llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_goal
     llx__planfile__generate_strategy___normalize_strategy_data --> llx__planfile__generate_strategy___normalize_sprints
@@ -1454,30 +1476,8 @@ flowchart TD
     llx__orchestration__ratelimit__cli___cmd_record --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_release --> Taskfile__print
     llx__orchestration__ratelimit__cli___cmd_status --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_available --> Taskfile__print
-    llx__orchestration__ratelimit__cli___cmd_cleanup --> Taskfile__print
-    llx__orchestration__ratelimit__cli__main --> llx__utils__cli_main__cli_main
-    llx__orchestration__ratelimit___persistence__load_limits_from_file --> Taskfile__print
-    llx__orchestration__ratelimit___persistence__save_limits_to_file --> llx__orchestration___utils__save_json
-    llx__orchestration__ratelimit___persistence__save_limits_to_file --> Taskfile__print
-    llx__orchestration__ratelimit___crud__add_limit --> Taskfile__print
-    llx__orchestration__ratelimit___crud__remove_limit --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine__load_config --> llx__orchestration___utils__load_json
-    llx__orchestration__routing__engine__RoutingEngine__load_config --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine__save_config --> llx__orchestration___utils__save_json
-    llx__orchestration__routing__engine__RoutingEngine__route_request --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine___metrics_worker --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine___optimization_worker --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine___optimize_routing --> Taskfile__print
-    llx__orchestration__routing__engine__RoutingEngine__print_status_summary --> Taskfile__print
-    llx__orchestration__routing__cli___cmd_route --> Taskfile__print
-    llx__orchestration__routing__cli___cmd_status --> Taskfile__print
-    llx__orchestration__routing__cli___cmd_optimize --> Taskfile__print
-    llx__orchestration__routing__cli__main --> llx__utils__cli_main__cli_main
-    llx__utils__issues__load_issue_source --> llx__utils__issues__load_todo_markdown
-    llx__utils__issues__resolve_issue_source --> llx__utils__issues__load_issue_source
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class examples__privacy__advanced__01_api_integration__main,llx__routing__client__LlxClient__chat,llx__planfile__executor__task___parse_llm_response,llx__planfile__executor__task___execute_task,llx__planfile__executor__strategy___update_task_in_planfile,llx__planfile__executor__strategy___normalize_strategy,llx__planfile__executor__strategy__execute_strategy,llx__cli__app__plan_run highCC
-    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___parse_unified_hunks,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process,llx__prellm__cli_config___format_config_sections medCC
+    class examples__privacy__advanced__01_api_integration__main,llx__cli__app__plan_run,llx__routing__client__LlxClient__chat,llx__planfile__executor__task___execute_task,llx__planfile__executor__strategy__execute_strategy highCC
+    class trace__test,examples__privacy__ml__01_entropy_ml_detection__EntropyAnalyzer___classify_by_context,examples__privacy__ml__01_entropy_ml_detection__MLBasedAnonymizer___detect_pii_semantic,examples__privacy__ml__01_entropy_ml_detection__main,examples__privacy__ml__04_behavioral_learning__main,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector__detect_passwords,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___is_likely_password,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_confidence,examples__privacy__ml__03_contextual_passwords__ContextualPasswordDetector___calculate_password_complexity,examples__privacy__ml__03_contextual_passwords__main,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___classify_entropy_string,examples__privacy__ml__02_hybrid_system__HybridAnonymizer___merge_results,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step1_pre_commit_scan,examples__privacy__advanced__03_cicd_integration__CICDPrivacyPipeline__step4_generate_report,examples__privacy__advanced__01_api_integration__SimulatedLLMAPI__send_prompt,scripts__pyqual_auto__main,llx__config__LlxConfig__load,llx__config___apply_toml,llx__config___apply_yaml,llx__config___apply_env,llx__llm___load_dotenv_fallback,llx__commands___patch_apply___parse_unified_hunks,llx__commands___patch_apply___find_hunk_position,llx__commands__fix__execute_prellm_fix,llx__privacy___project_ast__ASTAnonymizer__visit_FunctionDef,llx__privacy___project_ast__ASTAnonymizer__visit_ImportFrom,llx__privacy___project_anonymizer__ProjectAnonymizer__anonymize_project,llx__privacy__deanonymize__ProjectDeanonymizer__deanonymize_text,llx__privacy____core__Anonymizer__scan,llx__privacy___streaming_chunking__ChunkedProcessor___split_and_process medCC

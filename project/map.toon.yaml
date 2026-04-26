@@ -1,8 +1,8 @@
-# llx | 338f 60003L | yaml:59,txt:4,python:210,shell:32,yml:10,json:4,toml:3,conf:3 | 2026-04-26
-# stats: 1935 func | 0 cls | 338 mod | CC̄=2.7 | critical:8 | cycles:0
-# alerts[5]: CC execute_strategy=53; CC plan_run=51; CC _execute_task=34; fan-out execute_strategy=30; fan-out main=25
-# hotspots[5]: execute_strategy fan=30; main fan=25; main fan=23; execute_v3_pipeline fan=23; _execute_task fan=23
-# evolution: CC̄ 2.6→2.7 (regressed +0.1)
+# llx | 338f 60038L | yaml:59,txt:4,python:210,shell:32,yml:10,json:4,toml:3,conf:3 | 2026-04-26
+# stats: 1956 func | 0 cls | 338 mod | CC̄=2.6 | critical:5 | cycles:0
+# alerts[5]: CC execute_strategy=53; CC plan_run=51; fan-out execute_strategy=30; fan-out main=25; fan-out execute_v3_pipeline=23
+# hotspots[5]: execute_strategy fan=30; main fan=25; main fan=23; execute_v3_pipeline fan=23; plan_run fan=23
+# evolution: CC̄ 2.6→2.6 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[338]:
   .taskill/state.json,13
@@ -203,8 +203,8 @@ M[338]:
   llx/planfile/executor/__init__.py,58
   llx/planfile/executor/backends.py,260
   llx/planfile/executor/base.py,31
-  llx/planfile/executor/strategy.py,438
-  llx/planfile/executor/task.py,460
+  llx/planfile/executor/strategy.py,446
+  llx/planfile/executor/task.py,439
   llx/planfile/executor_simple.py,58
   llx/planfile/generate_strategy.py,470
   llx/planfile/model_selector.py,264
@@ -308,16 +308,16 @@ M[338]:
   my-api/pyproject.toml,63
   my-api/requirements.txt,6
   my-api/src/my_api/__init__.py,1
-  planfile.yaml,1671
+  planfile.yaml,1678
   prefact.yaml,82
   project.sh,48
-  project/analysis.toon.yaml,454
-  project/calls.yaml,7089
-  project/calls.toon.yaml,613
-  project/duplication.toon.yaml,260
-  project/evolution.toon.yaml,78
-  project/map.toon.yaml,1627
-  project/project.toon.yaml,53
+  project/analysis.toon.yaml,451
+  project/calls.yaml,7109
+  project/calls.toon.yaml,615
+  project/duplication.toon.yaml,266
+  project/evolution.toon.yaml,82
+  project/map.toon.yaml,1636
+  project/project.toon.yaml,56
   project/prompt.txt,47
   project/validation.toon.yaml,157
   pyproject.toml,167
@@ -345,12 +345,18 @@ M[338]:
   tree.sh,1
 D:
   llx/planfile/executor/strategy.py:
-    e: _load_strategy,_save_strategy,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_normalize_strategy,execute_strategy
+    e: _load_strategy,_save_strategy,_find_task_in_planfile,_append_task_note,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_build_task_lookup,_normalize_pattern_from_lookup,_normalize_v2_task,_normalize_v2_sprints,_normalize_strategy,execute_strategy
     _load_strategy(path)
     _save_strategy(path;strategy)
+    _find_task_in_planfile(planfile;task_id)
+    _append_task_note(target_task;comment)
     _update_task_in_planfile(planfile_path;task_id;status;comment)
     _map_action_to_task_type(action)
     _map_priority(priority)
+    _build_task_lookup(strategy)
+    _normalize_pattern_from_lookup(pattern;task_lookup)
+    _normalize_v2_task(task;strategy)
+    _normalize_v2_sprints(strategy)
     _normalize_strategy(strategy)
     execute_strategy(strategy_path;project_path)
   llx/cli/app.py:
@@ -378,12 +384,22 @@ D:
     _plan_code_impl(strategy;out;model;profile)
     main()
   llx/planfile/executor/task.py:
-    e: _map_action_to_task_type,_map_priority,_parse_llm_response,_select_model,_build_task_prompt,_execute_task
+    e: _map_action_to_task_type,_map_priority,_check_indicators,_extract_explanation,_build_message,_parse_llm_response,_select_model,_build_task_prompt,_run_mcp_backend,_run_cursor_backend,_run_windsurf_backend,_run_claude_code_backend,_run_aider_backend,_run_llm_chat_with_retry,_determine_task_status,_execute_task
     _map_action_to_task_type(action)
     _map_priority(priority)
+    _check_indicators(text;indicators)
+    _extract_explanation(lines;indicators)
+    _build_message(issue_not_found;changes_made;problem_fixed;explanation)
     _parse_llm_response(response)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
+    _run_mcp_backend(target_file;prompt;model)
+    _run_cursor_backend(project_root;prompt;model;target_file)
+    _run_windsurf_backend(project_root;prompt;model;target_file)
+    _run_claude_code_backend(project_root;prompt;model;target_file)
+    _run_aider_backend(project_root;prompt;model;target_file;use_docker)
+    _run_llm_chat_with_retry(prompt;model)
+    _determine_task_status(validation;code_changes_applied)
     _execute_task(task;config;metrics;model_override;dry_run;backend;project_root)
   llx/routing/client.py:
     e: ChatMessage,ChatResponse,LlxClient
@@ -606,6 +622,10 @@ Usage:
   llx/privacy/_project_ast.py:
     e: ASTAnonymizer
     ASTAnonymizer(ast.NodeTransformer): __init__(2),visit_FunctionDef(1),visit_ClassDef(1),visit_Name(1),visit_Assign(1),visit_Attribute(1),visit_ImportFrom(1),visit_Import(1),visit_Constant(1),_is_builtin(1)  # AST transformer that anonymizes code symbols while preservin...
+  llx/privacy/_project_anonymizer.py:
+    e: ProjectAnonymizationResult,ProjectAnonymizer
+    ProjectAnonymizationResult:
+    ProjectAnonymizer: __init__(2),anonymize_project(3),anonymize_file(1),_anonymize_python(2),_anonymize_source_code(2),_anonymize_config(2),_anonymize_generic(2),anonymize_string(2)
   llx/prellm/core.py:
     e: PreLLM,_resolve_pipeline_name,_apply_config_overrides,_trace_preprocess_configuration,preprocess_and_execute,preprocess_and_execute_sync
     PreLLM: __init__(2),__call__(3),decompose_only(3),get_audit_log(0),_audit(3),_load_config(0)  # preLLM v0.2/v0.3 — small LLM decomposition before large LLM ...
@@ -713,10 +733,6 @@ Ever...
     _handle_llx_project_anonymize(args)
     _handle_llx_project_deanonymize(args)
     _handle_llx_privacy_scan(args)
-  llx/privacy/_project_anonymizer.py:
-    e: ProjectAnonymizationResult,ProjectAnonymizer
-    ProjectAnonymizationResult:
-    ProjectAnonymizer: __init__(2),anonymize_project(3),anonymize_file(1),_anonymize_python(2),_anonymize_source_code(2),_anonymize_config(2),_anonymize_generic(2),anonymize_string(2)
   examples/privacy/advanced/03_cicd_integration.py:
     e: SecurityScanResult,CICDPrivacyPipeline,create_cicd_project,main
     SecurityScanResult:  # Result of security scan...
@@ -946,6 +962,13 @@ U...
   llx/prellm/context/sensitive_filter.py:
     e: SensitiveDataFilter
     SensitiveDataFilter: __init__(3),_load_rules(1),classify_key(1),classify_value(1),filter_dict(2),filter_context_for_large_llm(1),sanitize_text(1),get_filter_report(0),_filter_dict_item(2),_filter_env_var_item(3),_filter_non_env_var_item(2),_filter_recursive(1),_looks_like_env_var(0),_mask_value(0)  # Classifies and filters sensitive data from context before LL...
+  llx/cli/version_check.py:
+    e: get_current_version,get_pypi_version,compare_versions,check_version,get_update_command
+    get_current_version()
+    get_pypi_version(package_name)
+    compare_versions(current;latest)
+    check_version()
+    get_update_command()
   llx/orchestration/session/cli.py:
     e: _build_parser,_dispatch,_cmd_create,_cmd_list,_cmd_queue,_cmd_cleanup,main
     _build_parser()
@@ -960,13 +983,6 @@ U...
     generate_proxy_config(config;output_path)
     start_proxy(config)
     check_proxy(base_url)
-  llx/cli/version_check.py:
-    e: get_current_version,get_pypi_version,compare_versions,check_version,get_update_command
-    get_current_version()
-    get_pypi_version(package_name)
-    compare_versions(current;latest)
-    check_version()
-    get_update_command()
   examples/privacy/advanced/02_multi_stage.py:
     e: AnonymizationLevel,MultiStageAnonymizer,create_business_logic_project,main
     AnonymizationLevel:  # Configuration for a specific anonymization level...
@@ -1508,7 +1524,6 @@ Uses multipro...
     print()
     print()
   Dockerfile:
-  project.sh:
   docker-compose-dev.yml:
   llx/__init__.py:
   strategy.yaml:
@@ -1671,6 +1686,7 @@ Uses multipro...
   llx/tools/config_manager.py:
   llx/tools/config/__init__.py:
   llx/cli/__init__.py:
+  llx/planfile/executor_simple.py:
   llx/planfile/__init__.py:
   llx/planfile/executor/base.py:
     e: BackendType,TaskResult
@@ -1760,14 +1776,16 @@ Uses multipro...
     Item(ItemBase):
   pyproject.toml:
   project/prompt.txt:
-  project/duplication.toon.yaml:
-  project/evolution.toon.yaml:
   project/project.toon.yaml:
-  project/calls.toon.yaml:
-  project/analysis.toon.yaml:
   planfile.yaml:
+  project/evolution.toon.yaml:
+  project/analysis.toon.yaml:
+  project.sh:
+  project/calls.toon.yaml:
+  project/duplication.toon.yaml:
+  project/calls.yaml:
   project/map.toon.yaml:
-    e: create_realistic_project,main,create_business_logic_project,main,create_cicd_project,main,main,main,create_complex_project,main,create_test_code_samples,main,create_sample_codebase,main,create_large_project,main,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_extract_metrics_target,_extract_evolution_stats,_extract_evolution_actions,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_parse_map_stats_line,_parse_map_alerts_line,_parse_map_hotspots_line,_count_map_modules,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope,check_tool,_run_tool,run_code2llm,run_redup,run_vallm,run_all_tools,_run_analysis_tools,analyze,select,chat,proxy_start,proxy_config,proxy_status,mcp_start,plan_generate,plan_review,plan_execute,plan_run,models,info,fix,init,_get_model_for_profile,_load_sprint_mapping,_generate_sprint_code,_plan_code_impl,main,analyze,_plan_code_impl,output_rich,output_json,_filter_models,_build_model_row,_render_models_table,_build_title,print_models_table,_render_tools_table,_render_tiers_table,_render_agents_table,_render_tags_legend,print_info_tables,create_strategy,validate_strategy,run_strategy_command,verify_strategy,add_strategy_commands,_extract_json_from_content,_apply_unified_diff,_finalize_hunk,_classify_line,_parse_unified_hunks,_find_hunk_position,apply_code_changes,load_errors_data,select_model_for_fix,display_model_selection_and_metrics,prepare_fix_prompt,handle_dry_run,execute_aider_fix,execute_prellm_fix,fix,normalize_litellm_base_url,_apply_toml,_apply_yaml_thresholds,_apply_yaml_models,_apply_yaml_proxy,_apply_yaml_models,_apply_yaml,_apply_env,build_context,_build_summary,_format_health,_format_evolution,_format_map_details,_format_duplication,_load_toon,generate_proxy_config,start_proxy,check_proxy,_tier_to_proxym,_build_llx_headers,load_litellm_config,_load_dotenv_fallback,_ensure_dotenv_loaded,get_llm_model,get_api_key,get_llm,list_tools,call_tool,run_stdio_server,create_app,run_sse_server,build_parser,main,main_sync,_escape_label_value,create_service_app,run_service,build_parser,main,_handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate,_handle_aider,_handle_llx_analyze,_handle_llx_select,_handle_llx_chat,_handle_planfile_generate,_handle_planfile_apply,_handle_llx_preprocess,_handle_llx_context,_handle_llx_project_anonymize,_handle_llx_project_deanonymize,_handle_llx_privacy_scan,_handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat,run_llx_fix_workflow,run_llx_refactor_workflow,load_json,save_json,_build_parser,_handle_status,_handle_health,_handle_monitor,_delegate_to_subpackage,main,cmd_remove_wrapper,cmd_remove_pair_wrapper,cmd_status_wrapper,cmd_list_wrapper,cmd_cleanup_wrapper,_build_parser,_dispatch,_cmd_create,_cmd_start,_cmd_stop,_cmd_list,_cmd_metrics,_cmd_health,main,_build_parser,_dispatch,_cmd_add_provider,_cmd_list_providers,_cmd_list_models,_cmd_model_info,_cmd_complete,_cmd_cancel,_cmd_status,_cmd_usage,main,execute_request,execute_ollama,execute_openai,execute_anthropic,messages_to_prompt,_failed,perform_health_checks,health_check_worker,_build_parser,_dispatch,_cmd_add,_cmd_enqueue,_cmd_dequeue,_cmd_complete,_cmd_status,_cmd_metrics,main,create_default_limits,add_limit,remove_limit,load_limits_from_file,save_limits_to_file,_build_parser,_dispatch,_cmd_add,_cmd_remove,_cmd_check,_cmd_record,_cmd_release,_cmd_status,_cmd_available,_cmd_cleanup,main,_build_parser,_dispatch,_cmd_route,_cmd_status,_cmd_metrics,_cmd_optimize,main,_build_parser,_dispatch,_cmd_create,_cmd_list,_cmd_queue,_cmd_cleanup,main,create_cleanup_handler,create_remove_handler,create_status_handler,_build_parser,_dispatch,_cmd_add_account,_cmd_list_accounts,_cmd_create,_cmd_start,_cmd_stop,_cmd_list,_cmd_sessions,main,load_vscode_config,save_vscode_config,create_default_vscode_config,create_strategy_command,create_strategy_command,example_create_strategy,example_validate_strategy,example_run_strategy,example_verify_strategy,example_programmatic_strategy,_detect_available_backends,_discover_mcp_services,_select_best_backend,_run_cursor_edit,_run_windsurf_edit,_run_claude_code_edit,_load_strategy,_save_strategy,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_normalize_strategy,execute_strategy,_map_action_to_task_type,_map_priority,_parse_llm_response,_select_model,_build_task_prompt,_execute_task,_normalize_strategy_data,_normalize_sprints,_normalize_single_sprint,_extract_sprint_id,_generate_tasks_from_patterns,_normalize_quality_gates,_normalize_single_gate,_normalize_goal,_normalize_metadata,generate_strategy_with_fix,_print_generation_info,_build_strategy_prompt,_call_llm_for_strategy,_parse_and_fix_yaml,_fix_yaml_formatting,_fix_list_formatting,_fix_indentation,save_fixed_strategy,main,load_valid_strategy,verify_strategy_post_execution,analyze_project_metrics,apply_strategy_to_tickets,run_strategy,_get_process_chain,configure,log_call,_get_user_memory_class,_get_codebase_indexer_class,_current_month_key,get_budget_tracker,reset_budget_tracker,query,context,process,decompose,init,serve,doctor,budget,models,session_list_cmd,session_export_cmd,session_import_cmd,session_clear_cmd,process,decompose,init,serve,_doctor_check_config,_doctor_check_providers,_doctor_check_files,doctor,budget,models,config_set_cmd,config_get_cmd,_format_config_sections,config_list_cmd,config_show_cmd,config_init_env,context,context_show_cmd,_init_logging,_handle_query_options,_show_debug_info,_initialize_execution,_execute_and_format_result,_relative_path,_path_to_module,_extract_module_from_import,_extract_module_docstring,collect_user_context,collect_environment_context,compress_codebase_folder,generate_context_schema,build_sensitive_filter,initialize_context_components,prepare_context,build_pipeline_context,_resolve_pipeline_name,_apply_config_overrides,_trace_preprocess_configuration,preprocess_and_execute,preprocess_and_execute_sync,_load_dotenv,get_env_config,extract_classification_from_state,extract_structure_from_state,extract_sub_queries_from_state,extract_missing_fields_from_state,extract_matched_rule_from_state,build_decomposition_result,format_classification_context,format_context_schema,format_runtime_context,format_user_context,build_executor_system_prompt,setup_logging,get_logger,_get_version,list_model_pairs,list_openrouter_models,load_pipeline_config,build_pipeline,execute_v3_pipeline,run_preprocessing,run_execution,persist_session,record_trace,_parse_model_pair,_build_prellm_meta,health,list_models,chat_completions,_stream_response,batch_process,create_app,get_current_trace,set_current_trace,_step_icon,_safe_json,_sanitize,_compact_value,_format_tree_value,_extract_prompt_text,_wrap_text,lazy_import_global,quick_anonymize,quick_deanonymize,_default_salt,_mapping_dict_for,_symbol_prefix,_mappings_to_dict,_dict_to_mappings,anonymize_project_with_progress,deanonymize_response_streaming,quick_project_deanonymize,build_reverse_lookup,find_symbol_tokens,find_content_tokens,get_content_mapping,restore_imports,restore_decorators,check_version_on_pypi,parse_version,bump_patch_version,update_version_file,update_pyproject_toml,git_commit_version_bump,main,_run_detect_secrets_subprocess,run_detect_secrets,main,run_ruff_lint,run_ruff_format_check,main,get_current_version,check_version_on_pypi,upload_to_pypi,main,run_pip_audit,run_bandit,main,run_mypy,main,get_current_version,verify_push,verify_publish,main,select_model,_count_premium_signals,_count_balanced_signals,_apply_task_adjustment,_compute_tier,_compute_alternative,check_context_fit,select_with_context_check,is_container_running,docker_exec,docker_cp,_build_parser,_delegate,_handle_start,_handle_stop,_handle_status,main,_cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_backup,_cmd_docker_env,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main,_build_parser,_dispatch,_handle_restore,_handle_health,_handle_wait,main,_build_parser,_write_json_output,_handle_check_command,_handle_quick_command,_handle_monitor_command,_handle_service_command,_handle_container_command,_handle_system_command,_handle_filesystem_command,_handle_network_command,_dispatch,main,_cmd_list,_cmd_pull,_cmd_test,_cmd_info,_cmd_recommend,_cmd_benchmark,_cmd_cleanup,_cmd_summary,_cmd_requirements,_build_parser,_dispatch,main,create_simple_handler,_cmd_start,_cmd_stop,_cmd_restart,_cmd_status,_cmd_logs,_cmd_install_extensions,_cmd_list_extensions,_cmd_update_extensions,_cmd_configure_roocode,_cmd_create_tasks,_cmd_create_launch,_cmd_backup,_cmd_quick_start,_build_parser,_dispatch,main,_extract_issue_files,_run_aider_fix,_format_aider_result,cli_main,_format_selection,_format_metrics,load_issue_source,load_todo_markdown,resolve_issue_source,_append_location,_append_first_present,issue_text,task_prompt_label,build_fix_prompt,_extract_file_refs,_read_snippet,_collect_file_context,_select_small_model,health,read_users,read_user,create_user,update_user,delete_user,read_products,read_product,create_product,update_product,delete_product,main,client,test_get_users,test_get_user,test_create_user,test_update_user,test_delete_user,test_api_performance,test_api_scalability,test_coverage,test_error_handling,test_security,test_placeholder,test_import,load_pyqual_config,save_pyqual_config,set_env_file,restore_env_file,backup_config,set_model,force_fix_stage,restore_metrics,run_pyqual,main,generate_simple_strategy,health_check,create_item,get_items,get_item,update_item,delete_item,test_read_root,test_read_health_check,test_create_item,test_get_item,test_get_item_not_found,test_get_items,test_update_item,test_update_item_not_found,test_delete_item,test_delete_item_not_found,test_invalid_item_data,test_create_item_parametrized,test_read_users,test_create_user,test_get_user,test_get_user_not_found,test_placeholder,test_import,test_llx_health,test_ollama_health,get_available_models,test_llx_models,test_chat_completion,_check_services,_print_models,_select_test_models,_run_chat_tests,_print_summary,main,test_aider_tool,test_aider_tool,test_strategy_models,test_strategy_validation,_make_metrics,test_fix_uses_aider_when_code_tool_is_enabled,event_loop,test
+    e: create_realistic_project,main,create_business_logic_project,main,create_cicd_project,main,main,main,create_complex_project,main,create_test_code_samples,main,create_sample_codebase,main,create_large_project,main,analyze_project,_collect_filesystem_metrics,_collect_code2llm_metrics,_apply_analysis_yaml,_extract_metrics_target,_extract_evolution_stats,_extract_evolution_actions,_apply_evolution_yaml,_apply_evolution_text,_apply_map_yaml,_parse_map_stats_line,_parse_map_alerts_line,_parse_map_hotspots_line,_count_map_modules,_apply_map_text,_collect_redup_metrics,_collect_vallm_metrics,_load_file,_extract_cc_value,_estimate_context_tokens,_classify_scope,check_tool,_run_tool,run_code2llm,run_redup,run_vallm,run_all_tools,_show_version_banner,_run_analysis_tools,analyze,select,chat,proxy_start,proxy_config,proxy_status,mcp_start,plan_generate,plan_review,plan_execute,plan_run,models,info,fix,init,_get_model_for_profile,_load_sprint_mapping,_generate_sprint_code,_plan_code_impl,main,analyze,_plan_code_impl,output_rich,output_json,_filter_models,_build_model_row,_render_models_table,_build_title,print_models_table,_render_tools_table,_render_tiers_table,_render_agents_table,_render_tags_legend,print_info_tables,create_strategy,validate_strategy,run_strategy_command,verify_strategy,add_strategy_commands,get_current_version,get_pypi_version,compare_versions,check_version,get_update_command,_extract_json_from_content,_apply_unified_diff,_finalize_hunk,_classify_line,_parse_unified_hunks,_find_hunk_position,apply_code_changes,load_errors_data,select_model_for_fix,display_model_selection_and_metrics,prepare_fix_prompt,handle_dry_run,execute_aider_fix,execute_prellm_fix,fix,normalize_litellm_base_url,_apply_toml,_apply_yaml_thresholds,_apply_yaml_models,_apply_yaml_proxy,_apply_yaml_models,_apply_yaml,_apply_env,build_context,_build_summary,_format_health,_format_evolution,_format_map_details,_format_duplication,_load_toon,generate_proxy_config,start_proxy,check_proxy,_tier_to_proxym,_build_llx_headers,load_litellm_config,_load_dotenv_fallback,_ensure_dotenv_loaded,get_llm_model,get_api_key,get_llm,list_tools,call_tool,run_stdio_server,create_app,run_sse_server,build_parser,main,main_sync,_escape_label_value,create_service_app,run_service,build_parser,main,_handle_code2llm_analyze,_handle_redup_scan,_handle_vallm_validate,_handle_aider,_handle_llx_analyze,_handle_llx_select,_handle_llx_chat,_handle_planfile_generate,_handle_planfile_apply,_handle_llx_preprocess,_handle_llx_context,_handle_llx_project_anonymize,_handle_llx_project_deanonymize,_handle_llx_privacy_scan,_handle_llx_proxy_status,_handle_llx_proxym_status,_handle_llx_proxym_chat,run_llx_fix_workflow,run_llx_refactor_workflow,load_json,save_json,_build_parser,_handle_status,_handle_health,_handle_monitor,_delegate_to_subpackage,main,cmd_remove_wrapper,cmd_remove_pair_wrapper,cmd_status_wrapper,cmd_list_wrapper,cmd_cleanup_wrapper,_build_parser,_dispatch,_cmd_create,_cmd_start,_cmd_stop,_cmd_list,_cmd_metrics,_cmd_health,main,_build_parser,_dispatch,_cmd_add_provider,_cmd_list_providers,_cmd_list_models,_cmd_model_info,_cmd_complete,_cmd_cancel,_cmd_status,_cmd_usage,main,execute_request,execute_ollama,execute_openai,execute_anthropic,messages_to_prompt,_failed,perform_health_checks,health_check_worker,_build_parser,_dispatch,_cmd_add,_cmd_enqueue,_cmd_dequeue,_cmd_complete,_cmd_status,_cmd_metrics,main,create_default_limits,add_limit,remove_limit,load_limits_from_file,save_limits_to_file,_build_parser,_dispatch,_cmd_add,_cmd_remove,_cmd_check,_cmd_record,_cmd_release,_cmd_status,_cmd_available,_cmd_cleanup,main,_build_parser,_dispatch,_cmd_route,_cmd_status,_cmd_metrics,_cmd_optimize,main,_build_parser,_dispatch,_cmd_create,_cmd_list,_cmd_queue,_cmd_cleanup,main,create_cleanup_handler,create_remove_handler,create_status_handler,_build_parser,_dispatch,_cmd_add_account,_cmd_list_accounts,_cmd_create,_cmd_start,_cmd_stop,_cmd_list,_cmd_sessions,main,load_vscode_config,save_vscode_config,create_default_vscode_config,create_strategy_command,create_strategy_command,example_create_strategy,example_validate_strategy,example_run_strategy,example_verify_strategy,example_programmatic_strategy,_detect_available_backends,_discover_mcp_services,_select_best_backend,_run_cursor_edit,_run_windsurf_edit,_run_claude_code_edit,_load_strategy,_save_strategy,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_normalize_strategy,execute_strategy,_map_action_to_task_type,_map_priority,_parse_llm_response,_select_model,_build_task_prompt,_execute_task,_normalize_strategy_data,_normalize_sprints,_normalize_single_sprint,_extract_sprint_id,_generate_tasks_from_patterns,_normalize_quality_gates,_normalize_single_gate,_normalize_goal,_normalize_metadata,generate_strategy_with_fix,_print_generation_info,_build_strategy_prompt,_call_llm_for_strategy,_parse_and_fix_yaml,_fix_yaml_formatting,_fix_list_formatting,_fix_indentation,save_fixed_strategy,main,load_valid_strategy,verify_strategy_post_execution,analyze_project_metrics,apply_strategy_to_tickets,run_strategy,_get_process_chain,configure,log_call,_get_user_memory_class,_get_codebase_indexer_class,_current_month_key,get_budget_tracker,reset_budget_tracker,query,context,process,decompose,init,serve,doctor,budget,models,session_list_cmd,session_export_cmd,session_import_cmd,session_clear_cmd,process,decompose,init,serve,_doctor_check_config,_doctor_check_providers,_doctor_check_files,doctor,budget,models,config_set_cmd,config_get_cmd,_format_config_sections,config_list_cmd,config_show_cmd,config_init_env,context,context_show_cmd,_init_logging,_handle_query_options,_show_debug_info,_initialize_execution,_execute_and_format_result,_relative_path,_path_to_module,_extract_module_from_import,_extract_module_docstring,collect_user_context,collect_environment_context,compress_codebase_folder,generate_context_schema,build_sensitive_filter,initialize_context_components,prepare_context,build_pipeline_context,_resolve_pipeline_name,_apply_config_overrides,_trace_preprocess_configuration,preprocess_and_execute,preprocess_and_execute_sync,_load_dotenv,get_env_config,extract_classification_from_state,extract_structure_from_state,extract_sub_queries_from_state,extract_missing_fields_from_state,extract_matched_rule_from_state,build_decomposition_result,format_classification_context,format_context_schema,format_runtime_context,format_user_context,build_executor_system_prompt,setup_logging,get_logger,_get_version,list_model_pairs,list_openrouter_models,load_pipeline_config,build_pipeline,execute_v3_pipeline,run_preprocessing,run_execution,persist_session,record_trace,_parse_model_pair,_build_prellm_meta,health,list_models,chat_completions,_stream_response,batch_process,create_app,get_current_trace,set_current_trace,_step_icon,_safe_json,_sanitize,_compact_value,_format_tree_value,_extract_prompt_text,_wrap_text,lazy_import_global,quick_anonymize,quick_deanonymize,_default_salt,_mapping_dict_for,_symbol_prefix,_mappings_to_dict,_dict_to_mappings,anonymize_project_with_progress,deanonymize_response_streaming,quick_project_deanonymize,build_reverse_lookup,find_symbol_tokens,find_content_tokens,get_content_mapping,restore_imports,restore_decorators,check_version_on_pypi,parse_version,bump_patch_version,update_version_file,update_pyproject_toml,git_commit_version_bump,main,_run_detect_secrets_subprocess,run_detect_secrets,main,run_ruff_lint,run_ruff_format_check,main,get_current_version,check_version_on_pypi,upload_to_pypi,main,run_pip_audit,run_bandit,main,run_mypy,main,get_current_version,verify_push,verify_publish,main,select_model,_count_premium_signals,_count_balanced_signals,_apply_task_adjustment,_compute_tier,_compute_alternative,check_context_fit,select_with_context_check,is_container_running,docker_exec,docker_cp,_build_parser,_delegate,_handle_start,_handle_stop,_handle_status,main,_cmd_load,_cmd_save,_cmd_create_env,_cmd_update_env,_cmd_get_env,_cmd_validate,_cmd_list_models,_cmd_add_model,_cmd_backup,_cmd_docker_env,_cmd_list_profiles,_cmd_summary,_build_parser,_dispatch,main,_build_parser,_dispatch,_handle_restore,_handle_health,_handle_wait,main,_build_parser,_write_json_output,_handle_check_command,_handle_quick_command,_handle_monitor_command,_handle_service_command,_handle_container_command,_handle_system_command,_handle_filesystem_command,_handle_network_command,_dispatch,main,_cmd_list,_cmd_pull,_cmd_test,_cmd_info,_cmd_recommend,_cmd_benchmark,_cmd_cleanup,_cmd_summary,_cmd_requirements,_build_parser,_dispatch,main,create_simple_handler,_cmd_start,_cmd_stop,_cmd_restart,_cmd_status,_cmd_logs,_cmd_install_extensions,_cmd_list_extensions,_cmd_update_extensions,_cmd_configure_roocode,_cmd_create_tasks,_cmd_create_launch,_cmd_backup,_cmd_quick_start,_build_parser,_dispatch,main,_extract_issue_files,_run_aider_fix,_format_aider_result,cli_main,_format_selection,_format_metrics,load_issue_source,load_todo_markdown,resolve_issue_source,_append_location,_append_first_present,issue_text,task_prompt_label,build_fix_prompt,_extract_file_refs,_read_snippet,_collect_file_context,_select_small_model,health,read_users,read_user,create_user,update_user,delete_user,read_products,read_product,create_product,update_product,delete_product,main,client,test_get_users,test_get_user,test_create_user,test_update_user,test_delete_user,test_api_performance,test_api_scalability,test_coverage,test_error_handling,test_security,test_placeholder,test_import,load_pyqual_config,save_pyqual_config,set_env_file,restore_env_file,backup_config,set_model,force_fix_stage,restore_metrics,run_pyqual,main,generate_simple_strategy,health_check,create_item,get_items,get_item,update_item,delete_item,test_read_root,test_read_health_check,test_create_item,test_get_item,test_get_item_not_found,test_get_items,test_update_item,test_update_item_not_found,test_delete_item,test_delete_item_not_found,test_invalid_item_data,test_create_item_parametrized,test_read_users,test_create_user,test_get_user,test_get_user_not_found,test_placeholder,test_import,test_llx_health,test_ollama_health,get_available_models,test_llx_models,test_chat_completion,_check_services,_print_models,_select_test_models,_run_chat_tests,_print_summary,main,test_aider_tool,test_aider_tool,test_strategy_models,test_strategy_validation,_make_metrics,test_fix_uses_aider_when_code_tool_is_enabled,event_loop,test
     create_realistic_project()
     main()
     create_business_logic_project()
@@ -1811,6 +1829,7 @@ Uses multipro...
     run_redup()
     run_vallm()
     run_all_tools()
+    _show_version_banner()
     _run_analysis_tools()
     analyze()
     select()
@@ -1851,6 +1870,11 @@ Uses multipro...
     run_strategy_command()
     verify_strategy()
     add_strategy_commands()
+    get_current_version()
+    get_pypi_version()
+    compare_versions()
+    check_version()
+    get_update_command()
     _extract_json_from_content()
     _apply_unified_diff()
     _finalize_hunk()
@@ -2392,8 +2416,6 @@ Uses multipro...
     test_fix_uses_aider_when_code_tool_is_enabled()
     event_loop()
     test()
-  project/calls.yaml:
-  llx/tools/__init__.py:
   llx/orchestration/__init__.py:
   llx/pyqual_plugins/__init__.py:
-  llx/planfile/executor_simple.py:
+  llx/tools/__init__.py:

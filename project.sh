@@ -40,7 +40,7 @@ $PIP install sumd --upgrade --quiet
 $VENV/bin/sumd .
 $VENV/bin/sumr .
 
-./tree.sh
+bash tree.sh
 
 pip install -U goal
 $PIP install goal --upgrade --quiet

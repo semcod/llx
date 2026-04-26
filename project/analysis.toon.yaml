@@ -1,18 +1,15 @@
-# code2llm | 339f 59548L | python:210,yaml:59,shell:32,yml:10,txt:4,json:4,toml:3,conf:3 | 2026-04-26
-# CC̄=2.7 | critical:8/1935 | dups:0 | cycles:0
+# code2llm | 339f 59592L | python:210,yaml:59,shell:32,yml:10,txt:4,json:4,toml:3,conf:3 | 2026-04-26
+# CC̄=2.6 | critical:5/1956 | dups:0 | cycles:0
 
-HEALTH[8]:
+HEALTH[5]:
   🟡 CC    main CC=15 (limit:15)
-  🟡 CC    chat CC=16 (limit:15)
-  🟡 CC    _parse_llm_response CC=18 (limit:15)
-  🟡 CC    _execute_task CC=34 (limit:15)
-  🟡 CC    _update_task_in_planfile CC=16 (limit:15)
-  🟡 CC    _normalize_strategy CC=22 (limit:15)
-  🟡 CC    execute_strategy CC=53 (limit:15)
   🟡 CC    plan_run CC=51 (limit:15)
+  🟡 CC    chat CC=16 (limit:15)
+  🟡 CC    _execute_task CC=18 (limit:15)
+  🟡 CC    execute_strategy CC=53 (limit:15)
 
 REFACTOR[1]:
-  1. split 8 high-CC methods  (CC>15)
+  1. split 5 high-CC methods  (CC>15)
 
 PIPELINES[1011]:
   [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
@@ -31,7 +28,7 @@ LAYERS:
   │ !! vscode_manager             791L  1C   38m  CC=10     ←0
   │ !! model_manager              756L  1C   36m  CC=8      ←0
   │ !! trace                      648L  2C   29m  CC=13     ←2
-  │ !! app                        644L  0C   22m  CC=51     ←0
+  │ !! app                        644L  0C   22m  CC=51     ←1
   │ !! orchestrator               642L  1C   28m  CC=10     ←0
   │ !! engine                     638L  1C   38m  CC=11     ←0
   │ !! manager                    614L  1C   30m  CC=12     ←0
@@ -46,10 +43,10 @@ LAYERS:
   │ collector                  482L  1C   21m  CC=10     ←7
   │ generate_strategy          470L  0C   19m  CC=9      ←2
   │ core                       468L  1C   11m  CC=10     ←5
-  │ !! task                       460L  0C    6m  CC=34     ←0
   │ server                     447L  10C    9m  CC=12     ←2
+  │ !! strategy                   446L  0C   13m  CC=53     ←0
   │ manager                    445L  1C   20m  CC=14     ←0
-  │ !! strategy                   438L  0C    7m  CC=53     ←0
+  │ !! task                       439L  0C   16m  CC=18     ←0
   │ models                     432L  33C    2m  CC=1      ←1
   │ deanonymize                424L  4C   16m  CC=8      ←1
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
@@ -170,8 +167,8 @@ LAYERS:
   │ algo_handlers               62L  1C   12m  CC=3      ←0
   │ models                      61L  4C    0m  CC=0.0    ←0
   │ models                      61L  4C    0m  CC=0.0    ←0
-  │ __init__                    58L  0C    0m  CC=0.0    ←0
   │ executor_simple             58L  0C    0m  CC=0.0    ←0
+  │ __init__                    58L  0C    0m  CC=0.0    ←0
   │ __init__                    56L  0C    0m  CC=0.0    ←0
   │ models                      54L  4C    0m  CC=0.0    ←0
   │ _docker                     53L  0C    3m  CC=3      ←1
@@ -312,7 +309,7 @@ LAYERS:
   │ models                       0L  3C    0m  CC=0.0    ←0
   │
   ./                              CC̄=1.5    ←in:0  →out:0
-  │ !! planfile.yaml             1671L  0C    0m  CC=0.0    ←0
+  │ !! planfile.yaml             1678L  0C    0m  CC=0.0    ←0
   │ !! Taskfile.yml               515L  0C    1m  CC=0.0    ←57
   │ goal.yaml                  429L  0C    0m  CC=0.0    ←0
   │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
@@ -363,14 +360,14 @@ LAYERS:
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                7089L  0C    0m  CC=0.0    ←0
-  │ !! map.toon.yaml             1627L  0C  513m  CC=0.0    ←7
-  │ !! calls.toon.yaml            613L  0C    0m  CC=0.0    ←0
-  │ analysis.toon.yaml         448L  0C    0m  CC=0.0    ←0
-  │ duplication.toon.yaml      260L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                7109L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             1636L  0C  518m  CC=0.0    ←6
+  │ !! calls.toon.yaml            615L  0C    0m  CC=0.0    ←0
+  │ analysis.toon.yaml         454L  0C    0m  CC=0.0    ←0
+  │ duplication.toon.yaml      266L  0C    0m  CC=0.0    ←0
   │ validation.toon.yaml       157L  0C    0m  CC=0.0    ←0
-  │ evolution.toon.yaml         78L  0C    0m  CC=0.0    ←0
-  │ project.toon.yaml           53L  0C    0m  CC=0.0    ←0
+  │ evolution.toon.yaml         82L  0C    0m  CC=0.0    ←0
+  │ project.toon.yaml           56L  0C    0m  CC=0.0    ←0
   │ prompt.txt                  47L  0C    0m  CC=0.0    ←0
   │
   .taskill/                       CC̄=0.0    ←in:0  →out:0
@@ -427,27 +424,27 @@ COUPLING:
         llx.examples                  12                                                                                                                                                                                   1                                                                              ──                      !! fan-out
         llx.commands                                                                                                                                                                                   8                   1                                                           1                                      ──  !! fan-out
   CYCLES: none
-  HUB: llx.planfile/ (fan-in=11)
   HUB: examples.filtering/ (fan-in=5)
-  HUB: llx.analysis/ (fan-in=15)
-  HUB: project.map/ (fan-in=10)
+  HUB: llx.planfile/ (fan-in=11)
   HUB: llx.routing/ (fan-in=8)
-  HUB: llx.utils/ (fan-in=24)
-  HUB: Taskfile/ (fan-in=1355)
-  HUB: llx.integrations/ (fan-in=6)
   HUB: llx/ (fan-in=25)
+  HUB: Taskfile/ (fan-in=1355)
   HUB: examples.docker/ (fan-in=7)
-  SMELL: llx.tools/ fan-out=417 → split needed
+  HUB: llx.utils/ (fan-in=24)
+  HUB: llx.analysis/ (fan-in=15)
+  HUB: project.map/ (fan-in=9)
+  HUB: llx.integrations/ (fan-in=6)
   SMELL: llx.planfile/ fan-out=34 → split needed
-  SMELL: llx.examples/ fan-out=13 → split needed
-  SMELL: llx.cli/ fan-out=68 → split needed
-  SMELL: llx.commands/ fan-out=12 → split needed
+  SMELL: llx.tools/ fan-out=417 → split needed
   SMELL: llx.mcp/ fan-out=19 → split needed
-  SMELL: llx.orchestration/ fan-out=326 → split needed
-  SMELL: scripts/ fan-out=19 → split needed
-  SMELL: test-local-chat/ fan-out=39 → split needed
-  SMELL: examples.privacy/ fan-out=438 → split needed
   SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
+  SMELL: llx.cli/ fan-out=67 → split needed
+  SMELL: llx.commands/ fan-out=12 → split needed
+  SMELL: llx.examples/ fan-out=13 → split needed
+  SMELL: examples.privacy/ fan-out=438 → split needed
+  SMELL: test-local-chat/ fan-out=39 → split needed
+  SMELL: scripts/ fan-out=19 → split needed
+  SMELL: llx.orchestration/ fan-out=326 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

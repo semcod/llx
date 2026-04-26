@@ -45,96 +45,101 @@ from llx.utils.aider import _run_aider_fix
 logger = logging.getLogger(__name__)
 
 
+def _check_indicators(text: str, indicators: list[str]) -> bool:
+    """Return True if any indicator is present in text (case-insensitive)."""
+    text_lower = text.lower()
+    return any(indicator in text_lower for indicator in indicators)
+
+
+_NOT_FOUND_INDICATORS = [
+    "issue not found",
+    "problem not found",
+    "no such issue",
+    "cannot find",
+    "could not find",
+    "doesn't exist",
+    "does not exist",
+    "already fixed",
+    "already resolved",
+    "no action needed",
+    "no changes needed",
+    "nothing to fix",
+    "not applicable",
+    "already up to date",
+]
+
+_CHANGES_INDICATORS = [
+    "i have modified",
+    "i have changed",
+    "i've updated",
+    "i updated",
+    "here is the modified",
+    "here is the updated",
+    "here is the fixed",
+    "changes made",
+    "file updated",
+    "code changed",
+    "i made the following changes",
+    "here are the changes",
+    "modified the",
+    "refactored",
+    "rewrote",
+]
+
+_FIXED_INDICATORS = [
+    "issue fixed",
+    "problem fixed",
+    "resolved",
+    "corrected",
+    "fixed the",
+    "has been fixed",
+    "successfully fixed",
+    "addressed",
+    "eliminated",
+]
+
+
+def _extract_explanation(lines: list[str], indicators: list[str]) -> str:
+    """Extract explanation context from lines where an indicator appears."""
+    for i, line in enumerate(lines):
+        if any(ind in line.lower() for ind in indicators):
+            context_lines = [line]
+            for j in range(i + 1, min(i + 4, len(lines))):
+                if lines[j].strip() and not lines[j].startswith('```'):
+                    context_lines.append(lines[j])
+            return ' '.join(context_lines)
+    return ""
+
+
+def _build_message(issue_not_found: bool, changes_made: bool, problem_fixed: bool, explanation: str) -> str:
+    """Build human-readable summary message from parsed flags."""
+    if issue_not_found:
+        return f"Task cancelled: {explanation}"
+    if changes_made and problem_fixed:
+        return "LLM reports changes made and issue fixed"
+    if changes_made:
+        return "LLM reports changes made"
+    if problem_fixed:
+        return "LLM reports issue fixed"
+    return "LLM response unclear about changes"
+
+
 def _parse_llm_response(response: str) -> dict:
     """Parse LLM response to extract structured information."""
     response_lower = response.lower()
-
-    # Presence of a Python code block is strong evidence changes were made
     has_code_block = "```python" in response_lower
 
-    # Check if LLM claims issue doesn't exist
-    not_found_indicators = [
-        "issue not found",
-        "problem not found",
-        "no such issue",
-        "cannot find",
-        "could not find",
-        "doesn't exist",
-        "does not exist",
-        "already fixed",
-        "already resolved",
-        "no action needed",
-        "no changes needed",
-        "nothing to fix",
-        "not applicable",
-        "already up to date",
-    ]
-    issue_not_found = any(indicator in response_lower for indicator in not_found_indicators)
+    issue_not_found = _check_indicators(response, _NOT_FOUND_INDICATORS)
+    changes_made = has_code_block or _check_indicators(response, _CHANGES_INDICATORS)
+    problem_fixed = _check_indicators(response, _FIXED_INDICATORS)
 
-    # Check if LLM claims changes were made
-    changes_indicators = [
-        "i have modified",
-        "i have changed",
-        "i've updated",
-        "i updated",
-        "here is the modified",
-        "here is the updated",
-        "here is the fixed",
-        "changes made",
-        "file updated",
-        "code changed",
-        "i made the following changes",
-        "here are the changes",
-        "modified the",
-        "refactored",
-        "rewrote",
-    ]
-    changes_made = has_code_block or any(indicator in response_lower for indicator in changes_indicators)
-
-    # Check if LLM claims problem was fixed
-    fixed_indicators = [
-        "issue fixed",
-        "problem fixed",
-        "resolved",
-        "corrected",
-        "fixed the",
-        "has been fixed",
-        "successfully fixed",
-        "addressed",
-        "eliminated",
-    ]
-    problem_fixed = any(indicator in response_lower for indicator in fixed_indicators)
-
-    # Extract detailed explanation for "issue not found" cases
     detailed_explanation = ""
     if issue_not_found:
-        # Try to extract the explanation from the response
-        lines = response.split('\n')
-        for i, line in enumerate(lines):
-            line_lower = line.lower()
-            if any(ind in line_lower for ind in not_found_indicators):
-                # Collect this line and the next few lines for context
-                context_lines = [line]
-                for j in range(i+1, min(i+4, len(lines))):
-                    if lines[j].strip() and not lines[j].startswith('```'):
-                        context_lines.append(lines[j])
-                detailed_explanation = ' '.join(context_lines)
-                break
-        
+        detailed_explanation = _extract_explanation(response.split('\n'), _NOT_FOUND_INDICATORS)
         if not detailed_explanation:
             detailed_explanation = "The issue described in the ticket was not found in the codebase."
 
-    # Build summary message with detailed explanation
-    if issue_not_found:
-        message = f"Task cancelled: {detailed_explanation}"
-    elif changes_made and problem_fixed:
-        message = "LLM reports changes made and issue fixed"
-    elif changes_made:
-        message = "LLM reports changes made"
-    elif problem_fixed:
-        message = "LLM reports issue fixed"
-    else:
-        message = "LLM response unclear about changes"
+    message = _build_message(issue_not_found, changes_made, problem_fixed, detailed_explanation)
 
     return {
         "changes_made": changes_made,
@@ -247,6 +252,112 @@ Focus on practical, actionable changes that improve the codebase.
     return prompt
 
 
+def _run_mcp_backend(target_file: str, prompt: str, model: str) -> tuple[str, bool, str]:
+    """Run MCP backend. Returns (response, changes_applied, effective_backend)."""
+    try:
+        from llx.mcp.client import MCPClient
+        mcp_client = MCPClient()
+        tool_result = mcp_client.call_tool(
+            "aider_edit_file",
+            {"file_path": target_file, "prompt": prompt, "model": model}
+        )
+        return str(tool_result), True, BackendType.MCP
+    except Exception as e:
+        logger.error(f"MCP editing failed: {e}")
+        return "", False, BackendType.LLM_CHAT
+
+
+def _run_cursor_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+    """Run Cursor backend. Returns (response, changes_applied)."""
+    result = _run_cursor_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
+    response = result.get("stdout", "") + "\n" + result.get("stderr", "")
+    success = result.get("success", False)
+    if not success:
+        logger.error(f"Cursor failed: {result.get('stderr', 'Unknown error')}")
+    return response, success
+
+
+def _run_windsurf_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+    """Run Windsurf backend. Returns (response, changes_applied)."""
+    result = _run_windsurf_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
+    response = result.get("stdout", "") + "\n" + result.get("stderr", "")
+    success = result.get("success", False)
+    if not success:
+        logger.error(f"Windsurf failed: {result.get('stderr', 'Unknown error')}")
+    return response, success
+
+
+def _run_claude_code_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+    """Run Claude Code backend. Returns (response, changes_applied)."""
+    result = _run_claude_code_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
+    response = result.get("stdout", "") + "\n" + result.get("stderr", "")
+    success = result.get("success", False)
+    if not success:
+        logger.error(f"Claude Code failed: {result.get('stderr', 'Unknown error')}")
+    return response, success
+
+
+def _run_aider_backend(project_root: Path, prompt: str, model: str, target_file: str, use_docker: bool) -> tuple[str, bool]:
+    """Run aider backend. Returns (response, changes_applied)."""
+    result = _run_aider_fix(
+        workdir=project_root,
+        prompt=prompt,
+        model=model,
+        files=[target_file] if target_file else None,
+        use_docker=use_docker
+    )
+    response = result.get("stdout", "") + "\n" + result.get("stderr", "")
+    success = result.get("success", False)
+    if not success:
+        logger.warning(f"Aider editing failed: {result.get('stderr', 'Unknown error')}")
+    return response, success
+
+
+def _run_llm_chat_with_retry(prompt: str, model: str) -> str:
+    """Run LLM chat with optional retry on unclear responses. Returns response content or raises Exception."""
+    client = LlxClient()
+    messages = [
+        ChatMessage(role="system", content="You are a helpful coding assistant."),
+        ChatMessage(role="user", content=prompt)
+    ]
+    response = client.chat(messages=messages, model=model, temperature=0.7)
+    response_content = response.content
+
+    validation = _parse_llm_response(response_content)
+    unclear = not validation["issue_not_found"] and not validation["changes_made"] and not validation["problem_fixed"]
+    if unclear:
+        logger.warning("LLM response unclear; retrying with stricter instructions")
+        strict_messages = [
+            ChatMessage(
+                role="system",
+                content=(
+                    "You are a precise coding assistant. "
+                    "When you modify code you MUST wrap the full file in a ```python block. "
+                    "If you make no changes, say exactly: 'No action needed'."
+                )
+            ),
+            ChatMessage(role="user", content=prompt)
+        ]
+        try:
+            retry_response = client.chat(messages=strict_messages, model=model, temperature=0.1)
+            return retry_response.content
+        except Exception as e:
+            logger.error(f"LLM retry failed: {e}")
+    return response_content
+
+
+def _determine_task_status(validation: dict, code_changes_applied: bool) -> tuple[str, bool, str]:
+    """Determine final task status from validation and backend results.
+
+    Returns (status, file_changed, validation_message).
+    """
+    if validation["issue_not_found"]:
+        return "cancelled", False, validation["message"]
+    if validation["changes_made"] or validation["problem_fixed"] or code_changes_applied:
+        return "success", code_changes_applied or validation["changes_made"], validation["message"]
+    return "failed", False, validation["message"]
+
+
 def _execute_task(
     task: dict,
     config: LlxConfig,
@@ -260,9 +371,8 @@ def _execute_task(
     start_time = time.time()
     task_name = task.get("name", "Unnamed Task")
     target_file = task.get("file")
-    
+
     try:
-        # Select model
         model = model_override or _select_model(task, config, metrics)
 
         if dry_run:
@@ -274,118 +384,25 @@ def _execute_task(
                 execution_time=time.time() - start_time
             )
 
-        # Build prompt
         prompt = _build_task_prompt(task, metrics)
-
-        # Execute using selected backend
         code_changes_applied = False
         response_content = ""
-        
+
         if backend == BackendType.MCP and target_file:
-            # Use MCP for code editing
-            try:
-                from llx.mcp.client import MCPClient
-                mcp_client = MCPClient()
-                
-                # Build MCP tool call
-                tool_result = mcp_client.call_tool(
-                    "aider_edit_file",
-                    {
-                        "file_path": str(target_file),
-                        "prompt": prompt,
-                        "model": model
-                    }
-                )
-                
-                response_content = str(tool_result)
-                code_changes_applied = True  # Assume MCP handles changes
-                
-                if not code_changes_applied:
-                    logger.error("MCP editing failed")
-            except Exception as e:
-                logger.error(f"MCP editing failed: {e}")
-                # Fallback to LLM chat
-                backend = BackendType.LLM_CHAT
-                
+            response_content, code_changes_applied, backend = _run_mcp_backend(str(target_file), prompt, model)
         elif backend == BackendType.CURSOR and target_file:
-            # Use Cursor for code editing
-            cursor_result = _run_cursor_edit(
-                workdir=project_root,
-                prompt=prompt,
-                model=model,
-                files=[str(target_file)]
-            )
-            
-            response_content = cursor_result.get("stdout", "") + "\n" + cursor_result.get("stderr", "")
-            code_changes_applied = cursor_result.get("success", False)
-            
-            if not code_changes_applied:
-                logger.error(f"Cursor failed: {cursor_result.get('stderr', 'Unknown error')}")
-                
+            response_content, code_changes_applied = _run_cursor_backend(project_root, prompt, model, str(target_file))
         elif backend == BackendType.WINDSURF and target_file:
-            # Use Windsurf for code editing
-            windsurf_result = _run_windsurf_edit(
-                workdir=project_root,
-                prompt=prompt,
-                model=model,
-                files=[str(target_file)]
-            )
-            
-            response_content = windsurf_result.get("stdout", "") + "\n" + windsurf_result.get("stderr", "")
-            code_changes_applied = windsurf_result.get("success", False)
-            
-            if not code_changes_applied:
-                logger.error(f"Windsurf failed: {windsurf_result.get('stderr', 'Unknown error')}")
-                
+            response_content, code_changes_applied = _run_windsurf_backend(project_root, prompt, model, str(target_file))
         elif backend == BackendType.CLAUDE_CODE and target_file:
-            # Use Claude Code for code editing
-            claude_result = _run_claude_code_edit(
-                workdir=project_root,
-                prompt=prompt,
-                model=model,
-                files=[str(target_file)]
-            )
-            
-            response_content = claude_result.get("stdout", "") + "\n" + claude_result.get("stderr", "")
-            code_changes_applied = claude_result.get("success", False)
-            
-            if not code_changes_applied:
-                logger.error(f"Claude Code failed: {claude_result.get('stderr', 'Unknown error')}")
-                
+            response_content, code_changes_applied = _run_claude_code_backend(project_root, prompt, model, str(target_file))
         elif backend in [BackendType.LOCAL, BackendType.DOCKER] and target_file:
-            # Use aider for code editing
-            use_docker = (backend == BackendType.DOCKER)
-            aider_result = _run_aider_fix(
-                workdir=project_root,
-                prompt=prompt,
-                model=model,
-                files=[str(target_file)] if target_file else None,
-                use_docker=use_docker
-            )
+            use_docker = backend == BackendType.DOCKER
+            response_content, code_changes_applied = _run_aider_backend(project_root, prompt, model, str(target_file), use_docker)
 
-            response_content = aider_result.get("stdout", "") + "\n" + aider_result.get("stderr", "")
-            code_changes_applied = aider_result.get("success", False)
-
-            if not code_changes_applied:
-                logger.warning(f"Aider editing failed: {aider_result.get('stderr', 'Unknown error')}")
-                # Still continue - aider might have partially succeeded
-        
-        # Default: use LLM chat
         if not code_changes_applied and backend == BackendType.LLM_CHAT:
-            client = LlxClient()
-
-            messages = [
-                ChatMessage(role="system", content="You are a helpful coding assistant."),
-                ChatMessage(role="user", content=prompt)
-            ]
-
             try:
-                response = client.chat(
-                    messages=messages,
-                    model=model,
-                    temperature=0.7
-                )
-                response_content = response.content
+                response_content = _run_llm_chat_with_retry(prompt, model)
             except Exception as e:
                 logger.error(f"LLM chat failed: {e}")
                 return TaskResult(
@@ -397,46 +414,8 @@ def _execute_task(
                     execution_time=time.time() - start_time
                 )
 
-            # Retry once with stricter prompt if response is unclear
-            validation = _parse_llm_response(response_content)
-            if not validation["issue_not_found"] and not validation["changes_made"] and not validation["problem_fixed"]:
-                logger.warning("LLM response unclear; retrying with stricter instructions")
-                strict_messages = [
-                    ChatMessage(
-                        role="system",
-                        content=(
-                            "You are a precise coding assistant. "
-                            "When you modify code you MUST wrap the full file in a ```python block. "
-                            "If you make no changes, say exactly: 'No action needed'."
-                        )
-                    ),
-                    ChatMessage(role="user", content=prompt)
-                ]
-                try:
-                    retry_response = client.chat(
-                        messages=strict_messages,
-                        model=model,
-                        temperature=0.1
-                    )
-                    response_content = retry_response.content
-                except Exception as e:
-                    logger.error(f"LLM retry failed: {e}")
-                    # Keep original response, mark as failed below
-
-        # Parse response for validation
         validation = _parse_llm_response(response_content)
-
-        # Determine final status based on validation and changes
-        if validation["issue_not_found"]:
-            status = "cancelled"
-        elif validation["changes_made"] or validation["problem_fixed"]:
-            status = "success"
-        elif code_changes_applied:
-            status = "success"
-        else:
-            status = "failed"
-
-        validation_message = validation["message"]
+        status, file_changed, validation_message = _determine_task_status(validation, code_changes_applied)
 
         return TaskResult(
             task_name=task_name,
@@ -444,10 +423,10 @@ def _execute_task(
             model_used=model,
             response=response_content,
             execution_time=time.time() - start_time,
-            file_changed=code_changes_applied or validation["changes_made"],
+            file_changed=file_changed,
             validation_message=validation_message
         )
-        
+
     except Exception as e:
         logger.error(f"Task execution failed: {e}")
         return TaskResult(

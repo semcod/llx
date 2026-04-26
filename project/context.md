@@ -6,15 +6,15 @@
 - **Primary Language**: python
 - **Languages**: python: 210, yaml: 59, shell: 32, yml: 10, txt: 4
 - **Analysis Mode**: static
-- **Total Functions**: 1935
+- **Total Functions**: 1956
 - **Total Classes**: 233
 - **Modules**: 338
-- **Entry Points**: 1634
+- **Entry Points**: 1640
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 624
+- **Functions**: 630
 - **File**: `map.toon.yaml`
 
 ### llx.tools.vscode_manager
@@ -105,9 +105,9 @@
 - **Classes**: 4
 - **File**: `deanonymize.py`
 
-### ai-tools-manage
-- **Functions**: 15
-- **File**: `ai-tools-manage.sh`
+### llx.planfile.executor.task
+- **Functions**: 16
+- **File**: `task.py`
 
 ## Key Entry Points
 
@@ -140,10 +140,6 @@ Args:
 
 ### examples.privacy.ml.03_contextual_passwords.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, ContextualPasswordDetector, examples.privacy.ml.03_contextual_passwords.create_test_code_samples, samples.items, Taskfile.print, Taskfile.print
-
-### llx.planfile.executor.task._execute_task
-> Execute a single task.
-- **Calls**: Path, time.time, task.get, task.get, llx.planfile.executor.task._build_task_prompt, llx.planfile.executor.task._parse_llm_response, TaskResult, llx.planfile.executor.task._select_model
 
 ### examples.privacy.project.01_anonymize_project.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.project.01_anonymize_project.create_sample_project
@@ -195,6 +191,10 @@ Args:
 ### llx.orchestration.queue.manager.QueueManager.load_queues
 > Load queues from configuration file.
 - **Calls**: self.config_file.exists, data.get, Taskfile.print, Taskfile.print, Taskfile.print, open, json.load, QueueConfig
+
+### llx.planfile.executor.task._execute_task
+> Execute a single task.
+- **Calls**: Path, time.time, task.get, task.get, llx.planfile.executor.task._build_task_prompt, llx.planfile.executor.task._parse_llm_response, llx.planfile.executor.task._determine_task_status, TaskResult
 
 ### llx.tools.health_checker.HealthChecker.monitor_services
 > Monitor services over time.
@@ -249,51 +249,55 @@ plan_run [llx.cli.app]
 execute_strategy [llx.planfile.executor.strategy]
   └─> _load_strategy
   └─> _normalize_strategy
+      └─> _build_task_lookup
+      └─> _normalize_v2_sprints
+          └─> _normalize_v2_task
   └─ →> analyze_project
       └─> _collect_filesystem_metrics
       └─> _estimate_context_tokens
 ```
 
-### Flow 4: _execute_task
-```
-_execute_task [llx.planfile.executor.task]
-  └─> _build_task_prompt
-```
-
-### Flow 5: load_instances
+### Flow 4: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 6: print_quick_start
+### Flow 5: print_quick_start
 ```
 print_quick_start [llx.tools.vscode_manager.VSCodeManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 7: load_vscode_config
+### Flow 6: load_vscode_config
 ```
 load_vscode_config [llx.orchestration.vscode.config_io]
 ```
 
-### Flow 8: load_config
+### Flow 7: load_config
 ```
 load_config [llx.orchestration.vscode.orchestrator.VSCodeOrchestrator]
 ```
 
-### Flow 9: load_limits
+### Flow 8: load_limits
 ```
 load_limits [llx.orchestration.ratelimit.limiter.RateLimiter]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 10: load_limits_from_file
+### Flow 9: load_limits_from_file
 ```
 load_limits_from_file [llx.orchestration.ratelimit._persistence]
+  └─ →> print
+  └─ →> print
+```
+
+### Flow 10: load_sessions
+```
+load_sessions [llx.orchestration.session.manager.SessionManager]
   └─ →> print
   └─ →> print
 ```
@@ -611,16 +615,15 @@ graph TD
     main --> MLBasedAnonymizer
     main --> ContextualPasswordDe
     main --> create_test_code_sam
-    _execute_task --> Path
-    _execute_task --> time
-    _execute_task --> get
-    _execute_task --> _build_task_prompt
     main --> ArgumentParser
     main --> add_argument
     load_instances --> exists
     load_instances --> get
     load_instances --> print
     print_quick_start --> print
+    load_vscode_config --> exists
+    load_vscode_config --> update
+    load_vscode_config --> get
 ```
 
 ## Reverse Engineering Guidelines
