@@ -129,6 +129,21 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.72] - 2026-04-26
+
+### Docs
+- Update README.md
+- Update TODO.md
+
+### Test
+- Update tests/test_plan_run_regressions.py
+
+### Other
+- Update llx/cli/app.py
+- Update llx/planfile/executor/base.py
+- Update llx/planfile/executor/strategy.py
+- Update planfile.yaml
+
 ## [0.1.71] - 2026-04-26
 
 ### Docs

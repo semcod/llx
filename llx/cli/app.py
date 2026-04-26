@@ -23,6 +23,7 @@ import logging
 
 import typer
 from rich.console import Console
+from rich.markdown import Markdown
 from rich.panel import Panel
 from dotenv import load_dotenv
 
@@ -345,31 +346,6 @@ def _resolve_tier_override(tier: Optional[str], config: LlxConfig, console: Cons
     return None
 
 
-def _map_to_ticket_status(result_status: str, file_changed: bool) -> str:
-    """Map TaskResult status to planfile TicketStatus.
-
-    Workflow mapping:
-    - success + file_changed -> done (completed with modifications)
-    - success + !file_changed -> done (verified no changes needed)
-    - no_changes -> canceled (ticket obsolete, issue not found)
-    - failed -> blocked (technical error, retry possible)
-    - invalid -> open (unclear response, needs re-execution)
-    - not_found -> canceled (issue doesn't exist)
-    - already_fixed -> done (previously resolved)
-    """
-    status_map = {
-        "success": "done",
-        "no_changes": "canceled",
-        "failed": "blocked",
-        "invalid": "open",
-        "not_found": "canceled",
-        "already_fixed": "done",
-        "dry_run": "open",
-        "skipped": "open",
-    }
-    return status_map.get(result_status, "open")
-
-
 def _persist_failed_results(results, strategy: str) -> None:
     """Persist execution results to planfile with proper status mapping.
 
@@ -382,6 +358,7 @@ def _persist_failed_results(results, strategy: str) -> None:
     so we only update top-level tickets here to prevent noisy "not found" warnings
     for synthetic task IDs generated at runtime.
     """
+    from llx.planfile.executor.base import map_to_ticket_status
     from llx.planfile.executor.strategy import _update_task_in_planfile
 
     if not results:
@@ -410,7 +387,7 @@ def _persist_failed_results(results, strategy: str) -> None:
             continue
 
         # Map execution result to ticket lifecycle status
-        ticket_status = _map_to_ticket_status(result.status, result.file_changed)
+        ticket_status = map_to_ticket_status(result.status, result.file_changed)
 
         # Build contextual comment for the status change
         if result.status == "no_changes":
@@ -428,23 +405,31 @@ def _persist_failed_results(results, strategy: str) -> None:
         )
 
 
-def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
-    """Print execution results as markdown-formatted table."""
+def _build_results_markdown(payload: dict[str, Any]) -> str:
+    """Build markdown output with YAML payload codeblock."""
     summary = payload.get("summary", {})
-    results = payload.get("results", [])
+    yaml_payload = _yaml.safe_dump(payload, sort_keys=False, allow_unicode=True).rstrip()
 
-    console.print("\n## Execution Summary\n")
-    console.print(f"- **Strategy:** {payload.get('strategy', 'N/A')}")
-    console.print(f"- **Project:** {payload.get('project', 'N/A')}")
+    lines = [
+        "## Execution Summary",
+        "",
+        f"- **Strategy:** {payload.get('strategy', 'N/A')}",
+        f"- **Project:** {payload.get('project', 'N/A')}",
+    ]
+
     if payload.get('sprint') is not None:
-        console.print(f"- **Sprint:** {payload['sprint']}")
-    console.print(f"- **Timestamp:** {payload.get('timestamp', 'N/A')}")
-    console.print(f"- **Total Tasks:** {summary.get('total', 0)}")
+        lines.append(f"- **Sprint:** {payload['sprint']}")
 
-    # Status counts as a table
-    console.print("\n### Status Counts\n")
-    console.print("| Status | Count |")
-    console.print("|--------|-------|")
+    lines.extend([
+        f"- **Timestamp:** {payload.get('timestamp', 'N/A')}",
+        f"- **Total Tasks:** {summary.get('total', 0)}",
+        "",
+        "### Status Counts",
+        "",
+        "| Status | Count |",
+        "|--------|-------|",
+    ])
+
     status_icons = {
         "success": "✓ Success",
         "failed": "✗ Failed",
@@ -457,28 +442,30 @@ def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
     for status, label in status_icons.items():
         count = summary.get(status, 0)
         if count > 0:
-            console.print(f"| {label} | {count} |")
+            lines.append(f"| {label} | {count} |")
 
-    # Results table
-    if results:
-        console.print("\n### Task Results\n")
-        console.print("| Ticket | Task | Status | Model | Time | Changed |")
-        console.print("|----------|------|--------|-------|------|---------|")
-        for r in results:
-            ticket = r.get('ticket_id') or '-'
-            task = r.get('task_name', 'Unknown')[:30]
-            status = r.get('status', 'unknown')
-            model = (r.get('model_used') or '-').split('/')[-1][:20]
-            time_val = f"{r.get('execution_time', 0):.2f}s"
-            changed = "✓" if r.get('file_changed') else "-"
-            console.print(f"| {ticket} | {task} | {status} | {model} | {time_val} | {changed} |")
+    lines.extend([
+        "",
+        "### Results Payload",
+        "",
+        "```yaml",
+        yaml_payload,
+        "```",
+        "",
+    ])
 
-    # Failed details
-    failed = [r for r in results if r.get('status') == 'failed']
-    if failed:
-        console.print("\n### Failed Tasks\n")
-        for r in failed:
-            console.print(f"- **{r.get('task_name', 'Unknown')}:** {r.get('error', 'No error details')}")
+    return "\n".join(lines)
+
+
+def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
+    """Print execution results as markdown with YAML codeblocks."""
+    markdown_output = _build_results_markdown(payload)
+
+    if console.is_terminal:
+        console.print(Markdown(markdown_output, code_theme="monokai"))
+        return
+
+    console.print(markdown_output, end="", markup=False, highlight=False)
 
 
 def _print_results_summary(results, use_aider: bool, backends, console: Console) -> None:
@@ -767,7 +754,7 @@ def plan_run(
         if format.lower() == "yaml":
             typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
         else:
-            _print_results_markdown(payload, run_console)
+            _print_results_markdown(payload, Console(stderr=False))
 
     except Exception as e:
         run_console.print(f"[red]Error:[/red] {e}")

@@ -338,7 +338,9 @@ def _execute_ticket_block(
                 on_progress(f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}")
 
         if not dry_run:
-            _update_task_in_planfile(strategy_path, ticket_id, result.status, result.validation_message or "")
+            from llx.planfile.executor.base import map_to_ticket_status
+            ticket_status = map_to_ticket_status(result.status, result.file_changed)
+            _update_task_in_planfile(strategy_path, ticket_id, ticket_status, result.validation_message or "")
 
         return [result]
     except Exception as e:

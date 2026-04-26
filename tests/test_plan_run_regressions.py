@@ -80,3 +80,46 @@ def test_persist_failed_results_updates_top_level_q_tickets(tmp_path, monkeypatc
     assert calls[0][1] == "Q01"
     # 'no_changes' result status maps to 'canceled' ticket status (issue not found)
     assert calls[0][2] == "canceled"
+
+
+def test_build_results_markdown_embeds_yaml_codeblock_with_ticket_ids() -> None:
+    app_mod = importlib.import_module("llx.cli.app")
+    payload = {
+        "strategy": "planfile.yaml",
+        "project": ".",
+        "sprint": None,
+        "ticket_id": None,
+        "tier": None,
+        "dry_run": False,
+        "timestamp": "2026-04-26 16:50:00",
+        "summary": {
+            "success": 1,
+            "failed": 0,
+            "invalid": 0,
+            "not_found": 0,
+            "already_fixed": 0,
+            "no_changes": 0,
+            "skipped": 0,
+            "total": 1,
+        },
+        "results": [
+            {
+                "ticket_id": "Q01",
+                "task_name": "Add markdown stdout output",
+                "status": "success",
+                "model_used": "openrouter/qwen",
+                "response": "ok",
+                "error": None,
+                "execution_time": 0.42,
+                "file_changed": True,
+                "validation_message": None,
+            }
+        ],
+    }
+
+    markdown = app_mod._build_results_markdown(payload)
+
+    assert "## Execution Summary" in markdown
+    assert "```yaml" in markdown
+    assert "ticket_id: Q01" in markdown
+    assert "status: success" in markdown

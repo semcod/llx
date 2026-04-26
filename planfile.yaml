@@ -959,6 +959,207 @@ tasks:
   source: redsl:dry_run
   description: God module — zbyt duży plik z za dużą liczbą funkcji
   rule: split_god_module
+- id: TQL-5bce0e5363
+  title: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+    failed without detailed error output'
+  description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+    Failure #1:
+
+    One or more TestQL checks failed without detailed error output
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+    --output json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-ebaf011504
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L10: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #1:
+
+    L10: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-517e310a98
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L14: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #2:
+
+    L14: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-04800a20c7
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L16: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #3:
+
+    L16: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-58da419964
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L22: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #4:
+
+    L22: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-eb9e306364
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L24: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #5:
+
+    L24: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-4894edcafd
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L27: ASSERT_JSON status
+    < 500 failed (path ''status'' not found in response)'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #6:
+
+    L27: ASSERT_JSON status < 500 failed (path ''status'' not found in response)
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-4d6f3a5ffa
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L28: ASSERT_JSON response_time
+    < 2000 failed (path ''response_time'' not found in respo...'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #7:
+
+    L28: ASSERT_JSON response_time < 2000 failed (path ''response_time'' not found
+    in response)
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
 sprints:
 - id: sprint-1
   name: Code Quality Improvements
@@ -974,14 +1175,9 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: no_changes
+    status: success
     notes:
-    - '[2026-04-26 15:12:08] success: LLM reports changes made'
-    - '[2026-04-26 15:14:32] Task no_changes: No changes needed: No action needed.'
-    - '[2026-04-26 15:14:33] Task no_changes: No changes needed:     console.print(f"  [dim]⊘
-      Already fixed:[/dim] {counts[''already_fixed'']}")     console.print(f"  [cyan]⊘
-      No changes needed:[/cyan] {counts[''no_changes'']}")     console.print(f"  [dim]⊘
-      Skipped:[/dim] {counts[''skipped'']}")'
+    - '[2026-04-26 16:51:40] success: LLM reports changes made'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
@@ -990,9 +1186,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:12:19] no_changes: No changes needed: No action needed.'
   - id: null
     name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/cli/formatters.py
@@ -1001,10 +1194,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:12:34] success: LLM reports changes made'
-    - '[2026-04-26 15:14:33] Task no_changes: No changes needed: No action needed'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 10 magic-numbers issues in llx/cli/formatters.py
@@ -1013,9 +1202,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: success
-    notes:
-    - '[2026-04-26 15:12:51] success: LLM reports changes made'
   - id: null
     name: Fix unused-imports issues
     description: Resolve 8 unused-imports issues in llx/cli/commands/planner.py
@@ -1024,13 +1210,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:12:59] success: LLM reports changes made'
-    - '[2026-04-26 15:14:33] Task no_changes: No changes needed:     console.print(f"  [dim]⊘
-      Already fixed:[/dim] {counts[''already_fixed'']}")     console.print(f"  [cyan]⊘
-      No changes needed:[/cyan] {counts[''no_changes'']}")     console.print(f"  [dim]⊘
-      Skipped:[/dim] {counts[''skipped'']}")'
   - id: null
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/cli/app.py
@@ -1039,12 +1218,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:13:27] no_changes: No changes needed:     console.print(f"  [dim]⊘
-      Already fixed:[/dim] {counts[''already_fixed'']}")     console.print(f"  [cyan]⊘
-      No changes needed:[/cyan] {counts[''no_changes'']}")     console.print(f"  [dim]⊘
-      Skipped:[/dim] {counts[''skipped'']}")'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/cli/app.py
@@ -1053,12 +1226,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:13:59] no_changes: No changes needed:     console.print(f"  [dim]⊘
-      Already fixed:[/dim] {counts[''already_fixed'']}")     console.print(f"  [cyan]⊘
-      No changes needed:[/cyan] {counts[''no_changes'']}")     console.print(f"  [dim]⊘
-      Skipped:[/dim] {counts[''skipped'']}")'
   - id: null
     name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/cli/strategy_commands.py
@@ -1067,9 +1234,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: success
-    notes:
-    - '[2026-04-26 15:14:12] success: LLM reports changes made'
   - id: null
     name: Fix smart-return-type issues
     description: Resolve 5 smart-return-type issues in llx/cli/strategy_commands.py
@@ -1078,9 +1242,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: success
-    notes:
-    - '[2026-04-26 15:14:17] success: LLM reports changes made'
   - id: null
     name: Fix string-concat issues
     description: Resolve 9 string-concat issues in llx/commands/_patch_apply.py
@@ -1089,9 +1250,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: no_changes
-    notes:
-    - '[2026-04-26 15:14:32] no_changes: No changes needed: No action needed'
   - id: null
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/commands/_patch_apply.py
@@ -1812,3 +1970,196 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
+  - id: TQL-5bce0e5363
+    name: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+      failed without detailed error output'
+    description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+      Failure #1:
+
+      One or more TestQL checks failed without detailed error output
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+      --output json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-ebaf011504
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L10: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #1:
+
+      L10: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-517e310a98
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L14: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #2:
+
+      L14: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-04800a20c7
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L16: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #3:
+
+      L16: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-58da419964
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L22: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #4:
+
+      L22: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-eb9e306364
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L24: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #5:
+
+      L24: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-4894edcafd
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L27: ASSERT_JSON status
+      < 500 failed (path ''status'' not found in response)'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #6:
+
+      L27: ASSERT_JSON status < 500 failed (path ''status'' not found in response)
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-4d6f3a5ffa
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L28: ASSERT_JSON response_time
+      < 2000 failed (path ''response_time'' not found in respo...'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #7:
+
+      L28: ASSERT_JSON response_time < 2000 failed (path ''response_time'' not found
+      in response)
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
