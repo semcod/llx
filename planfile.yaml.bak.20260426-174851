@@ -1,0 +1,2357 @@
+schema: '1.0'
+project: llx
+version: 0.1.57
+generated: '2026-04-19'
+generator: redsl planfile sync
+sources:
+- project/analysis.toon.yaml
+- project/duplication.toon.yaml
+stats:
+  total: 68
+  todo: 65
+  done: 3
+tasks:
+- id: Q01
+  title: 'reduce_complexity: collector (CC=10)'
+  description: Module 'collector' has cyclomatic complexity CC=10 (482 lines, 1 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/analysis/collector.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q02
+  title: 'reduce_complexity: core (CC=10)'
+  description: Module 'core' has cyclomatic complexity CC=10 (468 lines, 1 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/core.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q03
+  title: 'reduce_complexity: server (CC=12)'
+  description: Module 'server' has cyclomatic complexity CC=12 (447 lines, 10 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/server.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q04
+  title: 'reduce_complexity: manager (CC=14)'
+  description: Module 'manager' has cyclomatic complexity CC=14 (445 lines, 1 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/orchestration/session/manager.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-14
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q05
+  title: 'reduce_complexity: codebase_indexer (CC=11)'
+  description: Module 'codebase_indexer' has cyclomatic complexity CC=11 (418 lines,
+    4 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/context/codebase_indexer.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q06
+  title: 'reduce_complexity: config (CC=13)'
+  description: Module 'config' has cyclomatic complexity CC=13 (376 lines, 4 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/config.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-13
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q07
+  title: 'reduce_complexity: user_memory (CC=12)'
+  description: Module 'user_memory' has cyclomatic complexity CC=12 (361 lines, 1
+    complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/context/user_memory.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q08
+  title: 'reduce_complexity: formatters (CC=14)'
+  description: Module 'formatters' has cyclomatic complexity CC=14 (312 lines, 0 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/cli/formatters.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-14
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q09
+  title: 'reduce_complexity: client (CC=11)'
+  description: Module 'client' has cyclomatic complexity CC=11 (287 lines, 3 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/mcp/client.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: stale
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q10
+  title: 'reduce_complexity: executor_simple (CC=13)'
+  description: Module 'executor_simple' has cyclomatic complexity CC=13 (276 lines,
+    1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/planfile/executor_simple.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-13
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q11
+  title: 'reduce_complexity: health_runner (CC=10)'
+  description: Module 'health_runner' has cyclomatic complexity CC=10 (266 lines,
+    1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/tools/health_runner.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q12
+  title: 'reduce_complexity: runner (CC=12)'
+  description: Module 'runner' has cyclomatic complexity CC=12 (263 lines, 0 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/analysis/runner.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: stale
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q13
+  title: 'reduce_complexity: pipeline_ops (CC=12)'
+  description: Module 'pipeline_ops' has cyclomatic complexity CC=12 (257 lines, 0
+    complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/pipeline_ops.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-12
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q14
+  title: 'reduce_complexity: context_engine (CC=13)'
+  description: Module 'context_engine' has cyclomatic complexity CC=13 (248 lines,
+    1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/analyzers/context_engine.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-13
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q15
+  title: 'reduce_complexity: _project_ast (CC=10)'
+  description: Module '_project_ast' has cyclomatic complexity CC=10 (226 lines, 1
+    complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/privacy/_project_ast.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q16
+  title: 'reduce_complexity: folder_compressor (CC=11)'
+  description: Module 'folder_compressor' has cyclomatic complexity CC=11 (224 lines,
+    1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/context/folder_compressor.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q17
+  title: 'reduce_complexity: validators (CC=14)'
+  description: Module 'validators' has cyclomatic complexity CC=14 (212 lines, 3 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/validators.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-14
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q18
+  title: 'reduce_complexity: schema_generator (CC=11)'
+  description: Module 'schema_generator' has cyclomatic complexity CC=11 (211 lines,
+    1 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/context/schema_generator.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q19
+  title: 'reduce_complexity: preprocessor (CC=13)'
+  description: Module 'preprocessor' has cyclomatic complexity CC=13 (188 lines, 2
+    complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/agents/preprocessor.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-13
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q20
+  title: 'reduce_complexity: llm (CC=10)'
+  description: Module 'llm' has cyclomatic complexity CC=10 (171 lines, 2 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/llm.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q21
+  title: 'reduce_complexity: llm_provider (CC=11)'
+  description: Module 'llm_provider' has cyclomatic complexity CC=11 (150 lines, 1
+    complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/llm_provider.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q22
+  title: 'reduce_complexity: cli (CC=10)'
+  description: Module 'cli' has cyclomatic complexity CC=10 (149 lines, 0 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/prellm/cli.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: stale
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: Q23
+  title: 'reduce_complexity: _project_anonymizer (CC=10)'
+  description: Module '_project_anonymizer' has cyclomatic complexity CC=10 (138 lines,
+    2 complex functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: llx/privacy/_project_anonymizer.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: failed
+  labels:
+  - refactor
+  - complexity
+  - cc-10
+  source: project/analysis.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 13:49:35] LLM response unclear about changes'
+- id: Q24
+  title: 'reduce_complexity: trace (CC=11)'
+  description: Module 'trace' has cyclomatic complexity CC=11 (49 lines, 0 complex
+    functions). Apply guard clauses, extract helpers, reduce nesting.
+  file: trace.py
+  action: reduce_complexity
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - complexity
+  - cc-11
+  source: project/analysis.toon.yaml
+  priority_label: medium
+- id: R01
+  title: 'extract_function: _dispatch.py'
+  description: 3 occurrences of 9-line block across 3 files — saves 18 lines
+  file: llx/tools/utils/_dispatch.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:46] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R02
+  title: 'extract_function: _dispatch.py'
+  description: 2 occurrences of 15-line block across 2 files — saves 15 lines
+  file: llx/orchestration/utils/_dispatch.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:46] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R03
+  title: 'extract_function: main.py'
+  description: 6 occurrences of 3-line block across 6 files — saves 15 lines
+  file: llx/tools/utils/main.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R04
+  title: 'extract_function: main.py'
+  description: 2 occurrences of 13-line block across 2 files — saves 13 lines
+  file: llx/pyqual_plugins/utils/main.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R05
+  title: 'extract_function: check_version_on_pypi.py'
+  description: 2 occurrences of 12-line block across 2 files — saves 12 lines
+  file: llx/pyqual_plugins/utils/check_version_on_pypi.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:07] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R06
+  title: 'extract_function: _cmd_health.py'
+  description: 4 occurrences of 4-line block across 4 files — saves 12 lines
+  file: llx/orchestration/utils/_cmd_health.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:54] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R07
+  title: 'extract_function: _cmd_list_models.py'
+  description: 5 occurrences of 3-line block across 3 files — saves 12 lines
+  file: llx/tools/utils/_cmd_list_models.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:55] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R08
+  title: 'extract_function: _calculate_entropy.py'
+  description: 2 occurrences of 11-line block across 2 files — saves 11 lines
+  file: examples/privacy/ml/utils/_calculate_entropy.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:55] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:47] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R09
+  title: 'extract_class: add_limit.py'
+  description: 2 occurrences of 11-line block across 2 files — saves 11 lines
+  file: llx/orchestration/ratelimit/utils/add_limit.py
+  action: extract_class
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-class
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:55] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:48] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R10
+  title: 'extract_function: _is_port_available.py'
+  description: 2 occurrences of 10-line block across 2 files — saves 10 lines
+  file: llx/orchestration/utils/_is_port_available.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:08] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:55] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:48] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R11
+  title: 'extract_function: _cmd_metrics.py'
+  description: 2 occurrences of 10-line block across 2 files — saves 10 lines
+  file: llx/orchestration/utils/_cmd_metrics.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:55] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:48] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R12
+  title: 'extract_function: _cmd_save.py'
+  description: 2 occurrences of 10-line block across 1 files — saves 10 lines
+  file: llx/tools/utils/_cmd_save.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:48] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R13
+  title: 'extract_function: _config_save_worker.py'
+  description: 2 occurrences of 8-line block across 2 files — saves 8 lines
+  file: llx/orchestration/utils/_config_save_worker.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:48] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R14
+  title: 'extract_function: _handle_code2llm_analyze.py'
+  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  file: llx/mcp/utils/_handle_code2llm_analyze.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R15
+  title: 'extract_function: _cmd_start.py'
+  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  file: llx/orchestration/instances/utils/_cmd_start.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R16
+  title: 'extract_function: _handle_service_command.py'
+  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  file: llx/tools/utils/_handle_service_command.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:09] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R17
+  title: 'extract_function: release_port.py'
+  description: 2 occurrences of 7-line block across 2 files — saves 7 lines
+  file: llx/orchestration/utils/release_port.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:56] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R18
+  title: 'extract_function: get_current_version.py'
+  description: 2 occurrences of 6-line block across 2 files — saves 6 lines
+  file: llx/pyqual_plugins/utils/get_current_version.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R19
+  title: 'extract_function: _handle_install.py'
+  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  file: llx/tools/utils/_handle_install.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:49] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R20
+  title: 'extract_function: _handle_start.py'
+  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  file: llx/tools/utils/_handle_start.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R21
+  title: 'extract_function: update_user.py'
+  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  file: my-api/utils/update_user.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:10] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R22
+  title: 'extract_function: delete_user.py'
+  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  file: my-api/utils/delete_user.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R23
+  title: 'extract_function: _cmd_cleanup.py'
+  description: 2 occurrences of 5-line block across 2 files — saves 5 lines
+  file: llx/orchestration/utils/_cmd_cleanup.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: R24
+  title: 'extract_function: _cmd_pull.py'
+  description: 2 occurrences of 5-line block across 1 files — saves 5 lines
+  file: llx/tools/utils/_cmd_pull.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:57] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R25
+  title: 'extract_function: read_user.py'
+  description: 2 occurrences of 5-line block across 1 files — saves 5 lines
+  file: my-api/utils/read_user.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:58] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R26
+  title: 'extract_function: _get_user_memory_class.py'
+  description: 2 occurrences of 4-line block across 1 files — saves 4 lines
+  file: llx/prellm/agents/utils/_get_user_memory_class.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:58] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:50] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R27
+  title: 'extract_function: _handle_filesystem_command.py'
+  description: 2 occurrences of 4-line block across 1 files — saves 4 lines
+  file: llx/tools/utils/_handle_filesystem_command.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:11] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:58] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:51] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: R28
+  title: 'extract_function: _cmd_status.py'
+  description: 2 occurrences of 3-line block across 2 files — saves 3 lines
+  file: llx/orchestration/utils/_cmd_status.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: R29
+  title: 'extract_function: create_user.py'
+  description: 2 occurrences of 3-line block across 1 files — saves 3 lines
+  file: my-api/utils/create_user.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: canceled
+  labels:
+  - refactor
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  notes:
+  - '[2026-04-26 17:44:12] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:46:58] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+  - '[2026-04-26 17:48:51] Pre-flight validation: prefact scan no longer detects this
+    issue.'
+- id: D30
+  title: 'extract_function: create_test_scenarios (saves 66L)'
+  description: 'Duplicated ''create_test_scenarios'': 2 occurrences, 66 lines each,
+    saves 66 lines. Files: examples/privacy/ml/02_hybrid_system.py, examples/privacy/ml/03_contextual_passwords.py'
+  file: examples/privacy/ml/02_hybrid_system.py
+  action: extract_function
+  priority: 2
+  effort: low
+  status: done
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: high
+  completed_at: '2026-04-20T06:47:30.694223+00:00'
+- id: D31
+  title: 'extract_function: _dispatch (saves 18L)'
+  description: 'Duplicated ''_dispatch'': 3 occurrences, 9 lines each, saves 18 lines.
+    Files: llx/tools/config_manager.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py'
+  file: llx/tools/config_manager.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D32
+  title: 'extract_function: _dispatch (saves 15L)'
+  description: 'Duplicated ''_dispatch'': 2 occurrences, 15 lines each, saves 15 lines.
+    Files: llx/orchestration/queue/cli.py, llx/orchestration/ratelimit/cli.py'
+  file: llx/orchestration/queue/cli.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D33
+  title: 'extract_function: main (saves 15L)'
+  description: 'Duplicated ''main'': 6 occurrences, 3 lines each, saves 15 lines.
+    Files: llx/tools/ai_tools_manager.py, llx/tools/config_manager.py, llx/tools/docker_manager.py'
+  file: llx/tools/ai_tools_manager.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  completed_at: '2026-04-20T07:45:11.890599+00:00'
+- id: D34
+  title: 'extract_function: main (saves 13L)'
+  description: 'Duplicated ''main'': 2 occurrences, 13 lines each, saves 13 lines.
+    Files: llx/pyqual_plugins/detect_secrets.py, llx/pyqual_plugins/type_check.py'
+  file: llx/pyqual_plugins/detect_secrets.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: done
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+  completed_at: '2026-04-20T10:06:07.294059+00:00'
+- id: D35
+  title: 'extract_function: check_version_on_pypi (saves 12L)'
+  description: 'Duplicated ''check_version_on_pypi'': 2 occurrences, 12 lines each,
+    saves 12 lines. Files: llx/pyqual_plugins/bump_version.py, llx/pyqual_plugins/publish.py'
+  file: llx/pyqual_plugins/bump_version.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D36
+  title: 'extract_function: _cmd_health (saves 12L)'
+  description: 'Duplicated ''_cmd_health'': 4 occurrences, 4 lines each, saves 12
+    lines. Files: llx/orchestration/instances/cli.py, llx/orchestration/llm/cli.py,
+    llx/orchestration/routing/cli.py'
+  file: llx/orchestration/instances/cli.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D38
+  title: 'extract_function: _calculate_entropy (saves 11L)'
+  description: 'Duplicated ''_calculate_entropy'': 2 occurrences, 11 lines each, saves
+    11 lines. Files: examples/privacy/ml/03_contextual_passwords.py, examples/privacy/ml/04_behavioral_learning.py'
+  file: examples/privacy/ml/03_contextual_passwords.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D39
+  title: 'extract_function: add_limit (saves 11L)'
+  description: 'Duplicated ''add_limit'': 2 occurrences, 11 lines each, saves 11 lines.
+    Files: llx/orchestration/ratelimit/_crud.py, llx/orchestration/ratelimit/limiter.py'
+  file: llx/orchestration/ratelimit/_crud.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: D40
+  title: 'extract_function: _is_port_available (saves 10L)'
+  description: 'Duplicated ''_is_port_available'': 2 occurrences, 10 lines each, saves
+    10 lines. Files: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py'
+  file: llx/orchestration/instances/ports.py
+  action: extract_function
+  priority: 3
+  effort: medium
+  status: todo
+  labels:
+  - refactor
+  - duplication
+  - extract-function
+  source: project/duplication.toon.yaml
+  priority_label: medium
+- id: refactor-2026-04-20-064
+  title: 'split_module: test_privacy_project.py'
+  status: todo
+  action: split_module
+  file: tests/test_privacy_project.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-066
+  title: 'split_module: test_privacy_extended.py'
+  status: todo
+  action: split_module
+  file: tests/test_privacy_extended.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-068
+  title: 'split_module: trace.py'
+  status: todo
+  action: split_module
+  file: llx/prellm/trace.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-070
+  title: 'split_module: docker_manager.py'
+  status: todo
+  action: split_module
+  file: llx/tools/docker_manager.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: refactor-2026-04-20-072
+  title: 'split_module: vscode_manager.py'
+  status: todo
+  action: split_module
+  file: llx/tools/vscode_manager.py
+  priority: 3
+  score: 1.62
+  created_at: '2026-04-20T09:27:31.877728+00:00'
+  source: redsl:dry_run
+  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  rule: split_god_module
+- id: TQL-5bce0e5363
+  title: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+    failed without detailed error output'
+  description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+    Failure #1:
+
+    One or more TestQL checks failed without detailed error output
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+    --output json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-ebaf011504
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L10: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #1:
+
+    L10: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-517e310a98
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L14: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #2:
+
+    L14: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-04800a20c7
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L16: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #3:
+
+    L16: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-58da419964
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L22: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #4:
+
+    L22: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-eb9e306364
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L24: expected status 201,
+    got 200'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #5:
+
+    L24: expected status 201, got 200
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-4894edcafd
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L27: ASSERT_JSON status
+    < 500 failed (path ''status'' not found in response)'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #6:
+
+    L27: ASSERT_JSON status < 500 failed (path ''status'' not found in response)
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+- id: TQL-4d6f3a5ffa
+  title: 'testql: generated-api-smoke.testql.toon.yaml :: L28: ASSERT_JSON response_time
+    < 2000 failed (path ''response_time'' not found in respo...'
+  description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+    Failure #7:
+
+    L28: ASSERT_JSON response_time < 2000 failed (path ''response_time'' not found
+    in response)
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+    json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
+sprints:
+- id: sprint-1
+  name: Code Quality Improvements
+  duration: 2 weeks
+  objectives:
+  - Fix code quality issues
+  task_patterns:
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 17 magic-numbers issues in llx/analysis/collector.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    status: success
+    notes:
+    - '[2026-04-26 17:47:17] success: LLM reports changes made'
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+    status: no_changes
+    notes:
+    - '[2026-04-26 17:47:23] no_changes: No changes needed: No action needed.'
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in llx/cli/formatters.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 10 magic-numbers issues in llx/cli/formatters.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 8 unused-imports issues in llx/cli/commands/planner.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/cli/app.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/cli/app.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/cli/strategy_commands.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 5 smart-return-type issues in llx/cli/strategy_commands.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 9 string-concat issues in llx/commands/_patch_apply.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/commands/_patch_apply.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix duplicate-imports issues
+    description: Resolve 1 duplicate-imports issues in llx/commands/_patch_apply.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/commands/_patch_apply.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/commands/fix.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in llx/commands/fix.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/detection/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix duplicate-imports issues
+    description: Resolve 2 duplicate-imports issues in llx/config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 19 magic-numbers issues in llx/config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/integrations/context_builder.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in llx/integrations/context_builder.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in llx/integrations/context_builder.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/integrations/proxy.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/integrations/proxy.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 2 llm-generated-code issues in llx/integrations/proxy.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/llm.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/llm.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/litellm_config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/litellm_config.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/client.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/integrations/proxym.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 10 magic-numbers issues in llx/integrations/proxym.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in llx/integrations/proxym.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/workflows.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in llx/mcp/service.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/mcp/service.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in llx/mcp/service.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/mcp/server.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/mcp/server.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/mcp/server.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in llx/mcp/server.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 14 relative-imports issues in llx/orchestration/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 10 relative-imports issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix duplicate-imports issues
+    description: Resolve 4 duplicate-imports issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 2 ai-boilerplate issues in llx/orchestration/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 5 llm-generated-code issues in llx/orchestration/cli_utils.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 6 relative-imports issues in llx/orchestration/instances/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 14 relative-imports issues in llx/orchestration/instances/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/instances/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/orchestration/instances/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 2 ai-boilerplate issues in llx/orchestration/instances/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in llx/mcp/tools.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix duplicate-imports issues
+    description: Resolve 13 duplicate-imports issues in llx/mcp/tools.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 6 magic-numbers issues in llx/mcp/tools.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/orchestration/instances/ports.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in llx/orchestration/instances/ports.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 6 magic-numbers issues in llx/orchestration/instances/ports.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 6 relative-imports issues in llx/orchestration/instances/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/instances/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in llx/orchestration/instances/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 6 magic-numbers issues in llx/orchestration/instances/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in llx/orchestration/llm/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 12 relative-imports issues in llx/orchestration/llm/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/llm/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/orchestration/llm/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 2 ai-boilerplate issues in llx/orchestration/llm/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/orchestration/llm/executors.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 5 string-concat issues in llx/orchestration/llm/executors.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 6 magic-numbers issues in llx/orchestration/llm/executors.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/orchestration/llm/health.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/orchestration/llm/health.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix llm-generated-code issues
+    description: Resolve 1 llm-generated-code issues in llx/orchestration/llm/health.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in llx/orchestration/queue/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 18 relative-imports issues in llx/orchestration/llm/orchestrator.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 3 smart-return-type issues in llx/orchestration/llm/orchestrator.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in llx/orchestration/llm/orchestrator.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 8 magic-numbers issues in llx/orchestration/llm/orchestrator.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 12 relative-imports issues in llx/orchestration/queue/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/queue/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in llx/orchestration/queue/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/orchestration/queue/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix ai-boilerplate issues
+    description: Resolve 2 ai-boilerplate issues in llx/orchestration/queue/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in llx/orchestration/llm/models.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in llx/orchestration/ratelimit/__init__.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in llx/orchestration/ratelimit/_crud.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/ratelimit/_crud.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in llx/orchestration/queue/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 3 smart-return-type issues in llx/orchestration/queue/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in llx/orchestration/queue/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix unused-imports issues
+    description: Resolve 8 unused-imports issues in llx/orchestration/queue/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/orchestration/queue/manager.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in llx/orchestration/ratelimit/_persistence.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in llx/orchestration/queue/models.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: null
+    name: Fix relative-imports issues
+    description: Resolve 8 relative-imports issues in llx/orchestration/ratelimit/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+  - id: null
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in llx/orchestration/ratelimit/cli.py
+    task_type: prefactor
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: medium
+  - id: TQL-5bce0e5363
+    name: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+      failed without detailed error output'
+    description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+      Failure #1:
+
+      One or more TestQL checks failed without detailed error output
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+      --output json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-ebaf011504
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L10: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #1:
+
+      L10: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-517e310a98
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L14: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #2:
+
+      L14: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-04800a20c7
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L16: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #3:
+
+      L16: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-58da419964
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L22: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #4:
+
+      L22: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-eb9e306364
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L24: expected status 201,
+      got 200'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #5:
+
+      L24: expected status 201, got 200
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-4894edcafd
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L27: ASSERT_JSON status
+      < 500 failed (path ''status'' not found in response)'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #6:
+
+      L27: ASSERT_JSON status < 500 failed (path ''status'' not found in response)
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix
+  - id: TQL-4d6f3a5ffa
+    name: 'testql: generated-api-smoke.testql.toon.yaml :: L28: ASSERT_JSON response_time
+      < 2000 failed (path ''response_time'' not found in respo...'
+    description: 'TestQL scenario failed: testql-scenarios/generated-api-smoke.testql.toon.yaml
+
+
+      Failure #7:
+
+      L28: ASSERT_JSON response_time < 2000 failed (path ''response_time'' not found
+      in response)
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-api-smoke.testql.toon.yaml --output
+      json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    file: ''
+    action: fix

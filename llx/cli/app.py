@@ -924,6 +924,10 @@ def plan_run(
             )
             if cancel_stale and not dry_run and stale_ids:
                 _cancel_stale_tickets_in_planfile(strategy, stale_ids, run_console)
+                run_console.print(
+                    "[dim]Tip:[/dim] run [bold]llx plan clean[/bold] later to physically "
+                    "remove canceled tickets from planfile.yaml and TODO.md."
+                )
 
             if (prune_stale or prune_unknown) and not dry_run:
                 from llx.planfile.ticket_pruner import prune_planfile_tickets
@@ -1066,6 +1070,125 @@ def plan_validate(
 
     if fail_on_stale and report.get("stale", 0):
         raise typer.Exit(1)
+
+
+def _build_clean_markdown(report: dict[str, Any]) -> str:
+    """Render `llx plan clean` report as markdown with YAML codeblock."""
+    yaml_payload = _yaml.safe_dump(report, sort_keys=False, allow_unicode=True).rstrip()
+    planfile = report.get("planfile") or {}
+    todo = report.get("todo") or {}
+    statuses = ", ".join(report.get("statuses") or [])
+
+    lines = [
+        "## Plan Clean",
+        "",
+        f"- **Strategy:** {report.get('strategy_path', 'N/A')}",
+        f"- **Project:** {report.get('project_path', 'N/A')}",
+        f"- **Statuses pruned:** {statuses or 'canceled'}",
+        f"- **Matched tickets:** {len(report.get('matched_ids') or [])}",
+        f"- **Removed from planfile:** {planfile.get('removed', 0)}",
+    ]
+    if todo:
+        lines.append(f"- **Removed lines from TODO.md:** {todo.get('removed_lines', 0)}")
+    if report.get("dry_run"):
+        lines.append("- **Mode:** dry-run (no files modified)")
+
+    matched = report.get("matched_ids") or []
+    if matched:
+        lines.extend(["", "### Matched ticket IDs", ""])
+        lines.extend(f"- `{tid}`" for tid in matched)
+
+    lines.extend([
+        "",
+        "### Clean Payload",
+        "",
+        "```yaml",
+        yaml_payload,
+        "```",
+        "",
+    ])
+
+    return "\n".join(lines)
+
+
+def _print_clean_markdown(report: dict[str, Any], target: Console) -> None:
+    markdown_output = _build_clean_markdown(report)
+    if target.is_terminal:
+        target.print(Markdown(markdown_output, code_theme="monokai"))
+        return
+    target.print(markdown_output, end="", markup=False, highlight=False)
+
+
+@plan_app.command("clean")
+def plan_clean(
+    strategy: str = typer.Argument("planfile.yaml", help="Strategy / planfile YAML"),
+    project_path: Path = typer.Option(Path("."), "--project", "-p"),
+    statuses: list[str] = typer.Option(
+        ["canceled"], "--status", "-s",
+        help="Ticket statuses considered resolved (repeat for multiple). Default: 'canceled'."
+    ),
+    include_done: bool = typer.Option(
+        False, "--include-done",
+        help="Also remove tickets with status 'done' (already-completed work)."
+    ),
+    update_todo: bool = typer.Option(
+        True, "--todo-sync/--no-todo-sync",
+        help="Also strip mentioning lines from TODO.md (default: on)."
+    ),
+    todo_path: Optional[str] = typer.Option(
+        None, "--todo-path",
+        help="Explicit TODO.md path (default: <project>/TODO.md)."
+    ),
+    backup: bool = typer.Option(
+        True, "--backup/--no-backup",
+        help="Write timestamped .bak.<ts> files before pruning (default: on)."
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", "-d",
+        help="Only compute counts; do not modify any file."
+    ),
+    fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
+) -> None:
+    """Remove resolved tickets (canceled by default) from planfile.yaml AND TODO.md."""
+    from llx.planfile.ticket_cleaner import clean_resolved_tickets
+
+    run_console = Console(stderr=True)
+    stdout_console = Console(stderr=False)
+
+    if strategy == ".":
+        strategy = "planfile.yaml"
+
+    target_statuses = set(statuses or [])
+    if include_done:
+        target_statuses.add("done")
+
+    try:
+        report = clean_resolved_tickets(
+            strategy_path=strategy,
+            project_path=project_path,
+            statuses=target_statuses,
+            backup=backup,
+            update_todo=update_todo,
+            todo_path=todo_path,
+            dry_run=dry_run,
+        )
+    except Exception as exc:
+        run_console.print(f"[red]Clean error:[/red] {exc}")
+        raise typer.Exit(2)
+
+    matched = len(report.get("matched_ids") or [])
+    planfile_removed = (report.get("planfile") or {}).get("removed", 0)
+    todo_removed = (report.get("todo") or {}).get("removed_lines", 0) if report.get("todo") else 0
+    mode = "dry-run" if dry_run else "applied"
+    run_console.print(
+        f"[dim]plan clean ({mode}):[/dim] matched={matched} "
+        f"planfile_removed={planfile_removed} todo_lines_removed={todo_removed}"
+    )
+
+    if fmt.lower() == "yaml":
+        typer.echo(_yaml.safe_dump(report, sort_keys=False, allow_unicode=True), nl=False)
+    else:
+        _print_clean_markdown(report, stdout_console)
 
 
 @plan_app.command("testql")

@@ -14,6 +14,9 @@ from typing import Callable
 DEFAULT_TIMEOUT_SECONDS = 120
 MAX_ERROR_LENGTH = 500
 SUCCESS_EXIT_CODE = 0
+DEFAULT_CODE2LLM_FORMAT = "toon"
+DEFAULT_REDUP_FORMAT = "json"
+DEFAULT_VALLM_FORMAT = "json"
 
 
 @dataclass
@@ -47,13 +50,13 @@ def _run_tool(
         return ToolResult(tool=tool, success=False, error=str(e))
 
 
-def run_code2llm(project_path: Path, output_dir: Path, fmt: str = "toon") -> ToolResult:
+def run_code2llm(project_path: Path, output_dir: Path, fmt: str = DEFAULT_CODE2LLM_FORMAT) -> ToolResult:
     return _run_tool("code2llm", [
         "code2llm", str(project_path), "-f", fmt, "-o", str(output_dir),
     ], output_dir)
 
 
-def run_redup(project_path: Path, output_dir: Path, fmt: str = "json") -> ToolResult:
+def run_redup(project_path: Path, output_dir: Path, fmt: str = DEFAULT_REDUP_FORMAT) -> ToolResult:
     return _run_tool("redup", [
         "redup", "scan", str(project_path), "--format", fmt, "--output", str(output_dir),
     ], output_dir)
@@ -62,7 +65,7 @@ def run_redup(project_path: Path, output_dir: Path, fmt: str = "json") -> ToolRe
 def run_vallm(project_path: Path, output_dir: Path) -> ToolResult:
     return _run_tool("vallm", [
         "vallm", "batch", str(project_path), "--recursive",
-        "--no-imports", "--no-complexity", "--format", "json",
+        "--no-imports", "--no-complexity", "--format", DEFAULT_VALLM_FORMAT,
     ], output_dir)
 
 
@@ -81,3 +84,4 @@ def run_all_tools(
             status = "done" if results[name].success else f"failed: {results[name].error}"
             on_progress(name, status)
     return results
+

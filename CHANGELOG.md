@@ -129,6 +129,18 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.77] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Other
+- Update llx/analysis/runner.py
+- Update llx/cli/app.py
+- Update llx/planfile/ticket_cleaner.py
+- Update planfile.yaml
+- Update planfile.yaml.bak.20260426-174851
+
 ## [0.1.76] - 2026-04-26
 
 ### Docs
