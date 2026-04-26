@@ -146,6 +146,7 @@ def _normalize_pattern_from_lookup(pattern: dict, task_lookup: dict) -> dict:
     if pattern_id and pattern_id in task_lookup:
         task_data = task_lookup[pattern_id]
         return {
+            "id": pattern_id,
             "name": pattern.get("name", task_data.get("title", pattern_id)),
             "description": pattern.get("description", task_data.get("description", "")),
             "task_type": _map_action_to_task_type(task_data.get("action", "feature")),
@@ -155,6 +156,7 @@ def _normalize_pattern_from_lookup(pattern: dict, task_lookup: dict) -> dict:
             "action": task_data.get("action", "")
         }
     return {
+        "id": pattern.get("id"),
         "name": pattern.get("name", pattern.get("id", "Unnamed")),
         "description": pattern.get("description", ""),
         "task_type": pattern.get("task_type", "feature"),
@@ -167,6 +169,7 @@ def _normalize_v2_task(task: dict | str, strategy: dict) -> Optional[dict]:
     """Normalize a single V2 sprint task into a task_pattern dict."""
     if isinstance(task, dict):
         return {
+            "id": task.get("id"),
             "name": task.get("name", "Unnamed Task"),
             "description": task.get("description", ""),
             "task_type": task.get("type", "feature"),
@@ -178,6 +181,7 @@ def _normalize_v2_task(task: dict | str, strategy: dict) -> Optional[dict]:
         for pattern in patterns:
             if pattern.get("id") == task:
                 return {
+                    "id": pattern.get("id"),
                     "name": pattern.get("name", "Unnamed Task"),
                     "description": pattern.get("description", ""),
                     "task_type": pattern.get("type", "feature"),
@@ -230,12 +234,20 @@ def _run_single_task_pattern(
     on_progress: Any,
 ) -> Optional[TaskResult]:
     """Execute one task pattern and report progress."""
+    task_id = task.get("id")
+    if not task_id:
+        import hashlib
+        stable_key = f"{task.get('name', 'Unnamed')}|{task.get('description', '')}"
+        task_id = f"task-{hashlib.sha1(stable_key.encode('utf-8')).hexdigest()[:10]}"
+
     task_name = task.get("name", "Unnamed")
+    task_label = f"{task_id} ({task_name})" if task_id and task_id != task_name else (task_id or task_name)
+    task_with_id = task if task.get("id") else {**task, "id": task_id}
     if on_progress:
-        on_progress(f"  [yellow]→[/yellow] {task_name}...")
+        on_progress(f"  [yellow]→[/yellow] {task_label}...")
     try:
         result = _execute_task(
-            task=task,
+            task=task_with_id,
             config=config,
             metrics=metrics,
             model_override=model_override,
@@ -245,16 +257,16 @@ def _run_single_task_pattern(
         )
         if on_progress:
             if result.status == "success":
-                on_progress(f"  [green]✓[/green] {task_name} ({result.model_used})")
+                on_progress(f"  [green]✓[/green] {task_label} ({result.model_used})")
             elif result.status == "dry_run":
-                on_progress(f"  [blue]○[/blue] {task_name} (dry-run)")
+                on_progress(f"  [blue]○[/blue] {task_label} (dry-run)")
             else:
-                on_progress(f"  [red]✗[/red] {task_name}: {result.error or result.validation_message}")
+                on_progress(f"  [red]✗[/red] {task_label}: {result.error or result.validation_message}")
         return result
     except Exception as e:
         logger.error(f"Task failed: {e}")
         if on_progress:
-            on_progress(f"  [red]✗[/red] {task_name}: {str(e)}")
+            on_progress(f"  [red]✗[/red] {task_label}: {str(e)}")
         return None
 
 
@@ -297,6 +309,7 @@ def _execute_ticket_block(
         on_progress(f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}")
 
     task_dict = {
+        "id": ticket_id,
         "name": ticket.get("title", ticket_id),
         "description": ticket.get("description", ""),
         "task_type": _map_action_to_task_type(ticket.get("action", "feature")),

@@ -404,6 +404,7 @@ def _execute_task(
 ) -> TaskResult:
     """Execute a single task."""
     start_time = time.time()
+    ticket_id = task.get("id")
     task_name = task.get("name", "Unnamed Task")
     target_file = _extract_file_from_task(task)
 
@@ -412,6 +413,7 @@ def _execute_task(
 
         if dry_run:
             return TaskResult(
+                ticket_id=ticket_id,
                 task_name=task_name,
                 status="dry_run",
                 model_used=model,
@@ -441,6 +443,7 @@ def _execute_task(
             except Exception as e:
                 logger.error(f"LLM chat failed: {e}")
                 return TaskResult(
+                    ticket_id=ticket_id,
                     task_name=task_name,
                     status="failed",
                     model_used=model,
@@ -457,6 +460,7 @@ def _execute_task(
         status, file_changed, validation_message = _determine_task_status(validation, code_changes_applied)
 
         return TaskResult(
+            ticket_id=ticket_id,
             task_name=task_name,
             status=status,
             model_used=model,
@@ -469,6 +473,7 @@ def _execute_task(
     except Exception as e:
         logger.error(f"Task execution failed: {e}")
         return TaskResult(
+            ticket_id=ticket_id,
             task_name=task_name,
             status="failed",
             model_used=model_override or "unknown",

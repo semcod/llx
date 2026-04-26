@@ -14,7 +14,7 @@ Commands:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional, Dict, Tuple
+from typing import Optional, Dict, Tuple, Any
 import os
 import time
 import yaml as _yaml
@@ -351,12 +351,22 @@ def _persist_failed_results(results, strategy: str) -> None:
     for result in results:
         if result.status in ("cancelled", "failed"):
             comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
-            _update_task_in_planfile(
-                planfile_path=strategy,
-                task_id=result.task_name,
-                status=result.status,
-                comment=comment
-            )
+            updated = False
+            if result.ticket_id:
+                updated = _update_task_in_planfile(
+                    planfile_path=strategy,
+                    task_id=result.ticket_id,
+                    status=result.status,
+                    comment=comment,
+                )
+
+            if not updated:
+                _update_task_in_planfile(
+                    planfile_path=strategy,
+                    task_id=result.task_name,
+                    status=result.status,
+                    comment=comment,
+                )
 
 
 def _print_results_summary(results, use_aider: bool, backends, console: Console) -> None:
@@ -397,18 +407,31 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
         for result in results:
             if result.status in detail_statuses:
                 color, icon = detail_colors[result.status]
-                console.print(f"  [{color}]{icon} {result.task_name}:[/{color}] {result.validation_message}")
+                label = result.task_name
+                if result.ticket_id:
+                    label = f"{result.ticket_id} ({result.task_name})" if result.ticket_id != result.task_name else result.ticket_id
+                console.print(f"  [{color}]{icon} {label}:[/{color}] {result.validation_message}")
 
     if counts["failed"] > 0:
         console.print("\n[dim]Failed tasks:[/dim]")
         for result in results:
             if result.status == "failed":
-                console.print(f"    [red]✗ {result.task_name}:[/red] {result.error}")
+                label = result.task_name
+                if result.ticket_id:
+                    label = f"{result.ticket_id} ({result.task_name})" if result.ticket_id != result.task_name else result.ticket_id
+                console.print(f"    [red]✗ {label}:[/red] {result.error}")
 
 
-def _save_results_yaml(results, output_yaml: str, strategy: str, project_path: Path, sprint: Optional[int], tier: Optional[str], dry_run: bool, console: Console) -> None:
-    """Save execution results to a YAML file."""
-    import yaml
+def _build_results_payload(
+    results,
+    strategy: str,
+    project_path: Path,
+    sprint: Optional[int],
+    ticket_id: Optional[str],
+    tier: Optional[str],
+    dry_run: bool,
+) -> dict[str, Any]:
+    """Build structured YAML payload for plan run output."""
     counts = {
         "success": sum(1 for r in results if r.status == "success"),
         "failed": sum(1 for r in results if r.status == "failed"),
@@ -418,16 +441,19 @@ def _save_results_yaml(results, output_yaml: str, strategy: str, project_path: P
         "cancelled": sum(1 for r in results if r.status == "cancelled"),
         "skipped": sum(1 for r in results if r.status in ["dry_run", "skipped"]),
     }
-    output_data = {
+
+    return {
         "strategy": strategy,
         "project": str(project_path),
         "sprint": sprint,
+        "ticket_id": ticket_id,
         "tier": tier,
         "dry_run": dry_run,
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "summary": {**counts, "total": len(results)},
         "results": [
             {
+                "ticket_id": r.ticket_id,
                 "task_name": r.task_name,
                 "status": r.status,
                 "model_used": r.model_used,
@@ -435,13 +461,17 @@ def _save_results_yaml(results, output_yaml: str, strategy: str, project_path: P
                 "error": r.error,
                 "execution_time": r.execution_time,
                 "file_changed": r.file_changed,
-                "validation_message": r.validation_message
+                "validation_message": r.validation_message,
             }
             for r in results
-        ]
+        ],
     }
-    with open(output_yaml, "w") as f:
-        yaml.dump(output_data, f, default_flow_style=False, allow_unicode=True)
+
+
+def _save_results_yaml(payload: dict[str, Any], output_yaml: str, console: Console) -> None:
+    """Save execution results payload to a YAML file."""
+    with open(output_yaml, "w", encoding="utf-8") as f:
+        _yaml.safe_dump(payload, f, sort_keys=False, allow_unicode=True)
     console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
 
 
@@ -456,23 +486,25 @@ def plan_run(
     auto_start_proxy: bool = typer.Option(True, "--no-auto-start-proxy", help="Disable automatic proxy startup"),
     max_concurrent: int = typer.Option(1, "--max-concurrent", "-j", help="Maximum number of tasks to run concurrently (default: 1)"),
     max_tasks: Optional[int] = typer.Option(None, "--max-tasks", "-n", help="Maximum total number of tasks to process (default: unlimited)"),
-    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Output results to YAML file"),
+    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to also save YAML results file"),
     use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
 
+    run_console = Console(stderr=True)
+
     if strategy == ".":
         strategy = "planfile.yaml"
 
-    backends = _print_run_params(strategy, project_path, ticket_id, sprint, tier, dry_run, use_aider, console)
+    backends = _print_run_params(strategy, project_path, ticket_id, sprint, tier, dry_run, use_aider, run_console)
 
     config = LlxConfig.load(str(project_path))
-    _ensure_proxy_running(config, dry_run, auto_start_proxy, console)
-    model_override = _resolve_tier_override(tier, config, console)
+    _ensure_proxy_running(config, dry_run, auto_start_proxy, run_console)
+    model_override = _resolve_tier_override(tier, config, run_console)
 
     def on_progress(msg: str):
-        console.print(f"[dim]  {msg}[/dim]")
+        run_console.print(f"[dim]  {msg}[/dim]")
 
     try:
         results = execute_strategy(
@@ -489,13 +521,25 @@ def plan_run(
         )
 
         _persist_failed_results(results, strategy)
-        _print_results_summary(results, use_aider, backends, console)
+        _print_results_summary(results, use_aider, backends, run_console)
+
+        payload = _build_results_payload(
+            results=results,
+            strategy=strategy,
+            project_path=project_path,
+            sprint=sprint,
+            ticket_id=ticket_id,
+            tier=tier,
+            dry_run=dry_run,
+        )
 
         if output_yaml:
-            _save_results_yaml(results, output_yaml, strategy, project_path, sprint, tier, dry_run, console)
+            _save_results_yaml(payload, output_yaml, run_console)
+
+        typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
 
     except Exception as e:
-        console.print(f"[red]Error:[/red] {e}")
+        run_console.print(f"[red]Error:[/red] {e}")
         raise typer.Exit(1)
 
 
