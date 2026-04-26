@@ -49,9 +49,7 @@ def output_rich(metrics: ProjectMetrics, result: SelectionResult, verbose: bool)
         console.print(f"  • {reason}")
 
     if verbose:
-        console.print(f"\n  [dim]Scores: complexity={result.scores['complexity']:.0f} "
-                       f"scale={result.scores['scale']:.0f} "
-                       f"coupling={result.scores['coupling']:.0f}[/dim]")
+        console.print(f"\n  [dim]Scores: complexity={result.scores['complexity']:.0f} scale={result.scores['scale']:.0f} coupling={result.scores['coupling']:.0f}[/dim]")
     if result.alternative_tier:
         console.print(f"\n  [dim]Alternative: {result.alternative_tier.value}[/dim]")
 
@@ -315,4 +313,3 @@ def print_info_tables(config) -> None:
     _render_tiers_table(config)
     _render_tags_legend()
     _render_agents_table()
-
