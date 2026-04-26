@@ -29,6 +29,20 @@ llx-tools ai-tools shell
 
 # Start VS Code
 llx-tools vscode start
+
+# --- Plan & Workflow (new) ---
+
+# Run planfile strategy with pre-flight validation
+llx plan run .
+
+# Check ticket freshness before running
+llx plan validate .
+
+# Clean resolved / canceled tickets
+llx plan clean .
+
+# Run a workflow pipeline defined in llx.yaml
+llx run
 ```
 
 ## 🛠️ Available Commands
@@ -426,6 +440,209 @@ llx-tools models profile qwen2.5-coder:7b
 # Load model profile
 llx-tools models load-profile coding
 ```
+
+## 🗂️ Plan & Workflow Management
+
+### `llx plan run` — Execute Strategy Tickets
+
+Runs tickets from a `planfile.yaml` strategy, with optional pre-flight freshness validation and stale-ticket pruning.
+
+```bash
+# Default run (markdown output, pre-flight ON, cancel stale ON)
+llx plan run .
+
+# Dry-run with YAML output
+llx plan run . --dry-run --format yaml
+
+# Skip pre-flight validation
+llx plan run . --no-validate
+
+# Mark stale as canceled but do not delete them
+llx plan run . --cancel-stale --no-prune-stale
+
+# Physically delete stale tickets before execution
+llx plan run . --prune-stale --backup
+
+# Limit tickets processed
+llx plan run . --max-tasks 10
+```
+
+**Pre-flight behaviour** (default `--validate`):
+1. `prefact` scans the codebase.
+2. Tickets whose anchored file/line no longer match are flagged `stale`.
+3. By default `--cancel-stale` marks them `canceled` in `planfile.yaml`.
+4. If `--prune-stale` is passed, they are physically removed (with `.bak.<ts>` backup).
+5. Stale tickets are skipped from LLM execution.
+
+**Output formats:**
+- `markdown` (default) — human-readable summary + compact YAML payload in fenced code block. Long fields such as `response` are truncated to ~240 chars; use `--format yaml` for full data.
+- `yaml` — raw structured payload on STDOUT.
+
+### `llx plan validate` — Ticket Freshness Check
+
+Standalone pre-flight without executing LLM tasks.
+
+```bash
+# Markdown report
+llx plan validate .
+
+# YAML report, fail if stale tickets found
+llx plan validate . --format yaml --fail-on-stale
+
+# Also prune stale and unknown tickets
+llx plan validate . --prune-stale --prune-unknown --backup
+```
+
+### `llx plan clean` — Remove Resolved Tickets
+
+Physically deletes tickets with selected statuses from `planfile.yaml` and strips corresponding lines from `TODO.md`.
+
+```bash
+# Remove canceled tickets (default)
+llx plan clean .
+
+# Also remove done tickets
+llx plan clean . --include-done
+
+# Dry-run to preview changes
+llx plan clean . --dry-run
+
+# Skip TODO.md sync
+llx plan clean . --no-todo-sync
+```
+
+### `llx plan testql` — TestQL Scenario Bridge
+
+Validates a TestQL scenario, generates tickets for failures, and syncs them to TODO.md and configured integrations.
+
+```bash
+llx plan testql testql-scenarios/api-smoke.testql.toon.yaml
+```
+
+See [TESTQL_INTEGRATION.md](TESTQL_INTEGRATION.md) for full details.
+
+### `llx run [WORKFLOW]` — Workflow Engine
+
+Executes ordered step pipelines defined in `llx.yaml`.
+
+```bash
+# Run default workflow
+llx run
+
+# List available workflows
+llx run --list
+
+# Run a specific workflow with YAML report
+llx run ci-pipeline --format yaml
+
+# Fail fast (stop on first failed step)
+llx run deploy --fail-fast
+```
+
+**Built-in step kinds:**
+- `prefact-scan` — source-code scan.
+- `plan-validate` — ticket freshness check (supports `cancel_stale`, `fail_on_stale`).
+- `plan-run` — execute strategy (auto-inherits stale IDs from previous validate step).
+- `testql` — run TestQL validation and ticket sync.
+- `shell` — arbitrary subprocess.
+- `python` — dynamic import + function call (`module:function` + kwargs).
+
+**Env substitution:** step parameters support `${VAR}` and `${VAR:-default}`.
+
+---
+
+## 🔄 Status & Integration Mapping
+
+### TaskResult → TicketStatus
+
+When an LLM task finishes, its execution result is mapped to a planfile ticket lifecycle status:
+
+| TaskResult | TicketStatus | Meaning |
+|------------|--------------|---------|
+| `success` | `done` | Code changes applied and validated |
+| `no_changes` | `canceled` | Issue not found or already fixed; ticket obsolete |
+| `failed` | `blocked` | LLM or tool error; requires human review |
+| `already_fixed` | `done` | Detected pre-existing fix |
+| `not_found` | `canceled` | Target file/function missing |
+| `invalid` / `dry_run` / `skipped` | `open` | Retained for next iteration |
+
+### Priority Mapping
+
+Generic planfile priorities are translated per backend:
+
+| planfile | GitHub label | GitLab label | Jira |
+|----------|--------------|--------------|------|
+| `critical` | `priority-critical` | `priority::critical` | `Highest` |
+| `high` | `priority-high` | `priority::high` | `High` |
+| `normal` | `priority-normal` | `priority::normal` | `Medium` |
+| `low` | `priority-low` | `priority::low` | `Low` |
+
+### Ticket Sources
+
+Every ticket carries a `TicketSource` block showing its origin:
+
+| `tool` | Description |
+|--------|-------------|
+| `code2llm` | Auto-generated from codebase analysis |
+| `vallm` | Generated by validation LLM |
+| `llx` | Generated by `llx plan` execution or workflows |
+| `human` | Manually created |
+
+---
+
+## 🔗 External Integrations
+
+Tickets can be bidirectionally synced with GitHub Issues, GitLab Issues, and Jira.
+
+### GitHub
+
+```bash
+# planfile.yaml snippet
+integration: ["github"]
+sync:
+  github:
+    issue: 142
+    url: "https://github.com/owner/repo/issues/142"
+```
+
+- Status `open`/`closed` maps directly to GitHub issue state.
+- Intermediate states (`review`, `blocked`, `canceled`) use labels (`status:review`, etc.).
+- Priority becomes `priority-{value}` label.
+- Auto-created labels: `planfile`, `managed`.
+
+### GitLab
+
+```bash
+# planfile.yaml snippet
+integration: ["gitlab"]
+sync:
+  gitlab:
+    iid: 45
+    url: "https://gitlab.com/owner/project/-/issues/45"
+```
+
+- Uses GitLab-native labels; priority mapped to `priority::{value}`.
+- Metadata appended as Markdown section in issue description.
+
+### Jira
+
+```bash
+# planfile.yaml snippet
+integration: ["jira"]
+sync:
+  jira:
+    key: "PROJ-123"
+    url: "https://jira.example.com/browse/PROJ-123"
+```
+
+- Jira transitions mapped from planfile status.
+- Priority mapped to Jira standard levels (`Highest` … `Lowest`).
+
+### Identity-Aware Sync
+
+When syncing, the system attempts **update-first** by integration reference (`id`, URL, or key) before creating a new remote ticket. Resolved references are written back into `ticket.sync` and `ticket.external_refs` to prevent duplicates.
+
+---
 
 ## 🔍 Troubleshooting
 
