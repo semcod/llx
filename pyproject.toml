@@ -42,12 +42,43 @@ llx-orchestrator = "llx.orchestration.orchestrator_cli:main"
 llx-mcp = "llx.mcp.server:main_sync"
 
 [project.optional-dependencies]
+# ── DEV LAYERS ───────────────────────────────────────────────────
+# Test dependencies only
+test = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pytest-asyncio>=0.23",
+]
+
+# Lint dependencies only
+lint = [
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
+# CI-specific tools
+ci = [
+    "goal>=2.1.0",
+    "costs>=0.1.20",
+    "pfix>=0.1.60",
+    "pyqual>=0.1.36",
+]
+
+# Lightweight dev – fast install (<60s)
+dev = [
+    "llx[test,lint]",
+]
+
+# Full dev – with CI tools and MCP
+dev-full = [
+    "llx[test,lint,ci,mcp]",
+]
+
+# ── RUNTIME LAYERS ──────────────────────────────────────────────
+# MCP server support
 mcp = ["mcp>=1.0", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
-litellm = ["litellm>=1.40"]
-code2llm = ["code2llm>=0.9"]
-redup = ["redup>=0.4"]
-vallm = ["vallm>=0.1"]
-ollama = ["ollama>=0.3"]
+
+# PreLLM server support
 prellm = [
     "litellm>=1.40",
     "jinja2>=3.1",
@@ -56,43 +87,33 @@ prellm = [
     "uvicorn>=0.29",
 ]
 prellm-full = [
-    "litellm>=1.40",
-    "jinja2>=3.1",
-    "nfo>=0.1",
-    "fastapi>=0.110",
-    "uvicorn>=0.29",
+    "llx[prellm]",
     "chromadb>=0.4",
     "tree-sitter>=0.21",
     "instructor>=1.0",
 ]
-all = [
-    "litellm>=1.40",
-    "code2llm>=0.9",
-    "redup>=0.4",
-    "vallm>=0.1",
-    "ollama>=0.3",
-    "mcp>=1.0",
-    "starlette>=0.37",
-    "sse-starlette>=2.0",
-    "uvicorn>=0.29",
-    "jinja2>=3.1",
-    "nfo>=0.1",
-    "fastapi>=0.110",
-    "pyqual>=0.1.36",
+
+# Monitoring support
+monitoring = [
+    "prometheus_client>=0.20",
+    "flask>=3.0",
+    "flask-healthcheck>=0.1",
 ]
-dev = [
-    "pytest>=8.0",
-    "pytest-cov>=5.0",
-    "ruff>=0.5",
-    "mypy>=1.10",
-    "goal>=2.1.0",
-    "costs>=0.1.20",
-    "click<8.1.0",
-    "pfix>=0.1.60",
-    "pyqual>=0.1.36",
-    "starlette>=0.37",
-    "sse-starlette>=2.0",
-    "uvicorn>=0.29",
+
+# Code analysis integrations
+code2llm = ["code2llm>=0.9"]
+redup = ["redup>=0.4"]
+vallm = ["vallm>=0.1"]
+
+# Local model support
+ollama = ["ollama>=0.3"]
+
+# LiteLLM proxy support (deprecated, use prellm)
+litellm = ["litellm>=1.40"]
+
+# Everything combined
+all = [
+    "llx[prellm,prellm-full,mcp,monitoring,test,lint,ci,code2llm,redup,vallm,ollama]",
 ]
 
 [project.urls]

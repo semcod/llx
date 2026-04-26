@@ -1,13 +1,18 @@
-# code2llm | 316f 58716L | python:190,yaml:59,shell:32,yml:10,txt:4,json:3,conf:3,toml:1 | 2026-04-25
-# CC̄=2.6 | critical:1/1903 | dups:0 | cycles:0
+# code2llm | 317f 59707L | python:190,yaml:59,shell:32,yml:10,txt:4,json:4,conf:3,toml:1 | 2026-04-26
+# CC̄=2.6 | critical:6/1958 | dups:0 | cycles:0
 
-HEALTH[1]:
+HEALTH[6]:
   🟡 CC    main CC=15 (limit:15)
+  🟡 CC    execute_strategy CC=34 (limit:15)
+  🟡 CC    _normalize_strategy CC=22 (limit:15)
+  🟡 CC    _execute_task CC=26 (limit:15)
+  🟡 CC    plan_run CC=42 (limit:15)
+  🟡 CC    chat CC=16 (limit:15)
 
 REFACTOR[1]:
-  1. split 1 high-CC methods  (CC>15)
+  1. split 6 high-CC methods  (CC>15)
 
-PIPELINES[1003]:
+PIPELINES[1013]:
   [1] Src [test]: test → _normalize_strategy_data → _normalize_goal
       PURITY: 100% pure
   [2] Src [generate_simple_strategy]: generate_simple_strategy → generate_strategy_with_fix → _print_generation_info
@@ -20,14 +25,16 @@ PIPELINES[1003]:
       PURITY: 100% pure
 
 LAYERS:
-  llx/                            CC̄=3.7    ←in:23  →out:0
+  llx/                            CC̄=3.8    ←in:23  →out:12  !! split
   │ !! tools                      995L  1C   17m  CC=13     ←0
+  │ !! executor_simple            833L  2C   15m  CC=34     ←1
   │ !! config_manager             794L  1C   45m  CC=12     ←0
   │ !! vscode_manager             791L  1C   38m  CC=10     ←0
   │ !! model_manager              756L  1C   36m  CC=8      ←0
   │ !! trace                      648L  2C   29m  CC=13     ←2
   │ !! orchestrator               642L  1C   28m  CC=10     ←0
   │ !! engine                     638L  1C   38m  CC=11     ←0
+  │ !! app                        598L  0C   21m  CC=42     ←0
   │ !! orchestrator               595L  1C   27m  CC=12     ←0
   │ !! health_checker             589L  1C   27m  CC=10     ←0
   │ !! manager                    556L  1C   18m  CC=12     ←0
@@ -44,20 +51,18 @@ LAYERS:
   │ models                     432L  33C    2m  CC=1      ←1
   │ deanonymize                424L  4C   16m  CC=8      ←1
   │ codebase_indexer           418L  4C   14m  CC=11     ←0
-  │ app                        413L  0C   19m  CC=7      ←1
-  │ config                     376L  4C    9m  CC=13     ←10
+  │ config                     376L  4C    9m  CC=13     ←9
   │ cli_commands               366L  0C   10m  CC=8      ←0
   │ user_memory                361L  1C   15m  CC=12     ←0
+  │ !! client                     347L  3C   12m  CC=16     ←0
   │ proxym                     331L  3C   12m  CC=8      ←1
   │ query_decomposer           330L  1C   10m  CC=9      ←0
   │ formatters                 312L  0C   12m  CC=14     ←2
   │ issues                     300L  0C   11m  CC=11     ←2
   │ _streaming_impl            295L  2C   15m  CC=6      ←0
   │ __core                     291L  3C   13m  CC=8      ←1
-  │ client                     287L  3C   11m  CC=11     ←0
   │ selector                   281L  2C    9m  CC=8      ←5
   │ cli                        278L  0C   13m  CC=3      ←0
-  │ executor_simple            276L  1C    7m  CC=13     ←1
   │ process_chain              275L  1C   10m  CC=7      ←0
   │ health_runner              266L  1C   10m  CC=10     ←0
   │ model_selector             264L  4C   15m  CC=14     ←0
@@ -79,7 +84,7 @@ LAYERS:
   │ validators                 212L  3C    7m  CC=14     ←0
   │ schema_generator           211L  1C    9m  CC=11     ←0
   │ cli                        193L  0C    6m  CC=8      ←0
-  │ aider                      192L  0C    3m  CC=10     ←1
+  │ aider                      192L  0C    3m  CC=10     ←2
   │ preprocessor               188L  2C    6m  CC=13     ←0
   │ cli_query                  186L  0C    5m  CC=9      ←2
   │ _project_context           185L  2C   13m  CC=2      ←3
@@ -285,7 +290,7 @@ LAYERS:
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=1.5    ←in:0  →out:0
-  │ !! planfile.yaml             2271L  0C    0m  CC=0.0    ←0
+  │ !! planfile.yaml             1668L  0C    0m  CC=0.0    ←0
   │ Taskfile.yml               498L  0C    1m  CC=0.0    ←56
   │ goal.yaml                  429L  0C    0m  CC=0.0    ←0
   │ docker-manage.sh           406L  0C    7m  CC=0.0    ←0
@@ -294,7 +299,7 @@ LAYERS:
   │ docker-compose-prod.yml    261L  0C    0m  CC=0.0    ←0
   │ test-local-chat            195L  0C   11m  CC=7      ←0
   │ docker-compose-dev.yml     156L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             145L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             146L  0C    0m  CC=0.0    ←0
   │ test.yaml                  114L  0C    0m  CC=0.0    ←0
   │ strategy.yaml              107L  0C    0m  CC=0.0    ←0
   │ pyqual.yaml                 96L  0C    0m  CC=0.0    ←0
@@ -311,8 +316,8 @@ LAYERS:
   │ requirements-dev.txt         9L  0C    0m  CC=0.0    ←0
   │ github.planfile.yaml         4L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
-  │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │ Dockerfile                   0L  0C    0m  CC=0.0    ←0
+  │ Makefile                     0L  0C    0m  CC=0.0    ←0
   │
   my-api/                         CC̄=1.5    ←in:0  →out:0
   │ monitoring                 125L  4C   14m  CC=2      ←0
@@ -334,9 +339,9 @@ LAYERS:
   │ entrypoint.sh               31L  0C    0m  CC=0.0    ←0
   │
   project/                        CC̄=0.0    ←in:0  →out:0
-  │ !! calls.yaml                7145L  0C    0m  CC=0.0    ←0
-  │ !! map.toon.yaml             1556L  0C  502m  CC=0.0    ←5
-  │ !! calls.toon.yaml            607L  0C    0m  CC=0.0    ←0
+  │ !! calls.yaml                7167L  0C    0m  CC=0.0    ←0
+  │ !! map.toon.yaml             2304L  0C  546m  CC=0.0    ←9
+  │ !! calls.toon.yaml            615L  0C    0m  CC=0.0    ←0
   │ analysis.toon.yaml         417L  0C    0m  CC=0.0    ←0
   │ duplication.toon.yaml      244L  0C    0m  CC=0.0    ←0
   │ validation.toon.yaml       157L  0C    0m  CC=0.0    ←0
@@ -356,6 +361,9 @@ LAYERS:
   │ generated-from-pytests.testql.toon.yaml    22L  0C    0m  CC=0.0    ←0
   │ generated-api-integration.testql.toon.yaml    18L  0C    0m  CC=0.0    ←0
   │
+  .taskill/                       CC̄=0.0    ←in:0  →out:0
+  │ state.json                  13L  0C    0m  CC=0.0    ←0
+  │
   ── zero ──
      Dockerfile                                0L
      Makefile                                  0L
@@ -373,44 +381,45 @@ LAYERS:
      my-api/Dockerfile                         0L
 
 COUPLING:
-                                Taskfile    examples.privacy           llx.tools   llx.orchestration  llx.pyqual_plugins             llx.cli        llx.planfile     test-local-chat           llx.utils             llx.mcp                 llx             scripts        llx.analysis        llx.examples        llx.commands
-            Taskfile                  ──                ←435                ←405                ←319                 ←76                 ←24                 ←26                 ←39                                                                             ←19                                     ←12                      hub
+                                Taskfile    examples.privacy           llx.tools   llx.orchestration  llx.pyqual_plugins             llx.cli        llx.planfile     test-local-chat                 llx           llx.utils             llx.mcp         project.map             scripts        llx.analysis        llx.examples
+            Taskfile                  ──                ←435                ←405                ←319                 ←76                 ←24                 ←26                 ←39                                                                                                 ←19                                     ←12  hub
     examples.privacy                 435                  ──                                                                                                                                                                                                                                                                      !! fan-out
-           llx.tools                 405                                      ──                                                                                                                       5                                                                                                                          !! fan-out
-   llx.orchestration                 319                                                          ──                                                                                                   7                                                                                                                          !! fan-out
+           llx.tools                 405                                      ──                                                                                                                                           5                                                                                                      !! fan-out
+   llx.orchestration                 319                                                          ──                                                                                                                       7                                                                                                      !! fan-out
   llx.pyqual_plugins                  76                                                                              ──                                                                                                                                                                                                          !! fan-out
-             llx.cli                  24                                                                                                  ──                   6                                                                              11                                       6                                          !! fan-out
-        llx.planfile                  26                                                                                                  ←6                  ──                                                          ←1                   2                                       2                                          hub
+             llx.cli                  24                                                                                                  ──                   8                                      13                                                           4                                       6                      !! fan-out
+        llx.planfile                  26                                                                                                  ←8                  ──                                       2                   1                                       1                                       2                      hub
      test-local-chat                  39                                                                                                                                          ──                                                                                                                                              !! fan-out
-           llx.utils                                                          ←5                  ←7                                                                                                  ──                   1                                                                                                  ←8  hub
-             llx.mcp                                                                                                                                           1                                       3                  ──                   5                                       6                                          !! fan-out
-                 llx                                                                                                                     ←11                  ←2                                                          ←5                  ──                                                          ←1                  ←1  hub
-             scripts                  19                                                                                                                                                                                                                          ──                                                              !! fan-out
-        llx.analysis                                                                                                                      ←6                  ←2                                                          ←6                                                          ──                                      ←1  hub
-        llx.examples                  12                                                                                                                                                                                                       1                                                          ──                      !! fan-out
-        llx.commands                                                                                                                                                                                   8                                       1                                       1                                      ──  !! fan-out
+                 llx                                                                                                                     ←13                  ←2                                      ──                                      ←5                  12                                                          ←1  hub
+           llx.utils                                                          ←5                  ←7                                                          ←1                                                          ──                   1                                                                                  hub
+             llx.mcp                                                                                                                                                                                   5                   3                  ──                   2                                       6                      !! fan-out
+         project.map                                                                                                                      ←4                  ←1                                     ←12                                      ←2                  ──                                                              hub
+             scripts                  19                                                                                                                                                                                                                                              ──                                          !! fan-out
+        llx.analysis                                                                                                                      ←6                  ←2                                                                              ←6                                                          ──                      hub
+        llx.examples                  12                                                                                                                                                               1                                                                                                                      ──  !! fan-out
   CYCLES: none
-  HUB: llx.routing/ (fan-in=9)
-  HUB: project.map/ (fan-in=5)
-  HUB: llx.analysis/ (fan-in=16)
-  HUB: llx.utils/ (fan-in=23)
-  HUB: llx.planfile/ (fan-in=10)
-  HUB: examples.filtering/ (fan-in=5)
-  HUB: llx/ (fan-in=23)
-  HUB: llx.integrations/ (fan-in=5)
-  HUB: examples.docker/ (fan-in=7)
   HUB: Taskfile/ (fan-in=1355)
-  SMELL: scripts/ fan-out=19 → split needed
-  SMELL: llx.planfile/ fan-out=31 → split needed
-  SMELL: test-local-chat/ fan-out=39 → split needed
-  SMELL: llx.examples/ fan-out=13 → split needed
-  SMELL: llx.cli/ fan-out=59 → split needed
-  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
-  SMELL: llx.commands/ fan-out=12 → split needed
+  HUB: examples.filtering/ (fan-in=5)
+  HUB: llx.planfile/ (fan-in=11)
+  HUB: llx.integrations/ (fan-in=7)
+  HUB: llx.routing/ (fan-in=9)
+  HUB: llx.analysis/ (fan-in=16)
+  HUB: project.map/ (fan-in=22)
+  HUB: llx.utils/ (fan-in=24)
+  HUB: examples.docker/ (fan-in=7)
+  HUB: llx/ (fan-in=23)
   SMELL: llx.mcp/ fan-out=23 → split needed
-  SMELL: llx.tools/ fan-out=417 → split needed
+  SMELL: llx.planfile/ fan-out=32 → split needed
   SMELL: examples.privacy/ fan-out=438 → split needed
+  SMELL: llx.cli/ fan-out=67 → split needed
+  SMELL: llx.examples/ fan-out=13 → split needed
+  SMELL: llx.commands/ fan-out=12 → split needed
+  SMELL: test-local-chat/ fan-out=39 → split needed
+  SMELL: llx.tools/ fan-out=417 → split needed
+  SMELL: llx.pyqual_plugins/ fan-out=76 → split needed
   SMELL: llx.orchestration/ fan-out=326 → split needed
+  SMELL: scripts/ fan-out=19 → split needed
+  SMELL: llx/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

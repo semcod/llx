@@ -11,12 +11,12 @@
 ## AI Cost Tracking
 
 ![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.31-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-28.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-28.9h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (74 commits)
-- 👤 **Human dev:** ~$2835 (28.4h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (79 commits)
+- 👤 **Human dev:** ~$2890 (28.9h @ $100/h, 30min dedup)
 
-Generated on 2026-04-25 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-04-26 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
@@ -76,9 +76,9 @@ preLLM proved the concept but had architectural issues that llx resolves:
    ┌────┼────────────────────────────────────────┐
    │    │           Model Tiers                   │
    │    ├── premium:  Claude Opus 4               │
-   │    ├── balanced: Claude Sonnet 4 / GPT-5     │
+   │    ├── balanced: Qwen 2.5 Coder (OpenRouter) │
    │    ├── cheap:    Claude Haiku 4.5            │
-   │    ├── free:     Gemini 2.5 Pro              │
+   │    ├── free:     Nemotron 3 Super (OpenRouter)│
    │    ├── openrouter: 300+ models (fallback)    │
    │    └── local:    Ollama (Qwen2.5-Coder)      │
    └──────────────────────────────────────────────┘
@@ -129,6 +129,11 @@ python -m llx.mcp --sse --port 8000
 ## Installation
 
 ```bash
+# Recommended: Use uv for 10-100x faster installation
+pip install uv
+uv pip install -e ".[dev]"
+
+# Or with pip
 pip install llx
 
 # With integrations
@@ -138,6 +143,16 @@ pip install llx[litellm]    # LiteLLM proxy
 pip install llx[code2llm]   # Code analysis
 pip install llx[redup]      # Duplication detection
 pip install llx[vallm]      # Code validation
+
+# Development environments
+pip install -e ".[dev]"      # Lightweight dev tools (pytest, ruff, mypy)
+pip install -e ".[dev-full]" # Full dev with all tools (goal, costs, pfix)
+```
+
+**uv Installation (Recommended):**
+```bash
+pip install uv
+uv pip install -e ".[dev]"  # 10-100x faster than pip
 ```
 
 ```bash
@@ -287,19 +302,58 @@ for result in results:
 
 **CLI usage:**
 ```bash
-# Proste lokalne wykonanie (nowa komenda)
-llx plan run .                          # Uruchom planfile.yaml
-llx plan run . --tier free               # Z konkretnym tierem modelu
-llx plan run . --sprint 1                # Tylko sprint 1
-llx plan run . --dry-run                 # Symulacja bez wykonywania
+# Basic execution
+llx plan run .                          # Run planfile.yaml
+llx plan run . --tier free               # With specific model tier
+llx plan run . --sprint 1                # Only sprint 1
+llx plan run . --dry-run                 # Simulate without executing
 
-# Generowanie i recenzja
+# Concurrency and task limits
+llx plan run . --max-concurrent 3        # Run 3 tasks in parallel
+llx plan run . --max-tasks 10            # Process only 10 tasks total
+llx plan run . -j 5 -n 20                # Short form: 5 concurrent, max 20 tasks
+
+# Proxy management (automatic detection and startup)
+llx plan run .                          # Auto-starts proxy if not running
+llx plan run . --no-auto-start-proxy     # Disable automatic proxy start
+
+# Code editing with automatic backend detection
+llx plan run . --use-aider               # Auto-detect best backend (LOCAL > CURSOR > WINDSURF > CLAUDE_CODE > DOCKER > MCP > LLM_CHAT)
+llx plan run . -a -j 3 -n 10             # Backend detection + concurrency + task limit
+
+# Output to YAML
+llx plan run . --output-yaml results.yaml
+llx plan run . -o execution_results.yaml
+
+# Generation and review
 llx plan generate strategy.yaml --output generated/
 llx plan review strategy.yaml --project .
 
-# Tworzenie ticketów w GitHub (wymaga zewnętrznego planfile)
+# GitHub ticket creation (requires external planfile)
 llx plan execute strategy.yaml --project . --dry-run
 ```
+
+**Code Editing Backends:**
+When using `--use-aider`, llx automatically detects and uses the best available backend:
+
+- **LOCAL** - Local aider package (highest priority)
+- **CURSOR** - Cursor AI
+- **WINDSURF** - Windsurf AI
+- **CLAUDE_CODE** - Claude Code
+- **DOCKER** - Aider in Docker container
+- **MCP** - MCP services
+- **LLM_CHAT** - Fallback (always available)
+
+The system automatically detects which backends are installed and selects the best one.
+
+**Task validation:**
+- `success` - Changes were made to code
+- `invalid` - No changes made (backend didn't modify files)
+- `not_found` - Target file doesn't exist
+- `already_fixed` - LLM reports issue not found or already fixed
+- `failed` - Execution error
+
+Use `--use-aider` for reliable code editing - the system automatically selects the best available backend.
 
 **Supported formats:**
 - **V1**: Tasks defined separately in `task_patterns`

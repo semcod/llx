@@ -6,15 +6,15 @@
 - **Primary Language**: python
 - **Languages**: python: 190, yaml: 59, shell: 32, yml: 10, txt: 4
 - **Analysis Mode**: static
-- **Total Functions**: 1903
-- **Total Classes**: 232
-- **Modules**: 315
-- **Entry Points**: 1619
+- **Total Functions**: 1958
+- **Total Classes**: 233
+- **Modules**: 316
+- **Entry Points**: 1665
 
 ## Architecture by Module
 
 ### project.map.toon
-- **Functions**: 609
+- **Functions**: 1237
 - **File**: `map.toon.yaml`
 
 ### llx.tools.config_manager
@@ -72,6 +72,10 @@
 - **Classes**: 1
 - **File**: `manager.py`
 
+### llx.cli.app
+- **Functions**: 21
+- **File**: `app.py`
+
 ### llx.orchestration.session.manager
 - **Functions**: 20
 - **Classes**: 1
@@ -81,10 +85,6 @@
 - **Functions**: 20
 - **Classes**: 1
 - **File**: `limiter.py`
-
-### llx.cli.app
-- **Functions**: 19
-- **File**: `app.py`
 
 ### llx.planfile.generate_strategy
 - **Functions**: 19
@@ -123,6 +123,10 @@ Main execution flows into the system:
 ### examples.privacy.advanced.02_multi_stage.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, Taskfile.print, Taskfile.print, examples.privacy.advanced.02_multi_stage.create_business_logic_project
 
+### llx.cli.app.plan_run
+> Execute planfile tasks locally with LLM (simpler alternative to 'execute').
+- **Calls**: plan_app.command, typer.Argument, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option, typer.Option
+
 ### examples.privacy.ml.01_entropy_ml_detection.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, MLBasedAnonymizer, Taskfile.print, Taskfile.print, Taskfile.print, Taskfile.print
 
@@ -137,6 +141,10 @@ Main execution flows into the system:
 
 ### examples.privacy.project.02_deanonymize_project.main
 - **Calls**: Taskfile.print, Taskfile.print, Taskfile.print, tempfile.TemporaryDirectory, project_path.mkdir, src_file.write_text, Taskfile.print, Taskfile.print
+
+### llx.planfile.executor_simple.execute_strategy
+> Execute strategy with simplified format support.
+- **Calls**: llx.planfile.executor_simple._load_strategy, llx.planfile.executor_simple._normalize_strategy, LlxConfig.load, llx.analysis.collector.analyze_project, strategy.get, llx.planfile.executor_simple._detect_available_backends, llx.planfile.executor_simple._select_best_backend, logger.info
 
 ### scripts.pyqual_auto.main
 - **Calls**: argparse.ArgumentParser, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.parse_args
@@ -216,14 +224,6 @@ Main execution flows into the system:
 v0.4 refactor: uses context_ops and pipeline_ops modules to reduce com
 - **Calls**: kwargs.pop, kwargs.pop, LLMProviderConfig, LLMProviderConfig, LLMProvider, LLMProvider, PromptRegistry, PromptPipeline.from_yaml
 
-### llx.tools.docker_manager.DockerManager.print_status_summary
-> Print comprehensive status summary.
-- **Calls**: Taskfile.print, Taskfile.print, self.get_service_status, Taskfile.print, status.items, Taskfile.print, self.services.keys, self.get_resource_usage
-
-### llx.config.LlxConfig.load
-> Load configuration from llx.yaml, llx.toml, or pyproject.toml.
-- **Calls**: None.resolve, cls, LiteLLMConfig.load, yaml_path.exists, pyproject.exists, llx.config._apply_env, llx.config.normalize_litellm_base_url, toml_path.exists
-
 ## Process Flows
 
 Key execution flows identified:
@@ -235,61 +235,62 @@ main [examples.privacy.advanced.01_api_integration]
   └─ →> print
 ```
 
-### Flow 2: load_instances
+### Flow 2: plan_run
+```
+plan_run [llx.cli.app]
+```
+
+### Flow 3: execute_strategy
+```
+execute_strategy [llx.planfile.executor_simple]
+  └─> _load_strategy
+  └─> _normalize_strategy
+  └─ →> analyze_project
+      └─> _collect_filesystem_metrics
+      └─> _estimate_context_tokens
+```
+
+### Flow 4: load_instances
 ```
 load_instances [llx.orchestration.instances.manager.InstanceManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 3: print_quick_start
+### Flow 5: print_quick_start
 ```
 print_quick_start [llx.tools.vscode_manager.VSCodeManager]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 4: load_vscode_config
+### Flow 6: load_vscode_config
 ```
 load_vscode_config [llx.orchestration.vscode.config_io]
 ```
 
-### Flow 5: load_config
+### Flow 7: load_config
 ```
 load_config [llx.orchestration.vscode.orchestrator.VSCodeOrchestrator]
 ```
 
-### Flow 6: load_limits
+### Flow 8: load_limits
 ```
 load_limits [llx.orchestration.ratelimit.limiter.RateLimiter]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 7: load_limits_from_file
+### Flow 9: load_limits_from_file
 ```
 load_limits_from_file [llx.orchestration.ratelimit._persistence]
   └─ →> print
   └─ →> print
 ```
 
-### Flow 8: load_sessions
+### Flow 10: load_sessions
 ```
 load_sessions [llx.orchestration.session.manager.SessionManager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 9: load_queues
-```
-load_queues [llx.orchestration.queue.manager.QueueManager]
-  └─ →> print
-  └─ →> print
-```
-
-### Flow 10: monitor_services
-```
-monitor_services [llx.tools.health_checker.HealthChecker]
   └─ →> print
   └─ →> print
 ```
@@ -485,8 +486,6 @@ Special cases
 > Process multiple queries in parallel.
 - **Output to**: app.post, HTTPException, asyncio.gather, list, llx.prellm.core.preprocess_and_execute
 
-### llx.prellm._get_process_chain
-
 ### llx.prellm.pipeline_ops.run_preprocessing
 > Run the small-LLM preprocessing step. Returns (prep_result, duration_ms).
 - **Output to**: time.time, preprocessor.preprocess, time.time
@@ -514,6 +513,9 @@ Args:
   
 - **Output to**: self.validate, logger.info, retry_fn, self.validate
 
+### llx.prellm.core._trace_preprocess_configuration
+- **Output to**: trace.step, str
+
 ## Behavioral Patterns
 
 ### recursion__sanitize
@@ -539,7 +541,7 @@ Args:
 ### state_machine_LlxClient
 - **Type**: state_machine
 - **Confidence**: 0.70
-- **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._parse_response
+- **Functions**: llx.routing.client.LlxClient.__init__, llx.routing.client.LlxClient.chat, llx.routing.client.LlxClient.chat_with_context, llx.routing.client.LlxClient._build_payload, llx.routing.client.LlxClient._direct_openrouter_call
 
 ## Public API Surface
 
@@ -548,12 +550,14 @@ Functions exposed as public API (no underscore prefix):
 - `examples.privacy.advanced.01_api_integration.main` - 90 calls
 - `examples.privacy.ml.04_behavioral_learning.main` - 84 calls
 - `examples.privacy.advanced.02_multi_stage.main` - 73 calls
+- `llx.cli.app.plan_run` - 72 calls
 - `examples.privacy.ml.01_entropy_ml_detection.main` - 65 calls
 - `examples.privacy.ml.03_contextual_passwords.main` - 64 calls
 - `examples.privacy.project.01_anonymize_project.main` - 52 calls
 - `examples.privacy.streaming.01_streaming_anonymization.main` - 50 calls
 - `llx.prellm.cli_context.context` - 49 calls
 - `examples.privacy.project.02_deanonymize_project.main` - 45 calls
+- `llx.planfile.executor_simple.execute_strategy` - 44 calls
 - `scripts.pyqual_auto.main` - 43 calls
 - `llx.orchestration.instances.manager.InstanceManager.load_instances` - 43 calls
 - `examples.privacy.advanced.03_cicd_integration.main` - 42 calls
@@ -576,15 +580,13 @@ Functions exposed as public API (no underscore prefix):
 - `llx.prellm.pipeline_ops.execute_v3_pipeline` - 27 calls
 - `llx.tools.docker_manager.DockerManager.print_status_summary` - 27 calls
 - `llx.mcp.service.create_service_app` - 27 calls
-- `llx.config.LlxConfig.load` - 26 calls
 - `llx.orchestration.session.manager.SessionManager.print_status_summary` - 26 calls
+- `llx.config.LlxConfig.load` - 26 calls
 - `llx.prellm.cli_config.config_show_cmd` - 25 calls
 - `llx.prellm.cli_commands.budget` - 25 calls
 - `llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.print_status_summary` - 25 calls
 - `examples.privacy.advanced.03_cicd_integration.CICDPrivacyPipeline.step1_pre_commit_scan` - 24 calls
 - `llx.prellm.env_config.get_env_config` - 24 calls
-- `llx.tools.vscode_manager.VSCodeManager.install_extensions` - 24 calls
-- `llx.tools.config_manager.ConfigManager.restore_configs` - 23 calls
 
 ## System Interactions
 
@@ -595,9 +597,17 @@ graph TD
     main --> print
     main --> TemporaryDirectory
     main --> mkdir
+    plan_run --> command
+    plan_run --> Argument
+    plan_run --> Option
     main --> MLBasedAnonymizer
     main --> ContextualPasswordDe
     main --> create_test_code_sam
+    execute_strategy --> _load_strategy
+    execute_strategy --> _normalize_strategy
+    execute_strategy --> load
+    execute_strategy --> analyze_project
+    execute_strategy --> get
     main --> ArgumentParser
     main --> add_argument
     load_instances --> exists
@@ -607,13 +617,6 @@ graph TD
     load_vscode_config --> exists
     load_vscode_config --> update
     load_vscode_config --> get
-    load_config --> exists
-    load_config --> update
-    load_config --> get
-    load_limits --> exists
-    load_limits --> get
-    load_limits --> print
-    load_limits --> _create_default_limi
 ```
 
 ## Reverse Engineering Guidelines

@@ -37,6 +37,21 @@ results = execute_strategy(
     project_path=".",
     dry_run=True
 )
+
+# With concurrency control
+results = execute_strategy(
+    "strategy.yaml",
+    project_path=".",
+    max_concurrent=3,  # Run 3 tasks in parallel
+    max_tasks=10       # Process only 10 tasks total
+)
+
+# With automatic backend detection for code editing
+results = execute_strategy(
+    "strategy.yaml",
+    project_path=".",
+    use_aider=True  # Auto-detects best backend: LOCAL > CURSOR > WINDSURF > CLAUDE_CODE > DOCKER > MCP > LLM_CHAT
+)
 ```
 
 ### V2 Format Example

@@ -19,9 +19,19 @@ llx plan review refactor-strategy.yaml .
 llx plan apply refactor-strategy.yaml . --dry-run
 
 # Phase 4: Execute sprint by sprint
-llx plan apply refactor-strategy.yaml . --sprint "sprint-1"
-llx plan apply refactor-strategy.yaml . --sprint "sprint-2"
-llx plan apply refactor-strategy.yaml . --sprint "sprint-3"
+# Using automatic backend detection (recommended)
+# System auto-detects: LOCAL > CURSOR > WINDSURF > CLAUDE_CODE > DOCKER > MCP > LLM_CHAT
+llx plan run . --sprint 1 --max-concurrent 3 --max-tasks 10 --use-aider
+llx plan run . --sprint 2 --max-concurrent 3 --max-tasks 10 --use-aider
+llx plan run . --sprint 3 --max-concurrent 3 --max-tasks 10 --use-aider
+
+# Or with LLM chat only (may not apply changes reliably)
+llx plan run . --sprint 1 --max-concurrent 3 --max-tasks 10
+llx plan run . --sprint 2 --max-concurrent 3 --max-tasks 10
+llx plan run . --sprint 3 --max-concurrent 3 --max-tasks 10
+
+# Output results to YAML
+llx plan run . --sprint 1 --max-concurrent 3 --max-tasks 10 --output-yaml sprint1_results.yaml
 ```
 
 # Generate focused strategy for specific issues

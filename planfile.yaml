@@ -969,1303 +969,705 @@ sprints:
   objectives:
   - Fix code quality issues
   task_patterns:
-  - id: ticket-00506015
-    name: Fix magic-numbers issues
+  - name: Fix magic-numbers issues
     description: Resolve 17 magic-numbers issues in llx/analysis/collector.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/analysis/collector.py
-    rule_id: magic-numbers
-    count: 17
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-fbe2ffd2
-    name: Fix magic-numbers issues
+    priority: high
+    status: invalid
+    validation_message: No changes made to code
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/analysis/runner.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-aa173a2f
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/cli/formatters.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/cli/formatters.py
-    rule_id: string-concat
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-634ef1dc
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 10 magic-numbers issues in llx/cli/formatters.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/cli/formatters.py
-    rule_id: magic-numbers
-    count: 10
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3f0bbcaa
-    name: Fix unused-imports issues
+    priority: high
+  - name: Fix unused-imports issues
     description: Resolve 8 unused-imports issues in llx/cli/commands/planner.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/cli/commands/planner.py
-    rule_id: unused-imports
-    count: 8
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-5b609c5e
-    name: Fix unused-imports issues
+    priority: high
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/cli/app.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/cli/app.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-1a408f68
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/cli/app.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/cli/app.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a3febb0a
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/cli/strategy_commands.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/cli/strategy_commands.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d1860122
-    name: Fix smart-return-type issues
+    priority: medium
+  - name: Fix smart-return-type issues
     description: Resolve 5 smart-return-type issues in llx/cli/strategy_commands.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/cli/strategy_commands.py
-    rule_id: smart-return-type
-    count: 5
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-c3f37de1
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 9 string-concat issues in llx/commands/_patch_apply.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/commands/_patch_apply.py
-    rule_id: string-concat
-    count: 9
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-cd2e2e08
-    name: Fix unused-imports issues
+    priority: high
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/commands/_patch_apply.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/commands/_patch_apply.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-34b424bd
-    name: Fix duplicate-imports issues
+    priority: medium
+  - name: Fix duplicate-imports issues
     description: Resolve 1 duplicate-imports issues in llx/commands/_patch_apply.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/commands/_patch_apply.py
-    rule_id: duplicate-imports
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-24841cfe
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/commands/_patch_apply.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/commands/_patch_apply.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-68331a44
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/commands/fix.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/commands/fix.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a776d527
-    name: Fix llm-generated-code issues
+    priority: medium
+  - name: Fix llm-generated-code issues
     description: Resolve 1 llm-generated-code issues in llx/commands/fix.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/commands/fix.py
-    rule_id: llm-generated-code
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4c20303b
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/detection/__init__.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/detection/__init__.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4227c179
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/config.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/config.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-115b3614
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/config.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/config.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-9663448d
-    name: Fix duplicate-imports issues
+    priority: medium
+  - name: Fix duplicate-imports issues
     description: Resolve 2 duplicate-imports issues in llx/config.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/config.py
-    rule_id: duplicate-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-6086d2aa
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 19 magic-numbers issues in llx/config.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/config.py
-    rule_id: magic-numbers
-    count: 19
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-2f540eec
-    name: Fix unused-imports issues
+    priority: high
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/integrations/context_builder.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/context_builder.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3021c38a
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 3 magic-numbers issues in llx/integrations/context_builder.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/context_builder.py
-    rule_id: magic-numbers
-    count: 3
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3a08125f
-    name: Fix llm-generated-code issues
+    priority: medium
+  - name: Fix llm-generated-code issues
     description: Resolve 1 llm-generated-code issues in llx/integrations/context_builder.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/context_builder.py
-    rule_id: llm-generated-code
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4962a33c
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/integrations/proxy.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/proxy.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-08d2e425
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/integrations/proxy.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/proxy.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-39ebc2b1
-    name: Fix llm-generated-code issues
+    priority: medium
+  - name: Fix llm-generated-code issues
     description: Resolve 2 llm-generated-code issues in llx/integrations/proxy.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/proxy.py
-    rule_id: llm-generated-code
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-7f81ee6f
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/llm.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/llm.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-73ee53f8
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/llm.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/llm.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-753ad8cd
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/litellm_config.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/litellm_config.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-573dfebc
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/litellm_config.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/litellm_config.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3b5528be
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/mcp/client.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/client.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-f1607bd9
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/integrations/proxym.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/proxym.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-b7a54255
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 10 magic-numbers issues in llx/integrations/proxym.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/integrations/proxym.py
-    rule_id: magic-numbers
-    count: 10
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-414cb43b
-    name: Fix llm-generated-code issues
+    priority: high
+  - name: Fix llm-generated-code issues
     description: Resolve 1 llm-generated-code issues in llx/integrations/proxym.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/integrations/proxym.py
-    rule_id: llm-generated-code
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-164e6e35
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/mcp/workflows.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/workflows.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3811768c
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in llx/mcp/service.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/service.py
-    rule_id: unused-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4e388d05
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/mcp/service.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/service.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-7dda93bf
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 1 ai-boilerplate issues in llx/mcp/service.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/service.py
-    rule_id: ai-boilerplate
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-1069be71
-    name: Fix smart-return-type issues
+    priority: medium
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/mcp/server.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/server.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-37da1652
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/mcp/server.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/mcp/server.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d75ce086
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/mcp/server.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/server.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-05ae1f60
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 1 ai-boilerplate issues in llx/mcp/server.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/server.py
-    rule_id: ai-boilerplate
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-fb9f0783
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 14 relative-imports issues in llx/orchestration/__init__.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/orchestration/__init__.py
-    rule_id: relative-imports
-    count: 14
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-6a20671a
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 10 relative-imports issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: relative-imports
-    count: 10
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d6bc5643
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-49b64439
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: string-concat
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-555a5a15
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-cdfe8293
-    name: Fix duplicate-imports issues
+    priority: medium
+  - name: Fix duplicate-imports issues
     description: Resolve 4 duplicate-imports issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: duplicate-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-bf1979e6
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 3 magic-numbers issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: magic-numbers
-    count: 3
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-64458d0a
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 2 ai-boilerplate issues in llx/orchestration/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/cli.py
-    rule_id: ai-boilerplate
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-fe606526
-    name: Fix llm-generated-code issues
+    priority: medium
+  - name: Fix llm-generated-code issues
     description: Resolve 5 llm-generated-code issues in llx/orchestration/cli_utils.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/cli_utils.py
-    rule_id: llm-generated-code
-    count: 5
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-ca95bfaf
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 6 relative-imports issues in llx/orchestration/instances/__init__.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/instances/__init__.py
-    rule_id: relative-imports
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-201a1571
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 14 relative-imports issues in llx/orchestration/instances/cli.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/orchestration/instances/cli.py
-    rule_id: relative-imports
-    count: 14
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-39b506b9
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/instances/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/cli.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-b7c06d62
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/orchestration/instances/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/instances/cli.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-5c48f565
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 2 ai-boilerplate issues in llx/orchestration/instances/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/cli.py
-    rule_id: ai-boilerplate
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-73e53919
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/mcp/tools.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/mcp/tools.py
-    rule_id: string-concat
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-0733c685
-    name: Fix duplicate-imports issues
+    priority: medium
+  - name: Fix duplicate-imports issues
     description: Resolve 13 duplicate-imports issues in llx/mcp/tools.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/mcp/tools.py
-    rule_id: duplicate-imports
-    count: 13
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-1b3b8b55
-    name: Fix magic-numbers issues
+    priority: high
+  - name: Fix magic-numbers issues
     description: Resolve 6 magic-numbers issues in llx/mcp/tools.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/mcp/tools.py
-    rule_id: magic-numbers
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-daeb36ee
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/orchestration/instances/ports.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/ports.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4899177f
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 2 string-concat issues in llx/orchestration/instances/ports.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/ports.py
-    rule_id: string-concat
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a547cd82
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 6 magic-numbers issues in llx/orchestration/instances/ports.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/instances/ports.py
-    rule_id: magic-numbers
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-cd0ad529
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 6 relative-imports issues in llx/orchestration/instances/manager.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/instances/manager.py
-    rule_id: relative-imports
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-879146af
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/instances/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/manager.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-c910af93
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 2 string-concat issues in llx/orchestration/instances/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/instances/manager.py
-    rule_id: string-concat
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-2e7de590
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 6 magic-numbers issues in llx/orchestration/instances/manager.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/instances/manager.py
-    rule_id: magic-numbers
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-7ae77df9
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in llx/orchestration/llm/__init__.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/llm/__init__.py
-    rule_id: relative-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-fec9e312
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 12 relative-imports issues in llx/orchestration/llm/cli.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/orchestration/llm/cli.py
-    rule_id: relative-imports
-    count: 12
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-e7ade229
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/llm/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/cli.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-75bc490c
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/orchestration/llm/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/llm/cli.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-5a9c8230
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 2 ai-boilerplate issues in llx/orchestration/llm/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/cli.py
-    rule_id: ai-boilerplate
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-fea66325
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/orchestration/llm/executors.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/executors.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-b019294e
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 5 string-concat issues in llx/orchestration/llm/executors.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/llm/executors.py
-    rule_id: string-concat
-    count: 5
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-5119a99a
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 6 magic-numbers issues in llx/orchestration/llm/executors.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/llm/executors.py
-    rule_id: magic-numbers
-    count: 6
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-27d85c76
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/orchestration/llm/health.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/health.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-9a569509
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/orchestration/llm/health.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/health.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-2e6ca419
-    name: Fix llm-generated-code issues
+    priority: medium
+  - name: Fix llm-generated-code issues
     description: Resolve 1 llm-generated-code issues in llx/orchestration/llm/health.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/health.py
-    rule_id: llm-generated-code
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-26479adc
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in llx/orchestration/queue/__init__.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/queue/__init__.py
-    rule_id: relative-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-54a3bbbc
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 18 relative-imports issues in llx/orchestration/llm/orchestrator.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/orchestration/llm/orchestrator.py
-    rule_id: relative-imports
-    count: 18
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-0964375e
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 3 smart-return-type issues in llx/orchestration/llm/orchestrator.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/orchestrator.py
-    rule_id: smart-return-type
-    count: 3
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-605e7834
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 2 string-concat issues in llx/orchestration/llm/orchestrator.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/orchestrator.py
-    rule_id: string-concat
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-51adfec9
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 8 magic-numbers issues in llx/orchestration/llm/orchestrator.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/llm/orchestrator.py
-    rule_id: magic-numbers
-    count: 8
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-675ffde3
-    name: Fix relative-imports issues
+    priority: high
+  - name: Fix relative-imports issues
     description: Resolve 12 relative-imports issues in llx/orchestration/queue/cli.py
     task_type: prefactor
-    priority: high
-    estimate: 3d
-    files:
-    - llx/orchestration/queue/cli.py
-    rule_id: relative-imports
-    count: 12
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a225527b
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/queue/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/cli.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4af58117
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 4 unused-imports issues in llx/orchestration/queue/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/queue/cli.py
-    rule_id: unused-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4d8b6bb1
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/orchestration/queue/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/cli.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d7ad6907
-    name: Fix ai-boilerplate issues
+    priority: medium
+  - name: Fix ai-boilerplate issues
     description: Resolve 2 ai-boilerplate issues in llx/orchestration/queue/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/cli.py
-    rule_id: ai-boilerplate
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-304919cd
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 1 magic-numbers issues in llx/orchestration/llm/models.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/llm/models.py
-    rule_id: magic-numbers
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-7440822d
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in llx/orchestration/ratelimit/__init__.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/ratelimit/__init__.py
-    rule_id: relative-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-3aec939f
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in llx/orchestration/ratelimit/_crud.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/ratelimit/_crud.py
-    rule_id: relative-imports
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-675df916
-    name: Fix smart-return-type issues
+    priority: medium
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/ratelimit/_crud.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/ratelimit/_crud.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-370da6c4
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in llx/orchestration/queue/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/queue/manager.py
-    rule_id: relative-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4f46115d
-    name: Fix smart-return-type issues
+    priority: medium
+  - name: Fix smart-return-type issues
     description: Resolve 3 smart-return-type issues in llx/orchestration/queue/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/manager.py
-    rule_id: smart-return-type
-    count: 3
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-b644e3fb
-    name: Fix string-concat issues
+    priority: medium
+  - name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/orchestration/queue/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/manager.py
-    rule_id: string-concat
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-478f4793
-    name: Fix unused-imports issues
+    priority: medium
+  - name: Fix unused-imports issues
     description: Resolve 8 unused-imports issues in llx/orchestration/queue/manager.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/queue/manager.py
-    rule_id: unused-imports
-    count: 8
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-4114c7be
-    name: Fix magic-numbers issues
+    priority: high
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/orchestration/queue/manager.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/manager.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d2755221
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 4 relative-imports issues in llx/orchestration/ratelimit/_persistence.py
     task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - llx/orchestration/ratelimit/_persistence.py
-    rule_id: relative-imports
-    count: 4
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-a88ccfbf
-    name: Fix magic-numbers issues
+    priority: medium
+  - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/orchestration/queue/models.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/queue/models.py
-    rule_id: magic-numbers
-    count: 2
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-cc315a50
-    name: Fix relative-imports issues
+    priority: medium
+  - name: Fix relative-imports issues
     description: Resolve 8 relative-imports issues in llx/orchestration/ratelimit/cli.py
     task_type: prefactor
-    priority: high
-    estimate: 2d
-    files:
-    - llx/orchestration/ratelimit/cli.py
-    rule_id: relative-imports
-    count: 8
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d5444fe0
-    name: Fix smart-return-type issues
+    priority: high
+  - name: Fix smart-return-type issues
     description: Resolve 1 smart-return-type issues in llx/orchestration/ratelimit/cli.py
     task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - llx/orchestration/ratelimit/cli.py
-    rule_id: smart-return-type
-    count: 1
     model_hints:
       planning: balanced
       implementation: balanced
+    priority: medium

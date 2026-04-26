@@ -4,22 +4,22 @@ flowchart TD
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
-        llx__cli__app___run_analysis_tools["_run_analysis_tools"]
-        llx__cli__app__analyze["analyze"]
-        llx__cli__app__select["select"]
-        llx__cli__app__chat["chat"]
-        llx__cli__app__proxy_start["proxy_start"]
-        llx__cli__app__proxy_config["proxy_config"]
-        llx__cli__app__proxy_status["proxy_status"]
-        llx__cli__app__mcp_start["mcp_start"]
-        llx__cli__app__plan_generate["plan_generate"]
-        llx__cli__app__plan_review["plan_review"]
-        llx__cli__app__plan_execute["plan_execute"]
-        llx__cli__app__models["models"]
-        llx__cli__app__info["info"]
-        llx__cli__app__fix["fix"]
-        llx__cli__app__init["init"]
-        ...["+23 more"]
+        llx__cli__formatters__output_rich["output_rich"]
+        llx__cli__formatters__output_json["output_json"]
+        llx__cli__formatters___filter_models["_filter_models"]
+        llx__cli__formatters___build_model_row["_build_model_row"]
+        llx__cli__formatters___render_models_table["_render_models_table"]
+        llx__cli__formatters___build_title["_build_title"]
+        llx__cli__formatters__print_models_table["print_models_table"]
+        llx__cli__formatters___render_tools_table["_render_tools_table"]
+        llx__cli__formatters___render_tiers_table["_render_tiers_table"]
+        llx__cli__formatters___render_agents_table["_render_agents_table"]
+        llx__cli__formatters___render_tags_legend["_render_tags_legend"]
+        llx__cli__formatters__print_info_tables["print_info_tables"]
+        llx__cli__strategy_commands__create_strategy["create_strategy"]
+        llx__cli__strategy_commands__validate_strategy["validate_strategy"]
+        llx__cli__strategy_commands__run_strategy_command["run_strategy_command"]
+        ...["+25 more"]
     end
 
     subgraph Core
@@ -38,7 +38,7 @@ flowchart TD
         ai_tools_manage__test["test"]
         ai_tools_manage__logs["logs"]
         ai_tools_manage__restart["restart"]
-        ...["+1432 more"]
+        ...["+1478 more"]
     end
 
     subgraph Exporters

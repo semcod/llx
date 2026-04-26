@@ -16,6 +16,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional, Dict, Tuple
 import os
+import time
 import yaml as _yaml
 import re
 import logging
@@ -256,6 +257,10 @@ def plan_run(
     tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"),
     dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Simulate without executing"),
     auto_start_proxy: bool = typer.Option(True, "--no-auto-start-proxy", help="Disable automatic proxy startup"),
+    max_concurrent: int = typer.Option(1, "--max-concurrent", "-j", help="Maximum number of tasks to run concurrently (default: 1)"),
+    max_tasks: Optional[int] = typer.Option(None, "--max-tasks", "-n", help="Maximum total number of tasks to process (default: unlimited)"),
+    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Output results to YAML file"),
+    use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
@@ -273,6 +278,13 @@ def plan_run(
         console.print(f"[dim]Tier:[/dim] {tier}")
     if dry_run:
         console.print(f"[dim]Mode:[/dim] dry-run")
+    if use_aider:
+        console.print(f"[dim]Code editing:[/dim] auto-detecting backend...")
+        # Detect backends to show what's available
+        from llx.planfile.executor_simple import _detect_available_backends, BackendType
+        backends = _detect_available_backends()
+        available = [k for k, v in backends.items() if v]
+        console.print(f"[dim]Available backends:[/dim] {', '.join(available)}")
 
     # Check proxy status before execution (unless dry-run)
     config = LlxConfig.load(str(project_path))
@@ -328,23 +340,87 @@ def plan_run(
             sprint_filter=sprint,
             dry_run=dry_run,
             on_progress=on_progress,
-            model_override=model_override
+            model_override=model_override,
+            max_concurrent=max_concurrent,
+            max_tasks=max_tasks,
+            use_aider=use_aider
         )
         
         # Summary
         console.print("\n[bold]Results:[/bold]")
+        if use_aider:
+            from llx.planfile.executor_simple import _select_best_backend
+            selected = _select_best_backend(backends)
+            console.print(f"[dim]Backend used:[/dim] {selected}")
         success = sum(1 for r in results if r.status == "success")
         failed = sum(1 for r in results if r.status == "failed")
+        invalid = sum(1 for r in results if r.status == "invalid")
+        not_found = sum(1 for r in results if r.status == "not_found")
+        already_fixed = sum(1 for r in results if r.status == "already_fixed")
         skipped = sum(1 for r in results if r.status in ["dry_run", "skipped"])
-        
+
         console.print(f"  [green]✓ Success:[/green] {success}")
         console.print(f"  [red]✗ Failed:[/red] {failed}")
+        console.print(f"  [yellow]⚠ Invalid (no changes):[/yellow] {invalid}")
+        console.print(f"  [dim]⊘ Not found:[/dim] {not_found}")
+        console.print(f"  [dim]⊘ Already fixed:[/dim] {already_fixed}")
         console.print(f"  [dim]⊘ Skipped:[/dim] {skipped}")
-        
+
+        # Show validation messages for invalid/not_found/already_fixed tasks
+        if invalid > 0 or not_found > 0 or already_fixed > 0:
+            console.print("\n[dim]Validation details:[/dim]")
+            for result in results:
+                if result.status in ["invalid", "not_found", "already_fixed"]:
+                    if result.status == "invalid":
+                        console.print(f"  [yellow]⚠ {result.task_name}:[/yellow] {result.validation_message}")
+                    elif result.status == "not_found":
+                        console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
+                    elif result.status == "already_fixed":
+                        console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
+
         if failed > 0:
+            console.print("\n[dim]Failed tasks:[/dim]")
             for result in results:
                 if result.status == "failed":
                     console.print(f"    [red]✗ {result.task_name}:[/red] {result.error}")
+
+        # Save results to YAML if requested
+        if output_yaml:
+            import yaml
+            output_data = {
+                "strategy": strategy,
+                "project": str(project_path),
+                "sprint": sprint,
+                "tier": tier,
+                "dry_run": dry_run,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "summary": {
+                    "success": success,
+                    "failed": failed,
+                    "invalid": invalid,
+                    "not_found": not_found,
+                    "already_fixed": already_fixed,
+                    "skipped": skipped,
+                    "total": len(results)
+                },
+                "results": [
+                    {
+                        "task_name": r.task_name,
+                        "status": r.status,
+                        "model_used": r.model_used,
+                        "response": r.response,
+                        "error": r.error,
+                        "execution_time": r.execution_time,
+                        "file_changed": r.file_changed,
+                        "validation_message": r.validation_message
+                    }
+                    for r in results
+                ]
+            }
+
+            with open(output_yaml, "w") as f:
+                yaml.dump(output_data, f, default_flow_style=False, allow_unicode=True)
+            console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
         
     except Exception as e:
         console.print(f"[red]Error:[/red] {e}")

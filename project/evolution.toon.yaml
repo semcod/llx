@@ -1,29 +1,49 @@
-# code2llm/evolution | 1773 func | 140f | 2026-04-25
+# code2llm/evolution | 1828 func | 140f | 2026-04-26
 
-NEXT[3] (ranked by impact):
-  [1] !! SPLIT           llx/mcp/tools.py
+NEXT[8] (ranked by impact):
+  [1] !! SPLIT           llx/planfile/executor_simple.py
+      WHY: 878L, 2 classes, max CC=34
+      EFFORT: ~4h  IMPACT: 29852
+
+  [2] !! SPLIT           llx/mcp/tools.py
       WHY: 995L, 1 classes, max CC=13
       EFFORT: ~4h  IMPACT: 12935
 
-  [2] !! SPLIT           llx/tools/config_manager.py
+  [3] !! SPLIT           llx/tools/config_manager.py
       WHY: 794L, 1 classes, max CC=12
       EFFORT: ~4h  IMPACT: 9528
 
-  [3] !! SPLIT           llx/tools/vscode_manager.py
-      WHY: 791L, 1 classes, max CC=10
-      EFFORT: ~4h  IMPACT: 7910
+  [4] !! SPLIT-FUNC      plan_run  CC=42  fan=22
+      WHY: CC=42 exceeds 15
+      EFFORT: ~1h  IMPACT: 924
+
+  [5] !! SPLIT-FUNC      execute_strategy  CC=34  fan=24
+      WHY: CC=34 exceeds 15
+      EFFORT: ~1h  IMPACT: 816
+
+  [6] !! SPLIT-FUNC      _execute_task  CC=26  fan=20
+      WHY: CC=26 exceeds 15
+      EFFORT: ~1h  IMPACT: 520
+
+  [7] !  SPLIT-FUNC      LlxClient.chat  CC=16  fan=15
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 240
+
+  [8] !  SPLIT-FUNC      _normalize_strategy  CC=22  fan=9
+      WHY: CC=22 exceeds 15
+      EFFORT: ~1h  IMPACT: 198
 
 
 RISKS[3]:
   ⚠ Splitting llx/mcp/tools.py may break 17 import paths
+  ⚠ Splitting llx/planfile/executor_simple.py may break 15 import paths
   ⚠ Splitting llx/tools/config_manager.py may break 45 import paths
-  ⚠ Splitting llx/tools/vscode_manager.py may break 38 import paths
 
 METRICS-TARGET:
-  CC̄:          2.5 → ≤1.8
-  max-CC:      14 → ≤7
-  god-modules: 12 → 0
-  high-CC(≥15): 0 → ≤0
+  CC̄:          2.6 → ≤1.8
+  max-CC:      42 → ≤20
+  god-modules: 14 → 0
+  high-CC(≥15): 5 → ≤2
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -51,4 +71,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=2.6 → now CC̄=2.5
+  prev CC̄=2.5 → now CC̄=2.6

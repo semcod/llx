@@ -24,7 +24,7 @@ Intelligent LLM model router driven by real code metrics — successor to preLLM
 ## Metadata
 
 - **name**: `llx`
-- **version**: `0.1.59`
+- **version**: `0.1.60`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -44,12 +44,12 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: llx;
-  version: 0.1.59;
+  version: 0.1.60;
 }
 
 dependencies {
   runtime: "typer>=0.24, rich>=13.0, pydantic>=2.0, pydantic-settings>=2.0, pydantic-yaml>=1.0, tomli>=2.0; python_version<'3.11', httpx>=0.27, pyyaml>=6.0, requests>=2.31, docker>=6.0, psutil>=5.9, planfile>=0.1.30";
-  dev: "pytest>=8.0, pytest-cov>=5.0, ruff>=0.5, mypy>=1.10, goal>=2.1.0, costs>=0.1.20, click<8.1.0, pfix>=0.1.60, pyqual>=0.1.36, starlette>=0.37, sse-starlette>=2.0, uvicorn>=0.29";
+  dev: "pytest>=8.0, pytest-cov>=5.0, ruff>=0.5, mypy>=1.10";
 }
 
 entity[name="ItemBase"] {
@@ -313,12 +313,17 @@ integration[name="email"] {
 workflow[name="install"] {
   trigger: manual;
   step-1: run cmd=echo "📦 Installing llx...";
-  step-2: run cmd=python -m venv .venv;
-  step-3: run cmd=.venv/bin/pip install --upgrade pip;
-  step-4: run cmd=.venv/bin/pip install -e .;
-  step-5: run cmd=.venv/bin/pip install -r requirements-dev.txt;
-  step-6: run cmd=echo "✅ Installation completed!";
-  step-7: run cmd=echo "Run 'source .venv/bin/activate' to activate the virtual environment";
+  step-2: run cmd=if command -v uv > /dev/null 2>&1; then \;
+  step-3: run cmd=uv venv; \;
+  step-4: run cmd=.venv/bin/pip install --upgrade pip; \;
+  step-5: run cmd=uv pip install -e ".[dev]"; \;
+  step-6: run cmd=else \;
+  step-7: run cmd=python -m venv .venv; \;
+  step-8: run cmd=.venv/bin/pip install --upgrade pip; \;
+  step-9: run cmd=.venv/bin/pip install -e ".[dev]"; \;
+  step-10: run cmd=fi;
+  step-11: run cmd=echo "✅ Installation completed!";
+  step-12: run cmd=echo "Run 'source .venv/bin/activate' to activate the virtual environment";
 }
 
 workflow[name="install-tools"] {
@@ -372,17 +377,17 @@ workflow[name="test-docker"] {
 
 workflow[name="lint"] {
   trigger: manual;
-  step-1: run cmd=echo "🔍 Running linting...";
-  step-2: run cmd=.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503;
-  step-3: run cmd=.venv/bin/python -m mypy llx/ --ignore-missing-imports;
-  step-4: run cmd=.venv/bin/python -m black --check llx/;
+  step-1: run cmd=echo "🔍 Running linting with ruff...";
+  step-2: run cmd=.venv/bin/python -m ruff check llx/;
+  step-3: run cmd=.venv/bin/python -m ruff check tests/;
+  step-4: run cmd=.venv/bin/python -m mypy llx/ --ignore-missing-imports;
 }
 
 workflow[name="format"] {
   trigger: manual;
-  step-1: run cmd=echo "📝 Formatting code...";
-  step-2: run cmd=.venv/bin/python -m black llx/;
-  step-3: run cmd=.venv/bin/python -m isort llx/;
+  step-1: run cmd=echo "📝 Formatting code with ruff...";
+  step-2: run cmd=.venv/bin/python -m ruff format llx/;
+  step-3: run cmd=.venv/bin/python -m ruff format tests/;
 }
 
 workflow[name="docker-dev"] {
@@ -547,8 +552,8 @@ workflow[name="ci-test"] {
 
 workflow[name="ci-lint"] {
   trigger: manual;
-  step-1: run cmd=echo "🔍 CI linting...";
-  step-2: run cmd=.venv/bin/python -m flake8 llx/ --max-line-length=100 --ignore=E203,W503 --output-format=github;
+  step-1: run cmd=echo "🔍 CI linting with ruff...";
+  step-2: run cmd=.venv/bin/python -m ruff check llx/ --format=github;
   step-3: run cmd=.venv/bin/python -m mypy llx/ --ignore-missing-imports --junit-xml test-results.xml;
 }
 
@@ -1590,7 +1595,7 @@ pipeline:
 ```yaml
 project:
   name: llx
-  version: 0.1.59
+  version: 0.1.60
   env: local
 ```
 
@@ -1620,14 +1625,6 @@ pytest>=8.0
 pytest-cov>=5.0
 ruff>=0.5
 mypy>=1.10
-goal>=2.1.0
-costs>=0.1.20
-click<8.1.0
-pfix>=0.1.60
-pyqual>=0.1.36
-starlette>=0.37
-sse-starlette>=2.0
-uvicorn>=0.29
 ```
 
 ## Deployment
@@ -1673,15 +1670,6 @@ pip install -e .[dev]
 - **base image**: `python:3.11-slim AS builder`
 - **expose**: `4000`
 - **entrypoint**: `["python", "-m", "llx", "proxy", "start"]`
-- **label** `maintainer`: Tom Sapletta <tom@sapletta.org>
-- **label** `org.label-schema.build-date`: $BUILD_DATE
-- **label** `org.label-schema.name`: llx
-- **label** `org.label-schema.description`: Intelligent LLM model router driven by real code metrics
-- **label** `org.label-schema.url`: https://github.com/wronai/llx
-- **label** `org.label-schema.vcs-ref`: $VCS_REF
-- **label** `org.label-schema.vcs-url`: https://github.com/wronai/llx
-- **label** `org.label-schema.vendor`: Tom Sapletta
-- **label** `org.label-schema.version`: $VERSION
 
 ### Docker Compose (`docker-compose.yml`)
 
@@ -1784,16 +1772,16 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# llx | 251f 44650L | python:217,shell:32,css:1,less:1 | 2026-04-25
-# stats: 609 func | 289 cls | 251 mod | CC̄=3.5 | critical:27 | cycles:0
-# alerts[5]: CC main=15; CC _build_model_row=14; CC _apply_yaml=13; CC _handle_aider=13; CC _select_model=13
-# hotspots[5]: main fan=25; execute_v3_pipeline fan=23; main fan=22; create_service_app fan=20; main fan=20
+# llx | 252f 45901L | python:218,shell:32,css:1,less:1 | 2026-04-26
+# stats: 623 func | 291 cls | 252 mod | CC̄=3.7 | critical:32 | cycles:0
+# alerts[5]: CC plan_run=42; CC _execute_task=35; CC execute_strategy=34; CC _normalize_strategy=22; CC main=15
+# hotspots[5]: main fan=25; execute_v3_pipeline fan=23; main fan=22; _execute_task fan=22; plan_run fan=21
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[251]:
+M[252]:
   ai-tools-manage.sh,352
   app.doql.css,562
-  app.doql.less,834
+  app.doql.less,839
   docker/ai-tools/entrypoint.sh,176
   docker/ai-tools/install-tools.sh,370
   docker/ollama/entrypoint.sh,32
@@ -1839,7 +1827,7 @@ M[251]:
   llx/analysis/collector.py,483
   llx/analysis/runner.py,83
   llx/cli/__init__.py,4
-  llx/cli/app.py,413
+  llx/cli/app.py,598
   llx/cli/commands/analyze.py,31
   llx/cli/commands/planner.py,25
   llx/cli/formatters.py,313
@@ -1912,7 +1900,7 @@ M[251]:
   llx/planfile/builder_simple.py,267
   llx/planfile/config.py,125
   llx/planfile/examples.py,142
-  llx/planfile/executor_simple.py,277
+  llx/planfile/executor_simple.py,1130
   llx/planfile/generate_strategy.py,471
   llx/planfile/model_selector.py,265
   llx/planfile/models.py,160
@@ -1985,7 +1973,7 @@ M[251]:
   llx/pyqual_plugins/type_check.py,72
   llx/pyqual_plugins/verify_push_publish.py,105
   llx/routing/__init__.py,2
-  llx/routing/client.py,288
+  llx/routing/client.py,348
   llx/routing/selector.py,282
   llx/tools/__init__.py,23
   llx/tools/_docker.py,54
@@ -2029,6 +2017,7 @@ M[251]:
   tests/privacy/test_deanonymizer.py,20
   tests/test_aider_mcp.py,96
   tests/test_anonymization_context.py,70
+  tests/test_backend_detection.py,148
   tests/test_core.py,214
   tests/test_detection.py,118
   tests/test_fix_aider_mode.py,82
@@ -2133,7 +2122,7 @@ D:
     run_all_tools(project_path;output_dir;on_progress)
   llx/cli/__init__.py:
   llx/cli/app.py:
-    e: _run_analysis_tools,analyze,select,chat,proxy_start,proxy_config,proxy_status,mcp_start,plan_generate,plan_review,plan_execute,models,info,fix,init,_get_model_for_profile,_load_sprint_mapping,_generate_sprint_code,_plan_code_impl
+    e: _run_analysis_tools,analyze,select,chat,proxy_start,proxy_config,proxy_status,mcp_start,plan_generate,plan_review,plan_execute,plan_run,models,info,fix,init,_get_model_for_profile,_load_sprint_mapping,_generate_sprint_code,_plan_code_impl,main
     _run_analysis_tools(project_path;config)
     analyze(path;toon_dir;task;local;max_tier;run_tools;verbose;json_output)
     select(path;toon_dir;task;local)
@@ -2145,6 +2134,7 @@ D:
     plan_generate(strategy;output_dir;model;profile)
     plan_review(strategy;project_path)
     plan_execute(strategy;project_path;backend;dry_run)
+    plan_run(strategy;project_path;sprint;tier;dry_run;auto_start_proxy;max_concurrent;max_tasks;output_yaml;use_aider)
     models(tag;provider;tier)
     info()
     fix(workdir;errors;apply;model;dry_run;verbose)
@@ -2153,6 +2143,7 @@ D:
     _load_sprint_mapping(project_name;description)
     _generate_sprint_code(client;sprint;sprint_files;project_name;description;out;selected_model)
     _plan_code_impl(strategy;out;model;profile)
+    main()
   llx/cli/commands/analyze.py:
     e: analyze
     analyze(path;toon_dir;task;local;max_tier;run_tools;verbose;json_output)
@@ -2541,13 +2532,26 @@ D:
     example_verify_strategy()
     example_programmatic_strategy()
   llx/planfile/executor_simple.py:
-    e: execute_strategy,_load_strategy,_normalize_strategy,_get_sprint_tasks,_execute_task,_select_model,_build_task_prompt,TaskResult
+    e: _detect_available_backends,_discover_mcp_services,_select_best_backend,_run_cursor_edit,_run_windsurf_edit,_run_claude_code_edit,_apply_code_changes,_get_file_hash,_analyze_llm_response,execute_strategy,_save_strategy,_load_strategy,_normalize_strategy,_map_action_to_task_type,_map_priority,_get_sprint_tasks,_execute_task,_select_model,_build_task_prompt,BackendType,TaskResult
+    BackendType:  # Available backend types for code editing.
     TaskResult:  # Result of executing a task.
+    _detect_available_backends()
+    _discover_mcp_services()
+    _select_best_backend(backends)
+    _run_cursor_edit(workdir;prompt;model;files)
+    _run_windsurf_edit(workdir;prompt;model;files)
+    _run_claude_code_edit(workdir;prompt;model;files)
+    _apply_code_changes(response;project_path;target_file)
+    _get_file_hash(file_path)
+    _analyze_llm_response(response)
     execute_strategy(strategy_path;project_path)
+    _save_strategy(path;strategy)
     _load_strategy(path)
     _normalize_strategy(strategy)
+    _map_action_to_task_type(action)
+    _map_priority(priority)
     _get_sprint_tasks(sprint)
-    _execute_task(task;project_path;config;metrics;dry_run;model_override)
+    _execute_task(task;project_path;config;metrics;dry_run;model_override;backend)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
   llx/planfile/generate_strategy.py:
@@ -2980,7 +2984,7 @@ D:
     e: ChatMessage,ChatResponse,LlxClient
     ChatMessage:  # A single chat message.
     ChatResponse: prompt_tokens(0),completion_tokens(0),total_tokens(0),deanonymize(0)  # Response from LLM completion.
-    LlxClient: __init__(1),chat(2),chat_with_context(3),_build_payload(5),_parse_response(3),_fallback_direct(3),_metrics_headers(1),close(0),__enter__(0),__exit__(0)  # LLM client that routes through LiteLLM proxy or calls direct
+    LlxClient: __init__(1),chat(2),chat_with_context(3),_build_payload(5),_direct_openrouter_call(2),_parse_response(3),_fallback_direct(3),_metrics_headers(1),close(0),__enter__(0),__exit__(0)  # LLM client that routes through LiteLLM proxy or calls direct
   llx/routing/selector.py:
     e: select_model,_count_premium_signals,_count_balanced_signals,_apply_task_adjustment,_compute_tier,_compute_alternative,check_context_fit,select_with_context_check,ModelTier,SelectionResult
     ModelTier:  # LLM model tiers ranked by capability and cost.
@@ -3262,6 +3266,9 @@ D:
   tests/test_anonymization_context.py:
     e: TestAnonymizationContext
     TestAnonymizationContext: test_context_creation(0),test_get_or_create_symbol_consistency(0),test_different_types_get_different_prefixes(0),test_context_serialization(0),test_context_save_load(1)  # Test AnonymizationContext symbol management.
+  tests/test_backend_detection.py:
+    e: TestBackendDetection
+    TestBackendDetection: test_backend_type_constants(0),test_detect_local_aider_available(1),test_detect_local_aider_not_available(1),test_detect_docker_available(1),test_detect_docker_not_available(1),test_detect_mcp_available(1),test_detect_mcp_not_available(1),test_select_best_backend_local_priority(0),test_select_best_backend_docker_priority(0),test_select_best_backend_llm_chat_fallback(0),test_select_best_backend_all_unavailable(0)  # Test backend detection functionality.
   tests/test_core.py:
     e: TestProjectMetrics,TestModelSelection,TestContextFit,TestConfig,TestHelpers,TestCode2LLMProject,TestPreLLMProject,TestVallmProject,TestSingleScript
     TestProjectMetrics: test_complexity_score_zero(0),test_complexity_score_high(0),test_scale_score_small(0),test_scale_score_large(0)
@@ -3398,7 +3405,7 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 
 ## Call Graph
 
-*492 nodes · 500 edges · 92 modules · CC̄=2.6*
+*482 nodes · 500 edges · 91 modules · CC̄=2.6*
 
 ### Hubs (by degree)
 
@@ -3415,7 +3422,7 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 492 | edges: 500 | modules: 92
+# nodes: 482 | edges: 500 | modules: 91
 # CC̄=2.6
 
 HUBS[20]:
@@ -3511,24 +3518,12 @@ MODULES:
     _collect_redup_metrics  CC=2  out:5
     _collect_vallm_metrics  CC=3  out:5
     _count_map_modules  CC=2  out:3
-  llx.analysis.runner  [6 funcs]
+  llx.analysis.runner  [5 funcs]
     _run_tool  CC=5  out:9
     check_tool  CC=1  out:1
-    run_all_tools  CC=6  out:3
     run_code2llm  CC=1  out:3
     run_redup  CC=1  out:3
     run_vallm  CC=1  out:2
-  llx.cli.app  [12 funcs]
-    _load_sprint_mapping  CC=3  out:7
-    _plan_code_impl  CC=7  out:24
-    _run_analysis_tools  CC=1  out:3
-    info  CC=1  out:3
-    models  CC=1  out:6
-    plan_execute  CC=1  out:9
-    plan_generate  CC=1  out:7
-    plan_review  CC=2  out:12
-    proxy_config  CC=1  out:6
-    proxy_start  CC=4  out:11
   llx.cli.formatters  [10 funcs]
     _build_model_row  CC=14  out:13
     _build_title  CC=4  out:5
@@ -3545,6 +3540,12 @@ MODULES:
     run_strategy_command  CC=1  out:13
     validate_strategy  CC=2  out:16
     verify_strategy  CC=6  out:21
+  llx.commands._patch_apply  [5 funcs]
+    _apply_unified_diff  CC=6  out:14
+    _classify_line  CC=6  out:5
+    _finalize_hunk  CC=3  out:1
+    _find_hunk_position  CC=9  out:10
+    _parse_unified_hunks  CC=10  out:14
   llx.commands.fix  [8 funcs]
     apply_code_changes  CC=3  out:3
     display_model_selection_and_metrics  CC=1  out:7
@@ -3554,30 +3555,12 @@ MODULES:
     load_errors_data  CC=4  out:9
     prepare_fix_prompt  CC=4  out:1
     select_model_for_fix  CC=3  out:2
-  llx.config  [7 funcs]
-    __post_init__  CC=1  out:1
-    load  CC=8  out:26
-    _apply_env  CC=9  out:10
-    _apply_yaml  CC=13  out:5
-    _apply_yaml_proxy  CC=4  out:4
-    _apply_yaml_thresholds  CC=4  out:9
-    normalize_litellm_base_url  CC=5  out:8
   llx.examples.utils  [5 funcs]
     check_dependencies  CC=3  out:4
     check_ollama  CC=3  out:6
     ensure_venv  CC=2  out:3
     process  CC=6  out:11
     run_workflow  CC=3  out:3
-  llx.integrations.proxy  [3 funcs]
-    check_proxy  CC=2  out:1
-    generate_proxy_config  CC=7  out:5
-    start_proxy  CC=5  out:11
-  llx.llm  [5 funcs]
-    __init__  CC=4  out:3
-    _ensure_dotenv_loaded  CC=3  out:4
-    _load_dotenv_fallback  CC=10  out:9
-    get_api_key  CC=1  out:2
-    get_llm_model  CC=2  out:4
   llx.orchestration._utils  [2 funcs]
     load_json  CC=3  out:4
     save_json  CC=2  out:4
@@ -3644,9 +3627,12 @@ MODULES:
     add_provider  CC=3  out:3
     cancel_request  CC=2  out:1
     complete_request  CC=4  out:11
-  llx.orchestration.queue.cli  [2 funcs]
+  llx.orchestration.queue.cli  [5 funcs]
     _cmd_add  CC=5  out:4
+    _cmd_complete  CC=2  out:2
+    _cmd_dequeue  CC=3  out:4
     _cmd_enqueue  CC=6  out:5
+    _cmd_status  CC=1  out:3
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5
@@ -3691,14 +3677,6 @@ MODULES:
     example_run_strategy  CC=1  out:1
     example_validate_strategy  CC=2  out:5
     example_verify_strategy  CC=2  out:4
-  llx.planfile.executor_simple  [7 funcs]
-    _build_task_prompt  CC=2  out:5
-    _execute_task  CC=5  out:18
-    _get_sprint_tasks  CC=3  out:0
-    _load_strategy  CC=2  out:4
-    _normalize_strategy  CC=12  out:17
-    _select_model  CC=13  out:15
-    execute_strategy  CC=7  out:16
   llx.planfile.generate_strategy  [18 funcs]
     _build_strategy_prompt  CC=7  out:7
     _call_llm_for_strategy  CC=2  out:14
@@ -3885,6 +3863,13 @@ MODULES:
     restart_ai_tools  CC=2  out:4
     start_ai_tools  CC=3  out:4
     stop_ai_tools  CC=3  out:5
+  llx.tools.cli  [6 funcs]
+    _build_parser  CC=2  out:11
+    _delegate  CC=3  out:4
+    _handle_start  CC=2  out:1
+    _handle_status  CC=1  out:1
+    _handle_stop  CC=2  out:1
+    main  CC=6  out:11
   llx.tools.config_manager  [24 funcs]
     _print_config_files_summary  CC=4  out:3
     _print_env_summary  CC=4  out:5
@@ -3958,15 +3943,27 @@ MODULES:
   llx.utils.formatting  [2 funcs]
     _format_metrics  CC=2  out:24
     _format_selection  CC=4  out:3
-  project.map.toon  [3 funcs]
-    build_fix_prompt  CC=0  out:0
+  llx.utils.issues  [2 funcs]
+    build_fix_prompt  CC=11  out:11
+    load_issue_source  CC=9  out:10
+  project.map.toon  [1 funcs]
     create_strategy_command  CC=0  out:0
-    load_issue_source  CC=0  out:0
   scripts.pyqual_auto  [2 funcs]
     main  CC=8  out:43
     run_pyqual  CC=3  out:5
   simple_generate  [1 funcs]
     generate_simple_strategy  CC=4  out:18
+  test-local-chat  [11 funcs]
+    _check_services  CC=3  out:5
+    _print_models  CC=4  out:12
+    _print_summary  CC=2  out:9
+    _run_chat_tests  CC=4  out:9
+    _select_test_models  CC=7  out:4
+    get_available_models  CC=4  out:3
+    main  CC=4  out:13
+    test_chat_completion  CC=4  out:16
+    test_llx_health  CC=2  out:1
+    test_llx_models  CC=4  out:3
   trace  [1 funcs]
     test  CC=11  out:10
 
@@ -3974,6 +3971,22 @@ EDGES:
   trace.test → llx.planfile.generate_strategy._normalize_strategy_data
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.generate_strategy_with_fix
   simple_generate.generate_simple_strategy → llx.planfile.generate_strategy.save_fixed_strategy
+  test-local-chat.test_chat_completion → Taskfile.print
+  test-local-chat._check_services → Taskfile.print
+  test-local-chat._check_services → test-local-chat.test_llx_health
+  test-local-chat._check_services → test-local-chat.test_ollama_health
+  test-local-chat._print_models → Taskfile.print
+  test-local-chat._print_models → test-local-chat.get_available_models
+  test-local-chat._print_models → test-local-chat.test_llx_models
+  test-local-chat._run_chat_tests → Taskfile.print
+  test-local-chat._run_chat_tests → test-local-chat.test_chat_completion
+  test-local-chat._print_summary → Taskfile.print
+  test-local-chat.main → Taskfile.print
+  test-local-chat.main → test-local-chat._check_services
+  test-local-chat.main → test-local-chat._print_models
+  test-local-chat.main → test-local-chat._select_test_models
+  test-local-chat.main → test-local-chat._run_chat_tests
+  test-local-chat.main → test-local-chat._print_summary
   examples.privacy.ml.01_entropy_ml_detection.main → Taskfile.print
   examples.privacy.ml.04_behavioral_learning.main → Taskfile.print
   examples.privacy.ml.03_contextual_passwords.main → Taskfile.print
@@ -3999,28 +4012,12 @@ EDGES:
   examples.privacy.basic.02_custom_patterns.main → Taskfile.print
   scripts.pyqual_auto.run_pyqual → Taskfile.print
   scripts.pyqual_auto.main → Taskfile.print
-  llx.config.LlxConfig.__post_init__ → llx.config.normalize_litellm_base_url
-  llx.config.LlxConfig.load → llx.config._apply_env
-  llx.config.LlxConfig.load → llx.config.normalize_litellm_base_url
-  llx.config._apply_yaml → llx.config._apply_yaml_proxy
-  llx.config._apply_yaml → llx.config._apply_yaml_thresholds
-  llx.llm._ensure_dotenv_loaded → llx.llm._load_dotenv_fallback
-  llx.llm.get_llm_model → llx.llm._ensure_dotenv_loaded
-  llx.llm.get_api_key → llx.llm._ensure_dotenv_loaded
-  llx.llm.LLM.__init__ → llx.llm.get_llm_model
-  llx.llm.LLM.__init__ → llx.llm.get_api_key
-  llx.commands.fix.load_errors_data → project.map.toon.load_issue_source
+  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._parse_unified_hunks
+  llx.commands._patch_apply._apply_unified_diff → llx.commands._patch_apply._find_hunk_position
+  llx.commands._patch_apply._parse_unified_hunks → llx.commands._patch_apply._classify_line
+  llx.commands._patch_apply._parse_unified_hunks → llx.commands._patch_apply._finalize_hunk
+  llx.commands.fix.load_errors_data → llx.utils.issues.load_issue_source
   llx.commands.fix.select_model_for_fix → examples.filtering.filtering.select_model
-  llx.commands.fix.display_model_selection_and_metrics → llx.utils.formatting._format_selection
-  llx.commands.fix.display_model_selection_and_metrics → llx.utils.formatting._format_metrics
-  llx.commands.fix.prepare_fix_prompt → project.map.toon.build_fix_prompt
-  llx.commands.fix.execute_aider_fix → llx.utils.aider._extract_issue_files
-  llx.commands.fix.execute_aider_fix → llx.utils.aider._run_aider_fix
-  llx.commands.fix.execute_prellm_fix → llx.prellm.core.preprocess_and_execute_sync
-  llx.commands.fix.execute_prellm_fix → llx.commands.fix.apply_code_changes
-  llx.commands.fix.fix → llx.commands.fix.load_errors_data
-  llx.commands.fix.fix → llx.analysis.collector.analyze_project
-  llx.privacy.deanonymize_engine.ProjectDeanonymizer.__init__ → llx.privacy.deanonymize_utils.build_reverse_lookup
 ```
 
 ## Test Contracts
