@@ -123,3 +123,31 @@ def test_build_results_markdown_embeds_yaml_codeblock_with_ticket_ids() -> None:
     assert "```yaml" in markdown
     assert "ticket_id: Q01" in markdown
     assert "status: success" in markdown
+
+
+def test_build_results_markdown_handles_empty_results() -> None:
+    app_mod = importlib.import_module("llx.cli.app")
+    payload = {
+        "strategy": "planfile.yaml",
+        "project": ".",
+        "summary": {"total": 0},
+        "results": [],
+    }
+    markdown = app_mod._build_results_markdown(payload)
+    assert "## Execution Summary" in markdown
+    assert "**Total Tasks:** 0" in markdown
+
+
+def test_map_to_ticket_status_covers_all_known_statuses() -> None:
+    from llx.planfile.executor.base import map_to_ticket_status
+
+    assert map_to_ticket_status("success", True) == "done"
+    assert map_to_ticket_status("success", False) == "done"
+    assert map_to_ticket_status("no_changes", False) == "canceled"
+    assert map_to_ticket_status("failed", False) == "blocked"
+    assert map_to_ticket_status("invalid", False) == "open"
+    assert map_to_ticket_status("not_found", False) == "canceled"
+    assert map_to_ticket_status("already_fixed", False) == "done"
+    assert map_to_ticket_status("dry_run", False) == "open"
+    assert map_to_ticket_status("skipped", False) == "open"
+    assert map_to_ticket_status("unknown_status", False) == "open"

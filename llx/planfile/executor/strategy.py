@@ -467,6 +467,7 @@ def execute_strategy(
     max_concurrent: int = 1,
     max_tasks: Optional[int] = None,
     use_aider: bool = False,
+    skip_ticket_ids: Optional[set[str]] = None,
 ) -> List[TaskResult]:
     """Execute strategy with simplified format support."""
     selected_backend = _select_execution_backend(use_aider)
@@ -475,8 +476,13 @@ def execute_strategy(
     config = LlxConfig.load(str(project_path))
     metrics = analyze_project(str(project_path))
     resolved_path = Path(project_path).resolve()
+    skip_ids = {str(tid) for tid in (skip_ticket_ids or set()) if tid}
 
     if ticket_id:
+        if ticket_id in skip_ids:
+            if on_progress:
+                on_progress(f"[dim]Skipping {ticket_id}: pre-flight marked stale[/dim]")
+            return []
         return _execute_ticket_block(
             strategy, ticket_id, config, metrics, model_override,
             dry_run, selected_backend, resolved_path, on_progress, strategy_path
@@ -492,6 +498,12 @@ def execute_strategy(
             on_progress(f"\n[bold blue]Sprint {sprint_num}:[/bold blue] {sprint.get('name', 'Unnamed')}")
 
         task_patterns = sprint.get("task_patterns", [])
+        if skip_ids:
+            filtered = [t for t in task_patterns if str(t.get("id") or "") not in skip_ids]
+            dropped = len(task_patterns) - len(filtered)
+            if dropped and on_progress:
+                on_progress(f"[dim]Pre-flight: skipped {dropped} stale task(s) in sprint {sprint_num}[/dim]")
+            task_patterns = filtered
         if not task_patterns:
             if on_progress:
                 on_progress(f"[dim]No tasks in sprint {sprint_num}[/dim]")

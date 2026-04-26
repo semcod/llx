@@ -325,6 +325,81 @@ plugins:
       enabled: false
       config: {}
 
+# Workflows — sequential task pipelines executed by `llx run [WORKFLOW]`.
+# Each step has a `kind` mapped to a built-in handler:
+#   prefact-scan   – run a prefact code scan
+#   plan-validate  – validate planfile tickets against the prefact scan
+#   plan-run       – execute planfile tasks via LLM (skips stale tickets)
+#   testql         – run a TestQL scenario (planfile bridge)
+#   shell          – run a shell command
+#   python         – call `module:function` with kwargs
+#
+# Optional per-step keys:
+#   when: "<expr>"          – Python expression evaluated against previous step outputs
+#   on_failure: stop|continue
+#
+# Step parameters support shell-style env substitution:
+#   ${VAR}             – replaced with os.environ['VAR']
+#   ${VAR:-default}    – falls back to 'default' when VAR is unset
+# Substitution is recursive over dict / list / tuple values.
+#
+# Run with:  llx run default
+# List with: llx run --list
+workflows:
+  default:
+    description: "Scan code with prefact, validate tickets, then execute fresh ones"
+    steps:
+      - name: scan
+        kind: prefact-scan
+        with:
+          project: "."
+      - name: validate
+        kind: plan-validate
+        with:
+          strategy: planfile.yaml
+          cancel_stale: true
+      - name: execute
+        kind: plan-run
+        when: "validate['current'] > 0"
+        with:
+          strategy: planfile.yaml
+          tier: "${LLX_TIER:-balanced}"
+          dry_run: false
+
+  scan-only:
+    description: "Run prefact + ticket-freshness validation without LLM execution"
+    steps:
+      - name: scan
+        kind: prefact-scan
+      - name: validate
+        kind: plan-validate
+        with:
+          strategy: planfile.yaml
+          fail_on_stale: false
+
+  testql:
+    description: "Run a TestQL scenario, generate tickets on failure, then execute fresh tickets"
+    steps:
+      - name: run-testql
+        kind: testql
+        with:
+          scenario: "${TESTQL_SCENARIO:-testql-scenarios/generated-from-pytests.testql.toon.yaml}"
+          strategy: planfile.yaml
+          url: "${TESTQL_URL:-http://localhost:8101}"
+          create_tickets: true
+          fail_on_failure: false
+      - name: validate
+        kind: plan-validate
+        with:
+          strategy: planfile.yaml
+          cancel_stale: true
+      - name: execute
+        kind: plan-run
+        when: "validate['current'] > 0"
+        with:
+          strategy: planfile.yaml
+          tier: "${LLX_TIER:-balanced}"
+
 # Metadata
 metadata:
   created_at: "2025-01-15T00:00:00Z"

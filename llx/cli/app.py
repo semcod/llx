@@ -609,6 +609,118 @@ def _save_results_yaml(payload: dict[str, Any], output_yaml: str, console: Conso
     console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
 
 
+def _build_freshness_markdown(report: dict[str, Any]) -> str:
+    """Render a ticket-freshness report as markdown with a YAML codeblock."""
+    scan = report.get("scan") or {}
+    yaml_payload = _yaml.safe_dump(report, sort_keys=False, allow_unicode=True).rstrip()
+
+    lines = [
+        "## Ticket Freshness",
+        "",
+        f"- **Strategy:** {report.get('strategy_path', 'N/A')}",
+        f"- **Project:** {report.get('project_path', 'N/A')}",
+        f"- **Scanner:** {scan.get('backend') or 'unavailable'}"
+        f" ({'available' if scan.get('available') else 'no scan'})",
+        f"- **Issues found:** {scan.get('issues', 0)}",
+        f"- **Tickets evaluated:** {report.get('total', 0)}",
+        "",
+        "### Ticket Status Counts",
+        "",
+        "| Status | Count |",
+        "|--------|-------|",
+        f"| ✓ Current | {report.get('current', 0)} |",
+        f"| ⊘ Stale | {report.get('stale', 0)} |",
+        f"| ? Unknown | {report.get('unknown', 0)} |",
+    ]
+
+    stale_ids = report.get("stale_ticket_ids") or []
+    if stale_ids:
+        lines.extend(["", "### Stale tickets", ""])
+        lines.extend(f"- `{tid}`" for tid in stale_ids)
+
+    review_ids = report.get("review_needed_ticket_ids") or []
+    if review_ids:
+        lines.extend(["", "### Needs review", ""])
+        lines.extend(f"- `{tid}`" for tid in review_ids)
+
+    lines.extend([
+        "",
+        "### Freshness Payload",
+        "",
+        "```yaml",
+        yaml_payload,
+        "```",
+        "",
+    ])
+
+    return "\n".join(lines)
+
+
+def _print_freshness_markdown(report: dict[str, Any], console: Console) -> None:
+    markdown_output = _build_freshness_markdown(report)
+    if console.is_terminal:
+        console.print(Markdown(markdown_output, code_theme="monokai"))
+        return
+    console.print(markdown_output, end="", markup=False, highlight=False)
+
+
+def _resolve_freshness_strategy(strategy: str) -> str:
+    return "planfile.yaml" if strategy == "." else strategy
+
+
+def _run_freshness_check(
+    *,
+    strategy: str,
+    project_path: Path,
+    ticket_id: Optional[str],
+    prefact_yaml: Optional[str],
+    prefact_bin: Optional[str],
+    require_scan: bool,
+) -> dict[str, Any]:
+    """Run prefact-driven ticket freshness validation."""
+    from llx.planfile.ticket_freshness import validate_tickets_with_prefact
+
+    return validate_tickets_with_prefact(
+        strategy_path=_resolve_freshness_strategy(strategy),
+        project_path=project_path,
+        ticket_ids=[ticket_id] if ticket_id else None,
+        prefact_yaml=prefact_yaml,
+        prefact_bin=prefact_bin,
+        require_scan=require_scan,
+    )
+
+
+def _cancel_stale_tickets_in_planfile(
+    strategy: str,
+    stale_ticket_ids: list[str],
+    console: Console,
+) -> int:
+    """Mark stale tickets as canceled directly in the planfile (best-effort)."""
+    if not stale_ticket_ids:
+        return 0
+
+    from llx.planfile.executor.strategy import _update_task_in_planfile
+
+    canceled = 0
+    for ticket_id in stale_ticket_ids:
+        try:
+            updated = _update_task_in_planfile(
+                planfile_path=strategy,
+                task_id=ticket_id,
+                status="canceled",
+                comment="Pre-flight validation: prefact scan no longer detects this issue.",
+            )
+        except Exception as exc:  # pragma: no cover - defensive
+            console.print(f"[dim]Could not cancel {ticket_id}: {exc}[/dim]")
+            continue
+        if updated:
+            canceled += 1
+
+    if canceled:
+        console.print(f"[dim]Pre-flight:[/dim] canceled {canceled} stale ticket(s).")
+    return canceled
+
+
 def _run_plan_testql_workflow(
     *,
     scenario: str,
@@ -701,6 +813,10 @@ def plan_run(
     output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to also save YAML results file"),
     use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
     format: str = typer.Option("markdown", "--format", "-f", help="Output format: yaml, markdown"),
+    validate: bool = typer.Option(True, "--validate/--no-validate", help="Pre-flight: scan code with prefact and skip stale tickets"),
+    cancel_stale: bool = typer.Option(False, "--cancel-stale", help="Mark stale tickets as canceled in the planfile during pre-flight"),
+    prefact_yaml: Optional[str] = typer.Option(None, "--prefact-yaml", help="Optional explicit prefact.yaml for pre-flight scan"),
+    prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path for subprocess fallback"),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
@@ -716,6 +832,33 @@ def plan_run(
     _ensure_proxy_running(config, dry_run, auto_start_proxy, run_console)
     model_override = _resolve_tier_override(tier, config, run_console)
 
+    freshness_report: Optional[dict[str, Any]] = None
+    skip_ticket_ids: set[str] = set()
+    if validate:
+        try:
+            freshness_report = _run_freshness_check(
+                strategy=strategy,
+                project_path=project_path,
+                ticket_id=ticket_id,
+                prefact_yaml=prefact_yaml,
+                prefact_bin=prefact_bin,
+                require_scan=False,
+            )
+        except Exception as exc:
+            run_console.print(f"[yellow]Pre-flight skipped:[/yellow] {exc}")
+            freshness_report = None
+        else:
+            scan_info = freshness_report.get("scan") or {}
+            stale_ids = list(freshness_report.get("stale_ticket_ids") or [])
+            skip_ticket_ids.update(stale_ids)
+            run_console.print(
+                f"[dim]Pre-flight:[/dim] scanner={scan_info.get('backend') or 'unavailable'} "
+                f"stale={len(stale_ids)} unknown={freshness_report.get('unknown', 0)} "
+                f"current={freshness_report.get('current', 0)}"
+            )
+            if cancel_stale and not dry_run and stale_ids:
+                _cancel_stale_tickets_in_planfile(strategy, stale_ids, run_console)
+
     def on_progress(msg: str):
         run_console.print(f"[dim]  {msg}[/dim]")
 
@@ -730,7 +873,8 @@ def plan_run(
             model_override=model_override,
             max_concurrent=max_concurrent,
             max_tasks=max_tasks,
-            use_aider=use_aider
+            use_aider=use_aider,
+            skip_ticket_ids=skip_ticket_ids or None,
         )
 
         _persist_failed_results(results, strategy)
@@ -746,18 +890,68 @@ def plan_run(
             tier=tier,
             dry_run=dry_run,
         )
+        if freshness_report is not None:
+            payload["freshness"] = freshness_report
 
         if output_yaml:
             _save_results_yaml(payload, output_yaml, run_console)
 
         # Output results in requested format (default: markdown for readability)
+        stdout_console = Console(stderr=False)
         if format.lower() == "yaml":
             typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
         else:
-            _print_results_markdown(payload, Console(stderr=False))
+            _print_results_markdown(payload, stdout_console)
+            if freshness_report is not None:
+                _print_freshness_markdown(freshness_report, stdout_console)
 
     except Exception as e:
         run_console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
+
+
+@plan_app.command("validate")
+def plan_validate(
+    strategy: str = typer.Argument("planfile.yaml", help="Strategy / planfile YAML"),
+    project_path: Path = typer.Option(Path("."), "--project", "-p"),
+    ticket_id: Optional[str] = typer.Option(None, "--ticket-id", "-i", help="Validate only this ticket ID"),
+    prefact_yaml: Optional[str] = typer.Option(None, "--prefact-yaml", help="Optional explicit prefact.yaml"),
+    prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path"),
+    require_scan: bool = typer.Option(False, "--require-scan", help="Fail if prefact scan cannot run"),
+    fail_on_stale: bool = typer.Option(False, "--fail-on-stale", help="Exit non-zero when stale tickets are detected"),
+    cancel_stale: bool = typer.Option(False, "--cancel-stale", help="Mark stale tickets as canceled in the planfile"),
+    fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
+) -> None:
+    """Validate ticket freshness against an actual prefact source-code scan."""
+    run_console = Console(stderr=True)
+
+    if strategy == ".":
+        strategy = "planfile.yaml"
+
+    try:
+        report = _run_freshness_check(
+            strategy=strategy,
+            project_path=project_path,
+            ticket_id=ticket_id,
+            prefact_yaml=prefact_yaml,
+            prefact_bin=prefact_bin,
+            require_scan=require_scan,
+        )
+    except Exception as exc:
+        run_console.print(f"[red]Validation error:[/red] {exc}")
+        raise typer.Exit(2)
+
+    stale_ids = list(report.get("stale_ticket_ids") or [])
+    if cancel_stale and stale_ids:
+        _cancel_stale_tickets_in_planfile(strategy, stale_ids, run_console)
+
+    stdout_console = Console(stderr=False)
+    if fmt.lower() == "yaml":
+        typer.echo(_yaml.safe_dump(report, sort_keys=False, allow_unicode=True), nl=False)
+    else:
+        _print_freshness_markdown(report, stdout_console)
+
+    if fail_on_stale and report.get("stale", 0):
         raise typer.Exit(1)
 
 
@@ -848,6 +1042,149 @@ def fix(
     """Fix code issues using LLX-driven model selection (pyqual integration)."""
     from llx.commands.fix import fix as fix_cmd
     fix_cmd(workdir, errors, apply, model, dry_run, verbose)
+
+
+def _build_workflow_markdown(report_dict: dict[str, Any]) -> str:
+    """Render a WorkflowReport (as dict) as markdown with a YAML codeblock."""
+    yaml_payload = _yaml.safe_dump(report_dict, sort_keys=False, allow_unicode=True).rstrip()
+
+    counts: dict[str, int] = {}
+    for step in report_dict.get("steps") or []:
+        status = str(step.get("status") or "unknown")
+        counts[status] = counts.get(status, 0) + 1
+
+    lines = [
+        f"## Workflow: {report_dict.get('workflow', 'N/A')}",
+        "",
+        f"- **Project:** {report_dict.get('project', 'N/A')}",
+        f"- **Status:** {report_dict.get('status', 'N/A')}",
+        f"- **Duration:** {report_dict.get('total_duration_s', 0)}s",
+        "",
+        "### Step Results",
+        "",
+        "| # | Step | Kind | Status | Duration | Summary |",
+        "|---|------|------|--------|----------|---------|",
+    ]
+
+    for idx, step in enumerate(report_dict.get("steps") or [], start=1):
+        lines.append(
+            f"| {idx} "
+            f"| `{step.get('name', '-')}` "
+            f"| `{step.get('kind', '-')}` "
+            f"| {step.get('status', '-')} "
+            f"| {step.get('duration_s', 0)}s "
+            f"| {step.get('summary', '') or ''} |"
+        )
+
+    failed = [s for s in report_dict.get("steps") or [] if s.get("status") == "failed"]
+    if failed:
+        lines.extend(["", "### Failed steps", ""])
+        for step in failed:
+            lines.append(
+                f"- **`{step.get('name')}` ({step.get('kind')}):** "
+                f"{step.get('error') or step.get('summary') or 'no details'}"
+            )
+
+    lines.extend([
+        "",
+        "### Workflow Payload",
+        "",
+        "```yaml",
+        yaml_payload,
+        "```",
+        "",
+    ])
+
+    return "\n".join(lines)
+
+
+def _print_workflow_markdown(report_dict: dict[str, Any], target: Console) -> None:
+    markdown_output = _build_workflow_markdown(report_dict)
+    if target.is_terminal:
+        target.print(Markdown(markdown_output, code_theme="monokai"))
+        return
+    target.print(markdown_output, end="", markup=False, highlight=False)
+
+
+@app.command("run")
+def run_workflow_cmd(
+    workflow_name: str = typer.Argument("default", help="Workflow name to run (default: 'default')"),
+    project_path: Path = typer.Option(Path("."), "--project", "-p"),
+    config: Optional[str] = typer.Option(None, "--config", "-c", help="Workflow YAML file (default: <project>/llx.yaml)"),
+    list_only: bool = typer.Option(False, "--list", "-l", help="List available workflows and exit"),
+    fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
+    fail_fast: bool = typer.Option(True, "--fail-fast/--no-fail-fast", help="Exit non-zero on workflow failure"),
+) -> None:
+    """Run a named workflow declared in llx.yaml under 'workflows:'."""
+    from llx.workflows import (
+        WorkflowError,
+        load_workflows,
+        report_to_dict,
+        run_workflow as _run_wf,
+    )
+
+    run_console = Console(stderr=True)
+    stdout_console = Console(stderr=False)
+
+    yaml_path = Path(config) if config else (project_path / "llx.yaml")
+    try:
+        workflows = load_workflows(yaml_path)
+    except WorkflowError as exc:
+        run_console.print(f"[red]Workflow load error:[/red] {exc}")
+        raise typer.Exit(2)
+
+    if list_only:
+        if not workflows:
+            run_console.print("[yellow]No workflows defined in llx.yaml[/yellow]")
+            raise typer.Exit(0)
+        run_console.print(f"[bold]Workflows in {yaml_path}:[/bold]")
+        for name, wf in workflows.items():
+            run_console.print(f"  - [cyan]{name}[/cyan]: {wf.description or '(no description)'}")
+            for step in wf.steps:
+                run_console.print(f"      • {step.name} [dim]({step.kind})[/dim]")
+        return
+
+    if not workflows:
+        run_console.print(
+            f"[yellow]No workflows defined in {yaml_path}. "
+            "Add a 'workflows:' section.[/yellow]"
+        )
+        raise typer.Exit(2)
+
+    workflow = workflows.get(workflow_name)
+    if workflow is None:
+        run_console.print(
+            f"[red]Workflow '{workflow_name}' not found.[/red] "
+            f"Available: {', '.join(sorted(workflows.keys()))}"
+        )
+        raise typer.Exit(2)
+
+    def on_step(step_report) -> None:
+        marker = {
+            "success": "[green]✓[/green]",
+            "failed": "[red]✗[/red]",
+            "skipped": "[dim]○[/dim]",
+        }.get(step_report.status, "?")
+        run_console.print(
+            f"  {marker} [bold]{step_report.name}[/bold] "
+            f"[dim]({step_report.kind}, {step_report.duration_s:.2f}s)[/dim] "
+            f"{step_report.summary or step_report.error or ''}"
+        )
+
+    run_console.print(f"[bold]Running workflow:[/bold] {workflow.name}")
+    if workflow.description:
+        run_console.print(f"[dim]{workflow.description}[/dim]")
+
+    report = _run_wf(workflow, project_path=project_path, on_step=on_step)
+    report_dict = report_to_dict(report)
+
+    if fmt.lower() == "yaml":
+        typer.echo(_yaml.safe_dump(report_dict, sort_keys=False, allow_unicode=True), nl=False)
+    else:
+        _print_workflow_markdown(report_dict, stdout_console)
+
+    if fail_fast and report.status != "success":
+        raise typer.Exit(1)
 
 
 @app.command()
