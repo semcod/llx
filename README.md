@@ -3,18 +3,18 @@
 **Intelligent LLM model router driven by real code metrics.**
 
 [![PyPI](https://img.shields.io/pypi/v/llx)](https://pypi.org/project/llx/)
-[![Version](https://img.shields.io/badge/version-0.1.67-blue)](https://pypi.org/project/llx/)
+[![Version](https://img.shields.io/badge/version-0.1.68-blue)](https://pypi.org/project/llx/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.67-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-32.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.68-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-32.3h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (87 commits)
-- 👤 **Human dev:** ~$3208 (32.1h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (88 commits)
+- 👤 **Human dev:** ~$3227 (32.3h @ $100/h, 30min dedup)
 
 Generated on 2026-04-26 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 

@@ -129,6 +129,11 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.68] - 2026-04-26
+
+### Docs
+- Update README.md
+
 ## [0.1.67] - 2026-04-26
 
 ### Docs
