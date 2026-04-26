@@ -335,6 +335,94 @@ def _execute_ticket_block(
         return []
 
 
+def _select_execution_backend(use_aider: bool) -> str:
+    """Select backend based on aider availability."""
+    if not use_aider:
+        return BackendType.LLM_CHAT
+    backends = _detect_available_backends()
+    selected = _select_best_backend(backends)
+    logger.info(f"Selected backend: {selected}")
+    return selected
+
+
+def _should_skip_sprint(sprint: dict, sprint_filter: Optional[int], on_progress: Any) -> bool:
+    """Return True if sprint should be skipped due to filter."""
+    sprint_num = sprint.get("sprint", 0)
+    if sprint_filter is not None and sprint_num != sprint_filter:
+        if on_progress:
+            on_progress(f"[dim]Skipping sprint {sprint_num} (filtered)[/dim]")
+        return True
+    return False
+
+
+def _execute_concurrent_tasks(
+    task_patterns: list,
+    config: LlxConfig,
+    metrics: Any,
+    model_override: Optional[str],
+    dry_run: bool,
+    selected_backend: str,
+    project_path: Path,
+    on_progress: Any,
+    max_tasks: Optional[int],
+    strategy_path: str | Path,
+    strategy: dict,
+) -> List[TaskResult]:
+    """Execute tasks concurrently using ThreadPoolExecutor."""
+    results: List[TaskResult] = []
+    total_tasks_processed = 0
+    with ThreadPoolExecutor(max_workers=len(task_patterns)) as executor:
+        futures = [
+            (task, executor.submit(
+                _run_single_task_pattern,
+                task, config, metrics, model_override, dry_run,
+                selected_backend, project_path, on_progress
+            ))
+            for task in task_patterns
+        ]
+        for task, future in futures:
+            if max_tasks is not None and total_tasks_processed >= max_tasks:
+                break
+            result = future.result()
+            if result is not None:
+                results.append(result)
+                total_tasks_processed += 1
+                if not dry_run:
+                    _update_sprint_task_status(task, result, strategy_path, strategy)
+    return results
+
+
+def _execute_sequential_tasks(
+    task_patterns: list,
+    config: LlxConfig,
+    metrics: Any,
+    model_override: Optional[str],
+    dry_run: bool,
+    selected_backend: str,
+    project_path: Path,
+    on_progress: Any,
+    max_tasks: Optional[int],
+    strategy_path: str | Path,
+    strategy: dict,
+) -> List[TaskResult]:
+    """Execute tasks sequentially, respecting max_tasks limit."""
+    results: List[TaskResult] = []
+    for task in task_patterns:
+        if max_tasks is not None and len(results) >= max_tasks:
+            if on_progress:
+                on_progress(f"[dim]Reached max_tasks limit ({max_tasks}), stopping.[/dim]")
+            break
+        result = _run_single_task_pattern(
+            task, config, metrics, model_override, dry_run,
+            selected_backend, project_path, on_progress
+        )
+        if result is not None:
+            results.append(result)
+            if not dry_run:
+                _update_sprint_task_status(task, result, strategy_path, strategy)
+    return results
+
+
 def execute_strategy(
     strategy_path: str | Path,
     project_path: str | Path = ".",
@@ -348,47 +436,26 @@ def execute_strategy(
     max_tasks: Optional[int] = None,
     use_aider: bool = False,
 ) -> List[TaskResult]:
-    """Execute strategy with simplified format support.
-    
-    Args:
-        strategy_path: Path to strategy/planfile YAML
-        project_path: Project root directory
-        sprint_filter: Optional sprint number to filter
-        ticket_id: Optional specific ticket ID from tasks section to execute
-        dry_run: Simulate without executing
-        on_progress: Callback for progress updates
-        model_override: Override model selection
-        max_concurrent: Max concurrent tasks
-        max_tasks: Max total tasks to process
-        use_aider: Use aider for code editing
-    """
-
-    selected_backend = BackendType.LLM_CHAT
-    if use_aider:
-        backends = _detect_available_backends()
-        selected_backend = _select_best_backend(backends)
-        logger.info(f"Selected backend: {selected_backend}")
-
+    """Execute strategy with simplified format support."""
+    selected_backend = _select_execution_backend(use_aider)
     strategy = _load_strategy(strategy_path)
     strategy = _normalize_strategy(strategy)
     config = LlxConfig.load(str(project_path))
     metrics = analyze_project(str(project_path))
-    results: List[TaskResult] = []
-    total_tasks_processed = 0
+    resolved_path = Path(project_path).resolve()
 
     if ticket_id:
         return _execute_ticket_block(
             strategy, ticket_id, config, metrics, model_override,
-            dry_run, selected_backend, Path(project_path), on_progress, strategy_path
+            dry_run, selected_backend, resolved_path, on_progress, strategy_path
         )
 
+    all_results: List[TaskResult] = []
     for sprint in strategy.get("sprints", []):
-        sprint_num = sprint.get("sprint", 0)
-        if sprint_filter is not None and sprint_num != sprint_filter:
-            if on_progress:
-                on_progress(f"[dim]Skipping sprint {sprint_num} (filtered)[/dim]")
+        if _should_skip_sprint(sprint, sprint_filter, on_progress):
             continue
 
+        sprint_num = sprint.get("sprint", 0)
         if on_progress:
             on_progress(f"\n[bold blue]Sprint {sprint_num}:[/bold blue] {sprint.get('name', 'Unnamed')}")
 
@@ -399,41 +466,19 @@ def execute_strategy(
             continue
 
         if max_concurrent > 1:
-            with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
-                futures = [
-                    (task, executor.submit(
-                        _run_single_task_pattern,
-                        task, config, metrics, model_override, dry_run,
-                        selected_backend, Path(project_path), on_progress
-                    ))
-                    for task in task_patterns
-                ]
-                for task, future in futures:
-                    if max_tasks is not None and total_tasks_processed >= max_tasks:
-                        break
-                    result = future.result()
-                    if result is not None:
-                        results.append(result)
-                        total_tasks_processed += 1
-                        if not dry_run:
-                            _update_sprint_task_status(task, result, strategy_path, strategy)
+            sprint_results = _execute_concurrent_tasks(
+                task_patterns, config, metrics, model_override, dry_run,
+                selected_backend, resolved_path, on_progress, max_tasks,
+                strategy_path, strategy,
+            )
         else:
-            for task in task_patterns:
-                if max_tasks is not None and total_tasks_processed >= max_tasks:
-                    break
-                result = _run_single_task_pattern(
-                    task, config, metrics, model_override, dry_run,
-                    selected_backend, Path(project_path), on_progress
-                )
-                if result is not None:
-                    results.append(result)
-                    total_tasks_processed += 1
-                    if not dry_run:
-                        _update_sprint_task_status(task, result, strategy_path, strategy)
+            sprint_results = _execute_sequential_tasks(
+                task_patterns, config, metrics, model_override, dry_run,
+                selected_backend, resolved_path, on_progress, max_tasks,
+                strategy_path, strategy,
+            )
+        all_results.extend(sprint_results)
+        if max_tasks is not None and len(all_results) >= max_tasks:
+            break
 
-                if max_tasks is not None and total_tasks_processed >= max_tasks:
-                    if on_progress:
-                        on_progress(f"[dim]Reached max_tasks limit ({max_tasks}), stopping.[/dim]")
-                    break
-
-    return results
+    return all_results
