@@ -39,7 +39,7 @@ llx plan testql SCENARIO [OPTIONS]
 | `--sync` / `--no-sync` | `True` | Sync tickets to TODO.md and integrations |
 | `--max-tickets` | `25` | Max tickets generated from one run |
 | `--testql-bin` | `testql` | TestQL CLI executable name/path |
-| `--testql-repo-path` | `/home/tom/github/oqlos/testql` | Fallback local repo path |
+| `--testql-repo-path` | `/home/tom/github/semcod/testql` | Fallback local repo path |
 | `--output-yaml`, `-o` | — | Save full payload to a YAML file |
 
 ### Examples
@@ -119,7 +119,7 @@ steps:
       sync_targets: true
       max_tickets: 25
       testql_bin: testql
-      testql_repo_path: /home/tom/github/oqlos/testql
+      testql_repo_path: /home/tom/github/semcod/testql
       fail_on_failure: true
 ```
 
@@ -136,7 +136,7 @@ steps:
 | `sync_targets` | `true` | Sync to TODO.md and integrations |
 | `max_tickets` | `25` | Ticket cap per run |
 | `testql_bin` | `testql` | TestQL CLI executable |
-| `testql_repo_path` | `/home/tom/github/oqlos/testql` | Fallback repo path |
+| `testql_repo_path` | `/home/tom/github/semcod/testql` | Fallback repo path |
 | `fail_on_failure` | `true` | Mark step as failed when checks fail |
 
 ---

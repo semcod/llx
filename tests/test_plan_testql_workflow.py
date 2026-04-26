@@ -63,7 +63,7 @@ def test_run_plan_testql_workflow_generates_and_syncs_tickets(monkeypatch) -> No
         sync_targets=True,
         max_tickets=5,
         testql_bin="testql",
-        testql_repo_path=Path("/home/tom/github/oqlos/testql"),
+        testql_repo_path=Path("/home/tom/github/semcod/testql"),
     )
 
     assert payload["validation"]["ok"] is False

@@ -674,7 +674,7 @@ def _step_testql(ctx: StepContext) -> StepOutput:
     )
     max_tickets = int(ctx.step.params.get("max_tickets") or 25)
     testql_bin = str(ctx.step.params.get("testql_bin") or "testql")
-    testql_repo_path = ctx.step.params.get("testql_repo_path") or "/home/tom/github/oqlos/testql"
+    testql_repo_path = ctx.step.params.get("testql_repo_path") or "/home/tom/github/semcod/testql"
     fail_on_failure = bool(
         ctx.step.params.get("fail_on_failure")
         if "fail_on_failure" in ctx.step.params

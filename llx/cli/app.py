@@ -1393,7 +1393,7 @@ def plan_testql(
     sync_targets: bool = typer.Option(True, "--sync/--no-sync", help="Sync generated tickets to TODO.md first and configured integrations"),
     max_tickets: int = typer.Option(25, "--max-tickets", help="Maximum tickets generated from one TestQL run"),
     testql_bin: str = typer.Option("testql", "--testql-bin", help="TestQL CLI executable name/path"),
-    testql_repo_path: Path = typer.Option(Path("/home/tom/github/oqlos/testql"), "--testql-repo-path", help="Fallback path to local TestQL repository"),
+    testql_repo_path: Path = typer.Option(Path("/home/tom/github/semcod/testql"), "--testql-repo-path", help="Fallback path to local TestQL repository"),
     output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to save YAML results file"),
 ) -> None:
     """Validate changes with TestQL DSL and optionally create/sync planfile tickets."""
