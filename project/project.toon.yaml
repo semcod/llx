@@ -1,32 +1,32 @@
-# llx | 1935 func | 169f | 141754L | python | 2026-04-26
+# llx | 1956 func | 169f | 141859L | python | 2026-04-26
 
 HEALTH:
-  CC̄=2.7  critical=70 (limit:10)  dup=15  cycles=0
+  CC̄=2.6  critical=67 (limit:10)  dup=15  cycles=0
 
 ALERTS[20]:
   !!! cc_exceeded      execute_strategy = 53 (limit:15)
   !!! cc_exceeded      plan_run = 51 (limit:15)
-  !!! cc_exceeded      _execute_task = 34 (limit:15)
   !!! high_fan_out     execute_strategy = 30 (limit:10)
   !!! high_fan_out     main = 25 (limit:10)
   !!! high_fan_out     main = 23 (limit:10)
   !!! high_fan_out     execute_v3_pipeline = 23 (limit:10)
-  !!! high_fan_out     _execute_task = 23 (limit:10)
   !!! high_fan_out     plan_run = 23 (limit:10)
   !!! high_fan_out     main = 20 (limit:10)
+  !!! high_fan_out     run_llx_fix_workflow = 20 (limit:10)
+  !!! high_fan_out     create_service_app = 20 (limit:10)
 
 MODULES[339] (top by size):
-  M[project/calls.yaml] 7089L C:0 F:0 CC↑0 D:0 (yaml)
-  M[planfile.yaml] 1671L C:0 F:0 CC↑0 D:0 (yaml)
-  M[project/map.toon.yaml] 1627L C:0 F:513 CC↑0 D:7 (yaml)
+  M[project/calls.yaml] 7109L C:0 F:0 CC↑0 D:0 (yaml)
+  M[planfile.yaml] 1678L C:0 F:0 CC↑0 D:0 (yaml)
+  M[project/map.toon.yaml] 1636L C:0 F:518 CC↑0 D:6 (yaml)
   M[llx/tools/vscode_manager.py] 791L C:1 F:38 CC↑10 D:0 (python)
   M[llx/tools/model_manager.py] 756L C:1 F:36 CC↑8 D:0 (python)
   M[llx/prellm/trace.py] 648L C:2 F:29 CC↑13 D:2 (python)
-  M[llx/cli/app.py] 644L C:0 F:22 CC↑51 D:0 (python)
+  M[llx/cli/app.py] 644L C:0 F:22 CC↑51 D:1 (python)
   M[llx/orchestration/llm/orchestrator.py] 642L C:1 F:28 CC↑10 D:0 (python)
   M[llx/orchestration/routing/engine.py] 638L C:1 F:38 CC↑11 D:0 (python)
+  M[project/calls.toon.yaml] 615L C:0 F:0 CC↑0 D:0 (yaml)
   M[llx/tools/config/manager.py] 614L C:1 F:30 CC↑12 D:0 (python)
-  M[project/calls.toon.yaml] 613L C:0 F:0 CC↑0 D:0 (yaml)
   M[llx/orchestration/vscode/orchestrator.py] 595L C:1 F:27 CC↑12 D:0 (python)
   M[llx/tools/health_checker.py] 589L C:1 F:27 CC↑10 D:0 (python)
   M[llx/orchestration/instances/manager.py] 556L C:1 F:18 CC↑12 D:0 (python)
@@ -43,14 +43,14 @@ Args:
   ★ execute_v3_pipeline fan=23  // Two-agent execution path — PreprocessorAgent + ExecutorAgent + PromptPipeline.
 
 
-  ★ _execute_task fan=23  // Execute a single task.
+  ★ plan_run fan=23  // Execute planfile tasks locally with LLM (simpler alternative to 'execute').
 
 REFACTOR[15]:
-  [1] H/L Split _execute_task (CC=34)
+  [1] H/L Split plan_run (CC=51)
   [2] H/L Split execute_strategy (CC=53)
-  [3] H/L Split plan_run (CC=51)
-  [4] H/H Split god module llx/cli/app.py (644L, 0 classes)
-  [5] H/H Split god module examples/privacy/advanced/01_api_integration.py (539L, 2 classes)
+  [3] H/H Split god module llx/cli/app.py (644L, 0 classes)
+  [4] H/H Split god module examples/privacy/advanced/01_api_integration.py (539L, 2 classes)
+  [5] H/H Split god module examples/privacy/ml/01_entropy_ml_detection.py (506L, 3 classes)
 
 EVOLUTION:
-  2026-04-26 CC̄=2.7 crit=70 141754L // Automated analysis
+  2026-04-26 CC̄=2.6 crit=67 141859L // Automated analysis

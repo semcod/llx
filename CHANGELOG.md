@@ -129,6 +129,28 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.65] - 2026-04-26
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+
+### Other
+- Update app.doql.less
+- Update llx/cli/app.py
+- Update llx/planfile/executor/strategy.py
+- Update llx/planfile/executor/task.py
+- Update planfile.yaml
+- Update project/calls.png
+- Update project/duplication.toon.yaml
+- Update project/index.html
+- Update project/map.toon.yaml
+- Update project/project.toon.yaml
+- ... and 2 more files
+
 ## [0.1.64] - 2026-04-26
 
 ### Docs

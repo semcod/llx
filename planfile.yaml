@@ -375,7 +375,7 @@ tasks:
   priority_label: medium
 - id: R01
   title: 'extract_function: _dispatch.py'
-  description: 3 occurrences of 9-line block across 3 files — saves 18 lines
+  description: "3 occurrences of 9-line block across 3 files \u2014 saves 18 lines"
   file: llx/tools/utils/_dispatch.py
   action: extract_function
   priority: 3
@@ -388,7 +388,7 @@ tasks:
   priority_label: medium
 - id: R02
   title: 'extract_function: _dispatch.py'
-  description: 2 occurrences of 15-line block across 2 files — saves 15 lines
+  description: "2 occurrences of 15-line block across 2 files \u2014 saves 15 lines"
   file: llx/orchestration/utils/_dispatch.py
   action: extract_function
   priority: 3
@@ -401,7 +401,7 @@ tasks:
   priority_label: medium
 - id: R03
   title: 'extract_function: main.py'
-  description: 6 occurrences of 3-line block across 6 files — saves 15 lines
+  description: "6 occurrences of 3-line block across 6 files \u2014 saves 15 lines"
   file: llx/tools/utils/main.py
   action: extract_function
   priority: 3
@@ -414,7 +414,7 @@ tasks:
   priority_label: medium
 - id: R04
   title: 'extract_function: main.py'
-  description: 2 occurrences of 13-line block across 2 files — saves 13 lines
+  description: "2 occurrences of 13-line block across 2 files \u2014 saves 13 lines"
   file: llx/pyqual_plugins/utils/main.py
   action: extract_function
   priority: 3
@@ -427,7 +427,7 @@ tasks:
   priority_label: medium
 - id: R05
   title: 'extract_function: check_version_on_pypi.py'
-  description: 2 occurrences of 12-line block across 2 files — saves 12 lines
+  description: "2 occurrences of 12-line block across 2 files \u2014 saves 12 lines"
   file: llx/pyqual_plugins/utils/check_version_on_pypi.py
   action: extract_function
   priority: 3
@@ -440,7 +440,7 @@ tasks:
   priority_label: medium
 - id: R06
   title: 'extract_function: _cmd_health.py'
-  description: 4 occurrences of 4-line block across 4 files — saves 12 lines
+  description: "4 occurrences of 4-line block across 4 files \u2014 saves 12 lines"
   file: llx/orchestration/utils/_cmd_health.py
   action: extract_function
   priority: 3
@@ -453,7 +453,7 @@ tasks:
   priority_label: medium
 - id: R07
   title: 'extract_function: _cmd_list_models.py'
-  description: 5 occurrences of 3-line block across 3 files — saves 12 lines
+  description: "5 occurrences of 3-line block across 3 files \u2014 saves 12 lines"
   file: llx/tools/utils/_cmd_list_models.py
   action: extract_function
   priority: 3
@@ -466,7 +466,7 @@ tasks:
   priority_label: medium
 - id: R08
   title: 'extract_function: _calculate_entropy.py'
-  description: 2 occurrences of 11-line block across 2 files — saves 11 lines
+  description: "2 occurrences of 11-line block across 2 files \u2014 saves 11 lines"
   file: examples/privacy/ml/utils/_calculate_entropy.py
   action: extract_function
   priority: 3
@@ -479,7 +479,7 @@ tasks:
   priority_label: medium
 - id: R09
   title: 'extract_class: add_limit.py'
-  description: 2 occurrences of 11-line block across 2 files — saves 11 lines
+  description: "2 occurrences of 11-line block across 2 files \u2014 saves 11 lines"
   file: llx/orchestration/ratelimit/utils/add_limit.py
   action: extract_class
   priority: 3
@@ -492,7 +492,7 @@ tasks:
   priority_label: medium
 - id: R10
   title: 'extract_function: _is_port_available.py'
-  description: 2 occurrences of 10-line block across 2 files — saves 10 lines
+  description: "2 occurrences of 10-line block across 2 files \u2014 saves 10 lines"
   file: llx/orchestration/utils/_is_port_available.py
   action: extract_function
   priority: 3
@@ -505,7 +505,7 @@ tasks:
   priority_label: medium
 - id: R11
   title: 'extract_function: _cmd_metrics.py'
-  description: 2 occurrences of 10-line block across 2 files — saves 10 lines
+  description: "2 occurrences of 10-line block across 2 files \u2014 saves 10 lines"
   file: llx/orchestration/utils/_cmd_metrics.py
   action: extract_function
   priority: 3
@@ -518,7 +518,7 @@ tasks:
   priority_label: medium
 - id: R12
   title: 'extract_function: _cmd_save.py'
-  description: 2 occurrences of 10-line block across 1 files — saves 10 lines
+  description: "2 occurrences of 10-line block across 1 files \u2014 saves 10 lines"
   file: llx/tools/utils/_cmd_save.py
   action: extract_function
   priority: 3
@@ -531,7 +531,7 @@ tasks:
   priority_label: medium
 - id: R13
   title: 'extract_function: _config_save_worker.py'
-  description: 2 occurrences of 8-line block across 2 files — saves 8 lines
+  description: "2 occurrences of 8-line block across 2 files \u2014 saves 8 lines"
   file: llx/orchestration/utils/_config_save_worker.py
   action: extract_function
   priority: 3
@@ -544,7 +544,7 @@ tasks:
   priority_label: medium
 - id: R14
   title: 'extract_function: _handle_code2llm_analyze.py'
-  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  description: "2 occurrences of 8-line block across 1 files \u2014 saves 8 lines"
   file: llx/mcp/utils/_handle_code2llm_analyze.py
   action: extract_function
   priority: 3
@@ -557,7 +557,7 @@ tasks:
   priority_label: medium
 - id: R15
   title: 'extract_function: _cmd_start.py'
-  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  description: "2 occurrences of 8-line block across 1 files \u2014 saves 8 lines"
   file: llx/orchestration/instances/utils/_cmd_start.py
   action: extract_function
   priority: 3
@@ -570,7 +570,7 @@ tasks:
   priority_label: medium
 - id: R16
   title: 'extract_function: _handle_service_command.py'
-  description: 2 occurrences of 8-line block across 1 files — saves 8 lines
+  description: "2 occurrences of 8-line block across 1 files \u2014 saves 8 lines"
   file: llx/tools/utils/_handle_service_command.py
   action: extract_function
   priority: 3
@@ -583,7 +583,7 @@ tasks:
   priority_label: medium
 - id: R17
   title: 'extract_function: release_port.py'
-  description: 2 occurrences of 7-line block across 2 files — saves 7 lines
+  description: "2 occurrences of 7-line block across 2 files \u2014 saves 7 lines"
   file: llx/orchestration/utils/release_port.py
   action: extract_function
   priority: 3
@@ -596,7 +596,7 @@ tasks:
   priority_label: medium
 - id: R18
   title: 'extract_function: get_current_version.py'
-  description: 2 occurrences of 6-line block across 2 files — saves 6 lines
+  description: "2 occurrences of 6-line block across 2 files \u2014 saves 6 lines"
   file: llx/pyqual_plugins/utils/get_current_version.py
   action: extract_function
   priority: 3
@@ -609,7 +609,7 @@ tasks:
   priority_label: medium
 - id: R19
   title: 'extract_function: _handle_install.py'
-  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  description: "2 occurrences of 6-line block across 1 files \u2014 saves 6 lines"
   file: llx/tools/utils/_handle_install.py
   action: extract_function
   priority: 3
@@ -622,7 +622,7 @@ tasks:
   priority_label: medium
 - id: R20
   title: 'extract_function: _handle_start.py'
-  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  description: "2 occurrences of 6-line block across 1 files \u2014 saves 6 lines"
   file: llx/tools/utils/_handle_start.py
   action: extract_function
   priority: 3
@@ -635,7 +635,7 @@ tasks:
   priority_label: medium
 - id: R21
   title: 'extract_function: update_user.py'
-  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  description: "2 occurrences of 6-line block across 1 files \u2014 saves 6 lines"
   file: my-api/utils/update_user.py
   action: extract_function
   priority: 3
@@ -648,7 +648,7 @@ tasks:
   priority_label: medium
 - id: R22
   title: 'extract_function: delete_user.py'
-  description: 2 occurrences of 6-line block across 1 files — saves 6 lines
+  description: "2 occurrences of 6-line block across 1 files \u2014 saves 6 lines"
   file: my-api/utils/delete_user.py
   action: extract_function
   priority: 3
@@ -661,7 +661,7 @@ tasks:
   priority_label: medium
 - id: R23
   title: 'extract_function: _cmd_cleanup.py'
-  description: 2 occurrences of 5-line block across 2 files — saves 5 lines
+  description: "2 occurrences of 5-line block across 2 files \u2014 saves 5 lines"
   file: llx/orchestration/utils/_cmd_cleanup.py
   action: extract_function
   priority: 3
@@ -674,7 +674,7 @@ tasks:
   priority_label: medium
 - id: R24
   title: 'extract_function: _cmd_pull.py'
-  description: 2 occurrences of 5-line block across 1 files — saves 5 lines
+  description: "2 occurrences of 5-line block across 1 files \u2014 saves 5 lines"
   file: llx/tools/utils/_cmd_pull.py
   action: extract_function
   priority: 3
@@ -687,7 +687,7 @@ tasks:
   priority_label: medium
 - id: R25
   title: 'extract_function: read_user.py'
-  description: 2 occurrences of 5-line block across 1 files — saves 5 lines
+  description: "2 occurrences of 5-line block across 1 files \u2014 saves 5 lines"
   file: my-api/utils/read_user.py
   action: extract_function
   priority: 3
@@ -700,7 +700,7 @@ tasks:
   priority_label: medium
 - id: R26
   title: 'extract_function: _get_user_memory_class.py'
-  description: 2 occurrences of 4-line block across 1 files — saves 4 lines
+  description: "2 occurrences of 4-line block across 1 files \u2014 saves 4 lines"
   file: llx/prellm/agents/utils/_get_user_memory_class.py
   action: extract_function
   priority: 3
@@ -713,7 +713,7 @@ tasks:
   priority_label: medium
 - id: R27
   title: 'extract_function: _handle_filesystem_command.py'
-  description: 2 occurrences of 4-line block across 1 files — saves 4 lines
+  description: "2 occurrences of 4-line block across 1 files \u2014 saves 4 lines"
   file: llx/tools/utils/_handle_filesystem_command.py
   action: extract_function
   priority: 3
@@ -726,7 +726,7 @@ tasks:
   priority_label: medium
 - id: R28
   title: 'extract_function: _cmd_status.py'
-  description: 2 occurrences of 3-line block across 2 files — saves 3 lines
+  description: "2 occurrences of 3-line block across 2 files \u2014 saves 3 lines"
   file: llx/orchestration/utils/_cmd_status.py
   action: extract_function
   priority: 3
@@ -739,7 +739,7 @@ tasks:
   priority_label: medium
 - id: R29
   title: 'extract_function: create_user.py'
-  description: 2 occurrences of 3-line block across 1 files — saves 3 lines
+  description: "2 occurrences of 3-line block across 1 files \u2014 saves 3 lines"
   file: my-api/utils/create_user.py
   action: extract_function
   priority: 3
@@ -913,7 +913,8 @@ tasks:
   score: 1.62
   created_at: '2026-04-20T09:27:31.877728+00:00'
   source: redsl:dry_run
-  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  description: "God module \u2014 zbyt du\u017Cy plik z za du\u017C\u0105 liczb\u0105\
+    \ funkcji"
   rule: split_god_module
 - id: refactor-2026-04-20-066
   title: 'split_module: test_privacy_extended.py'
@@ -924,7 +925,8 @@ tasks:
   score: 1.62
   created_at: '2026-04-20T09:27:31.877728+00:00'
   source: redsl:dry_run
-  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  description: "God module \u2014 zbyt du\u017Cy plik z za du\u017C\u0105 liczb\u0105\
+    \ funkcji"
   rule: split_god_module
 - id: refactor-2026-04-20-068
   title: 'split_module: trace.py'
@@ -935,7 +937,8 @@ tasks:
   score: 1.62
   created_at: '2026-04-20T09:27:31.877728+00:00'
   source: redsl:dry_run
-  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  description: "God module \u2014 zbyt du\u017Cy plik z za du\u017C\u0105 liczb\u0105\
+    \ funkcji"
   rule: split_god_module
 - id: refactor-2026-04-20-070
   title: 'split_module: docker_manager.py'
@@ -946,7 +949,8 @@ tasks:
   score: 1.62
   created_at: '2026-04-20T09:27:31.877728+00:00'
   source: redsl:dry_run
-  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  description: "God module \u2014 zbyt du\u017Cy plik z za du\u017C\u0105 liczb\u0105\
+    \ funkcji"
   rule: split_god_module
 - id: refactor-2026-04-20-072
   title: 'split_module: vscode_manager.py'
@@ -957,7 +961,8 @@ tasks:
   score: 1.62
   created_at: '2026-04-20T09:27:31.877728+00:00'
   source: redsl:dry_run
-  description: God module — zbyt duży plik z za dużą liczbą funkcji
+  description: "God module \u2014 zbyt du\u017Cy plik z za du\u017C\u0105 liczb\u0105\
+    \ funkcji"
   rule: split_god_module
 sprints:
 - id: sprint-1
@@ -973,16 +978,9 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: high
-    status: cancelled
+    status: success
     notes:
-    - '[2026-04-26 14:11:29] cancelled: Task cancelled: Issue not found. The current
-      file content for llx/analysis/collector.py was not provided in the query, so
-      I am unable to read, understand, or modify it to resolve the magic-numbers issues.
-      Please provide the file content or clarify.'
-    - '[2026-04-26 14:11:29] Task cancelled: Task cancelled: Issue not found. The
-      current file content for llx/analysis/collector.py was not provided in the query,
-      so I am unable to read, understand, or modify it to resolve the magic-numbers
-      issues. Please provide the file content or clarify.'
+    - '[2026-04-26 14:23:59] success: LLM reports changes made'
   - name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
     task_type: prefactor

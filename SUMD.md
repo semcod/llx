@@ -24,7 +24,7 @@ Intelligent LLM model router driven by real code metrics — successor to preLLM
 ## Metadata
 
 - **name**: `llx`
-- **version**: `0.1.63`
+- **version**: `0.1.64`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -44,7 +44,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: llx;
-  version: 0.1.63;
+  version: 0.1.64;
 }
 
 dependencies {
@@ -1634,7 +1634,7 @@ pipeline:
 ```yaml
 project:
   name: llx
-  version: 0.1.63
+  version: 0.1.64
   env: local
 ```
 
@@ -1811,9 +1811,9 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# llx | 273f 46483L | python:239,shell:32,css:1,less:1 | 2026-04-26
-# stats: 630 func | 291 cls | 273 mod | CC̄=3.7 | critical:32 | cycles:0
-# alerts[5]: CC execute_strategy=53; CC plan_run=51; CC _execute_task=34; CC _normalize_strategy=22; CC _parse_llm_response=18
+# llx | 273f 46594L | python:239,shell:32,css:1,less:1 | 2026-04-26
+# stats: 649 func | 291 cls | 273 mod | CC̄=3.7 | critical:31 | cycles:0
+# alerts[5]: CC execute_strategy=53; CC plan_run=51; CC _execute_task=18; CC main=15; CC _build_model_row=14
 # hotspots[5]: main fan=25; execute_strategy fan=25; execute_v3_pipeline fan=23; main fan=22; plan_run fan=22
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
@@ -1953,8 +1953,8 @@ M[273]:
   llx/planfile/executor/__init__.py,59
   llx/planfile/executor/backends.py,261
   llx/planfile/executor/base.py,32
-  llx/planfile/executor/strategy.py,439
-  llx/planfile/executor/task.py,461
+  llx/planfile/executor/strategy.py,563
+  llx/planfile/executor/task.py,448
   llx/planfile/executor_simple.py,59
   llx/planfile/generate_strategy.py,471
   llx/planfile/model_selector.py,265
@@ -2631,21 +2631,40 @@ D:
     BackendType:  # Available backend types for code editing.
     TaskResult:  # Result of executing a task.
   llx/planfile/executor/strategy.py:
-    e: _load_strategy,_save_strategy,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_normalize_strategy,execute_strategy
+    e: _load_strategy,_save_strategy,_find_task_in_planfile,_append_task_note,_update_task_in_planfile,_map_action_to_task_type,_map_priority,_build_task_lookup,_normalize_pattern_from_lookup,_normalize_v2_task,_normalize_v2_sprints,_normalize_strategy,_run_single_task_pattern,_update_sprint_task_status,_execute_ticket_block,execute_strategy
     _load_strategy(path)
     _save_strategy(path;strategy)
+    _find_task_in_planfile(planfile;task_id)
+    _append_task_note(target_task;comment)
     _update_task_in_planfile(planfile_path;task_id;status;comment)
     _map_action_to_task_type(action)
     _map_priority(priority)
+    _build_task_lookup(strategy)
+    _normalize_pattern_from_lookup(pattern;task_lookup)
+    _normalize_v2_task(task;strategy)
+    _normalize_v2_sprints(strategy)
     _normalize_strategy(strategy)
+    _run_single_task_pattern(task;config;metrics;model_override;dry_run;selected_backend;project_path;on_progress)
+    _update_sprint_task_status(task;result;strategy_path;strategy)
+    _execute_ticket_block(strategy;ticket_id;config;metrics;model_override;dry_run;selected_backend;project_path;on_progress;strategy_path)
     execute_strategy(strategy_path;project_path)
   llx/planfile/executor/task.py:
-    e: _map_action_to_task_type,_map_priority,_parse_llm_response,_select_model,_build_task_prompt,_execute_task
+    e: _map_action_to_task_type,_map_priority,_check_indicators,_extract_explanation,_build_message,_parse_llm_response,_select_model,_build_task_prompt,_run_mcp_backend,_run_cursor_backend,_run_windsurf_backend,_run_claude_code_backend,_run_aider_backend,_run_llm_chat_with_retry,_determine_task_status,_execute_task
     _map_action_to_task_type(action)
     _map_priority(priority)
+    _check_indicators(text;indicators)
+    _extract_explanation(lines;indicators)
+    _build_message(issue_not_found;changes_made;problem_fixed;explanation)
     _parse_llm_response(response)
     _select_model(task;config;metrics)
     _build_task_prompt(task;metrics)
+    _run_mcp_backend(target_file;prompt;model)
+    _run_cursor_backend(project_root;prompt;model;target_file)
+    _run_windsurf_backend(project_root;prompt;model;target_file)
+    _run_claude_code_backend(project_root;prompt;model;target_file)
+    _run_aider_backend(project_root;prompt;model;target_file;use_docker)
+    _run_llm_chat_with_retry(prompt;model)
+    _determine_task_status(validation;code_changes_applied)
     _execute_task(task;config;metrics;model_override;dry_run;backend;project_root)
   llx/planfile/executor_simple.py:
   llx/planfile/generate_strategy.py:
@@ -3506,7 +3525,7 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 
 ## Call Graph
 
-*484 nodes · 500 edges · 93 modules · CC̄=2.7*
+*494 nodes · 500 edges · 95 modules · CC̄=2.6*
 
 ### Hubs (by degree)
 
@@ -3519,12 +3538,12 @@ class LLM:  # Synchronous LiteLLM wrapper with .env configuration.
 | `main` *(in examples.privacy.ml.01_entropy_ml_detection)* | 11 ⚠ | 0 | 65 | **65** |
 | `main` *(in examples.privacy.ml.03_contextual_passwords)* | 11 ⚠ | 0 | 64 | **64** |
 | `main` *(in examples.privacy.project.01_anonymize_project)* | 4 | 0 | 52 | **52** |
-| `context` *(in llx.prellm.cli_context)* | 9 | 1 | 49 | **50** |
+| `main` *(in examples.privacy.streaming.01_streaming_anonymization)* | 5 | 0 | 50 | **50** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/llx
-# nodes: 484 | edges: 500 | modules: 93
-# CC̄=2.7
+# nodes: 494 | edges: 500 | modules: 95
+# CC̄=2.6
 
 HUBS[20]:
   Taskfile.print
@@ -3541,10 +3560,10 @@ HUBS[20]:
     CC=11  in:0  out:64  total:64
   examples.privacy.project.01_anonymize_project.main
     CC=4  in:0  out:52  total:52
-  llx.prellm.cli_context.context
-    CC=9  in:1  out:49  total:50
   examples.privacy.streaming.01_streaming_anonymization.main
     CC=5  in:0  out:50  total:50
+  llx.prellm.cli_context.context
+    CC=9  in:1  out:49  total:50
   examples.privacy.project.02_deanonymize_project.main
     CC=4  in:0  out:45  total:45
   llx.orchestration.instances.manager.InstanceManager.load_instances
@@ -3553,10 +3572,10 @@ HUBS[20]:
     CC=8  in:0  out:43  total:43
   examples.privacy.advanced.03_cicd_integration.main
     CC=7  in:0  out:42  total:42
-  llx.orchestration.vscode.config_io.load_vscode_config
-    CC=6  in:0  out:36  total:36
   llx.tools.vscode_manager.VSCodeManager.print_quick_start
     CC=1  in:0  out:36  total:36
+  llx.orchestration.vscode.config_io.load_vscode_config
+    CC=6  in:0  out:36  total:36
   llx.orchestration.vscode.orchestrator.VSCodeOrchestrator.load_config
     CC=6  in:0  out:36  total:36
   llx.planfile.generate_strategy.main
@@ -3619,12 +3638,24 @@ MODULES:
     _collect_redup_metrics  CC=2  out:5
     _collect_vallm_metrics  CC=3  out:5
     _count_map_modules  CC=2  out:3
-  llx.analysis.runner  [5 funcs]
+  llx.analysis.runner  [6 funcs]
     _run_tool  CC=5  out:9
     check_tool  CC=1  out:1
+    run_all_tools  CC=6  out:3
     run_code2llm  CC=1  out:3
     run_redup  CC=1  out:3
     run_vallm  CC=1  out:2
+  llx.cli.app  [13 funcs]
+    _load_sprint_mapping  CC=3  out:7
+    _plan_code_impl  CC=7  out:24
+    _run_analysis_tools  CC=1  out:3
+    _show_version_banner  CC=3  out:4
+    info  CC=1  out:3
+    models  CC=1  out:6
+    plan_execute  CC=1  out:9
+    plan_generate  CC=1  out:7
+    plan_review  CC=2  out:12
+    proxy_config  CC=1  out:6
   llx.cli.formatters  [10 funcs]
     _build_model_row  CC=14  out:13
     _build_title  CC=4  out:5
@@ -3641,6 +3672,12 @@ MODULES:
     run_strategy_command  CC=1  out:13
     validate_strategy  CC=2  out:16
     verify_strategy  CC=6  out:21
+  llx.cli.version_check  [5 funcs]
+    check_version  CC=4  out:3
+    compare_versions  CC=7  out:12
+    get_current_version  CC=2  out:0
+    get_pypi_version  CC=4  out:6
+    get_update_command  CC=2  out:0
   llx.commands._patch_apply  [5 funcs]
     _apply_unified_diff  CC=6  out:14
     _classify_line  CC=6  out:5
@@ -3671,6 +3708,10 @@ MODULES:
     ensure_venv  CC=2  out:3
     process  CC=6  out:11
     run_workflow  CC=3  out:3
+  llx.integrations.proxy  [3 funcs]
+    check_proxy  CC=2  out:1
+    generate_proxy_config  CC=7  out:5
+    start_proxy  CC=5  out:11
   llx.llm  [5 funcs]
     __init__  CC=4  out:3
     _ensure_dotenv_loaded  CC=3  out:4
@@ -3722,27 +3763,14 @@ MODULES:
     _cmd_usage  CC=1  out:3
     _dispatch  CC=2  out:3
     main  CC=1  out:2
-  llx.orchestration.llm.executors  [6 funcs]
-    _failed  CC=1  out:1
+  llx.orchestration.llm.executors  [4 funcs]
     execute_anthropic  CC=3  out:15
     execute_ollama  CC=3  out:15
     execute_openai  CC=3  out:14
     execute_request  CC=4  out:4
-    messages_to_prompt  CC=5  out:6
   llx.orchestration.llm.health  [2 funcs]
     health_check_worker  CC=3  out:3
     perform_health_checks  CC=5  out:4
-  llx.orchestration.llm.orchestrator  [10 funcs]
-    _create_default_config  CC=2  out:5
-    add_model  CC=2  out:2
-    add_provider  CC=3  out:3
-    cancel_request  CC=2  out:1
-    complete_request  CC=4  out:11
-    load_config  CC=6  out:30
-    remove_provider  CC=4  out:3
-    save_config  CC=5  out:6
-    start  CC=2  out:3
-    stop  CC=2  out:4
   llx.orchestration.session.cli  [5 funcs]
     _cmd_cleanup  CC=1  out:3
     _cmd_create  CC=7  out:5

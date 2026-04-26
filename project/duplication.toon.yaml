@@ -1,23 +1,23 @@
-# redup/duplication | 33 groups | 209f 37217L | 2026-04-26
+# redup/duplication | 34 groups | 209f 37204L | 2026-04-26
 
 SUMMARY:
   files_scanned: 209
-  total_lines:   37217
-  dup_groups:    33
-  dup_fragments: 73
-  saved_lines:   502
-  scan_ms:       7712
+  total_lines:   37204
+  dup_groups:    34
+  dup_fragments: 76
+  saved_lines:   518
+  scan_ms:       8466
 
 HOTSPOTS[7] (files with most duplication):
   examples/privacy/advanced/02_multi_stage.py  dup=185L  groups=1  frags=1  (0.5%)
   llx/planfile/executor/backends.py  dup=108L  groups=1  frags=3  (0.3%)
   examples/privacy/ml/01_entropy_ml_detection.py  dup=60L  groups=1  frags=1  (0.2%)
+  llx/planfile/executor/task.py  dup=47L  groups=3  frags=5  (0.1%)
   my-api/src/my_api/main.py  dup=40L  groups=4  frags=8  (0.1%)
   llx/orchestration/instances/cli.py  dup=30L  groups=3  frags=4  (0.1%)
   llx/tools/config/cli.py  dup=29L  groups=3  frags=5  (0.1%)
-  llx/tools/health_checker.py  dup=27L  groups=3  frags=5  (0.1%)
 
-DUPLICATES[33] (ranked by impact):
+DUPLICATES[34] (ranked by impact):
   [209d7601e17179e8] !! STRU  create_business_logic_project  L=185 N=2 saved=185 sim=1.00
       examples/privacy/advanced/02_multi_stage.py:118-302  (create_business_logic_project)
       examples/privacy/ml/01_entropy_ml_detection.py:310-369  (create_complex_project)
@@ -25,6 +25,10 @@ DUPLICATES[33] (ranked by impact):
       llx/planfile/executor/backends.py:149-184  (_run_cursor_edit)
       llx/planfile/executor/backends.py:187-222  (_run_windsurf_edit)
       llx/planfile/executor/backends.py:225-260  (_run_claude_code_edit)
+  [74222bdb03e3ecf6]   STRU  _run_cursor_backend  L=8 N=3 saved=16 sim=1.00
+      llx/planfile/executor/task.py:270-277  (_run_cursor_backend)
+      llx/planfile/executor/task.py:280-287  (_run_windsurf_backend)
+      llx/planfile/executor/task.py:290-297  (_run_claude_code_backend)
   [53538b7c7e9fbc5c]   STRU  _dispatch  L=15 N=2 saved=15 sim=1.00
       llx/orchestration/queue/cli.py:40-54  (_dispatch)
       llx/orchestration/ratelimit/cli.py:33-47  (_dispatch)
@@ -32,7 +36,7 @@ DUPLICATES[33] (ranked by impact):
       llx/pyqual_plugins/detect_secrets.py:49-61  (main)
       llx/pyqual_plugins/type_check.py:55-67  (main)
   [38c37e9b2acab178]   EXAC  _map_priority  L=12 N=2 saved=12 sim=1.00
-      llx/planfile/executor/strategy.py:123-134  (_map_priority)
+      llx/planfile/executor/strategy.py:119-130  (_map_priority)
       llx/planfile/executor/task.py:22-33  (_map_priority)
   [8593830f9a7b5964]   EXAC  check_version_on_pypi  L=12 N=2 saved=12 sim=1.00
       llx/pyqual_plugins/bump_version.py:13-24  (check_version_on_pypi)
@@ -55,7 +59,7 @@ DUPLICATES[33] (ranked by impact):
       llx/orchestration/ratelimit/_crud.py:19-29  (add_limit)
       llx/orchestration/ratelimit/limiter.py:173-183  (add_limit)
   [29597928ab273483]   EXAC  _map_action_to_task_type  L=11 N=2 saved=11 sim=1.00
-      llx/planfile/executor/strategy.py:110-120  (_map_action_to_task_type)
+      llx/planfile/executor/strategy.py:106-116  (_map_action_to_task_type)
       llx/planfile/executor/task.py:9-19  (_map_action_to_task_type)
   [6a3aad3970abbd84]   EXAC  _is_port_available  L=10 N=2 saved=10 sim=1.00
       llx/orchestration/instances/ports.py:42-51  (_is_port_available)
@@ -125,132 +129,136 @@ DUPLICATES[33] (ranked by impact):
       my-api/src/my_api/main.py:51-53  (create_user)
       my-api/src/my_api/main.py:84-86  (create_product)
 
-REFACTOR[33] (ranked by priority):
+REFACTOR[34] (ranked by priority):
   [1] ◐ extract_module     → examples/privacy/utils/create_business_logic_project.py
       WHY: 2 occurrences of 185-line block across 2 files — saves 185 lines
       FILES: examples/privacy/advanced/02_multi_stage.py, examples/privacy/ml/01_entropy_ml_detection.py
   [2] ○ extract_function   → llx/planfile/executor/utils/_run_cursor_edit.py
       WHY: 3 occurrences of 36-line block across 1 files — saves 72 lines
       FILES: llx/planfile/executor/backends.py
-  [3] ○ extract_function   → llx/orchestration/utils/_dispatch.py
+  [3] ○ extract_function   → llx/planfile/executor/utils/_run_cursor_backend.py
+      WHY: 3 occurrences of 8-line block across 1 files — saves 16 lines
+      FILES: llx/planfile/executor/task.py
+  [4] ○ extract_function   → llx/orchestration/utils/_dispatch.py
       WHY: 2 occurrences of 15-line block across 2 files — saves 15 lines
       FILES: llx/orchestration/queue/cli.py, llx/orchestration/ratelimit/cli.py
-  [4] ○ extract_function   → llx/pyqual_plugins/utils/main.py
+  [5] ○ extract_function   → llx/pyqual_plugins/utils/main.py
       WHY: 2 occurrences of 13-line block across 2 files — saves 13 lines
       FILES: llx/pyqual_plugins/detect_secrets.py, llx/pyqual_plugins/type_check.py
-  [5] ○ extract_function   → llx/planfile/executor/utils/_map_priority.py
+  [6] ○ extract_function   → llx/planfile/executor/utils/_map_priority.py
       WHY: 2 occurrences of 12-line block across 2 files — saves 12 lines
       FILES: llx/planfile/executor/strategy.py, llx/planfile/executor/task.py
-  [6] ○ extract_function   → llx/pyqual_plugins/utils/check_version_on_pypi.py
+  [7] ○ extract_function   → llx/pyqual_plugins/utils/check_version_on_pypi.py
       WHY: 2 occurrences of 12-line block across 2 files — saves 12 lines
       FILES: llx/pyqual_plugins/bump_version.py, llx/pyqual_plugins/publish.py
-  [7] ○ extract_function   → llx/orchestration/utils/_cmd_health.py
+  [8] ○ extract_function   → llx/orchestration/utils/_cmd_health.py
       WHY: 4 occurrences of 4-line block across 4 files — saves 12 lines
       FILES: llx/orchestration/instances/cli.py, llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py, llx/orchestration/session/cli.py
-  [8] ○ extract_function   → llx/tools/utils/main.py
+  [9] ○ extract_function   → llx/tools/utils/main.py
       WHY: 5 occurrences of 3-line block across 5 files — saves 12 lines
       FILES: llx/tools/config/cli.py, llx/tools/docker_manager.py, llx/tools/health_checker.py, llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [9] ○ extract_function   → examples/privacy/ml/utils/_calculate_entropy.py
+  [10] ○ extract_function   → examples/privacy/ml/utils/_calculate_entropy.py
       WHY: 2 occurrences of 11-line block across 2 files — saves 11 lines
       FILES: examples/privacy/ml/03_contextual_passwords.py, examples/privacy/ml/04_behavioral_learning.py
-  [10] ○ extract_class      → llx/orchestration/ratelimit/utils/add_limit.py
+  [11] ○ extract_class      → llx/orchestration/ratelimit/utils/add_limit.py
       WHY: 2 occurrences of 11-line block across 2 files — saves 11 lines
       FILES: llx/orchestration/ratelimit/_crud.py, llx/orchestration/ratelimit/limiter.py
-  [11] ○ extract_function   → llx/planfile/executor/utils/_map_action_to_task_type.py
+  [12] ○ extract_function   → llx/planfile/executor/utils/_map_action_to_task_type.py
       WHY: 2 occurrences of 11-line block across 2 files — saves 11 lines
       FILES: llx/planfile/executor/strategy.py, llx/planfile/executor/task.py
-  [12] ○ extract_function   → llx/orchestration/utils/_is_port_available.py
+  [13] ○ extract_function   → llx/orchestration/utils/_is_port_available.py
       WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
       FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [13] ○ extract_function   → llx/orchestration/utils/_cmd_metrics.py
+  [14] ○ extract_function   → llx/orchestration/utils/_cmd_metrics.py
       WHY: 2 occurrences of 10-line block across 2 files — saves 10 lines
       FILES: llx/orchestration/instances/cli.py, llx/orchestration/queue/cli.py
-  [14] ○ extract_function   → llx/tools/config/utils/_cmd_save.py
+  [15] ○ extract_function   → llx/tools/config/utils/_cmd_save.py
       WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
       FILES: llx/tools/config/cli.py
-  [15] ○ extract_function   → llx/orchestration/utils/_config_save_worker.py
+  [16] ○ extract_function   → llx/orchestration/utils/_config_save_worker.py
       WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
       FILES: llx/orchestration/llm/orchestrator.py, llx/orchestration/vscode/orchestrator.py
-  [16] ○ extract_function   → llx/orchestration/instances/utils/_cmd_start.py
+  [17] ○ extract_function   → llx/orchestration/instances/utils/_cmd_start.py
       WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
       FILES: llx/orchestration/instances/cli.py
-  [17] ○ extract_function   → llx/tools/utils/_handle_service_command.py
+  [18] ○ extract_function   → llx/tools/utils/_handle_service_command.py
       WHY: 2 occurrences of 8-line block across 1 files — saves 8 lines
       FILES: llx/tools/health_checker.py
-  [18] ○ extract_function   → llx/orchestration/utils/release_port.py
+  [19] ○ extract_function   → llx/orchestration/utils/release_port.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: llx/orchestration/instances/ports.py, llx/orchestration/vscode/ports.py
-  [19] ○ extract_function   → llx/utils/get_current_version.py
+  [20] ○ extract_function   → llx/utils/get_current_version.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: llx/cli/version_check.py, llx/prellm/logging_setup.py
-  [20] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
+  [21] ○ extract_function   → llx/pyqual_plugins/utils/get_current_version.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/pyqual_plugins/publish.py, llx/pyqual_plugins/verify_push_publish.py
-  [21] ○ extract_function   → llx/tools/utils/_handle_start.py
+  [22] ○ extract_function   → llx/tools/utils/_handle_start.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: llx/tools/cli.py
-  [22] ○ extract_function   → llx/tools/utils/_cmd_summary.py
+  [23] ○ extract_function   → llx/tools/utils/_cmd_summary.py
       WHY: 3 occurrences of 3-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [23] ○ extract_function   → llx/tools/utils/_dispatch.py
+  [24] ○ extract_function   → llx/tools/utils/_dispatch.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: llx/tools/model_manager.py, llx/tools/vscode_manager.py
-  [24] ○ extract_function   → my-api/src/my_api/utils/update_user.py
+  [25] ○ extract_function   → my-api/src/my_api/utils/update_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [25] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
+  [26] ○ extract_function   → my-api/src/my_api/utils/delete_user.py
       WHY: 2 occurrences of 6-line block across 1 files — saves 6 lines
       FILES: my-api/src/my_api/main.py
-  [26] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
+  [27] ○ extract_function   → llx/orchestration/utils/_cmd_cleanup.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: llx/orchestration/ratelimit/cli.py, llx/orchestration/session/cli.py
-  [27] ○ extract_function   → llx/tools/utils/_cmd_pull.py
+  [28] ○ extract_function   → llx/tools/utils/_cmd_pull.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: llx/tools/model_manager.py
-  [28] ○ extract_function   → my-api/src/my_api/utils/read_user.py
+  [29] ○ extract_function   → my-api/src/my_api/utils/read_user.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: my-api/src/my_api/main.py
-  [29] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
+  [30] ○ extract_function   → llx/prellm/agents/utils/_get_user_memory_class.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/prellm/agents/preprocessor.py
-  [30] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
+  [31] ○ extract_function   → llx/tools/utils/_handle_filesystem_command.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: llx/tools/health_checker.py
-  [31] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
+  [32] ○ extract_function   → llx/orchestration/utils/_cmd_status.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: llx/orchestration/llm/cli.py, llx/orchestration/routing/cli.py
-  [32] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
+  [33] ○ extract_function   → llx/tools/config/utils/_cmd_list_models.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: llx/tools/config/cli.py
-  [33] ○ extract_function   → my-api/src/my_api/utils/create_user.py
+  [34] ○ extract_function   → my-api/src/my_api/utils/create_user.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: my-api/src/my_api/main.py
 
-QUICK_WINS[24] (low risk, high savings — do first):
+QUICK_WINS[25] (low risk, high savings — do first):
   [2] extract_function   saved=72L  → llx/planfile/executor/utils/_run_cursor_edit.py
       FILES: backends.py
-  [3] extract_function   saved=15L  → llx/orchestration/utils/_dispatch.py
+  [3] extract_function   saved=16L  → llx/planfile/executor/utils/_run_cursor_backend.py
+      FILES: task.py
+  [4] extract_function   saved=15L  → llx/orchestration/utils/_dispatch.py
       FILES: cli.py, cli.py
-  [4] extract_function   saved=13L  → llx/pyqual_plugins/utils/main.py
+  [5] extract_function   saved=13L  → llx/pyqual_plugins/utils/main.py
       FILES: detect_secrets.py, type_check.py
-  [5] extract_function   saved=12L  → llx/planfile/executor/utils/_map_priority.py
+  [6] extract_function   saved=12L  → llx/planfile/executor/utils/_map_priority.py
       FILES: strategy.py, task.py
-  [6] extract_function   saved=12L  → llx/pyqual_plugins/utils/check_version_on_pypi.py
+  [7] extract_function   saved=12L  → llx/pyqual_plugins/utils/check_version_on_pypi.py
       FILES: bump_version.py, publish.py
-  [7] extract_function   saved=12L  → llx/orchestration/utils/_cmd_health.py
+  [8] extract_function   saved=12L  → llx/orchestration/utils/_cmd_health.py
       FILES: cli.py, cli.py, cli.py +1
-  [8] extract_function   saved=12L  → llx/tools/utils/main.py
+  [9] extract_function   saved=12L  → llx/tools/utils/main.py
       FILES: cli.py, docker_manager.py, health_checker.py +2
-  [9] extract_function   saved=11L  → examples/privacy/ml/utils/_calculate_entropy.py
+  [10] extract_function   saved=11L  → examples/privacy/ml/utils/_calculate_entropy.py
       FILES: 03_contextual_passwords.py, 04_behavioral_learning.py
-  [10] extract_class      saved=11L  → llx/orchestration/ratelimit/utils/add_limit.py
+  [11] extract_class      saved=11L  → llx/orchestration/ratelimit/utils/add_limit.py
       FILES: _crud.py, limiter.py
-  [11] extract_function   saved=11L  → llx/planfile/executor/utils/_map_action_to_task_type.py
-      FILES: strategy.py, task.py
 
-EFFORT_ESTIMATE (total ≈ 21.0h):
+EFFORT_ESTIMATE (total ≈ 21.6h):
   hard   create_business_logic_project       saved=185L  ~555min
   hard   _run_cursor_edit                    saved=72L  ~216min
+  medium _run_cursor_backend                 saved=16L  ~32min
   medium _dispatch                           saved=15L  ~30min
   easy   main                                saved=13L  ~26min
   easy   _map_priority                       saved=12L  ~24min
@@ -258,9 +266,8 @@ EFFORT_ESTIMATE (total ≈ 21.0h):
   easy   _cmd_health                         saved=12L  ~24min
   easy   main                                saved=12L  ~24min
   easy   _calculate_entropy                  saved=11L  ~22min
-  easy   add_limit                           saved=11L  ~22min
-  ... +23 more (~294min)
+  ... +24 more (~316min)
 
 METRICS-TARGET:
-  dup_groups:  33 → 0
-  saved_lines: 502 lines recoverable
+  dup_groups:  34 → 0
+  saved_lines: 518 lines recoverable

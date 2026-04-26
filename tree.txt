@@ -1,0 +1,629 @@
+.
+├── ai-tools-manage.sh
+├── app.doql.css
+├── app.doql.less
+├── backups
+├── cache
+├── CHANGELOG.md
+├── code2llm_output
+│   ├── analysis.toon.yaml
+│   ├── context.md
+│   ├── evolution.toon.yaml
+│   ├── llx
+│   │   ├── analysis.toon.yaml
+│   │   └── evolution.toon.yaml
+│   ├── my-api_my_api
+│   │   ├── analysis.toon.yaml
+│   │   └── evolution.toon.yaml
+│   ├── README.md
+│   └── root
+│       ├── analysis.toon.yaml
+│       └── evolution.toon.yaml
+├── CONTRIBUTING.md
+├── docker
+│   ├── ai-tools
+│   │   ├── entrypoint.sh
+│   │   └── install-tools.sh
+│   ├── backup
+│   ├── grafana
+│   ├── loki
+│   ├── nginx
+│   │   ├── conf.d
+│   │   │   └── llx.conf
+│   │   └── nginx.conf
+│   ├── ollama
+│   │   └── entrypoint.sh
+│   ├── postgres
+│   │   └── init.sql
+│   ├── prometheus
+│   ├── promtail
+│   ├── redis
+│   │   └── redis.conf
+│   └── vscode
+│       ├── install-extensions.sh
+│       └── settings.json
+├── docker-compose-dev.yml
+├── docker-compose-prod.yml
+├── docker-compose.yml
+├── Dockerfile
+├── docker-manage.sh
+├── examples
+│   ├── aider
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   └── strategy.yaml
+│   ├── ai-tools
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── basic
+│   │   ├── my-api
+│   │   │   ├── docker-compose.yml
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   ├── strategy.yaml
+│   │   └── test-api
+│   │       └── requirements.txt
+│   ├── cleanup.sh
+│   ├── cli-tools
+│   │   ├── my-backup
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   └── strategy.yaml
+│   ├── cloud-local
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── docker
+│   │   ├── docker.sh
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── filtering
+│   │   ├── filtering.sh
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   └── strategy.yaml
+│   ├── fullstack
+│   │   ├── generate_simple.sh
+│   │   ├── my-tool
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   └── test-app
+│   ├── hybrid
+│   │   ├── hybrid.sh
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── local
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── multi-provider
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── planfile
+│   │   ├── microservices
+│   │   │   ├── api-gateway
+│   │   │   │   └── src
+│   │   │   ├── order-service
+│   │   │   │   └── src
+│   │   │   ├── product-service
+│   │   │   │   └── src
+│   │   │   ├── shared
+│   │   │   └── user-service
+│   │   │       └── src
+│   │   ├── planfile_config.yaml
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   ├── sample-project
+│   │   │   └── src
+│   │   │       ├── models
+│   │   │       ├── services
+│   │   │       └── utils
+│   │   ├── strategy.yaml
+│   │   ├── test-cases
+│   │   └── utils
+│   ├── privacy
+│   │   ├── advanced
+│   │   │   ├── 01_api_integration.py
+│   │   │   ├── 02_multi_stage.py
+│   │   │   ├── 03_cicd_integration.py
+│   │   │   └── README.md
+│   │   ├── basic
+│   │   │   ├── 01_text_anonymization.py
+│   │   │   └── 02_custom_patterns.py
+│   │   ├── mcp
+│   │   │   └── README.md
+│   │   ├── ml
+│   │   │   ├── 01_entropy_ml_detection.py
+│   │   │   ├── 02_hybrid_system.py
+│   │   │   ├── 02_hybrid_system.py.bak
+│   │   │   ├── 03_contextual_passwords.py
+│   │   │   ├── 04_behavioral_learning.py
+│   │   │   └── README.md
+│   │   ├── project
+│   │   │   ├── 01_anonymize_project.py
+│   │   │   └── 02_deanonymize_project.py
+│   │   ├── README.md
+│   │   └── streaming
+│   │       └── 01_streaming_anonymization.py
+│   ├── proxy
+│   │   ├── proxy-test.yaml
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── proxy-test.yaml
+│   ├── pyqual-llx-demo.sh
+│   ├── pyqual-llx.yaml
+│   ├── python-api
+│   │   ├── my-api-complete
+│   │   │   ├── docker-compose.yml
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── my-api-final
+│   │   │   ├── Dockerfile
+│   │   │   ├── README.md
+│   │   │   └── requirements.txt
+│   │   ├── my-api-restaurant
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── QUICKSTART.md
+│   │   ├── README.md
+│   │   ├── run.sh
+│   │   ├── run.sh.backup
+│   │   ├── run.sh.old
+│   │   ├── run.sh.v2
+│   │   ├── setup-aliases.sh
+│   │   ├── strategy_cheaper.yaml
+│   │   ├── strategy_complete.yaml
+│   │   ├── strategy_desc.yaml
+│   │   ├── strategy.yaml
+│   │   ├── test-api
+│   │   │   ├── docker-compose.yml
+│   │   │   └── Dockerfile
+│   │   ├── test-api-new
+│   │   │   └── requirements.txt
+│   │   ├── test-cli
+│   │   │   ├── docker-compose.yml
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── test-cli-debug
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── test-cli-final
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── test-cli-v2
+│   │   │   ├── Dockerfile
+│   │   │   └── requirements.txt
+│   │   ├── test-cli-v3
+│   │   │   └── requirements.txt
+│   │   ├── test-project
+│   │   │   ├── docker-compose.yml
+│   │   │   └── Dockerfile
+│   │   └── test-webapp
+│   │       └── requirements.txt
+│   ├── README.md
+│   ├── REFACTORING_FINAL.md
+│   ├── REFACTORING_SUMMARY.md
+│   ├── run.sh
+│   └── vscode-roocode
+│       ├── README.md
+│       └── run.sh
+├── EXAMPLES_MIGRATION_PLAN.md
+├── EXAMPLES_REFACTORING_SPEC.md
+├── generate.sh
+├── github.planfile.yaml
+├── goal.yaml
+├── img.png
+├── LICENSE
+├── litellm-config.yaml
+├── litellm_config.yaml
+├── llx
+│   ├── analysis
+│   │   ├── collector.py
+│   │   ├── __init__.py
+│   │   └── runner.py
+│   ├── cli
+│   │   ├── app.py
+│   │   ├── commands
+│   │   │   ├── analyze.py
+│   │   │   └── planner.py
+│   │   ├── formatters.py
+│   │   ├── __init__.py
+│   │   ├── strategy_commands.py
+│   │   └── version_check.py
+│   ├── commands
+│   │   ├── fix.py
+│   │   ├── fix.py.bak
+│   │   ├── __init__.py
+│   │   └── _patch_apply.py
+│   ├── config.py
+│   ├── configs
+│   │   ├── config.yaml
+│   │   ├── defaults
+│   │   │   ├── business.yaml
+│   │   │   ├── coding.yaml
+│   │   │   ├── devops.yaml
+│   │   │   └── embedded.yaml
+│   │   ├── deploy.yaml
+│   │   ├── domains
+│   │   │   ├── devops_k8s.yaml
+│   │   │   ├── embedded.yaml
+│   │   │   └── polish_finance.yaml
+│   │   ├── pipelines.yaml
+│   │   ├── planfile_config.yaml
+│   │   ├── prellm_config.yaml
+│   │   ├── project_types.yaml
+│   │   ├── prompts.yaml
+│   │   ├── response_schemas.yaml
+│   │   ├── rules.yaml
+│   │   └── sensitive_rules.yaml
+│   ├── detection
+│   │   ├── detector.py
+│   │   └── __init__.py
+│   ├── examples
+│   │   └── utils.py
+│   ├── __init__.py
+│   ├── integrations
+│   │   ├── context_builder.py
+│   │   ├── __init__.py
+│   │   ├── proxym.py
+│   │   └── proxy.py
+│   ├── litellm_config.py
+│   ├── llm.py
+│   ├── __main__.py
+│   ├── mcp
+│   │   ├── client.py
+│   │   ├── __init__.py
+│   │   ├── __main__.py
+│   │   ├── server.py
+│   │   ├── service.py
+│   │   ├── tools
+│   │   │   ├── analysis.py
+│   │   │   ├── base.py
+│   │   │   ├── code_edit.py
+│   │   │   ├── core.py
+│   │   │   ├── __init__.py
+│   │   │   ├── planfile.py
+│   │   │   ├── preprocessing.py
+│   │   │   ├── privacy.py
+│   │   │   ├── proxym.py
+│   │   │   └── registry.py
+│   │   ├── tools.py
+│   │   └── workflows.py
+│   ├── orchestration
+│   │   ├── cli.py
+│   │   ├── cli_utils.py
+│   │   ├── __init__.py
+│   │   ├── instances
+│   │   │   ├── cli.py
+│   │   │   ├── __init__.py
+│   │   │   ├── manager.py
+│   │   │   ├── models.py
+│   │   │   └── ports.py
+│   │   ├── llm
+│   │   │   ├── cli.py
+│   │   │   ├── executors.py
+│   │   │   ├── health.py
+│   │   │   ├── __init__.py
+│   │   │   ├── models.py
+│   │   │   └── orchestrator.py
+│   │   ├── queue
+│   │   │   ├── cli.py
+│   │   │   ├── __init__.py
+│   │   │   ├── manager.py
+│   │   │   └── models.py
+│   │   ├── ratelimit
+│   │   │   ├── cli.py
+│   │   │   ├── _crud.py
+│   │   │   ├── __init__.py
+│   │   │   ├── limiter.py
+│   │   │   ├── models.py
+│   │   │   └── _persistence.py
+│   │   ├── routing
+│   │   │   ├── cli.py
+│   │   │   ├── engine.py
+│   │   │   ├── __init__.py
+│   │   │   └── models.py
+│   │   ├── session
+│   │   │   ├── cli.py
+│   │   │   ├── __init__.py
+│   │   │   ├── manager.py
+│   │   │   └── models.py
+│   │   ├── utils
+│   │   │   ├── _cmd_cleanup.py
+│   │   │   ├── _cmd_remove.py
+│   │   │   └── _cmd_status.py
+│   │   ├── _utils.py
+│   │   └── vscode
+│   │       ├── cli.py
+│   │       ├── config_io.py
+│   │       ├── defaults.py
+│   │       ├── __init__.py
+│   │       ├── models.py
+│   │       ├── orchestrator.py
+│   │       └── ports.py
+│   ├── planfile
+│   │   ├── builder.py
+│   │   ├── builder_simple.py
+│   │   ├── config.py
+│   │   ├── examples.py
+│   │   ├── executor
+│   │   │   ├── backends.py
+│   │   │   ├── base.py
+│   │   │   ├── __init__.py
+│   │   │   ├── strategy.py
+│   │   │   └── task.py
+│   │   ├── executor_simple.py
+│   │   ├── generate_strategy.py
+│   │   ├── IMPROVEMENTS_SUMMARY.md
+│   │   ├── __init__.py
+│   │   ├── model_selector.py
+│   │   ├── models.py
+│   │   ├── README_SIMPLIFIED.md
+│   │   └── runner.py
+│   ├── prellm
+│   │   ├── agents
+│   │   │   ├── executor.py
+│   │   │   ├── __init__.py
+│   │   │   └── preprocessor.py
+│   │   ├── analyzers
+│   │   │   ├── context_engine.py
+│   │   │   └── __init__.py
+│   │   ├── budget.py
+│   │   ├── chains
+│   │   │   ├── __init__.py
+│   │   │   └── process_chain.py
+│   │   ├── cli_commands.py
+│   │   ├── cli_config.py
+│   │   ├── cli_context.py
+│   │   ├── cli.py
+│   │   ├── cli_query.py
+│   │   ├── context
+│   │   │   ├── codebase_indexer.py
+│   │   │   ├── folder_compressor.py
+│   │   │   ├── __init__.py
+│   │   │   ├── schema_generator.py
+│   │   │   ├── sensitive_filter.py
+│   │   │   ├── shell_collector.py
+│   │   │   └── user_memory.py
+│   │   ├── context_ops.py
+│   │   ├── core.py
+│   │   ├── env_config.py
+│   │   ├── extractors.py
+│   │   ├── __init__.py
+│   │   ├── llm_provider.py
+│   │   ├── logging_setup.py
+│   │   ├── model_catalog.py
+│   │   ├── models.py
+│   │   ├── _nfo_compat.py
+│   │   ├── pipeline
+│   │   │   ├── algo_handlers.py
+│   │   │   ├── config.py
+│   │   │   ├── engine.py
+│   │   │   ├── __init__.py
+│   │   │   └── loader.py
+│   │   ├── pipeline_ops.py
+│   │   ├── pipeline.py
+│   │   ├── prompt_registry.py
+│   │   ├── query_decomposer.py
+│   │   ├── server.py
+│   │   ├── trace.py
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── lazy_imports.py
+│   │   │   └── lazy_loader.py
+│   │   └── validators.py
+│   ├── privacy
+│   │   ├── __core.py
+│   │   ├── deanonymize_engine.py
+│   │   ├── deanonymize.py
+│   │   ├── deanonymize_results.py
+│   │   ├── deanonymize_utils.py
+│   │   ├── __init__.py
+│   │   ├── _project_anonymizer.py
+│   │   ├── _project_ast.py
+│   │   ├── _project_context.py
+│   │   ├── project.py
+│   │   ├── _streaming_chunking.py
+│   │   ├── _streaming_impl.py
+│   │   ├── _streaming_parallel.py
+│   │   └── streaming.py
+│   ├── pyqual_plugins
+│   │   ├── bump_version.py
+│   │   ├── detect_secrets.py
+│   │   ├── __init__.py
+│   │   ├── lint.py
+│   │   ├── publish.py
+│   │   ├── security_audit.py
+│   │   ├── type_check.py
+│   │   └── verify_push_publish.py
+│   ├── routing
+│   │   ├── client.py
+│   │   ├── __init__.py
+│   │   └── selector.py
+│   ├── tools
+│   │   ├── ai_tools_manager.py
+│   │   ├── ai_tools_manager.py.bak
+│   │   ├── cli.py
+│   │   ├── config
+│   │   │   ├── cli.py
+│   │   │   ├── __init__.py
+│   │   │   └── manager.py
+│   │   ├── config_manager.py
+│   │   ├── docker_manager.py
+│   │   ├── _docker.py
+│   │   ├── health_checker.py
+│   │   ├── health_runner.py
+│   │   ├── __init__.py
+│   │   ├── model_manager.py
+│   │   ├── utils
+│   │   │   └── _cmd_uninstall_extension.py
+│   │   ├── _utils.py
+│   │   └── vscode_manager.py
+│   └── utils
+│       ├── aider.py
+│       ├── cli_main.py
+│       ├── formatting.py
+│       ├── issues.py
+│       └── models.py
+├── llx.egg-info
+│   ├── dependency_links.txt
+│   ├── entry_points.txt
+│   ├── PKG-INFO
+│   ├── requires.txt
+│   ├── SOURCES.txt
+│   └── top_level.txt
+├── LLX_ENHANCEMENT_PLAN.md
+├── llx-orchestrator
+├── LLX_PLANFILE_SIMPLIFICATION.md
+├── LLX_STRATEGY_INTEGRATION.md
+├── llx-tools
+├── llx.yaml
+├── logs
+│   ├── redsl_20260408_141415.log
+│   ├── redsl_20260408_143435.log
+│   ├── redsl_20260408_143545.log
+│   ├── redsl_20260408_143601.log
+│   ├── redsl_20260408_143625.log
+│   ├── redsl_20260408_143651.log
+│   ├── redsl_20260408_143801.log
+│   ├── redsl_20260419_193242.log
+│   ├── redsl_20260419_193323.log
+│   ├── redsl_20260419_210245.log
+│   ├── redsl_20260420_084137.log
+│   ├── redsl_20260420_084538.log
+│   ├── redsl_20260420_094137.log
+│   ├── redsl_20260420_112727.log
+│   ├── redsl_20260420_120413.log
+│   ├── redsl_20260420_120643.log
+│   ├── redsl_20260420_120845.log
+│   ├── redsl_20260420_120954.log
+│   └── redsl_20260420_121310.log
+├── Makefile
+├── my-api
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── __init__.py
+│   ├── pyproject.toml
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── my_api
+│   │   │   ├── __init__.py
+│   │   │   ├── main.py
+│   │   │   ├── models.py
+│   │   │   ├── monitoring.py
+│   │   │   └── test_api.py
+│   │   └── my_api.egg-info
+│   │       ├── dependency_links.txt
+│   │       ├── PKG-INFO
+│   │       ├── requires.txt
+│   │       ├── SOURCES.txt
+│   │       └── top_level.txt
+│   └── tests
+│       └── test_my_api.py
+├── my_api -> /home/tom/github/semcod/llx/my-api
+├── planfile.yaml
+├── prefact.yaml
+├── project
+│   ├── analysis.toon.yaml
+│   ├── calls.mmd
+│   ├── calls.png
+│   ├── calls.toon.yaml
+│   ├── calls.yaml
+│   ├── compact_flow.mmd
+│   ├── compact_flow.png
+│   ├── context.md
+│   ├── duplication.toon.yaml
+│   ├── evolution.toon.yaml
+│   ├── flow.mmd
+│   ├── flow.png
+│   ├── index.html
+│   ├── map.toon.yaml
+│   ├── mermaid.export
+│   ├── project.toon.yaml
+│   ├── prompt.txt
+│   ├── README.md
+│   └── validation.toon.yaml
+├── project.sh
+├── proxy.log
+├── pyproject.toml
+├── pyqual.yaml
+├── README.md
+├── redsl_refactor_plan.md
+├── redsl_refactor_plan.toon.yaml
+├── redsl_refactor_report.md
+├── redsl_refactor_report.toon.yaml
+├── redsl.yaml
+├── REFACTORING_SPRINT4_SUMMARY.md
+├── REFACTORING_SUMMARY.md
+├── refactor_output
+├── refactor-strategy.yaml
+├── requirements-dev.txt
+├── requirements.txt
+├── scripts
+│   └── pyqual_auto.py
+├── SIMPLE_CONFIG.md
+├── simple_generate.py
+├── strategy.yaml
+├── SUMD.md
+├── SUMR.md
+├── Taskfile.yml
+├── test_aider_docker.py
+├── test_aider_mcp.py
+├── test-api-qwen
+│   ├── Dockerfile
+│   ├── __init__.py
+│   ├── pyproject.toml
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── src
+│   │   ├── test_api_qwen
+│   │   │   ├── __init__.py
+│   │   │   ├── main.py
+│   │   │   ├── models.py
+│   │   │   └── test_api.py
+│   │   └── test_api_qwen.egg-info
+│   │       ├── dependency_links.txt
+│   │       ├── PKG-INFO
+│   │       ├── requires.txt
+│   │       ├── SOURCES.txt
+│   │       └── top_level.txt
+│   └── tests
+│       └── test_test_api_qwen.py
+├── test_api_qwen -> /home/tom/github/semcod/llx/test-api-qwen
+├── test_cli.py
+├── test-local-chat.py
+├── testql-scenarios
+│   ├── generated-api-integration.testql.toon.yaml
+│   ├── generated-api-smoke.testql.toon.yaml
+│   └── generated-from-pytests.testql.toon.yaml
+├── tests
+│   ├── __init__.py
+│   ├── privacy
+│   │   ├── test_anonymizer.py
+│   │   ├── test_context.py
+│   │   └── test_deanonymizer.py
+│   ├── test_aider_mcp.py
+│   ├── test_anonymization_context.py
+│   ├── test_backend_detection.py
+│   ├── test_core.py
+│   ├── test_detection.py
+│   ├── test_fix_aider_mode.py
+│   ├── test_mcp.py
+│   ├── test_prellm_integration.py
+│   ├── test_privacy_extended.py
+│   ├── test_privacy_project.py
+│   ├── test_privacy.py
+│   ├── test_project_anonymizer.py
+│   ├── test_project_deanonymizer.py
+│   └── test_proxym_integration.py
+├── test_strategy_integration.py
+├── test.yaml
+├── TODO.md
+├── trace.py
+├── tree.sh
+├── tree.txt
+├── uv.lock
+└── VERSION
+
+135 directories, 492 files

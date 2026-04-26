@@ -219,6 +219,122 @@ def _normalize_strategy(strategy: dict) -> dict:
     return strategy
 
 
+def _run_single_task_pattern(
+    task: dict,
+    config: LlxConfig,
+    metrics: Any,
+    model_override: Optional[str],
+    dry_run: bool,
+    selected_backend: str,
+    project_path: Path,
+    on_progress: Any,
+) -> Optional[TaskResult]:
+    """Execute one task pattern and report progress."""
+    task_name = task.get("name", "Unnamed")
+    if on_progress:
+        on_progress(f"  [yellow]→[/yellow] {task_name}...")
+    try:
+        result = _execute_task(
+            task=task,
+            config=config,
+            metrics=metrics,
+            model_override=model_override,
+            dry_run=dry_run,
+            backend=selected_backend,
+            project_root=project_path.resolve()
+        )
+        if on_progress:
+            if result.status == "success":
+                on_progress(f"  [green]✓[/green] {task_name} ({result.model_used})")
+            elif result.status == "dry_run":
+                on_progress(f"  [blue]○[/blue] {task_name} (dry-run)")
+            else:
+                on_progress(f"  [red]✗[/red] {task_name}: {result.error or result.validation_message}")
+        return result
+    except Exception as e:
+        logger.error(f"Task failed: {e}")
+        if on_progress:
+            on_progress(f"  [red]✗[/red] {task_name}: {str(e)}")
+        return None
+
+
+def _update_sprint_task_status(task: dict, result: TaskResult, strategy_path: str | Path, strategy: dict) -> None:
+    """Update a sprint task's status and notes in-place and persist strategy."""
+    task["status"] = result.status
+    if "notes" not in task:
+        task["notes"] = []
+    if not isinstance(task["notes"], list):
+        task["notes"] = [task["notes"]]
+    from datetime import datetime
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    task["notes"].append(f"[{ts}] {result.status}: {result.validation_message or result.error or 'no details'}")
+    _save_strategy(strategy_path, strategy)
+
+
+def _execute_ticket_block(
+    strategy: dict,
+    ticket_id: str,
+    config: LlxConfig,
+    metrics: Any,
+    model_override: Optional[str],
+    dry_run: bool,
+    selected_backend: str,
+    project_path: Path,
+    on_progress: Any,
+    strategy_path: str | Path,
+) -> List[TaskResult]:
+    """Execute a single ticket by ID and update planfile."""
+    tasks = strategy.get("tasks", [])
+    ticket = next((t for t in tasks if t.get("id") == ticket_id), None)
+
+    if not ticket:
+        logger.error(f"Ticket {ticket_id} not found in planfile")
+        if on_progress:
+            on_progress(f"[red]✗ Ticket {ticket_id} not found[/red]")
+        return []
+
+    if on_progress:
+        on_progress(f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}")
+
+    task_dict = {
+        "name": ticket.get("title", ticket_id),
+        "description": ticket.get("description", ""),
+        "task_type": _map_action_to_task_type(ticket.get("action", "feature")),
+        "model_hints": {"tier": "balanced"},
+        "priority": _map_priority(ticket.get("priority", 3)),
+        "file": ticket.get("file", ""),
+        "action": ticket.get("action", "")
+    }
+
+    try:
+        result = _execute_task(
+            task=task_dict,
+            config=config,
+            metrics=metrics,
+            model_override=model_override,
+            dry_run=dry_run,
+            backend=selected_backend,
+            project_root=project_path.resolve()
+        )
+        if on_progress:
+            if result.status == "success":
+                on_progress(f"  [green]✓[/green] {ticket_id} ({result.model_used})")
+            elif result.status == "dry_run":
+                on_progress(f"  [blue]○[/blue] {ticket_id} (dry-run)")
+            else:
+                on_progress(f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}")
+
+        if not dry_run:
+            _update_task_in_planfile(strategy_path, ticket_id, result.status, result.validation_message or "")
+
+        return [result]
+    except Exception as e:
+        logger.error(f"Ticket execution failed: {e}")
+        if on_progress:
+            on_progress(f"  [red]✗[/red] {ticket_id}: {str(e)}")
+        return []
+
+
 def execute_strategy(
     strategy_path: str | Path,
     project_path: str | Path = ".",
@@ -247,200 +363,77 @@ def execute_strategy(
         use_aider: Use aider for code editing
     """
 
-    # Auto-detect and select best backend for code editing
     selected_backend = BackendType.LLM_CHAT
     if use_aider:
         backends = _detect_available_backends()
         selected_backend = _select_best_backend(backends)
         logger.info(f"Selected backend: {selected_backend}")
 
-    # Load strategy
     strategy = _load_strategy(strategy_path)
-    
-    # Normalize to handle both V1 and V2 formats
     strategy = _normalize_strategy(strategy)
-    
     config = LlxConfig.load(str(project_path))
     metrics = analyze_project(str(project_path))
-    results = []
+    results: List[TaskResult] = []
     total_tasks_processed = 0
 
-    # If ticket_id is specified, execute that specific ticket from tasks section
     if ticket_id:
-        tasks = strategy.get("tasks", [])
-        ticket = None
-        for task in tasks:
-            if task.get("id") == ticket_id:
-                ticket = task
-                break
-        
-        if not ticket:
-            logger.error(f"Ticket {ticket_id} not found in planfile")
-            if on_progress:
-                on_progress(f"[red]✗ Ticket {ticket_id} not found[/red]")
-            return results
-        
-        if on_progress:
-            on_progress(f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}")
-        
-        # Convert ticket to task format
-        task_dict = {
-            "name": ticket.get("title", ticket_id),
-            "description": ticket.get("description", ""),
-            "task_type": _map_action_to_task_type(ticket.get("action", "feature")),
-            "model_hints": {"tier": "balanced"},
-            "priority": _map_priority(ticket.get("priority", 3)),
-            "file": ticket.get("file", ""),
-            "action": ticket.get("action", "")
-        }
-        
-        try:
-            result = _execute_task(
-                task=task_dict,
-                config=config,
-                metrics=metrics,
-                model_override=model_override,
-                dry_run=dry_run,
-                backend=selected_backend,
-                project_root=Path(project_path).resolve()
-            )
-            results.append(result)
-            
-            if on_progress:
-                if result.status == "success":
-                    on_progress(f"  [green]✓[/green] {ticket_id} ({result.model_used})")
-                elif result.status == "dry_run":
-                    on_progress(f"  [blue]○[/blue] {ticket_id} (dry-run)")
-                else:
-                    on_progress(f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}")
-            
-            # Update ticket status in planfile if not dry_run
-            if not dry_run:
-                _update_task_in_planfile(strategy_path, ticket_id, result.status, result.validation_message or "")
-            
-        except Exception as e:
-            logger.error(f"Ticket execution failed: {e}")
-            if on_progress:
-                on_progress(f"  [red]✗[/red] {ticket_id}: {str(e)}")
-        
-        return results
+        return _execute_ticket_block(
+            strategy, ticket_id, config, metrics, model_override,
+            dry_run, selected_backend, Path(project_path), on_progress, strategy_path
+        )
 
-    # Original sprint-based execution
     for sprint in strategy.get("sprints", []):
         sprint_num = sprint.get("sprint", 0)
-        
-        # Apply sprint filter if specified
         if sprint_filter is not None and sprint_num != sprint_filter:
             if on_progress:
                 on_progress(f"[dim]Skipping sprint {sprint_num} (filtered)[/dim]")
             continue
-        
+
         if on_progress:
             on_progress(f"\n[bold blue]Sprint {sprint_num}:[/bold blue] {sprint.get('name', 'Unnamed')}")
-        
-        # Get task patterns from sprint
+
         task_patterns = sprint.get("task_patterns", [])
-        
         if not task_patterns:
             if on_progress:
                 on_progress(f"[dim]No tasks in sprint {sprint_num}[/dim]")
             continue
-        
-        # Execute tasks
+
         if max_concurrent > 1:
-            # Parallel execution
             with ThreadPoolExecutor(max_workers=max_concurrent) as executor:
-                futures = []
-                for task in task_patterns:
-                    future = executor.submit(
-                        _execute_task,
-                        task=task,
-                        config=config,
-                        metrics=metrics,
-                        model_override=model_override,
-                        dry_run=dry_run,
-                        backend=selected_backend,
-                        project_root=Path(project_path).resolve()
-                    )
-                    futures.append((task, future))
-                
+                futures = [
+                    (task, executor.submit(
+                        _run_single_task_pattern,
+                        task, config, metrics, model_override, dry_run,
+                        selected_backend, Path(project_path), on_progress
+                    ))
+                    for task in task_patterns
+                ]
                 for task, future in futures:
                     if max_tasks is not None and total_tasks_processed >= max_tasks:
                         break
-                    
-                    task_name = task.get("name", "Unnamed")
-                    if on_progress:
-                        on_progress(f"  [yellow]→[/yellow] {task_name}...")
-                    
-                    try:
-                        result = future.result()
+                    result = future.result()
+                    if result is not None:
                         results.append(result)
                         total_tasks_processed += 1
-                        
-                        if on_progress:
-                            if result.status == "success":
-                                on_progress(f"  [green]✓[/green] {task_name} ({result.model_used})")
-                            elif result.status == "dry_run":
-                                on_progress(f"  [blue]○[/blue] {task_name} (dry-run)")
-                            else:
-                                on_progress(f"  [red]✗[/red] {task_name}: {result.error or result.validation_message}")
-                    except Exception as e:
-                        logger.error(f"Task failed: {e}")
-                        if on_progress:
-                            on_progress(f"  [red]✗[/red] {task_name}: {str(e)}")
+                        if not dry_run:
+                            _update_sprint_task_status(task, result, strategy_path, strategy)
         else:
-            # Sequential execution
             for task in task_patterns:
                 if max_tasks is not None and total_tasks_processed >= max_tasks:
                     break
-                
-                task_name = task.get("name", "Unnamed")
-                if on_progress:
-                    on_progress(f"  [yellow]→[/yellow] {task_name}...")
-                
-                try:
-                    result = _execute_task(
-                        task=task,
-                        config=config,
-                        metrics=metrics,
-                        model_override=model_override,
-                        dry_run=dry_run,
-                        backend=selected_backend,
-                        project_root=Path(project_path).resolve()
-                    )
+                result = _run_single_task_pattern(
+                    task, config, metrics, model_override, dry_run,
+                    selected_backend, Path(project_path), on_progress
+                )
+                if result is not None:
                     results.append(result)
                     total_tasks_processed += 1
-                    
-                    if on_progress:
-                        if result.status == "success":
-                            on_progress(f"  [green]✓[/green] {task_name} ({result.model_used})")
-                        elif result.status == "dry_run":
-                            on_progress(f"  [blue]○[/blue] {task_name} (dry-run)")
-                        else:
-                            on_progress(f"  [red]✗[/red] {task_name}: {result.error or result.validation_message}")
-                    
-                    # Update strategy with results if it's a real execution
                     if not dry_run:
-                        # Mark task status in the sprint pattern
-                        task["status"] = result.status
-                        if "notes" not in task:
-                            task["notes"] = []
-                        if not isinstance(task["notes"], list):
-                            task["notes"] = [task["notes"]]
-                        from datetime import datetime
-                        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        task["notes"].append(f"[{ts}] {result.status}: {result.validation_message or result.error or 'no details'}")
-                        _save_strategy(strategy_path, strategy)
-                        
-                except Exception as e:
-                    logger.error(f"Task failed: {e}")
-                    if on_progress:
-                        on_progress(f"  [red]✗[/red] {task_name}: {str(e)}")
-                
-                # Check max_tasks limit
+                        _update_sprint_task_status(task, result, strategy_path, strategy)
+
                 if max_tasks is not None and total_tasks_processed >= max_tasks:
                     if on_progress:
                         on_progress(f"[dim]Reached max_tasks limit ({max_tasks}), stopping.[/dim]")
                     break
-    
+
     return results

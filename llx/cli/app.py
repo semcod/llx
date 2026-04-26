@@ -135,6 +135,14 @@ def select(
         console.print(f"  [dim]• {reason}[/dim]")
 
 
+def _resolve_chat_model(config: LlxConfig, model_override: Optional[str], result) -> str:
+    """Resolve final model id from override and selection result."""
+    model_id = model_override or result.model_id
+    if model_override and model_override in config.models:
+        return config.models[model_override].model_id
+    return model_id
+
+
 @app.command()
 def chat(
     path: str = typer.Argument(".", help="Project path"),
@@ -155,11 +163,7 @@ def chat(
     else:
         result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task)
 
-    model_id = model_override or result.model_id
-
-    if model_override and model_override in config.models:
-        model_id = config.models[model_override].model_id
-
+    model_id = _resolve_chat_model(config, model_override, result)
     console.print(f"[bold]Model:[/bold] {model_id}  [dim]({result.tier.value})[/dim]")
 
     from llx.integrations.context_builder import build_context
@@ -274,6 +278,173 @@ def plan_execute(
     )
 
 
+def _print_run_params(strategy: str, project_path: Path, ticket_id: Optional[str], sprint: Optional[int], tier: Optional[str], dry_run: bool, use_aider: bool, console: Console) -> Any:
+    """Print plan_run parameter summary and detect backends if needed."""
+    console.print(f"[bold]Running planfile:[/bold] {strategy}")
+    console.print(f"[dim]Project:[/dim] {project_path}")
+    if ticket_id:
+        console.print(f"[dim]Ticket:[/dim] {ticket_id}")
+    if sprint:
+        console.print(f"[dim]Sprint:[/dim] {sprint}")
+    if tier:
+        console.print(f"[dim]Tier:[/dim] {tier}")
+    if dry_run:
+        console.print(f"[dim]Mode:[/dim] dry-run")
+    if use_aider:
+        console.print(f"[dim]Code editing:[/dim] auto-detecting backend...")
+        from llx.planfile.executor_simple import _detect_available_backends
+        backends = _detect_available_backends()
+        available = [k for k, v in backends.items() if v]
+        console.print(f"[dim]Available backends:[/dim] {', '.join(available)}")
+        return backends
+    return None
+
+
+def _ensure_proxy_running(config: LlxConfig, dry_run: bool, auto_start_proxy: bool, console: Console) -> None:
+    """Auto-start proxy if not running (unless dry-run or disabled)."""
+    if dry_run or not auto_start_proxy:
+        return
+    from llx.integrations.proxy import check_proxy, start_proxy
+    proxy_url = config.litellm_base_url
+    if check_proxy(proxy_url):
+        return
+    console.print(f"[yellow]⚠ LiteLLM proxy not running at {proxy_url}[/yellow]")
+    console.print("[dim]Attempting to start proxy automatically...[/dim]")
+    try:
+        proc = start_proxy(config, background=True)
+        if proc:
+            console.print(f"[green]✓ Proxy started (PID {proc.pid})[/green]")
+        else:
+            console.print("[red]✗ Failed to start proxy[/red]")
+            console.print(f"[dim]Run manually: llx proxy start[/dim]")
+            raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]✗ Failed to start proxy: {e}[/red]")
+        console.print(f"[dim]Run manually: llx proxy start[/dim]")
+        raise typer.Exit(1)
+
+
+def _resolve_tier_override(tier: Optional[str], config: LlxConfig, console: Console) -> Optional[str]:
+    """Map tier alias to model override id."""
+    if not tier:
+        return None
+    tier_aliases = {
+        "balance": "balanced",
+        "free": "free",
+        "cheap": "cheap",
+        "premium": "premium",
+        "local": "local",
+        "openrouter": "openrouter",
+    }
+    normalized = tier_aliases.get(tier, tier)
+    tier_model = config.models.get(normalized)
+    if tier_model:
+        console.print(f"[dim]Model:[/dim] {tier_model.model_id}")
+        return tier_model.model_id
+    console.print(f"[yellow]Warning:[/yellow] Tier '{tier}' not found in config")
+    return None
+
+
+def _persist_failed_results(results, strategy: str) -> None:
+    """Update planfile for cancelled/failed tasks so state is persisted."""
+    from llx.planfile.executor.strategy import _update_task_in_planfile
+    for result in results:
+        if result.status in ("cancelled", "failed"):
+            comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
+            _update_task_in_planfile(
+                planfile_path=strategy,
+                task_id=result.task_name,
+                status=result.status,
+                comment=comment
+            )
+
+
+def _print_results_summary(results, use_aider: bool, backends, console: Console) -> None:
+    """Print execution summary counts and validation details."""
+    console.print("\n[bold]Results:[/bold]")
+    if use_aider and backends:
+        from llx.planfile.executor_simple import _select_best_backend
+        selected = _select_best_backend(backends)
+        console.print(f"[dim]Backend used:[/dim] {selected}")
+
+    counts = {
+        "success": sum(1 for r in results if r.status == "success"),
+        "failed": sum(1 for r in results if r.status == "failed"),
+        "invalid": sum(1 for r in results if r.status == "invalid"),
+        "not_found": sum(1 for r in results if r.status == "not_found"),
+        "already_fixed": sum(1 for r in results if r.status == "already_fixed"),
+        "cancelled": sum(1 for r in results if r.status == "cancelled"),
+        "skipped": sum(1 for r in results if r.status in ["dry_run", "skipped"]),
+    }
+
+    console.print(f"  [green]✓ Success:[/green] {counts['success']}")
+    console.print(f"  [red]✗ Failed:[/red] {counts['failed']}")
+    console.print(f"  [yellow]⚠ Invalid (no changes):[/yellow] {counts['invalid']}")
+    console.print(f"  [dim]⊘ Not found:[/dim] {counts['not_found']}")
+    console.print(f"  [dim]⊘ Already fixed:[/dim] {counts['already_fixed']}")
+    console.print(f"  [cyan]⊘ Cancelled:[/cyan] {counts['cancelled']}")
+    console.print(f"  [dim]⊘ Skipped:[/dim] {counts['skipped']}")
+
+    detail_statuses = {"invalid", "not_found", "already_fixed", "cancelled"}
+    detail_colors = {
+        "invalid": ("yellow", "⚠"),
+        "not_found": ("dim", "⊘"),
+        "already_fixed": ("dim", "⊘"),
+        "cancelled": ("cyan", "⊘"),
+    }
+    if any(counts[s] > 0 for s in detail_statuses):
+        console.print("\n[dim]Validation details:[/dim]")
+        for result in results:
+            if result.status in detail_statuses:
+                color, icon = detail_colors[result.status]
+                console.print(f"  [{color}]{icon} {result.task_name}:[/{color}] {result.validation_message}")
+
+    if counts["failed"] > 0:
+        console.print("\n[dim]Failed tasks:[/dim]")
+        for result in results:
+            if result.status == "failed":
+                console.print(f"    [red]✗ {result.task_name}:[/red] {result.error}")
+
+
+def _save_results_yaml(results, output_yaml: str, strategy: str, project_path: Path, sprint: Optional[int], tier: Optional[str], dry_run: bool, console: Console) -> None:
+    """Save execution results to a YAML file."""
+    import yaml
+    counts = {
+        "success": sum(1 for r in results if r.status == "success"),
+        "failed": sum(1 for r in results if r.status == "failed"),
+        "invalid": sum(1 for r in results if r.status == "invalid"),
+        "not_found": sum(1 for r in results if r.status == "not_found"),
+        "already_fixed": sum(1 for r in results if r.status == "already_fixed"),
+        "cancelled": sum(1 for r in results if r.status == "cancelled"),
+        "skipped": sum(1 for r in results if r.status in ["dry_run", "skipped"]),
+    }
+    output_data = {
+        "strategy": strategy,
+        "project": str(project_path),
+        "sprint": sprint,
+        "tier": tier,
+        "dry_run": dry_run,
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "summary": {**counts, "total": len(results)},
+        "results": [
+            {
+                "task_name": r.task_name,
+                "status": r.status,
+                "model_used": r.model_used,
+                "response": r.response,
+                "error": r.error,
+                "execution_time": r.execution_time,
+                "file_changed": r.file_changed,
+                "validation_message": r.validation_message
+            }
+            for r in results
+        ]
+    }
+    with open(output_yaml, "w") as f:
+        yaml.dump(output_data, f, default_flow_style=False, allow_unicode=True)
+    console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
+
+
 @plan_app.command("run")
 def plan_run(
     strategy: str = typer.Argument(..., help="Strategy YAML file (or 'planfile.yaml')"),
@@ -290,77 +461,19 @@ def plan_run(
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
-    from llx.integrations.proxy import check_proxy
 
-    # Auto-detect planfile.yaml if strategy is "."
     if strategy == ".":
         strategy = "planfile.yaml"
 
-    console.print(f"[bold]Running planfile:[/bold] {strategy}")
-    console.print(f"[dim]Project:[/dim] {project_path}")
-    if ticket_id:
-        console.print(f"[dim]Ticket:[/dim] {ticket_id}")
-    if sprint:
-        console.print(f"[dim]Sprint:[/dim] {sprint}")
-    if tier:
-        console.print(f"[dim]Tier:[/dim] {tier}")
-    if dry_run:
-        console.print(f"[dim]Mode:[/dim] dry-run")
-    if use_aider:
-        console.print(f"[dim]Code editing:[/dim] auto-detecting backend...")
-        # Detect backends to show what's available
-        from llx.planfile.executor_simple import _detect_available_backends, BackendType
-        backends = _detect_available_backends()
-        available = [k for k, v in backends.items() if v]
-        console.print(f"[dim]Available backends:[/dim] {', '.join(available)}")
+    backends = _print_run_params(strategy, project_path, ticket_id, sprint, tier, dry_run, use_aider, console)
 
-    # Check proxy status before execution (unless dry-run)
     config = LlxConfig.load(str(project_path))
-    proxy_url = config.litellm_base_url
+    _ensure_proxy_running(config, dry_run, auto_start_proxy, console)
+    model_override = _resolve_tier_override(tier, config, console)
 
-    if not dry_run and auto_start_proxy:
-        if not check_proxy(proxy_url):
-            console.print(f"[yellow]⚠ LiteLLM proxy not running at {proxy_url}[/yellow]")
-            console.print("[dim]Attempting to start proxy automatically...[/dim]")
-            try:
-                from llx.integrations.proxy import start_proxy
-                proc = start_proxy(config, background=True)
-                if proc:
-                    console.print(f"[green]✓ Proxy started (PID {proc.pid})[/green]")
-                else:
-                    console.print("[red]✗ Failed to start proxy[/red]")
-                    console.print(f"[dim]Run manually: llx proxy start[/dim]")
-                    raise typer.Exit(1)
-            except Exception as e:
-                console.print(f"[red]✗ Failed to start proxy: {e}[/red]")
-                console.print(f"[dim]Run manually: llx proxy start[/dim]")
-                raise typer.Exit(1)
-    
-    # Map tier to model override
-    model_override = None
-    if tier:
-        # Normalize tier name (handle common aliases)
-        tier_aliases = {
-            "balance": "balanced",
-            "free": "free",
-            "cheap": "cheap",
-            "premium": "premium",
-            "local": "local",
-            "openrouter": "openrouter",
-        }
-        normalized_tier = tier_aliases.get(tier, tier)
-
-        config = LlxConfig.load(str(project_path))
-        tier_model = config.models.get(normalized_tier)
-        if tier_model:
-            model_override = tier_model.model_id
-            console.print(f"[dim]Model:[/dim] {model_override}")
-        else:
-            console.print(f"[yellow]Warning:[/yellow] Tier '{tier}' not found in config")
-    
     def on_progress(msg: str):
         console.print(f"[dim]  {msg}[/dim]")
-    
+
     try:
         results = execute_strategy(
             strategy_path=strategy,
@@ -374,100 +487,13 @@ def plan_run(
             max_tasks=max_tasks,
             use_aider=use_aider
         )
-        
-        # Update planfile for cancelled / failed tasks so state is persisted
-        from llx.planfile.executor.strategy import _update_task_in_planfile
-        for result in results:
-            if result.status in ("cancelled", "failed"):
-                comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
-                _update_task_in_planfile(
-                    planfile_path=strategy,
-                    task_id=result.task_name,
-                    status=result.status,
-                    comment=comment
-                )
-        
-        # Summary
-        console.print("\n[bold]Results:[/bold]")
-        if use_aider:
-            from llx.planfile.executor_simple import _select_best_backend
-            selected = _select_best_backend(backends)
-            console.print(f"[dim]Backend used:[/dim] {selected}")
-        success = sum(1 for r in results if r.status == "success")
-        failed = sum(1 for r in results if r.status == "failed")
-        invalid = sum(1 for r in results if r.status == "invalid")
-        not_found = sum(1 for r in results if r.status == "not_found")
-        already_fixed = sum(1 for r in results if r.status == "already_fixed")
-        cancelled = sum(1 for r in results if r.status == "cancelled")
-        skipped = sum(1 for r in results if r.status in ["dry_run", "skipped"])
 
-        console.print(f"  [green]✓ Success:[/green] {success}")
-        console.print(f"  [red]✗ Failed:[/red] {failed}")
-        console.print(f"  [yellow]⚠ Invalid (no changes):[/yellow] {invalid}")
-        console.print(f"  [dim]⊘ Not found:[/dim] {not_found}")
-        console.print(f"  [dim]⊘ Already fixed:[/dim] {already_fixed}")
-        console.print(f"  [cyan]⊘ Cancelled:[/cyan] {cancelled}")
-        console.print(f"  [dim]⊘ Skipped:[/dim] {skipped}")
+        _persist_failed_results(results, strategy)
+        _print_results_summary(results, use_aider, backends, console)
 
-        # Show validation messages for invalid/not_found/already_fixed/cancelled tasks
-        if invalid > 0 or not_found > 0 or already_fixed > 0 or cancelled > 0:
-            console.print("\n[dim]Validation details:[/dim]")
-            for result in results:
-                if result.status in ["invalid", "not_found", "already_fixed", "cancelled"]:
-                    if result.status == "invalid":
-                        console.print(f"  [yellow]⚠ {result.task_name}:[/yellow] {result.validation_message}")
-                    elif result.status == "not_found":
-                        console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
-                    elif result.status == "already_fixed":
-                        console.print(f"  [dim]⊘ {result.task_name}:[/dim] {result.validation_message}")
-                    elif result.status == "cancelled":
-                        console.print(f"  [cyan]⊘ {result.task_name}:[/cyan] {result.validation_message}")
-
-        if failed > 0:
-            console.print("\n[dim]Failed tasks:[/dim]")
-            for result in results:
-                if result.status == "failed":
-                    console.print(f"    [red]✗ {result.task_name}:[/red] {result.error}")
-
-        # Save results to YAML if requested
         if output_yaml:
-            import yaml
-            output_data = {
-                "strategy": strategy,
-                "project": str(project_path),
-                "sprint": sprint,
-                "tier": tier,
-                "dry_run": dry_run,
-                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-                "summary": {
-                    "success": success,
-                    "failed": failed,
-                    "invalid": invalid,
-                    "not_found": not_found,
-                    "already_fixed": already_fixed,
-                    "cancelled": cancelled,
-                    "skipped": skipped,
-                    "total": len(results)
-                },
-                "results": [
-                    {
-                        "task_name": r.task_name,
-                        "status": r.status,
-                        "model_used": r.model_used,
-                        "response": r.response,
-                        "error": r.error,
-                        "execution_time": r.execution_time,
-                        "file_changed": r.file_changed,
-                        "validation_message": r.validation_message
-                    }
-                    for r in results
-                ]
-            }
+            _save_results_yaml(results, output_yaml, strategy, project_path, sprint, tier, dry_run, console)
 
-            with open(output_yaml, "w") as f:
-                yaml.dump(output_data, f, default_flow_style=False, allow_unicode=True)
-            console.print(f"\n[dim]Results saved to:[/dim] {output_yaml}")
-        
     except Exception as e:
         console.print(f"[red]Error:[/red] {e}")
         raise typer.Exit(1)

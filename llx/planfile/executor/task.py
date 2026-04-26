@@ -45,6 +45,16 @@ from llx.utils.aider import _run_aider_fix
 logger = logging.getLogger(__name__)
 
 
+def _extract_file_from_task(task: dict) -> str:
+    """Return the target file path from task['file'] or parsed from description."""
+    file_path = task.get("file", "")
+    if file_path:
+        return file_path
+    import re
+    m = re.search(r'in\s+([\w./]+\.py)', task.get("description", ""))
+    return m.group(1) if m else ""
+
+
 def _check_indicators(text: str, indicators: list[str]) -> bool:
     """Return True if any indicator is present in text (case-insensitive)."""
     text_lower = text.lower()
@@ -178,6 +188,14 @@ def _build_task_prompt(task: dict, metrics: Any) -> str:
     """Build execution prompt with project context."""
 
     file_path = task.get("file", "")
+
+    # Fallback: extract file path from description (e.g. "Resolve issues in path/to/file.py")
+    if not file_path:
+        import re
+        desc = task.get("description", "")
+        m = re.search(r'in\s+([\w./]+\.py)', desc)
+        if m:
+            file_path = m.group(1)
 
     prompt = f"""## Task: {task.get('name', 'Unnamed Task')}
 
@@ -313,6 +331,41 @@ def _run_aider_backend(project_root: Path, prompt: str, model: str, target_file:
     return response, success
 
 
+def _apply_llm_code_blocks(response: str, default_file: str = "") -> bool:
+    """Extract code blocks from LLM response and write them to disk.
+
+    Supports ```python:path/to/file.py and ```python (uses default_file).
+    Returns True if any file was written.
+    """
+    import re
+    written = False
+
+    # Pattern: ```python:path/to/file.py
+    pattern = r'```python:([^\n]+)\n(.*?)```'
+    matches = re.findall(pattern, response, re.DOTALL)
+
+    if not matches and default_file:
+        # Fallback: plain ```python blocks without a path header
+        plain = r'```python\n(.*?)```'
+        plain_matches = re.findall(plain, response, re.DOTALL)
+        if plain_matches:
+            matches = [(default_file, plain_matches[0])]
+
+    for file_path, content in matches:
+        try:
+            path = Path(file_path)
+            if not path.is_absolute():
+                path = Path.cwd() / path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+            logger.info(f"Wrote changes to {path}")
+            written = True
+        except Exception as e:
+            logger.error(f"Failed to write {file_path}: {e}")
+
+    return written
+
+
 def _run_llm_chat_with_retry(prompt: str, model: str) -> str:
     """Run LLM chat with optional retry on unclear responses. Returns response content or raises Exception."""
     client = LlxClient()
@@ -370,7 +423,7 @@ def _execute_task(
     """Execute a single task."""
     start_time = time.time()
     task_name = task.get("name", "Unnamed Task")
-    target_file = task.get("file")
+    target_file = _extract_file_from_task(task)
 
     try:
         model = model_override or _select_model(task, config, metrics)
@@ -413,6 +466,10 @@ def _execute_task(
                     error=str(e),
                     execution_time=time.time() - start_time
                 )
+
+            # Extract and apply any code blocks returned by the LLM
+            if response_content:
+                code_changes_applied = _apply_llm_code_blocks(response_content, target_file or "")
 
         validation = _parse_llm_response(response_content)
         status, file_changed, validation_message = _determine_task_status(validation, code_changes_applied)
