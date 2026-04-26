@@ -129,6 +129,15 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.66] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Other
+- Update llx/planfile/executor/task.py
+- Update planfile.yaml
+
 ## [0.1.65] - 2026-04-26
 
 ### Docs

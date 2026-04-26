@@ -205,19 +205,7 @@ Target File: {file_path if file_path else 'N/A'}
 
 Description:
 {task.get('description', '')}
-
-## Project Context
 """
-
-    # Add metrics if available
-    if hasattr(metrics, 'total_files'):
-        prompt += f"- Files: {metrics.total_files}\n"
-        prompt += f"- Lines of code: {metrics.total_lines:,}\n"
-        prompt += f"- Average cyclomatic complexity: {metrics.avg_cc:.1f}\n"
-        prompt += f"- Max complexity: {metrics.max_cc}\n"
-        prompt += f"- Critical functions (CC > 10): {metrics.critical_count}\n"
-    else:
-        prompt += "- Metrics not available\n"
 
     # Add file content if file is specified
     if file_path:
@@ -225,14 +213,13 @@ Description:
             from pathlib import Path
             file_full_path = Path(file_path)
             if not file_full_path.is_absolute():
-                # Assume relative to current directory
                 file_full_path = Path.cwd() / file_path
 
             if file_full_path.exists():
                 with open(file_full_path, "r", encoding="utf-8") as f:
                     file_content = f.read()
                 prompt += f"""
-## Current File Content
+## Current File Content (ONLY this file may be modified)
 
 ```python
 {file_content}
@@ -246,25 +233,20 @@ Description:
     prompt += f"""
 ## Instructions
 
-CRITICAL: You MUST output the complete modified file content in a code block.
+CRITICAL RULES:
+1. You may ONLY modify the Target File listed above.
+2. Do NOT modify, create, or reference any other files.
+3. Do NOT output code blocks for any other file path.
 
-For each file you modify, use this format:
+Output format (use EXACTLY this):
 ```python:{file_path if file_path else 'path/to/file.py'}
-# Complete file content here
+<COMPLETE file content here>
 ```
 
-If modifying multiple files, use separate code blocks with file paths.
-
 Requirements:
-1. Read and understand the current file content
-2. Apply the necessary changes to fix the issue
-3. Output the COMPLETE modified file content (not just snippets)
-4. Ensure the code is syntactically correct and complete
-5. Do not truncate or omit any parts of the file
-
-If the issue does not exist or cannot be found, explicitly state: "Issue not found" or "No action needed".
-
-Focus on practical, actionable changes that improve the codebase.
+- Output the COMPLETE modified file content (not snippets).
+- Ensure syntactic correctness; do not truncate or omit anything.
+- If the issue does not exist in the Target File, state exactly: "No action needed".
 """
 
     return prompt
