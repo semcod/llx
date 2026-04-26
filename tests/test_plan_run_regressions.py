@@ -151,3 +151,64 @@ def test_map_to_ticket_status_covers_all_known_statuses() -> None:
     assert map_to_ticket_status("dry_run", False) == "open"
     assert map_to_ticket_status("skipped", False) == "open"
     assert map_to_ticket_status("unknown_status", False) == "open"
+
+
+def test_build_results_markdown_truncates_long_response_fields() -> None:
+    app_mod = importlib.import_module("llx.cli.app")
+    long_blob = "X" * 4000
+    payload = {
+        "strategy": "planfile.yaml",
+        "project": ".",
+        "summary": {"total": 1, "success": 1},
+        "results": [
+            {
+                "ticket_id": "Q01",
+                "task_name": "Big response",
+                "status": "success",
+                "model_used": "openrouter/qwen",
+                "response": long_blob,
+                "error": None,
+                "execution_time": 1.0,
+                "file_changed": True,
+                "validation_message": None,
+            }
+        ],
+    }
+
+    markdown = app_mod._build_results_markdown(payload)
+
+    assert "truncated" in markdown
+    # The original 4000-char string must not appear verbatim in markdown.
+    assert long_blob not in markdown
+    # Exact-truncation count of 'X' chars should not exceed the limit.
+    assert markdown.count("X") <= app_mod._MARKDOWN_TRUNCATE_LIMIT
+
+
+def test_truncate_long_strings_does_not_mutate_payload() -> None:
+    app_mod = importlib.import_module("llx.cli.app")
+    long_blob = "Y" * 1000
+    payload = {
+        "results": [
+            {"response": long_blob, "ticket_id": "Q01"},
+        ]
+    }
+
+    compact = app_mod._truncate_long_strings_for_markdown(payload)
+    assert compact["results"][0]["response"] != long_blob
+    # Original untouched
+    assert payload["results"][0]["response"] == long_blob
+
+
+def test_truncate_only_targets_whitelisted_fields() -> None:
+    app_mod = importlib.import_module("llx.cli.app")
+    long_blob = "Z" * 500
+    payload = {
+        "task_name": long_blob,        # not whitelisted -> kept as-is
+        "ticket_id": long_blob,        # not whitelisted -> kept as-is
+        "response": long_blob,         # whitelisted -> truncated
+    }
+
+    compact = app_mod._truncate_long_strings_for_markdown(payload)
+    assert compact["task_name"] == long_blob
+    assert compact["ticket_id"] == long_blob
+    assert compact["response"] != long_blob

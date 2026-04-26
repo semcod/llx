@@ -265,6 +265,111 @@ def test_plan_validate_yaml_format_emits_pure_yaml(monkeypatch, tmp_path: Path) 
     assert parsed["scan"]["available"] is True
 
 
+def test_load_planfile_validator_uses_top_level_when_available(monkeypatch) -> None:
+    import sys
+    import types
+
+    from llx.planfile import ticket_freshness as tf
+
+    sentinel = lambda **_kwargs: {"sentinel": "top-level"}  # noqa: E731
+    fake_pkg = types.ModuleType("planfile")
+    fake_pkg.validate_planfile_tickets = sentinel
+    monkeypatch.setitem(sys.modules, "planfile", fake_pkg)
+
+    resolved = tf._load_planfile_validator()
+    assert resolved is sentinel
+
+
+def test_load_planfile_validator_falls_back_to_submodule(monkeypatch) -> None:
+    import sys
+    import types
+
+    from llx.planfile import ticket_freshness as tf
+
+    # Top-level module exists but does NOT export the function
+    pkg = types.ModuleType("planfile")
+    monkeypatch.setitem(sys.modules, "planfile", pkg)
+
+    sentinel = lambda **_kwargs: {"sentinel": "submodule"}  # noqa: E731
+    sub = types.ModuleType("planfile.ticket_validation")
+    sub.validate_planfile_tickets = sentinel
+    monkeypatch.setitem(sys.modules, "planfile.ticket_validation", sub)
+
+    resolved = tf._load_planfile_validator()
+    assert resolved is sentinel
+
+
+def test_load_planfile_validator_raises_prefacterror_when_missing(monkeypatch) -> None:
+    import sys
+    import types
+
+    from llx.planfile import ticket_freshness as tf
+
+    pkg = types.ModuleType("planfile")
+    monkeypatch.setitem(sys.modules, "planfile", pkg)
+    monkeypatch.setitem(
+        sys.modules,
+        "planfile.ticket_validation",
+        types.ModuleType("planfile.ticket_validation"),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "planfile.validation",
+        types.ModuleType("planfile.validation"),
+    )
+
+    with pytest.raises(PrefactError):
+        tf._load_planfile_validator()
+
+
+def test_validate_tickets_with_prefact_uses_submodule_validator(monkeypatch, tmp_path: Path) -> None:
+    """End-to-end: when only the submodule export exists, validation still works."""
+    import sys
+    import types
+
+    from llx.planfile import ticket_freshness as tf
+
+    captured: dict[str, object] = {}
+
+    def fake_validator(**kwargs):
+        captured.update(kwargs)
+        return {
+            "current": 1, "stale": 0, "unknown": 0,
+            "stale_ticket_ids": [], "review_needed_ticket_ids": [],
+            "tickets": [], "filtered_ticket_ids": [],
+            "strategy_path": str(kwargs["strategy_path"]),
+            "project_path": str(kwargs["project_path"]),
+            "scan_available": True, "total": 1,
+            "confirmed_current_ticket_ids": ["F1"],
+        }
+
+    pkg = types.ModuleType("planfile")
+    monkeypatch.setitem(sys.modules, "planfile", pkg)
+
+    sub = types.ModuleType("planfile.ticket_validation")
+    sub.validate_planfile_tickets = fake_validator
+    monkeypatch.setitem(sys.modules, "planfile.ticket_validation", sub)
+
+    _patch_scan(
+        monkeypatch,
+        [{"rule_id": "unused-imports", "file": "src/a.py", "line": 1}],
+    )
+
+    strategy = tmp_path / "planfile.yaml"
+    _write(strategy, _planfile_with_two_rule_tickets())
+    _write(tmp_path / "src/a.py", "import os\n")
+
+    report = tf.validate_tickets_with_prefact(
+        strategy_path=strategy,
+        project_path=tmp_path,
+    )
+
+    assert report["confirmed_current_ticket_ids"] == ["F1"]
+    assert report["scan"]["available"] is True
+    # Submodule validator was actually invoked
+    assert captured  # not empty
+
+
 def test_plan_validate_fail_on_stale_returns_nonzero(monkeypatch, tmp_path: Path) -> None:
     strategy = tmp_path / "planfile.yaml"
     _write(strategy, _planfile_with_two_rule_tickets())

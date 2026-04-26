@@ -129,6 +129,15 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.75] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_plan_run_regressions.py
+- Update tests/test_ticket_freshness.py
+
 ## [0.1.74] - 2026-04-26
 
 ### Docs
