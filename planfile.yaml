@@ -1177,7 +1177,7 @@ sprints:
     priority: high
     status: success
     notes:
-    - '[2026-04-26 16:56:01] success: LLM reports changes made'
+    - '[2026-04-26 17:34:15] success: LLM reports changes made'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 2 magic-numbers issues in llx/analysis/runner.py
@@ -1186,9 +1186,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: no_changes
-    notes:
-    - '[2026-04-26 16:56:18] no_changes: No changes needed: No action needed'
   - id: null
     name: Fix string-concat issues
     description: Resolve 1 string-concat issues in llx/cli/formatters.py
@@ -1197,9 +1194,6 @@ sprints:
       planning: balanced
       implementation: balanced
     priority: medium
-    status: success
-    notes:
-    - '[2026-04-26 16:56:40] success: LLM reports changes made'
   - id: null
     name: Fix magic-numbers issues
     description: Resolve 10 magic-numbers issues in llx/cli/formatters.py

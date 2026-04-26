@@ -33,6 +33,40 @@ from llx.integrations.prefact import (
 )
 
 
+def _load_planfile_validator():
+    """Return ``validate_planfile_tickets`` from any compatible planfile release.
+
+    Tries (in order):
+    1. Top-level ``planfile.validate_planfile_tickets`` (newer releases).
+    2. Submodule ``planfile.ticket_validation.validate_planfile_tickets``.
+    3. Submodule ``planfile.validation.validate_planfile_tickets`` (legacy alias).
+
+    Raises :class:`PrefactError` if none of the imports succeed; this lets the
+    pre-flight in ``llx plan run`` degrade gracefully and continue without
+    freshness checks instead of crashing the entire run.
+    """
+    last_error: Exception | None = None
+    candidates = (
+        ("planfile", "validate_planfile_tickets"),
+        ("planfile.ticket_validation", "validate_planfile_tickets"),
+        ("planfile.validation", "validate_planfile_tickets"),
+    )
+    for module_name, attr in candidates:
+        try:
+            module = __import__(module_name, fromlist=[attr])
+        except Exception as exc:  # pragma: no cover - defensive
+            last_error = exc
+            continue
+        candidate = getattr(module, attr, None)
+        if callable(candidate):
+            return candidate
+    raise PrefactError(
+        "planfile.validate_planfile_tickets is not available in this environment "
+        "(install/upgrade the 'planfile' package)."
+        + (f" Last import error: {last_error}" if last_error else "")
+    )
+
+
 def _empty_scan_summary(reason: str) -> dict[str, Any]:
     return {
         "available": False,
@@ -83,7 +117,7 @@ def validate_tickets_with_prefact(
         Dict mirroring ``planfile.validate_planfile_tickets`` plus a ``scan``
         block describing the underlying prefact run.
     """
-    from planfile import validate_planfile_tickets
+    validate_planfile_tickets = _load_planfile_validator()
 
     project_root = Path(project_path).resolve()
     strategy_file = Path(strategy_path)

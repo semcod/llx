@@ -405,10 +405,72 @@ def _persist_failed_results(results, strategy: str) -> None:
         )
 
 
+# Field whitelist whose strings get aggressively trimmed when rendering the
+# YAML payload inside markdown output (full data is still emitted by
+# `--format yaml` and `--output-yaml`).
+_MARKDOWN_TRUNCATE_FIELDS: frozenset[str] = frozenset({
+    "response",
+    "message",
+    "validation_message",
+    "error",
+    "stdout",
+    "stderr",
+})
+
+_MARKDOWN_TRUNCATE_LIMIT = 240
+
+
+def _truncate_long_strings_for_markdown(
+    value: Any,
+    *,
+    limit: int = _MARKDOWN_TRUNCATE_LIMIT,
+    parent_field: Optional[str] = None,
+) -> Any:
+    """Recursively shorten long string values for human-readable markdown output.
+
+    Only strings reached via a key in :data:`_MARKDOWN_TRUNCATE_FIELDS` are
+    truncated; everything else is passed through unchanged. The mutation is
+    done on a deep copy so the original payload (used for ``--format yaml``
+    and ``--output-yaml``) is not affected.
+    """
+    if isinstance(value, dict):
+        return {
+            key: _truncate_long_strings_for_markdown(
+                item, limit=limit, parent_field=str(key)
+            )
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [
+            _truncate_long_strings_for_markdown(item, limit=limit, parent_field=parent_field)
+            for item in value
+        ]
+    if isinstance(value, tuple):
+        return tuple(
+            _truncate_long_strings_for_markdown(item, limit=limit, parent_field=parent_field)
+            for item in value
+        )
+    if (
+        isinstance(value, str)
+        and parent_field in _MARKDOWN_TRUNCATE_FIELDS
+        and len(value) > limit
+    ):
+        omitted = len(value) - limit
+        suffix = f"… <truncated {omitted} chars; use --format yaml or --output-yaml for full output>"
+        return value[:limit].rstrip() + suffix
+    return value
+
+
 def _build_results_markdown(payload: dict[str, Any]) -> str:
-    """Build markdown output with YAML payload codeblock."""
+    """Build markdown output with a compact YAML payload codeblock.
+
+    Long fields like ``response`` are truncated to keep terminal output
+    readable; the full payload is still emitted by ``--format yaml`` and
+    ``--output-yaml``.
+    """
     summary = payload.get("summary", {})
-    yaml_payload = _yaml.safe_dump(payload, sort_keys=False, allow_unicode=True).rstrip()
+    compact_payload = _truncate_long_strings_for_markdown(payload)
+    yaml_payload = _yaml.safe_dump(compact_payload, sort_keys=False, allow_unicode=True).rstrip()
 
     lines = [
         "## Execution Summary",
