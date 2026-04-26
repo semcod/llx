@@ -129,6 +129,17 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.82] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_plan_testql_e2e.py
+
+### Other
+- Update llx/cli/app.py
+
 ## [0.1.81] - 2026-04-26
 
 ### Docs

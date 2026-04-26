@@ -1029,7 +1029,7 @@ def _run_plan_testql_workflow(
         },
     }
 
-    if create_tickets and not bool(validation.get("ok")):
+    if create_tickets and not dry_run and not bool(validation.get("ok")):
         tickets = build_testql_tickets(validation, scenario_path=scenario, max_tickets=max_tickets)
         payload["tickets"]["generated"] = len(tickets)
 
