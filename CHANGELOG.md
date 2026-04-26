@@ -129,6 +129,20 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.71] - 2026-04-26
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_plan_testql_workflow.py
+
+### Other
+- Update .idea/llx.iml
+- Update .idea/modules.xml
+- Update .idea/vcs.xml
+- Update llx/cli/app.py
+
 ## [0.1.70] - 2026-04-26
 
 ### Docs

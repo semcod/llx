@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/../goal/.idea/goal.iml" filepath="$PROJECT_DIR$/../goal/.idea/goal.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/llx.iml" filepath="$PROJECT_DIR$/.idea/llx.iml" />
       <module fileurl="file://$PROJECT_DIR$/../planfile/.idea/planfile.iml" filepath="$PROJECT_DIR$/../planfile/.idea/planfile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../prefact/.idea/prefact.iml" filepath="$PROJECT_DIR$/../prefact/.idea/prefact.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../wronai/prellm/.idea/prellm.iml" filepath="$PROJECT_DIR$/../../wronai/prellm/.idea/prellm.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../wronai/proxy/.idea/proxy.iml" filepath="$PROJECT_DIR$/../../wronai/proxy/.idea/proxy.iml" />
     </modules>

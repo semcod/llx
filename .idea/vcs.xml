@@ -5,5 +5,6 @@
     <mapping directory="$PROJECT_DIR$/../goal" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../planfile" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../prefact" vcs="Git" />
   </component>
 </project>
