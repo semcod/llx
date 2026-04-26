@@ -212,3 +212,49 @@ from llx.planfile.ticket_cleaner import (
 
 Each function returns a structured dict, so they're easy to compose in
 custom scripts and CI pipelines.
+
+## Output format
+
+All planfile-related commands (`llx plan run`, `llx plan validate`,
+`llx plan clean`, `llx run`) emit **markdown** by default with a
+syntax-highlighted YAML codeblock. The markdown is rendered with:
+
+- **Colored headings** (`##` → bold cyan, `###` → bold yellow)
+- **Bullets** with dim styling and inline marks (`**bold**`, `` `code` ``)
+- **Single freshness section** — no duplicate `## Ticket Freshness` panels
+- **No null fields** in the embedded YAML (kept clean for readability)
+- **No padding** — lines are not padded to terminal width
+
+When piping to a file or non-TTY, the raw markdown source is preserved
+so you can parse or save it directly. Use `--format yaml` for pure
+machine-readable YAML output (no markdown wrapper).
+
+Example output for a run with freshness enabled:
+
+```markdown
+## Execution Summary
+
+- **Strategy:** planfile.yaml
+- **Project:** .
+- **Timestamp:** 2026-04-26 18:25:24
+- **Total Tasks:** 0
+
+_No tasks executed._
+
+## Ticket Freshness
+
+- **Scanner:** subprocess (available)
+- **Issues found:** 0
+- **Tickets evaluated:** 0 (current=0, stale=0, unknown=0)
+
+### Results Payload
+
+```yaml
+strategy: planfile.yaml
+project: .
+dry_run: false
+summary: { total: 0, ... }
+freshness:
+  scan: { backend: subprocess, issues: 0, ... }
+```
+```

@@ -129,6 +129,20 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.80] - 2026-04-26
+
+### Docs
+- Update README.md
+- Update docs/PLANFILE_CLEANUP.md
+
+### Test
+- Update tests/test_plan_run_regressions.py
+
+### Other
+- Update llx/cli/app.py
+- Update planfile.yaml
+- Update planfile.yaml.bak.20260426-182447
+
 ## [0.1.79] - 2026-04-26
 
 ### Docs

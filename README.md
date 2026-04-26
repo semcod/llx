@@ -3,18 +3,18 @@
 **Intelligent LLM model router driven by real code metrics.**
 
 [![PyPI](https://img.shields.io/pypi/v/llx)](https://pypi.org/project/llx/)
-[![Version](https://img.shields.io/badge/version-0.1.79-blue)](https://pypi.org/project/llx/)
+[![Version](https://img.shields.io/badge/version-0.1.80-blue)](https://pypi.org/project/llx/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.79-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.80-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.50-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-36.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $7.5000 (104 commits)
-- 👤 **Human dev:** ~$3597 (36.0h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.5000 (105 commits)
+- 👤 **Human dev:** ~$3599 (36.0h @ $100/h, 30min dedup)
 
 Generated on 2026-04-26 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -366,9 +366,21 @@ llx plan run . -o execution_results.yaml
 llx plan generate strategy.yaml --output generated/
 llx plan review strategy.yaml --project .
 
+# Ticket freshness validation
+llx plan validate .                          # Check if tickets are still current
+llx plan validate . --prune-stale            # Validate and delete stale tickets
+
+# Cleanup resolved tickets
+llx plan clean .                             # Remove canceled tickets from planfile.yaml + TODO.md
+llx plan clean . --include-done              # Also remove done tickets
+llx plan clean . --dry-run                   # Preview without writing
+
 # GitHub ticket creation (requires external planfile)
 llx plan execute strategy.yaml --project . --dry-run
 ```
+
+**Output format:**
+All planfile commands emit colored markdown with syntax-highlighted YAML codeblocks. When piping to a file, raw markdown is preserved. Use `--format yaml` for pure YAML output.
 
 **Code Editing Backends:**
 When using `--use-aider`, llx automatically detects and uses the best available backend:

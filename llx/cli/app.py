@@ -25,6 +25,7 @@ import typer
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
+from rich.syntax import Syntax
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -461,16 +462,88 @@ def _truncate_long_strings_for_markdown(
     return value
 
 
+def _drop_nullish_for_markdown(value: Any) -> Any:
+    """Recursively strip ``None`` / empty-collection values from a payload.
+
+    Used **only** when embedding the payload inside markdown output so the
+    YAML codeblock stays focused. The full structure (including nulls) is
+    preserved by ``--format yaml`` and ``--output-yaml``.
+    """
+    if isinstance(value, dict):
+        out: dict[str, Any] = {}
+        for key, item in value.items():
+            cleaned = _drop_nullish_for_markdown(item)
+            if cleaned is None:
+                continue
+            if isinstance(cleaned, (list, dict)) and len(cleaned) == 0:
+                continue
+            out[key] = cleaned
+        return out
+    if isinstance(value, list):
+        return [_drop_nullish_for_markdown(item) for item in value if item is not None]
+    return value
+
+
+def _build_freshness_summary_lines(report: dict[str, Any]) -> list[str]:
+    """Return a compact ``## Ticket Freshness`` block (no YAML codeblock).
+
+    Used as an inline addendum inside ``_build_results_markdown`` so the user
+    does not see the freshness data three times (header summary + payload +
+    standalone freshness panel).
+    """
+    scan = report.get("scan") or {}
+    backend = scan.get("backend") or "unavailable"
+    available = "available" if scan.get("available") else "no scan"
+
+    total = report.get("total", 0)
+    current = report.get("current", 0)
+    stale = report.get("stale", 0)
+    unknown = report.get("unknown", 0)
+
+    lines = [
+        "",
+        "## Ticket Freshness",
+        "",
+        f"- **Scanner:** {backend} ({available})",
+        f"- **Issues found:** {scan.get('issues', 0)}",
+        f"- **Tickets evaluated:** {total} (current={current}, stale={stale}, unknown={unknown})",
+    ]
+
+    stale_ids = report.get("stale_ticket_ids") or []
+    if stale_ids:
+        preview = ", ".join(f"`{t}`" for t in stale_ids[:10])
+        more = "" if len(stale_ids) <= 10 else f" _(+{len(stale_ids) - 10} more)_"
+        lines.append(f"- **Stale:** {preview}{more}")
+
+    review_ids = report.get("review_needed_ticket_ids") or []
+    if review_ids:
+        preview = ", ".join(f"`{t}`" for t in review_ids[:10])
+        more = "" if len(review_ids) <= 10 else f" _(+{len(review_ids) - 10} more)_"
+        lines.append(f"- **Needs review (unknown):** {preview}{more}")
+
+    prune_info = report.get("prune")
+    if isinstance(prune_info, dict) and prune_info.get("removed"):
+        backup = prune_info.get("backup_path") or "(no backup)"
+        lines.append(f"- **Pruned:** {prune_info['removed']} ticket(s); backup={backup}")
+
+    return lines
+
+
 def _build_results_markdown(payload: dict[str, Any]) -> str:
     """Build markdown output with a compact YAML payload codeblock.
 
     Long fields like ``response`` are truncated to keep terminal output
     readable; the full payload is still emitted by ``--format yaml`` and
-    ``--output-yaml``.
+    ``--output-yaml``. Null / empty fields are stripped from the embedded
+    YAML for the same reason.
     """
-    summary = payload.get("summary", {})
-    compact_payload = _truncate_long_strings_for_markdown(payload)
-    yaml_payload = _yaml.safe_dump(compact_payload, sort_keys=False, allow_unicode=True).rstrip()
+    summary = payload.get("summary", {}) or {}
+    total = int(summary.get("total") or 0)
+
+    compact_payload = _drop_nullish_for_markdown(_truncate_long_strings_for_markdown(payload))
+    yaml_payload = _yaml.safe_dump(
+        compact_payload, sort_keys=False, allow_unicode=True
+    ).rstrip()
 
     lines = [
         "## Execution Summary",
@@ -479,17 +552,12 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
         f"- **Project:** {payload.get('project', 'N/A')}",
     ]
 
-    if payload.get('sprint') is not None:
+    if payload.get("sprint") is not None:
         lines.append(f"- **Sprint:** {payload['sprint']}")
 
     lines.extend([
         f"- **Timestamp:** {payload.get('timestamp', 'N/A')}",
-        f"- **Total Tasks:** {summary.get('total', 0)}",
-        "",
-        "### Status Counts",
-        "",
-        "| Status | Count |",
-        "|--------|-------|",
+        f"- **Total Tasks:** {total}",
     ])
 
     status_icons = {
@@ -501,10 +569,26 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
         "no_changes": "⊘ No Changes",
         "skipped": "⊘ Skipped",
     }
-    for status, label in status_icons.items():
-        count = summary.get(status, 0)
-        if count > 0:
-            lines.append(f"| {label} | {count} |")
+    rows = [
+        (label, summary.get(status, 0))
+        for status, label in status_icons.items()
+        if summary.get(status, 0) > 0
+    ]
+    if rows:
+        lines.extend([
+            "",
+            "### Status Counts",
+            "",
+            "| Status | Count |",
+            "|--------|-------|",
+        ])
+        lines.extend(f"| {label} | {count} |" for label, count in rows)
+    elif total == 0:
+        lines.extend(["", "_No tasks executed._"])
+
+    freshness_report = payload.get("freshness")
+    if isinstance(freshness_report, dict):
+        lines.extend(_build_freshness_summary_lines(freshness_report))
 
     lines.extend([
         "",
@@ -519,15 +603,127 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
-    """Print execution results as markdown with YAML codeblocks."""
-    markdown_output = _build_results_markdown(payload)
+def _split_markdown_around_codeblock(markdown: str) -> tuple[str, Optional[str], str]:
+    """Split markdown into ``(prefix, yaml_code, suffix)`` around the first
+    ```` ```yaml ```` block. Returns ``(markdown, None, "")`` when no fenced
+    YAML block is present.
+    """
+    lines = markdown.splitlines()
+    try:
+        start = next(i for i, ln in enumerate(lines) if ln.strip() == "```yaml")
+    except StopIteration:
+        return markdown, None, ""
 
-    if console.is_terminal:
-        console.print(Markdown(markdown_output, code_theme="monokai"))
+    try:
+        end = next(i for i in range(start + 1, len(lines)) if lines[i].strip() == "```")
+    except StopIteration:
+        return markdown, None, ""
+
+    prefix = "\n".join(lines[:start]).rstrip() + "\n\n"
+    code = "\n".join(lines[start + 1:end])
+    suffix_text = "\n".join(lines[end + 1:]).rstrip()
+    suffix = ("\n" + suffix_text + "\n") if suffix_text else "\n"
+    return prefix, code, suffix
+
+
+# Inline-markup pattern: **bold** | _italic_ | `code`
+_MD_INLINE_RE = re.compile(r"\*\*(.+?)\*\*|(?<![A-Za-z0-9])_([^_]+)_(?![A-Za-z0-9])|`([^`]+)`")
+
+
+def _render_markdown_inline(text: str) -> "Text":
+    """Render ``**bold** _italic_ `code` `` runs as a Rich :class:`Text` object."""
+    from rich.text import Text
+
+    out = Text()
+    pos = 0
+    for match in _MD_INLINE_RE.finditer(text):
+        if match.start() > pos:
+            out.append(text[pos:match.start()])
+        bold, italic, code = match.group(1), match.group(2), match.group(3)
+        if bold is not None:
+            out.append(bold, style="bold")
+        elif italic is not None:
+            out.append(italic, style="italic dim")
+        elif code is not None:
+            out.append(code, style="cyan")
+        pos = match.end()
+    if pos < len(text):
+        out.append(text[pos:])
+    return out
+
+
+def _render_markdown_line(line: str, console: Console) -> None:
+    """Render a single markdown line with minimal styling.
+
+    Supported subset (matches what we emit from ``_build_*_markdown``):
+        - ``# / ## / ###`` headings
+        - ``- ...`` bullet lists (with **bold**, `code`, _italic_ inline)
+        - ``| col | col |`` tables (rendered as dim monospace)
+        - blank lines, plain paragraphs with inline marks
+    """
+    from rich.text import Text
+
+    stripped = line.lstrip()
+
+    if stripped == "":
+        console.print()
         return
 
-    console.print(markdown_output, end="", markup=False, highlight=False)
+    # Headings
+    if stripped.startswith("### "):
+        console.print(Text(stripped[4:], style="bold yellow"))
+        return
+    if stripped.startswith("## "):
+        console.print(Text(stripped[3:], style="bold cyan"))
+        return
+    if stripped.startswith("# "):
+        console.print(Text(stripped[2:], style="bold magenta"))
+        return
+
+    # Table rows / separators — render dim, monospace as-is
+    if stripped.startswith("|") or set(stripped) <= set("-| "):
+        console.print(Text(line, style="dim"))
+        return
+
+    # Bullet list items
+    if stripped.startswith("- "):
+        indent = " " * (len(line) - len(stripped))
+        bullet = Text(f"{indent}• ", style="dim")
+        bullet.append(_render_markdown_inline(stripped[2:]))
+        console.print(bullet)
+        return
+
+    # Plain paragraph with inline marks
+    console.print(_render_markdown_inline(line))
+
+
+def _print_markdown_with_yaml(markdown_text: str, console: Console) -> None:
+    """Print markdown to ``console``.
+
+    Outside of TTY: print verbatim (so piping ``> output.md`` keeps the source
+    intact). Inside a TTY: render headings/bullets/inline marks ourselves
+    (line-by-line, no width padding) and run the YAML codeblock through
+    ``Syntax(monokai)`` for syntax highlighting.
+    """
+    if not console.is_terminal:
+        console.print(markdown_text, end="", markup=False, highlight=False)
+        return
+
+    prefix, code, suffix = _split_markdown_around_codeblock(markdown_text)
+
+    for line in prefix.splitlines():
+        _render_markdown_line(line, console)
+
+    if code is not None:
+        console.print(Syntax(code, "yaml", theme="monokai", background_color="default"))
+
+    for line in suffix.splitlines():
+        _render_markdown_line(line, console)
+
+
+def _print_results_markdown(payload: dict[str, Any], console: Console) -> None:
+    """Print execution results as markdown with a syntax-highlighted YAML codeblock."""
+    _print_markdown_with_yaml(_build_results_markdown(payload), console)
 
 
 def _print_results_summary(results, use_aider: bool, backends, console: Console) -> None:
@@ -719,11 +915,7 @@ def _build_freshness_markdown(report: dict[str, Any]) -> str:
 
 
 def _print_freshness_markdown(report: dict[str, Any], console: Console) -> None:
-    markdown_output = _build_freshness_markdown(report)
-    if console.is_terminal:
-        console.print(Markdown(markdown_output, code_theme="monokai"))
-        return
-    console.print(markdown_output, end="", markup=False, highlight=False)
+    _print_markdown_with_yaml(_build_freshness_markdown(report), console)
 
 
 def _resolve_freshness_strategy(strategy: str) -> str:
@@ -971,7 +1163,10 @@ def plan_run(
 
         _persist_failed_results(results, strategy)
         _sync_todo_from_planfile(strategy, project_path, results, dry_run, run_console)
-        _print_results_summary(results, use_aider, backends, run_console)
+        # Legacy bullet summary on stderr is only useful when picking among
+        # aider backends; the markdown report below already covers counts.
+        if use_aider:
+            _print_results_summary(results, use_aider, backends, run_console)
 
         payload = _build_results_payload(
             results=results,
@@ -988,14 +1183,14 @@ def plan_run(
         if output_yaml:
             _save_results_yaml(payload, output_yaml, run_console)
 
-        # Output results in requested format (default: markdown for readability)
+        # Output results in requested format (default: markdown for readability).
+        # The markdown view already embeds a compact Ticket Freshness block, so
+        # we no longer print _print_freshness_markdown separately here.
         stdout_console = Console(stderr=False)
         if format.lower() == "yaml":
             typer.echo(_yaml.safe_dump(payload, sort_keys=False, allow_unicode=True), nl=False)
         else:
             _print_results_markdown(payload, stdout_console)
-            if freshness_report is not None:
-                _print_freshness_markdown(freshness_report, stdout_console)
 
     except Exception as e:
         run_console.print(f"[red]Error:[/red] {e}")
@@ -1112,11 +1307,7 @@ def _build_clean_markdown(report: dict[str, Any]) -> str:
 
 
 def _print_clean_markdown(report: dict[str, Any], target: Console) -> None:
-    markdown_output = _build_clean_markdown(report)
-    if target.is_terminal:
-        target.print(Markdown(markdown_output, code_theme="monokai"))
-        return
-    target.print(markdown_output, end="", markup=False, highlight=False)
+    _print_markdown_with_yaml(_build_clean_markdown(report), target)
 
 
 @plan_app.command("clean")
@@ -1335,11 +1526,7 @@ def _build_workflow_markdown(report_dict: dict[str, Any]) -> str:
 
 
 def _print_workflow_markdown(report_dict: dict[str, Any], target: Console) -> None:
-    markdown_output = _build_workflow_markdown(report_dict)
-    if target.is_terminal:
-        target.print(Markdown(markdown_output, code_theme="monokai"))
-        return
-    target.print(markdown_output, end="", markup=False, highlight=False)
+    _print_markdown_with_yaml(_build_workflow_markdown(report_dict), target)
 
 
 @app.command("run")
