@@ -346,10 +346,10 @@ def _resolve_tier_override(tier: Optional[str], config: LlxConfig, console: Cons
 
 
 def _persist_failed_results(results, strategy: str) -> None:
-    """Update planfile for cancelled/failed tasks so state is persisted."""
+    """Update planfile for no_changes/failed tasks so state is persisted."""
     from llx.planfile.executor.strategy import _update_task_in_planfile
     for result in results:
-        if result.status in ("cancelled", "failed"):
+        if result.status in ("no_changes", "failed"):
             comment = f"Task {result.status}: {result.validation_message or result.error or 'no details'}"
             updated = False
             if result.ticket_id:
@@ -468,6 +468,41 @@ def _build_results_payload(
     }
 
 
+def _sync_todo_from_planfile(strategy: str, project_path: Path, results, dry_run: bool, console: Console) -> None:
+    """Sync TODO.md checkboxes using planfile reusable API when enabled in config."""
+    if dry_run:
+        return
+
+    try:
+        import planfile as _planfile
+    except Exception:
+        return
+
+    sync_func = getattr(_planfile, "sync_todo_checkboxes_from_planfile", None)
+    if not callable(sync_func):
+        return
+
+    try:
+        report = sync_func(
+            strategy_path=strategy,
+            project_path=str(project_path),
+            results=results,
+        )
+    except Exception as e:
+        console.print(f"[dim]TODO sync skipped:[/dim] {e}")
+        return
+
+    if not isinstance(report, dict) or not report.get("enabled"):
+        return
+
+    updated = int(report.get("updated") or 0)
+    todo_path = report.get("todo_path") or "TODO.md"
+    if updated > 0:
+        console.print(f"[dim]TODO sync:[/dim] updated {updated} checkbox(es) in {todo_path}")
+    else:
+        console.print(f"[dim]TODO sync:[/dim] enabled, no checkbox updates ({todo_path})")
+
+
 def _save_results_yaml(payload: dict[str, Any], output_yaml: str, console: Console) -> None:
     """Save execution results payload to a YAML file."""
     with open(output_yaml, "w", encoding="utf-8") as f:
@@ -521,6 +556,7 @@ def plan_run(
         )
 
         _persist_failed_results(results, strategy)
+        _sync_todo_from_planfile(strategy, project_path, results, dry_run, run_console)
         _print_results_summary(results, use_aider, backends, run_console)
 
         payload = _build_results_payload(

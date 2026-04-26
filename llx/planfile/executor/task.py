@@ -124,7 +124,7 @@ def _extract_explanation(lines: list[str], indicators: list[str]) -> str:
 def _build_message(issue_not_found: bool, changes_made: bool, problem_fixed: bool, explanation: str) -> str:
     """Build human-readable summary message from parsed flags."""
     if issue_not_found:
-        return f"Task cancelled: {explanation}"
+        return f"No changes needed: {explanation}"
     if changes_made and problem_fixed:
         return "LLM reports changes made and issue fixed"
     if changes_made:
@@ -387,7 +387,7 @@ def _determine_task_status(validation: dict, code_changes_applied: bool) -> tupl
     Returns (status, file_changed, validation_message).
     """
     if validation["issue_not_found"]:
-        return "cancelled", False, validation["message"]
+        return "no_changes", False, validation["message"]
     if validation["changes_made"] or validation["problem_fixed"] or code_changes_applied:
         return "success", code_changes_applied or validation["changes_made"], validation["message"]
     return "failed", False, validation["message"]
