@@ -383,7 +383,7 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
         "invalid": sum(1 for r in results if r.status == "invalid"),
         "not_found": sum(1 for r in results if r.status == "not_found"),
         "already_fixed": sum(1 for r in results if r.status == "already_fixed"),
-        "cancelled": sum(1 for r in results if r.status == "cancelled"),
+        "no_changes": sum(1 for r in results if r.status == "no_changes"),
         "skipped": sum(1 for r in results if r.status in ["dry_run", "skipped"]),
     }
 
@@ -392,15 +392,15 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
     console.print(f"  [yellow]⚠ Invalid (no changes):[/yellow] {counts['invalid']}")
     console.print(f"  [dim]⊘ Not found:[/dim] {counts['not_found']}")
     console.print(f"  [dim]⊘ Already fixed:[/dim] {counts['already_fixed']}")
-    console.print(f"  [cyan]⊘ Cancelled:[/cyan] {counts['cancelled']}")
+    console.print(f"  [cyan]⊘ No changes needed:[/cyan] {counts['no_changes']}")
     console.print(f"  [dim]⊘ Skipped:[/dim] {counts['skipped']}")
 
-    detail_statuses = {"invalid", "not_found", "already_fixed", "cancelled"}
+    detail_statuses = {"invalid", "not_found", "already_fixed", "no_changes"}
     detail_colors = {
         "invalid": ("yellow", "⚠"),
         "not_found": ("dim", "⊘"),
         "already_fixed": ("dim", "⊘"),
-        "cancelled": ("cyan", "⊘"),
+        "no_changes": ("cyan", "⊘"),
     }
     if any(counts[s] > 0 for s in detail_statuses):
         console.print("\n[dim]Validation details:[/dim]")
