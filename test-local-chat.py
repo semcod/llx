@@ -7,9 +7,9 @@ Tests chat functionality with local Ollama models through llx proxy
 import requests
 import time
 import sys
-from typing import Any
 
 HTTP_OK = 200
+
 
 def test_llx_health() -> bool:
     """Test if llx API is running"""
@@ -19,6 +19,7 @@ def test_llx_health() -> bool:
     except:
         return False
 
+
 def test_ollama_health() -> bool:
     """Test if Ollama is running"""
     try:
@@ -26,6 +27,7 @@ def test_ollama_health() -> bool:
         return response.status_code == HTTP_OK
     except:
         return False
+
 
 def get_available_models() -> list[str]:
     """Get available Ollama models"""
@@ -38,6 +40,7 @@ def get_available_models() -> list[str]:
         pass
     return []
 
+
 def test_llx_models() -> list[str]:
     """Test models available through llx API"""
     try:
@@ -49,43 +52,41 @@ def test_llx_models() -> list[str]:
         pass
     return []
 
-def test_chat_completion(model="qwen2.5-coder:7b", message="Hello! Can you write a simple Python function?"):
+
+def test_chat_completion(
+    model="qwen2.5-coder:7b", message="Hello! Can you write a simple Python function?"
+):
     """Test chat completion through llx API"""
     url = "http://localhost:4000/v1/chat/completions"
-    
+
     payload = {
         "model": model,
-        "messages": [
-            {"role": "user", "content": message}
-        ],
+        "messages": [{"role": "user", "content": message}],
         "temperature": 0.2,
-        "max_tokens": 500
+        "max_tokens": 500,
     }
-    
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer sk-proxy-local-dev"
-    }
-    
+
+    headers = {"Content-Type": "application/json", "Authorization": "Bearer sk-proxy-local-dev"}
+
     try:
         print(f"🤖 Testing chat with model: {model}")
         print(f"📝 Message: {message}")
         print(f"🔗 API: {url}")
         print("⏳ Sending request...")
-        
+
         start_time = time.time()
         response = requests.post(url, json=payload, headers=headers, timeout=30)
         end_time = time.time()
-        
+
         print(f"⚡ Response time: {end_time - start_time:.2f}s")
         print(f"📊 Status: {response.status_code}")
-        
+
         if response.status_code == 200:
             data = response.json()
             content = data["choices"][0]["message"]["content"]
             tokens = data.get("usage", {})
-            
-            print(f"✅ Success!")
+
+            print("✅ Success!")
             print(f"💬 Response: {content[:200]}...")
             if tokens:
                 print(f"🔢 Tokens used: {tokens}")
@@ -93,10 +94,11 @@ def test_chat_completion(model="qwen2.5-coder:7b", message="Hello! Can you write
         else:
             print(f"❌ Error: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Exception: {e}")
         return False
+
 
 def _check_services() -> tuple[bool, bool]:
     """Check llx and Ollama health and print results."""
@@ -153,17 +155,17 @@ def _run_chat_tests(test_models: list[str]) -> int:
 
 def _print_summary(success_count: int, total: int, test_models: list[str]) -> bool:
     """Print test summary and return overall success flag."""
-    print(f"\n📊 Test Summary:")
+    print("\n📊 Test Summary:")
     print(f"✅ Successful: {success_count}/{total}")
     print(f"❌ Failed: {total - success_count}/{total}")
     if success_count > 0:
-        print(f"\n🎉 Local chat is working! You can:")
-        print(f"   • Use VS Code at http://localhost:8080")
-        print(f"   • Configure chat to use http://localhost:4000")
+        print("\n🎉 Local chat is working! You can:")
+        print("   • Use VS Code at http://localhost:8080")
+        print("   • Configure chat to use http://localhost:4000")
         print(f"   • Use model: {test_models[0]}")
         return True
-    print(f"\n❌ Chat tests failed. Check llx API logs:")
-    print(f"   ./docker-manage.sh logs dev llx-api")
+    print("\n❌ Chat tests failed. Check llx API logs:")
+    print("   ./docker-manage.sh logs dev llx-api")
     return False
 
 
@@ -189,6 +191,7 @@ def main() -> bool:
 
     success_count = _run_chat_tests(test_models)
     return _print_summary(success_count, len(test_models), test_models)
+
 
 if __name__ == "__main__":
     success = main()

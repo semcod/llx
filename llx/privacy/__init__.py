@@ -19,17 +19,17 @@ Project-level features (llx.privacy.project, llx.privacy.deanonymize, llx.privac
 
 Quick usage:
     from llx.privacy import quick_anonymize, quick_deanonymize
-    
+
     # Simple text anonymization
     result = quick_anonymize("Contact john@example.com")
     print(result.text)  # "Contact [EMAIL_1]"
-    
+
     # Project-level
     from llx.privacy.project import ProjectAnonymizer, AnonymizationContext
     ctx = AnonymizationContext("/path/to/project")
     anon = ProjectAnonymizer(ctx)
     result = anon.anonymize_project()
-    
+
     # Deanonymize LLM response
     from llx.privacy.deanonymize import ProjectDeanonymizer
     deanonymizer = ProjectDeanonymizer(ctx)

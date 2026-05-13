@@ -19,6 +19,7 @@ from llx.privacy.deanonymize import ProjectDeanonymizer
 @dataclass
 class SimulatedLLMResponse:
     """Simulated LLM API response."""
+
     request_id: str
     model: str
     anonymized_content: str
@@ -27,41 +28,42 @@ class SimulatedLLMResponse:
 
 class SimulatedLLMAPI:
     """Simulates external LLM API (like OpenAI, Anthropic, etc.)."""
-    
+
     def __init__(self, model: str = "claude-sonnet-4"):
         self.model = model
         self.request_count = 0
-    
+
     def send_prompt(self, anonymized_code: str, prompt: str) -> SimulatedLLMResponse:
         """Simulate sending anonymized code to LLM API."""
         self.request_count += 1
-        
+
         # Simulate LLM analyzing code and providing suggestions
         # Note: LLM only sees anonymized names (fn_*, var_*, etc.)
-        
+
         # Extract some anonymized function names for the response
         import re
-        fn_names = re.findall(r'fn_[a-f0-9]{6}', anonymized_code)[:3]
-        var_names = re.findall(r'var_[a-f0-9]{6}', anonymized_code)[:2]
-        cls_names = re.findall(r'cls_[a-f0-9]{6}', anonymized_code)[:1]
-        
+
+        fn_names = re.findall(r"fn_[a-f0-9]{6}", anonymized_code)[:3]
+        var_names = re.findall(r"var_[a-f0-9]{6}", anonymized_code)[:2]
+        cls_names = re.findall(r"cls_[a-f0-9]{6}", anonymized_code)[:1]
+
         # Generate suggestion using anonymized names
         suggestions = f"""
 Code Review Results:
 
-1. Function `{fn_names[0] if fn_names else 'fn_xxx'}` has high complexity.
-   Recommendation: Extract helper functions from `{fn_names[0] if fn_names else 'fn_xxx'}`.
+1. Function `{fn_names[0] if fn_names else "fn_xxx"}` has high complexity.
+   Recommendation: Extract helper functions from `{fn_names[0] if fn_names else "fn_xxx"}`.
 
-2. Variable `{var_names[0] if var_names else 'var_xxx'}` is reassigned multiple times.
-   Consider making it immutable or using `{var_names[1] if len(var_names) > 1 else 'var_yyy'}` pattern.
+2. Variable `{var_names[0] if var_names else "var_xxx"}` is reassigned multiple times.
+   Consider making it immutable or using `{var_names[1] if len(var_names) > 1 else "var_yyy"}` pattern.
 
-3. Class `{cls_names[0] if cls_names else 'cls_xxx'}` has tight coupling.
-   Suggestion: Apply dependency injection to `{cls_names[0] if cls_names else 'cls_xxx'}`.
+3. Class `{cls_names[0] if cls_names else "cls_xxx"}` has tight coupling.
+   Suggestion: Apply dependency injection to `{cls_names[0] if cls_names else "cls_xxx"}`.
 
-Refactoring priority: HIGH for `{fn_names[0] if fn_names else 'fn_xxx'}`.
+Refactoring priority: HIGH for `{fn_names[0] if fn_names else "fn_xxx"}`.
 Estimated effort: 2-3 hours.
 """
-        
+
         return SimulatedLLMResponse(
             request_id=f"req_{self.request_count:04d}",
             model=self.model,
@@ -72,14 +74,14 @@ Estimated effort: 2-3 hours.
 
 def create_realistic_project(base_path: Path) -> None:
     """Create a realistic e-commerce project structure."""
-    
+
     # Project structure
     (base_path / "src" / "services").mkdir(parents=True)
     (base_path / "src" / "models").mkdir(parents=True)
     (base_path / "src" / "utils").mkdir(parents=True)
     (base_path / "tests").mkdir(parents=True)
     (base_path / "config").mkdir(parents=True)
-    
+
     # Payment service with sensitive data
     (base_path / "src" / "services" / "payment_service.py").write_text("""
 \"\"\"Payment processing service with Stripe integration.\"\"\"
@@ -196,7 +198,7 @@ class RefundManager:
             'payment_intent_id': 'pi_1234567890'
         }
 """)
-    
+
     # User model with PII
     (base_path / "src" / "models" / "user.py").write_text("""
 \"\"\"User model with PII handling.\"\"\"
@@ -278,7 +280,7 @@ class UserRepository:
         # This is sensitive - PESEL lookup
         pass
 """)
-    
+
     # Configuration with secrets
     (base_path / "config" / "production.yaml").write_text("""
 # Production configuration - SENSITIVE
@@ -302,7 +304,7 @@ endpoints:
   internal_api: https://api.internal.company.com/v2
   payment_gateway: https://payments.stripe.com/api/v1
 """)
-    
+
     # Utils with sensitive paths
     (base_path / "src" / "utils" / "helpers.py").write_text("""
 \"\"\"Utility functions.\"\"\"
@@ -327,7 +329,7 @@ class FileManager:
         \"\"\"Get log file for specific date.\"\"\"
         return Path(LOG_PATH) / f\"app-{date}.log\"
 """)
-    
+
     # Main application
     (base_path / "src" / "main.py").write_text("""
 \"\"\"Main application entry point.\"\"\"
@@ -358,7 +360,7 @@ def main():
 if __name__ == "__main__":
     main()
 """)
-    
+
     # Test file
     (base_path / "tests" / "test_payment.py").write_text("""
 \"\"\"Tests for payment service.\"\"\"
@@ -380,16 +382,16 @@ def main():
     print("=" * 80)
     print("LLX Privacy: Complex Real-World API Integration Example")
     print("=" * 80)
-    
+
     with tempfile.TemporaryDirectory() as tmpdir:
         project_path = Path(tmpdir) / "ecommerce_platform"
         project_path.mkdir()
-        
+
         # Step 1: Create realistic project
         print("\n1. CREATING REALISTIC E-COMMERCE PROJECT")
         print("-" * 60)
         create_realistic_project(project_path)
-        
+
         # List created structure
         print("Project structure:")
         for f in sorted(project_path.rglob("*")):
@@ -397,74 +399,74 @@ def main():
                 rel = f.relative_to(project_path)
                 size = f.stat().st_size
                 print(f"  {rel} ({size} bytes)")
-        
+
         # Show sensitive content
         print("\n2. SENSITIVE DATA IN PROJECT (before anonymization):")
         print("-" * 60)
-        
+
         config_content = (project_path / "config" / "production.yaml").read_text()
         print("Config file contains:")
         for line in config_content.split("\n"):
             if any(x in line.lower() for x in ["password", "secret", "key", "token", "api"]):
                 print(f"  ⚠️  {line.strip()}")
-        
+
         payment_content = (project_path / "src" / "services" / "payment_service.py").read_text()
         if "sk_live_" in payment_content:
             print("  ⚠️  Payment service contains Stripe live API key!")
-        
+
         user_content = (project_path / "src" / "models" / "user.py").read_text()
         if "pesel" in user_content:
             print("  ⚠️  User model handles PESEL (Polish national ID)")
-        
+
         # Step 2: Anonymize project
         print("\n3. ANONYMIZING ENTIRE PROJECT")
         print("-" * 60)
-        
+
         ctx = AnonymizationContext(project_path=project_path)
         anonymizer = ProjectAnonymizer(ctx)
-        
+
         result = anonymizer.anonymize_project(
             include_patterns=["*.py", "*.yaml", "*.yml", "*.json"],
             exclude_patterns=["**/__pycache__/**", "**/.git/**"],
         )
-        
+
         print(f"Files processed: {len(result.files)}")
-        print(f"\nSymbol mappings created:")
+        print("\nSymbol mappings created:")
         print(f"  Variables: {len(ctx.variables)}")
         print(f"  Functions: {len(ctx.functions)}")
         print(f"  Classes: {len(ctx.classes)}")
-        
+
         # Verify sensitive data is masked
         print("\n4. VERIFYING ANONYMIZATION")
         print("-" * 60)
-        
+
         anon_config = result.files.get("config/production.yaml", "")
         if "SuperSecretDBPassword123!" not in anon_config and "[PASSWORD_" in anon_config:
             print("  ✅ Database password anonymized")
-        
+
         if "sk_live_EXAMPLE_DUMMY_KEY_NOT_REAL" not in anon_config:
             print("  ✅ Stripe API key anonymized in config")
-        
+
         anon_payment = result.files.get("src/services/payment_service.py", "")
         if "sk_live_" not in anon_payment:
             print("  ✅ Stripe API key anonymized in payment service")
-        
+
         anon_user = result.files.get("src/models/user.py", "")
         if "90010112345" not in anon_user and "[PESEL_" in anon_user:
             print("  ✅ PESEL numbers anonymized")
-        
+
         # Save context for API request
         context_path = project_path / "anonymization_context.json"
         ctx.save(context_path)
-        
+
         # Step 3: Simulate API request to LLM
         print("\n5. SIMULATING LLM API REQUEST")
         print("-" * 60)
-        
+
         # Prepare anonymized payload
         payment_code = result.files["src/services/payment_service.py"]
         user_code = result.files["src/models/user.py"]
-        
+
         prompt = f"""Review the following code for security issues and refactoring opportunities:
 
 Payment Service:
@@ -482,40 +484,39 @@ Please identify:
 2. Code smells and refactoring opportunities  
 3. Performance issues
 """
-        
+
         print("Sending anonymized code to LLM API...")
         print(f"Prompt size: {len(prompt)} characters")
-        
+
         # Simulate API call
         llm_api = SimulatedLLMAPI(model="claude-sonnet-4")
         api_response = llm_api.send_prompt(
-            anonymized_code=payment_code,
-            prompt="Review for security issues"
+            anonymized_code=payment_code, prompt="Review for security issues"
         )
-        
-        print(f"API Response received:")
+
+        print("API Response received:")
         print(f"  Request ID: {api_response.request_id}")
         print(f"  Model: {api_response.model}")
         print(f"  Tokens used: {api_response.tokens_used}")
-        
+
         # Step 4: Deanonymize response
         print("\n6. DEANONYMIZING API RESPONSE")
         print("-" * 60)
-        
+
         print("LLM Response (with anonymized names):")
         print(api_response.anonymized_content[:500])
-        
+
         deanonymizer = ProjectDeanonymizer(ctx)
         restored_response = deanonymizer.deanonymize_text(api_response.anonymized_content)
-        
-        print(f"\nDeanonymized Response (with original names):")
+
+        print("\nDeanonymized Response (with original names):")
         print(restored_response.text)
-        
+
         # Show some restorations
         print(f"\nRestorations made ({len(restored_response.restorations)}):")
         for token, original in restored_response.restorations[:5]:
             print(f"  {token} → {original}")
-        
+
         # Step 5: Apply to project
         print("\n7. APPLYING SUGGESTIONS TO PROJECT")
         print("-" * 60)
@@ -524,7 +525,7 @@ Please identify:
         print("  2. Apply relevant changes to original code")
         print("  3. Run tests to verify correctness")
         print("  4. Commit changes to version control")
-        
+
         print("\n" + "=" * 80)
         print("Example completed successfully!")
         print("=" * 80)

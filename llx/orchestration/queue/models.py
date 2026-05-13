@@ -8,6 +8,7 @@ from enum import Enum
 
 class QueueStatus(Enum):
     """Queue status."""
+
     IDLE = "idle"
     PROCESSING = "processing"
     FULL = "full"
@@ -16,6 +17,7 @@ class QueueStatus(Enum):
 
 class RequestPriority(Enum):
     """Request priority levels."""
+
     URGENT = 1
     HIGH = 2
     NORMAL = 3
@@ -26,6 +28,7 @@ class RequestPriority(Enum):
 @dataclass
 class QueueRequest:
     """A request in the queue."""
+
     request_id: str
     provider: str
     account: str
@@ -48,6 +51,7 @@ class QueueRequest:
 @dataclass
 class QueueConfig:
     """Configuration for a queue."""
+
     queue_id: str
     provider: str
     account: str
@@ -61,6 +65,7 @@ class QueueConfig:
 @dataclass
 class QueueState:
     """Current state of a queue."""
+
     queue_id: str
     status: QueueStatus
     created_at: datetime

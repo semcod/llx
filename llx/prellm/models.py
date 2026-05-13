@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 # Sensitivity levels (Task 2)
 # ============================================================
 
+
 class SensitivityLevel(str, enum.Enum):
     SAFE = "safe"
     MASKED = "masked"
@@ -24,6 +25,7 @@ class SensitivityLevel(str, enum.Enum):
 # ============================================================
 # Shell Context models (Task 1)
 # ============================================================
+
 
 class ProcessInfo(BaseModel):
     pid: int = 0
@@ -67,6 +69,7 @@ class ShellContext(BaseModel):
 # Context Schema model (Task 4)
 # ============================================================
 
+
 class ContextSchema(BaseModel):
     execution_env: str = "cli"
     platform: str = ""
@@ -84,6 +87,7 @@ class ContextSchema(BaseModel):
 # Filter report model (Task 2)
 # ============================================================
 
+
 class FilterReport(BaseModel):
     blocked_keys: list[str] = Field(default_factory=list)
     masked_keys: list[str] = Field(default_factory=list)
@@ -94,6 +98,7 @@ class FilterReport(BaseModel):
 # ============================================================
 # Compressed folder model (Task 3)
 # ============================================================
+
 
 class CompressedFolder(BaseModel):
     root: str = ""
@@ -109,12 +114,14 @@ class CompressedFolder(BaseModel):
 # v0.4 — Runtime Context (unified snapshot for persistent context)
 # ============================================================
 
+
 class RuntimeContext(BaseModel):
     """Full runtime snapshot — env, process, locale, network, git, system.
 
     Combines ShellContext data with sensitivity filtering stats and token estimation.
     Used by the context-aware pipeline to auto-inject environment into small-LLM prompts.
     """
+
     env_safe: dict[str, str] = Field(default_factory=dict)
     process: dict[str, Any] = Field(default_factory=dict)
     locale: dict[str, str] = Field(default_factory=dict)
@@ -131,6 +138,7 @@ class SessionSnapshot(BaseModel):
 
     Equivalent to LM Studio 'save session' / AnythingLLM Git sync.
     """
+
     session_id: str = ""
     interactions: list[dict[str, Any]] = Field(default_factory=list)
     preferences: dict[str, str] = Field(default_factory=dict)
@@ -141,8 +149,8 @@ class SessionSnapshot(BaseModel):
 
     def to_file(self, path: Any) -> None:
         """Export snapshot to JSON file."""
-        import json
         from pathlib import Path as _Path
+
         p = _Path(path)
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(self.model_dump_json(indent=2), encoding="utf-8")
@@ -150,8 +158,8 @@ class SessionSnapshot(BaseModel):
     @classmethod
     def from_file(cls, path: Any) -> "SessionSnapshot":
         """Import snapshot from JSON file."""
-        import json
         from pathlib import Path as _Path
+
         raw = _Path(path).read_text(encoding="utf-8")
         return cls.model_validate_json(raw)
 
@@ -159,6 +167,7 @@ class SessionSnapshot(BaseModel):
 # ============================================================
 # Enums
 # ============================================================
+
 
 class Policy(str, enum.Enum):
     STRICT = "strict"
@@ -183,6 +192,7 @@ class StepStatus(str, enum.Enum):
 
 class DecompositionStrategy(str, enum.Enum):
     """Strategy for how the small LLM preprocesses a query."""
+
     AUTO = "auto"
     CLASSIFY = "classify"
     STRUCTURE = "structure"
@@ -194,6 +204,7 @@ class DecompositionStrategy(str, enum.Enum):
 # ============================================================
 # v0.1 compat models (kept for backward compatibility)
 # ============================================================
+
 
 class BiasPattern(BaseModel):
     regex: str
@@ -210,6 +221,7 @@ class ModelConfig(BaseModel):
 
 class GuardConfig(BaseModel):
     """Top-level YAML config model (v0.1 compat)."""
+
     bias_patterns: list[BiasPattern] = Field(default_factory=list)
     clarify_template: str = "[KONTEKST]: Podaj szczegóły lub alternatywy dla: {query}"
     max_retries: int = 3
@@ -220,6 +232,7 @@ class GuardConfig(BaseModel):
 
 class AnalysisResult(BaseModel):
     """Result of query analysis (v0.1 compat)."""
+
     needs_clarify: bool = False
     detected_patterns: list[str] = Field(default_factory=list)
     enriched_query: str = ""
@@ -230,6 +243,7 @@ class AnalysisResult(BaseModel):
 
 class GuardResponse(BaseModel):
     """Response from Prellm (v0.1 compat)."""
+
     content: str
     clarified: bool = False
     needs_more_context: bool = False
@@ -243,11 +257,13 @@ class GuardResponse(BaseModel):
 # v0.2 — Domain Rules (YAML-driven, replaces hardcoded regex)
 # ============================================================
 
+
 class DomainRule(BaseModel):
     """Configurable domain rule — keywords, intent, required fields, enrich template.
 
     Replaces hardcoded BiasPattern regex with dynamic LLM-based matching.
     """
+
     name: str
     keywords: list[str] = Field(default_factory=list)
     intent: str = ""
@@ -261,8 +277,10 @@ class DomainRule(BaseModel):
 # v0.2 — LLM Provider Config
 # ============================================================
 
+
 class LLMProviderConfig(BaseModel):
     """Configuration for a single LLM provider (small or large)."""
+
     model: str = "gpt-5.4-mini"
     fallback: list[str] = Field(default_factory=list)
     max_retries: int = 3
@@ -275,8 +293,10 @@ class LLMProviderConfig(BaseModel):
 # v0.2 — Decomposition Prompts
 # ============================================================
 
+
 class DecompositionPrompts(BaseModel):
     """System prompts for each decomposition step — all configurable via YAML."""
+
     classify_prompt: str = (
         "You are a query classifier. Analyze the user query and return JSON: "
         '{"intent": "<intent>", "confidence": <0.0-1.0>, "domain": "<domain>"}. '
@@ -299,7 +319,7 @@ class DecompositionPrompts(BaseModel):
     )
     split_prompt: str = (
         "You are a query splitter. Break the complex user query into independent "
-        "sub-questions. Return JSON: {\"sub_queries\": [\"q1\", \"q2\", ...]}. "
+        'sub-questions. Return JSON: {"sub_queries": ["q1", "q2", ...]}. '
         "Only return valid JSON."
     )
 
@@ -308,10 +328,14 @@ class DecompositionPrompts(BaseModel):
 # v0.2 — PreLLM Config (replaces GuardConfig for new pipeline)
 # ============================================================
 
+
 class PreLLMConfig(BaseModel):
     """Top-level config for preLLM v0.2 — fully YAML-driven."""
+
     small_model: LLMProviderConfig = Field(
-        default_factory=lambda: LLMProviderConfig(model="phi3:mini", max_tokens=512, temperature=0.0)
+        default_factory=lambda: LLMProviderConfig(
+            model="phi3:mini", max_tokens=512, temperature=0.0
+        )
     )
     large_model: LLMProviderConfig = Field(
         default_factory=lambda: LLMProviderConfig(model="gpt-5.4-mini", max_tokens=2048)
@@ -328,8 +352,10 @@ class PreLLMConfig(BaseModel):
 # v0.2 — Decomposition Result
 # ============================================================
 
+
 class ClassificationResult(BaseModel):
     """Output of the CLASSIFY step."""
+
     intent: str = ""
     confidence: float = 0.0
     domain: str = ""
@@ -337,6 +363,7 @@ class ClassificationResult(BaseModel):
 
 class StructureResult(BaseModel):
     """Output of the STRUCTURE step."""
+
     action: str = ""
     target: str = ""
     parameters: dict[str, Any] = Field(default_factory=dict)
@@ -344,6 +371,7 @@ class StructureResult(BaseModel):
 
 class DecompositionResult(BaseModel):
     """Full result of the small LLM decomposition pipeline."""
+
     strategy: DecompositionStrategy = DecompositionStrategy.PASSTHROUGH
     original_query: str = ""
     classification: ClassificationResult | None = None
@@ -359,8 +387,10 @@ class DecompositionResult(BaseModel):
 # v0.2 — PreLLM Response
 # ============================================================
 
+
 class PreLLMResponse(BaseModel):
     """Response from preLLM v0.2 — includes decomposition + large LLM output."""
+
     content: str
     decomposition: DecompositionResult | None = None
     model_used: str = ""
@@ -375,6 +405,7 @@ class PreLLMResponse(BaseModel):
 # ============================================================
 # Process chain models (updated for v0.2 per-step strategy)
 # ============================================================
+
 
 class ProcessStep(BaseModel):
     name: str
@@ -396,6 +427,7 @@ class ProcessConfig(BaseModel):
 
 class StepResult(BaseModel):
     """Result of a single process chain step."""
+
     step_name: str
     status: StepStatus = StepStatus.PENDING
     response: PreLLMResponse | GuardResponse | None = None
@@ -407,6 +439,7 @@ class StepResult(BaseModel):
 
 class ProcessResult(BaseModel):
     """Result of a full process chain execution."""
+
     process_name: str
     steps: list[StepResult] = Field(default_factory=list)
     completed: bool = False
@@ -419,8 +452,10 @@ class ProcessResult(BaseModel):
 # Audit models
 # ============================================================
 
+
 class AuditEntry(BaseModel):
     """Single audit log entry for traceability."""
+
     timestamp: datetime = Field(default_factory=datetime.utcnow)
     action: str
     query: str = ""

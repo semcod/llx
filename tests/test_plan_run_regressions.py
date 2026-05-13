@@ -7,12 +7,7 @@ from llx.planfile.executor.task import _parse_llm_response
 
 
 def test_parse_llm_response_ignores_no_changes_inside_code_blocks() -> None:
-    response = (
-        "```python:llx/cli/app.py\n"
-        "def f():\n"
-        "    console.print(\"No changes needed\")\n"
-        "```\n"
-    )
+    response = '```python:llx/cli/app.py\ndef f():\n    console.print("No changes needed")\n```\n'
 
     parsed = _parse_llm_response(response)
 
@@ -206,8 +201,14 @@ def test_results_markdown_skips_status_table_when_all_zero() -> None:
         "strategy": "planfile.yaml",
         "project": ".",
         "summary": {
-            "success": 0, "failed": 0, "invalid": 0, "not_found": 0,
-            "already_fixed": 0, "no_changes": 0, "skipped": 0, "total": 0,
+            "success": 0,
+            "failed": 0,
+            "invalid": 0,
+            "not_found": 0,
+            "already_fixed": 0,
+            "no_changes": 0,
+            "skipped": 0,
+            "total": 0,
         },
         "results": [],
     }
@@ -275,7 +276,7 @@ def test_render_markdown_inline_styles_bold_italic_code() -> None:
 
     assert text.plain == "plain bold italic code end"
     # Verify each marked span carried a style (bold / italic / cyan).
-    span_styles = {(text.plain[s.start:s.end], str(s.style)) for s in text.spans}
+    span_styles = {(text.plain[s.start : s.end], str(s.style)) for s in text.spans}
     style_for = {token: style for token, style in span_styles}
     assert "bold" in style_for["bold"]
     assert "italic" in style_for["italic"]
@@ -286,6 +287,7 @@ def test_print_markdown_with_yaml_pipe_keeps_raw_text() -> None:
     """Non-TTY targets must keep the markdown source intact (no ANSI)."""
     import io
     from rich.console import Console as RichConsole
+
     app_mod = importlib.import_module("llx.cli.app")
 
     buf = io.StringIO()
@@ -303,6 +305,7 @@ def test_print_markdown_with_yaml_tty_emits_ansi_for_headings() -> None:
     """TTY targets must color headings (no leading '##' literal)."""
     import io
     from rich.console import Console as RichConsole
+
     app_mod = importlib.import_module("llx.cli.app")
 
     buf = io.StringIO()
@@ -319,15 +322,7 @@ def test_print_markdown_with_yaml_tty_emits_ansi_for_headings() -> None:
 
 def test_split_markdown_around_codeblock_isolates_yaml() -> None:
     app_mod = importlib.import_module("llx.cli.app")
-    md = (
-        "## Header\n\n"
-        "- bullet\n\n"
-        "```yaml\n"
-        "key: value\n"
-        "key2: 123\n"
-        "```\n"
-        "after\n"
-    )
+    md = "## Header\n\n- bullet\n\n```yaml\nkey: value\nkey2: 123\n```\nafter\n"
     prefix, code, suffix = app_mod._split_markdown_around_codeblock(md)
     assert "## Header" in prefix
     assert "- bullet" in prefix
@@ -339,9 +334,9 @@ def test_truncate_only_targets_whitelisted_fields() -> None:
     app_mod = importlib.import_module("llx.cli.app")
     long_blob = "Z" * 500
     payload = {
-        "task_name": long_blob,        # not whitelisted -> kept as-is
-        "ticket_id": long_blob,        # not whitelisted -> kept as-is
-        "response": long_blob,         # whitelisted -> truncated
+        "task_name": long_blob,  # not whitelisted -> kept as-is
+        "ticket_id": long_blob,  # not whitelisted -> kept as-is
+        "response": long_blob,  # whitelisted -> truncated
     }
 
     compact = app_mod._truncate_long_strings_for_markdown(payload)

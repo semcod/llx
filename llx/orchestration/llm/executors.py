@@ -103,9 +103,7 @@ def execute_openai(
         "stream": request.stream,
     }
 
-    response = requests.post(
-        url, json=payload, headers=headers, timeout=request.timeout_seconds
-    )
+    response = requests.post(url, json=payload, headers=headers, timeout=request.timeout_seconds)
 
     if response.status_code != 200:
         return _failed(request, f"HTTP {response.status_code}: {response.text}")
@@ -157,9 +155,7 @@ def execute_anthropic(
         "top_p": request.top_p,
     }
 
-    response = requests.post(
-        url, json=payload, headers=headers, timeout=request.timeout_seconds
-    )
+    response = requests.post(url, json=payload, headers=headers, timeout=request.timeout_seconds)
 
     if response.status_code != 200:
         return _failed(request, f"HTTP {response.status_code}: {response.text}")

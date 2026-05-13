@@ -44,6 +44,7 @@ async def _handle_llx_proxym_status(args: dict) -> dict:
     """Get detailed proxym proxy status."""
     from llx.integrations.proxym import ProxymClient
     from llx.config import LlxConfig
+
     config = LlxConfig.load(args.get("path", "."))
     url = args.get("url", config.litellm_base_url)
     client = ProxymClient(config, base_url=url)

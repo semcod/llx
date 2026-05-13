@@ -35,10 +35,7 @@ class ParallelProjectProcessor:
         anonymizer = ProjectAnonymizer(context)
 
         with ProcessPoolExecutor(max_workers=self.max_workers) as executor:
-            future_to_file = {
-                executor.submit(anonymizer.anonymize_file, fp): fp
-                for fp in files
-            }
+            future_to_file = {executor.submit(anonymizer.anonymize_file, fp): fp for fp in files}
 
             for future in as_completed(future_to_file):
                 file_path = future_to_file[future]

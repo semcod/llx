@@ -10,6 +10,7 @@ from typing import Any, Dict, Optional
 
 # ── JSON config I/O ─────────────────────────────────────
 
+
 def load_json(path: Path, label: str = "config") -> Optional[Dict[str, Any]]:
     """Load JSON from *path*, returning None on missing file or error."""
     try:

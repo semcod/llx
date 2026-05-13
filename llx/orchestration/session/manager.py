@@ -95,18 +95,20 @@ class SessionManager:
             data: Dict[str, Any] = {"sessions": [], "states": {}}
 
             for config in self.sessions.values():
-                data["sessions"].append({
-                    "session_id": config.session_id,
-                    "session_type": config.session_type.value,
-                    "provider": config.provider,
-                    "model": config.model,
-                    "account": config.account,
-                    "max_requests_per_hour": config.max_requests_per_hour,
-                    "max_tokens_per_hour": config.max_tokens_per_hour,
-                    "cooldown_minutes": config.cooldown_minutes,
-                    "priority": config.priority,
-                    "metadata": config.metadata,
-                })
+                data["sessions"].append(
+                    {
+                        "session_id": config.session_id,
+                        "session_type": config.session_type.value,
+                        "provider": config.provider,
+                        "model": config.model,
+                        "account": config.account,
+                        "max_requests_per_hour": config.max_requests_per_hour,
+                        "max_tokens_per_hour": config.max_tokens_per_hour,
+                        "cooldown_minutes": config.cooldown_minutes,
+                        "priority": config.priority,
+                        "metadata": config.metadata,
+                    }
+                )
 
             for state in self.session_states.values():
                 data["states"][state.session_id] = {
@@ -229,9 +231,7 @@ class SessionManager:
 
             return True
 
-    def release_session(
-        self, session_id: str, tokens_used: int = 0, success: bool = True
-    ) -> bool:
+    def release_session(self, session_id: str, tokens_used: int = 0, success: bool = True) -> bool:
         """Release a session after use."""
         with self.lock:
             if session_id not in self.session_states:
@@ -247,9 +247,7 @@ class SessionManager:
 
             if self._should_rate_limit(session_id):
                 config = self.sessions[session_id]
-                state.rate_limit_until = datetime.now() + timedelta(
-                    minutes=config.cooldown_minutes
-                )
+                state.rate_limit_until = datetime.now() + timedelta(minutes=config.cooldown_minutes)
                 state.status = SessionStatus.RATE_LIMITED
                 print(f"⏰ Session {session_id} rate limited until {state.rate_limit_until}")
 
@@ -310,7 +308,11 @@ class SessionManager:
             return {
                 "queue_length": len(self.request_queue),
                 "waiting_sessions": len(
-                    [s for s in self.session_states.values() if s.status == SessionStatus.RATE_LIMITED]
+                    [
+                        s
+                        for s in self.session_states.values()
+                        if s.status == SessionStatus.RATE_LIMITED
+                    ]
                 ),
                 "active_sessions": len(
                     [s for s in self.session_states.values() if s.status == SessionStatus.ACTIVE]
@@ -418,14 +420,16 @@ class SessionManager:
         for state in self.session_states.values():
             status_counts[state.status.value] = status_counts.get(state.status.value, 0) + 1
         for config in self.sessions.values():
-            type_counts[config.session_type.value] = type_counts.get(config.session_type.value, 0) + 1
+            type_counts[config.session_type.value] = (
+                type_counts.get(config.session_type.value, 0) + 1
+            )
 
         print(f"📊 Total Sessions: {total_sessions}")
         print(f"📈 By Status: {dict(status_counts)}")
         print(f"🏷️  By Type: {dict(type_counts)}")
 
         queue_status = self.get_queue_status()
-        print(f"\n🚶 Queue Status:")
+        print("\n🚶 Queue Status:")
         print(f"  Length: {queue_status['queue_length']}")
         print(f"  Waiting: {queue_status['waiting_sessions']}")
         print(f"  Active: {queue_status['active_sessions']}")
@@ -437,7 +441,7 @@ class SessionManager:
 
         rate_limited = [s for s in self.session_states.values() if s.rate_limit_until]
         if rate_limited:
-            print(f"\n⏰ Rate Limited Sessions:")
+            print("\n⏰ Rate Limited Sessions:")
             for state in rate_limited:
                 time_left = state.rate_limit_until - datetime.now()
                 print(f"  • {state.session_id}: {time_left.total_seconds():.0f}s")

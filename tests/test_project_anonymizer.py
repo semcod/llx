@@ -1,7 +1,5 @@
 """Tests for project-level anonymization."""
 
-from pathlib import Path
-
 from llx.privacy.project import (
     AnonymizationContext,
     ProjectAnonymizer,
@@ -29,12 +27,12 @@ class ShoppingCart:
     def add_item(self, product):
         self.items.append(product)
 """)
-        
+
         ctx = AnonymizationContext(project_path=tmp_path)
         anonymizer = ProjectAnonymizer(ctx)
-        
+
         result = anonymizer.anonymize_file(test_file)
-        
+
         # Original names should not be present
         assert "calculate_total" not in result or "items" not in result
         # Anonymized names should be present
@@ -44,10 +42,10 @@ class ShoppingCart:
         """Should anonymize text with context."""
         ctx = AnonymizationContext(project_path="/tmp")
         anonymizer = ProjectAnonymizer(ctx)
-        
+
         text = "Email: admin@example.com, API: sk-abcdefghijklmnopqrstuv"
         result = anonymizer.anonymize_string(text)
-        
+
         assert "admin@example.com" not in result
         assert "[EMAIL_" in result
 
@@ -61,12 +59,12 @@ def main():
     process(user_data)
 """)
         (tmp_path / "config.yaml").write_text("api_key: sk-abcdefghijklmnopqrstuv")
-        
+
         ctx = AnonymizationContext(project_path=tmp_path)
         anonymizer = ProjectAnonymizer(ctx)
-        
+
         result = anonymizer.anonymize_project(include_patterns=["*.py", "*.yaml"])
-        
+
         assert len(result.files) == 2
         assert "src/main.py" in result.files
         assert "config.yaml" in result.files
@@ -76,14 +74,14 @@ def main():
         # Create large file
         large_file = tmp_path / "large.py"
         large_file.write_text("x" * 100)
-        
+
         ctx = AnonymizationContext(project_path=tmp_path)
         anonymizer = ProjectAnonymizer(ctx)
-        
+
         result = anonymizer.anonymize_project(
             include_patterns=["*.py"],
-            max_file_size=50  # 50 bytes - file is 100 bytes
+            max_file_size=50,  # 50 bytes - file is 100 bytes
         )
-        
+
         assert len(result.files) == 0
         assert len(result.errors) > 0

@@ -75,15 +75,17 @@ def save_limits_to_file(self) -> bool:
         data: Dict[str, Any] = {"limits": [], "states": {}}
 
         for config in self.limits.values():
-            data["limits"].append({
-                "provider": config.provider,
-                "account": config.account,
-                "limits": {k.value: v for k, v in config.limits.items()},
-                "cooldown_minutes": config.cooldown_minutes,
-                "penalty_multiplier": config.penalty_multiplier,
-                "max_penalties": config.max_penalties,
-                "metadata": config.metadata,
-            })
+            data["limits"].append(
+                {
+                    "provider": config.provider,
+                    "account": config.account,
+                    "limits": {k.value: v for k, v in config.limits.items()},
+                    "cooldown_minutes": config.cooldown_minutes,
+                    "penalty_multiplier": config.penalty_multiplier,
+                    "max_penalties": config.max_penalties,
+                    "metadata": config.metadata,
+                }
+            )
 
         for state in self.states.values():
             key = f"{state.provider}:{state.account}"

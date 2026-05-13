@@ -16,6 +16,7 @@ import yaml
 @dataclass
 class LiteLLMModelConfig:
     """Configuration for a single LiteLLM model."""
+
     model_name: str
     litellm_params: Dict[str, Any]
     tags: List[str]
@@ -28,6 +29,7 @@ class LiteLLMModelConfig:
 @dataclass
 class LiteLLMConfig:
     """Complete LiteLLM configuration."""
+
     model_list: List[LiteLLMModelConfig]
     model_aliases: Dict[str, str]
     general_settings: Dict[str, Any]
@@ -40,17 +42,17 @@ class LiteLLMConfig:
         """Load LiteLLM configuration from litellm-config.yaml."""
         root = Path(project_path).resolve()
         config_path = root / "litellm-config.yaml"
-        
+
         if not config_path.exists():
             # Return default configuration if file doesn't exist
             return cls._default_config()
-        
+
         with open(config_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        
+
         if not data:
             return cls._default_config()
-        
+
         # Parse model list
         model_list = []
         for model_data in data.get("model_list", []):
@@ -61,10 +63,12 @@ class LiteLLMConfig:
                 tier=model_data.get("tier", "balanced"),
                 provider=model_data.get("provider", "unknown"),
                 context_window=model_data.get("context_window", 200000),
-                pricing=model_data.get("pricing", {"input_per_token": 0.0, "output_per_token": 0.0}),
+                pricing=model_data.get(
+                    "pricing", {"input_per_token": 0.0, "output_per_token": 0.0}
+                ),
             )
             model_list.append(model)
-        
+
         return cls(
             model_list=model_list,
             model_aliases=data.get("model_aliases", {}),
@@ -73,7 +77,7 @@ class LiteLLMConfig:
             quality_thresholds=data.get("quality_thresholds", {}),
             fallback_order=data.get("fallback_order", []),
         )
-    
+
     @classmethod
     def _default_config(cls) -> "LiteLLMConfig":
         """Return default configuration when no config file is found."""
@@ -85,37 +89,37 @@ class LiteLLMConfig:
             quality_thresholds={},
             fallback_order=[],
         )
-    
+
     def get_model_config(self, model_name: str) -> Optional[LiteLLMModelConfig]:
         """Get configuration for a specific model."""
         for model in self.model_list:
             if model.model_name == model_name:
                 return model
         return None
-    
+
     def get_models_by_tag(self, tag: str) -> List[LiteLLMModelConfig]:
         """Get all models with a specific tag."""
         return [model for model in self.model_list if tag in model.tags]
-    
+
     def get_models_by_provider(self, provider: str) -> List[LiteLLMModelConfig]:
         """Get all models from a specific provider."""
         return [model for model in self.model_list if model.provider == provider]
-    
+
     def get_models_by_tier(self, tier: str) -> List[LiteLLMModelConfig]:
         """Get all models in a specific tier."""
         return [model for model in self.model_list if model.tier == tier]
-    
+
     def resolve_alias(self, alias: str) -> Optional[str]:
         """Resolve model alias to actual model name."""
         return self.model_aliases.get(alias)
-    
+
     def to_llx_models(self) -> Dict[str, Any]:
         """Convert LiteLLM models to llx ModelConfig format."""
         # Import here to avoid circular import
         from llx.config import ModelConfig
-        
+
         models = {}
-        
+
         for model in self.model_list:
             llx_model = ModelConfig(
                 name=model.model_name,
@@ -127,9 +131,9 @@ class LiteLLMConfig:
                 tags=model.tags,
             )
             models[model.model_name] = llx_model
-        
+
         return models
-    
+
     def get_proxy_config(self) -> Dict[str, Any]:
         """Get configuration for LiteLLM proxy server."""
         return {

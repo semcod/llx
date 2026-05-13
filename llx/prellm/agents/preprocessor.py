@@ -32,17 +32,22 @@ _CodebaseIndexer = None
 def _get_user_memory_class():
     """Lazy import UserMemory class."""
     from llx.prellm.utils.lazy_imports import lazy_import_global
-    return lazy_import_global('_UserMemory', 'prellm.context.user_memory.UserMemory', globals())
+
+    return lazy_import_global("_UserMemory", "prellm.context.user_memory.UserMemory", globals())
 
 
 def _get_codebase_indexer_class():
     """Lazy import CodebaseIndexer class."""
     from llx.prellm.utils.lazy_imports import lazy_import_global
-    return lazy_import_global('_CodebaseIndexer', 'prellm.context.codebase_indexer.CodebaseIndexer', globals())
+
+    return lazy_import_global(
+        "_CodebaseIndexer", "prellm.context.codebase_indexer.CodebaseIndexer", globals()
+    )
 
 
 class PreprocessResult(BaseModel):
     """Output of the PreprocessorAgent — structured input for the ExecutorAgent."""
+
     original_query: str = ""
     executor_input: str = ""
     decomposition: PipelineResult | None = None
@@ -86,7 +91,9 @@ class PreprocessorAgent:
         if codebase_path and codebase_indexer:
             try:
                 self._codebase_index = codebase_indexer.index_directory(codebase_path)
-                logger.info(f"Indexed codebase: {self._codebase_index.total_files} files, {self._codebase_index.total_symbols} symbols")
+                logger.info(
+                    f"Indexed codebase: {self._codebase_index.total_files} files, {self._codebase_index.total_symbols} symbols"
+                )
             except Exception as e:
                 logger.warning(f"Failed to index codebase at {codebase_path}: {e}")
 
@@ -116,7 +123,9 @@ class PreprocessorAgent:
             try:
                 recent = await self.user_memory.get_recent_context(query, limit=3)
                 if recent:
-                    history_lines = [f"- {r['query']}: {r['response_summary'][:100]}" for r in recent]
+                    history_lines = [
+                        f"- {r['query']}: {r['response_summary'][:100]}" for r in recent
+                    ]
                     full_ctx["user_history"] = "\n".join(history_lines)
                 prefs = await self.user_memory.get_user_preferences()
                 if prefs:
@@ -127,7 +136,9 @@ class PreprocessorAgent:
         # 3. Enrich with CodebaseIndexer (relevant symbols)
         if self.codebase_indexer and self._codebase_index:
             try:
-                codebase_ctx = self.codebase_indexer.get_context_for_query(self._codebase_index, query)
+                codebase_ctx = self.codebase_indexer.get_context_for_query(
+                    self._codebase_index, query
+                )
                 if codebase_ctx:
                     full_ctx["codebase_context"] = codebase_ctx
             except Exception as e:
@@ -157,7 +168,13 @@ class PreprocessorAgent:
         state = pipeline_result.state
 
         # Try common output keys in priority order
-        for key in ("composed_prompt", "executor_input", "meta_prompt", "enriched_query", "enriched"):
+        for key in (
+            "composed_prompt",
+            "executor_input",
+            "meta_prompt",
+            "enriched_query",
+            "enriched",
+        ):
             value = state.get(key)
             if value:
                 composed = ""

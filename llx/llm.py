@@ -127,7 +127,11 @@ class LLM:
 
         content = response.choices[0].message.content or ""
         usage = response.usage.dict() if response.usage else None
-        cost = response._hidden_params.get("response_cost") if hasattr(response, "_hidden_params") else None
+        cost = (
+            response._hidden_params.get("response_cost")
+            if hasattr(response, "_hidden_params")
+            else None
+        )
 
         return LLMResponse(
             content=content,

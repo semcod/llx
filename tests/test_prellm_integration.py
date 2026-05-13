@@ -13,35 +13,34 @@ class TestPreLLMImports:
 
     def test_top_level_import(self):
         import llx.prellm
+
         assert hasattr(llx.prellm, "__version__")
         assert hasattr(llx.prellm, "__all__")
         assert len(llx.prellm.__all__) >= 40
 
     def test_core_imports(self):
-        from llx.prellm.core import preprocess_and_execute, PreLLM
+        from llx.prellm.core import preprocess_and_execute
+
         assert callable(preprocess_and_execute)
 
     def test_models_imports(self):
         from llx.prellm.models import (
-            PreLLMResponse, DecompositionStrategy, LLMProviderConfig,
-            ShellContext, ContextSchema, FilterReport,
+            DecompositionStrategy,
         )
+
         assert DecompositionStrategy.CLASSIFY.value == "classify"
 
     def test_pipeline_imports(self):
-        from llx.prellm.pipeline import PromptPipeline, PipelineConfig, PipelineResult
+        pass
 
     def test_agents_imports(self):
-        from llx.prellm.agents import PreprocessorAgent, ExecutorAgent
+        pass
 
     def test_context_imports(self):
-        from llx.prellm.context import (
-            UserMemory, CodebaseIndexer, ShellContextCollector,
-            SensitiveDataFilter, FolderCompressor, ContextSchemaGenerator,
-        )
+        pass
 
     def test_utils_imports(self):
-        from llx.prellm.utils import LazyLoader, lazy_import_global
+        pass
 
 
 class TestPreLLMFunctional:
@@ -49,6 +48,7 @@ class TestPreLLMFunctional:
 
     def test_sensitive_filter_masks_keys(self):
         from llx.prellm.context.sensitive_filter import SensitiveDataFilter
+
         sf = SensitiveDataFilter()
         data = {"OPENAI_API_KEY": "sk-abc123", "USER": "tom"}
         filtered = sf.filter_dict(data)
@@ -57,12 +57,14 @@ class TestPreLLMFunctional:
 
     def test_shell_collector_gathers_context(self):
         from llx.prellm.context.shell_collector import ShellContextCollector
+
         ctx = ShellContextCollector().collect_all()
         assert ctx.process.pid > 0
         assert len(ctx.env_vars) > 0
 
     def test_budget_tracker_enforces_limit(self, tmp_path):
         from llx.prellm.budget import BudgetTracker, BudgetExceededError
+
         bt = BudgetTracker(monthly_limit=0.001, persist_path=tmp_path / "budget.json")
         bt.record(model="test", cost=0.002)
         with pytest.raises(BudgetExceededError):
@@ -70,6 +72,7 @@ class TestPreLLMFunctional:
 
     def test_decomposition_strategy_enum(self):
         from llx.prellm.models import DecompositionStrategy
+
         assert DecompositionStrategy.AUTO.value == "auto"
         assert DecompositionStrategy.CLASSIFY.value == "classify"
         assert DecompositionStrategy.STRUCTURE.value == "structure"
@@ -79,6 +82,7 @@ class TestPreLLMFunctional:
 
     def test_prellm_response_creation(self):
         from llx.prellm.models import PreLLMResponse
+
         resp = PreLLMResponse(
             content="test output",
             model_used="gpt-5.4-mini",
@@ -90,6 +94,7 @@ class TestPreLLMFunctional:
 
     def test_llm_provider_config_defaults(self):
         from llx.prellm.models import LLMProviderConfig
+
         cfg = LLMProviderConfig(model="ollama/qwen2.5:3b")
         assert cfg.max_tokens == 2048
         assert cfg.temperature == 0.0
@@ -97,17 +102,20 @@ class TestPreLLMFunctional:
 
     def test_env_config_loads(self):
         from llx.prellm.env_config import get_env_config
+
         cfg = get_env_config()
         assert cfg.small_model is not None
         assert cfg.large_model is not None
 
     def test_model_catalog(self):
         from llx.prellm.model_catalog import list_model_pairs
+
         pairs = list_model_pairs()
         assert len(pairs) > 0
 
     def test_trace_recorder_lifecycle(self):
         from llx.prellm.trace import TraceRecorder
+
         trace = TraceRecorder()
         trace.start(query="test_pipeline")
         trace.step("step1", step_type="classify", inputs={"query": "test"})

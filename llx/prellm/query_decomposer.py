@@ -7,7 +7,6 @@ or passthrough user queries before routing to a large LLM.
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 from llx.prellm.llm_provider import LLMProvider
 from llx.prellm.models import (
@@ -16,7 +15,6 @@ from llx.prellm.models import (
     DecompositionResult,
     DecompositionStrategy,
     DomainRule,
-    LLMProviderConfig,
     DecompositionPrompts,
     StructureResult,
 )
@@ -176,12 +174,11 @@ class QueryDecomposer:
         if context:
             context_str = "\n".join(f"  {k}: {v}" for k, v in context.items())
 
-        missing_str = ", ".join(result.missing_fields) if result.missing_fields else "none identified"
-
-        user_msg = (
-            f"Original query: {query}\n"
-            f"Missing fields: {missing_str}\n"
+        missing_str = (
+            ", ".join(result.missing_fields) if result.missing_fields else "none identified"
         )
+
+        user_msg = f"Original query: {query}\nMissing fields: {missing_str}\n"
         if context_str:
             user_msg += f"Available context:\n{context_str}\n"
         if result.classification:

@@ -131,9 +131,7 @@ def test_remove_todo_lines_id_must_be_standalone_token(tmp_path: Path) -> None:
     """Substring matches must NOT trigger removal."""
     todo = tmp_path / "TODO.md"
     todo.write_text(
-        "- [ ] Q1 short\n"
-        "- [ ] Q11 longer must be kept\n"
-        "- [ ] Q1Z foreign suffix must be kept\n",
+        "- [ ] Q1 short\n- [ ] Q11 longer must be kept\n- [ ] Q1Z foreign suffix must be kept\n",
         encoding="utf-8",
     )
 
@@ -301,11 +299,14 @@ def test_cli_plan_clean_default_canceled_with_todo(tmp_path: Path) -> None:
     result = runner.invoke(
         llx_app,
         [
-            "plan", "clean",
+            "plan",
+            "clean",
             str(strategy),
-            "--project", str(tmp_path),
+            "--project",
+            str(tmp_path),
             "--no-backup",
-            "--format", "yaml",
+            "--format",
+            "yaml",
         ],
     )
 
@@ -327,12 +328,15 @@ def test_cli_plan_clean_dry_run(tmp_path: Path) -> None:
     result = runner.invoke(
         llx_app,
         [
-            "plan", "clean",
+            "plan",
+            "clean",
             str(strategy),
-            "--project", str(tmp_path),
+            "--project",
+            str(tmp_path),
             "--dry-run",
             "--no-backup",
-            "--format", "yaml",
+            "--format",
+            "yaml",
         ],
     )
 
@@ -361,13 +365,16 @@ def test_cli_plan_clean_include_done(tmp_path: Path) -> None:
     result = runner.invoke(
         llx_app,
         [
-            "plan", "clean",
+            "plan",
+            "clean",
             str(strategy),
-            "--project", str(tmp_path),
+            "--project",
+            str(tmp_path),
             "--include-done",
             "--no-todo-sync",
             "--no-backup",
-            "--format", "yaml",
+            "--format",
+            "yaml",
         ],
     )
 

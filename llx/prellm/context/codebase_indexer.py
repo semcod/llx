@@ -20,6 +20,7 @@ logger = logging.getLogger("prellm.context.codebase_indexer")
 @dataclass
 class CodeSymbol:
     """A code symbol extracted from source."""
+
     name: str
     kind: str  # "function", "class", "method", "import", "variable"
     file_path: str
@@ -33,6 +34,7 @@ class CodeSymbol:
 @dataclass
 class FileIndex:
     """Index of a single source file."""
+
     path: str
     language: str
     symbols: list[CodeSymbol] = field(default_factory=list)
@@ -43,6 +45,7 @@ class FileIndex:
 @dataclass
 class CodebaseIndex:
     """Full codebase index."""
+
     root: str
     files: list[FileIndex] = field(default_factory=list)
     total_symbols: int = 0
@@ -92,6 +95,7 @@ class CodebaseIndexer:
         """Check if tree-sitter is available."""
         try:
             import tree_sitter  # noqa: F401
+
             return True
         except ImportError:
             logger.info("tree-sitter not installed. Using fallback regex-based indexing.")
@@ -114,10 +118,22 @@ class CodebaseIndexer:
             CodebaseIndex with all extracted symbols.
         """
         root = Path(root)
-        exclude = set(exclude_dirs or [
-            ".git", ".venv", "venv", "node_modules", "__pycache__",
-            ".tox", ".mypy_cache", ".pytest_cache", "dist", "build", ".eggs",
-        ])
+        exclude = set(
+            exclude_dirs
+            or [
+                ".git",
+                ".venv",
+                "venv",
+                "node_modules",
+                "__pycache__",
+                ".tox",
+                ".mypy_cache",
+                ".pytest_cache",
+                "dist",
+                "build",
+                ".eggs",
+            ]
+        )
 
         index = CodebaseIndex(root=str(root))
 
@@ -172,7 +188,9 @@ class CodebaseIndexer:
 
         return file_index
 
-    def _extract_with_tree_sitter(self, content: str, language: str, file_path: str) -> list[CodeSymbol]:
+    def _extract_with_tree_sitter(
+        self, content: str, language: str, file_path: str
+    ) -> list[CodeSymbol]:
         """Extract symbols using tree-sitter AST parsing."""
         try:
             parser = self._get_parser(language)
@@ -196,6 +214,7 @@ class CodebaseIndexer:
 
         try:
             import tree_sitter
+
             lang_module = __import__(f"tree_sitter_{language}")
             lang = tree_sitter.Language(lang_module.language())
             parser = tree_sitter.Parser(lang)
@@ -206,33 +225,39 @@ class CodebaseIndexer:
             self._parsers[language] = None
             return None
 
-    def _walk_tree(self, node: Any, symbols: list[CodeSymbol], file_path: str, content: str) -> None:
+    def _walk_tree(
+        self, node: Any, symbols: list[CodeSymbol], file_path: str, content: str
+    ) -> None:
         """Recursively walk tree-sitter AST and extract symbols."""
         node_type = node.type
 
         if node_type in ("function_definition", "function_declaration"):
             name_node = node.child_by_field_name("name")
             if name_node:
-                symbols.append(CodeSymbol(
-                    name=name_node.text.decode("utf-8"),
-                    kind="function",
-                    file_path=file_path,
-                    line_start=node.start_point[0] + 1,
-                    line_end=node.end_point[0] + 1,
-                    signature=self._get_line(content, node.start_point[0]),
-                ))
+                symbols.append(
+                    CodeSymbol(
+                        name=name_node.text.decode("utf-8"),
+                        kind="function",
+                        file_path=file_path,
+                        line_start=node.start_point[0] + 1,
+                        line_end=node.end_point[0] + 1,
+                        signature=self._get_line(content, node.start_point[0]),
+                    )
+                )
 
         elif node_type == "class_definition":
             name_node = node.child_by_field_name("name")
             if name_node:
-                symbols.append(CodeSymbol(
-                    name=name_node.text.decode("utf-8"),
-                    kind="class",
-                    file_path=file_path,
-                    line_start=node.start_point[0] + 1,
-                    line_end=node.end_point[0] + 1,
-                    signature=self._get_line(content, node.start_point[0]),
-                ))
+                symbols.append(
+                    CodeSymbol(
+                        name=name_node.text.decode("utf-8"),
+                        kind="class",
+                        file_path=file_path,
+                        line_start=node.start_point[0] + 1,
+                        line_end=node.end_point[0] + 1,
+                        signature=self._get_line(content, node.start_point[0]),
+                    )
+                )
 
         for child in node.children:
             self._walk_tree(child, symbols, file_path, content)
@@ -249,6 +274,7 @@ class CodebaseIndexer:
     def _extract_with_regex(content: str, language: str, file_path: str) -> list[CodeSymbol]:
         """Fallback: extract symbols using regex patterns."""
         import re
+
         symbols: list[CodeSymbol] = []
         lines = content.splitlines()
 
@@ -258,48 +284,56 @@ class CodebaseIndexer:
                 m = re.match(r"^(\s*)(?:async\s+)?def\s+(\w+)\s*\(", line)
                 if m:
                     indent = len(m.group(1))
-                    symbols.append(CodeSymbol(
-                        name=m.group(2),
-                        kind="method" if indent > 0 else "function",
-                        file_path=file_path,
-                        line_start=i,
-                        line_end=i,
-                        signature=line.strip(),
-                    ))
+                    symbols.append(
+                        CodeSymbol(
+                            name=m.group(2),
+                            kind="method" if indent > 0 else "function",
+                            file_path=file_path,
+                            line_start=i,
+                            line_end=i,
+                            signature=line.strip(),
+                        )
+                    )
                 # Classes
                 m = re.match(r"^class\s+(\w+)", line)
                 if m:
-                    symbols.append(CodeSymbol(
-                        name=m.group(1),
-                        kind="class",
-                        file_path=file_path,
-                        line_start=i,
-                        line_end=i,
-                        signature=line.strip(),
-                    ))
+                    symbols.append(
+                        CodeSymbol(
+                            name=m.group(1),
+                            kind="class",
+                            file_path=file_path,
+                            line_start=i,
+                            line_end=i,
+                            signature=line.strip(),
+                        )
+                    )
 
         elif language in ("javascript", "typescript"):
             for i, line in enumerate(lines, 1):
                 m = re.match(r"^\s*(?:export\s+)?(?:async\s+)?function\s+(\w+)", line)
                 if m:
-                    symbols.append(CodeSymbol(
-                        name=m.group(1),
-                        kind="function",
-                        file_path=file_path,
-                        line_start=i,
-                        line_end=i,
-                        signature=line.strip(),
-                    ))
+                    symbols.append(
+                        CodeSymbol(
+                            name=m.group(1),
+                            kind="function",
+                            file_path=file_path,
+                            line_start=i,
+                            line_end=i,
+                            signature=line.strip(),
+                        )
+                    )
                 m = re.match(r"^\s*(?:export\s+)?class\s+(\w+)", line)
                 if m:
-                    symbols.append(CodeSymbol(
-                        name=m.group(1),
-                        kind="class",
-                        file_path=file_path,
-                        line_start=i,
-                        line_end=i,
-                        signature=line.strip(),
-                    ))
+                    symbols.append(
+                        CodeSymbol(
+                            name=m.group(1),
+                            kind="class",
+                            file_path=file_path,
+                            line_start=i,
+                            line_end=i,
+                            signature=line.strip(),
+                        )
+                    )
 
         return symbols
 
@@ -307,6 +341,7 @@ class CodebaseIndexer:
     def _extract_imports(content: str, language: str) -> list[str]:
         """Extract import statements."""
         import re
+
         imports: list[str] = []
 
         if language == "python":
@@ -356,9 +391,7 @@ class CodebaseIndexer:
 
         return "\n".join(lines)
 
-    def get_compressed_context(
-        self, root: str | Path, query: str, max_tokens: int = 2048
-    ) -> str:
+    def get_compressed_context(self, root: str | Path, query: str, max_tokens: int = 2048) -> str:
         """Full pipeline: index → compress → filter by query relevance.
 
         Returns text ready for injection into small-LLM prompt.
@@ -385,7 +418,9 @@ class CodebaseIndexer:
             else:
                 other_summaries.append(line)
 
-        header = f"[Project: {compressed.total_modules} modules, {compressed.total_functions} functions]"
+        header = (
+            f"[Project: {compressed.total_modules} modules, {compressed.total_functions} functions]"
+        )
         parts.append(header)
         token_count += self.estimate_tokens(header)
 

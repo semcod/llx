@@ -6,7 +6,11 @@ from llx.mcp.tools.preprocessing import tool_llx_preprocess, tool_llx_context
 from llx.mcp.tools.proxym import tool_llx_proxy_status, tool_llx_proxym_status, tool_llx_proxym_chat
 from llx.mcp.tools.code_edit import tool_aider
 from llx.mcp.tools.planfile import tool_planfile_generate, tool_planfile_apply
-from llx.mcp.tools.privacy import tool_llx_privacy_scan, tool_llx_project_anonymize, tool_llx_project_deanonymize
+from llx.mcp.tools.privacy import (
+    tool_llx_privacy_scan,
+    tool_llx_project_anonymize,
+    tool_llx_project_deanonymize,
+)
 
 MCP_TOOLS = (
     tool_llx_analyze,

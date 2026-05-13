@@ -32,6 +32,7 @@ class BudgetExceededError(Exception):
 @dataclass
 class UsageEntry:
     """Single API call cost record."""
+
     timestamp: str
     model: str
     prompt_tokens: int = 0
@@ -48,6 +49,7 @@ class BudgetTracker:
         tracker.check(model="gpt-4o")          # raises if over budget
         tracker.record(model="gpt-4o", cost=0.05, prompt_tokens=100, completion_tokens=50)
     """
+
     monthly_limit: float | None = None
     persist_path: Path = field(default_factory=lambda: Path(".prellm") / "budget.json")
     _entries: list[UsageEntry] = field(default_factory=list)
@@ -111,6 +113,7 @@ class BudgetTracker:
         """
         try:
             import litellm
+
             cost = litellm.completion_cost(completion_response=response)
         except Exception:
             cost = 0.0
@@ -212,7 +215,9 @@ def _current_month_key() -> str:
 _global_tracker: BudgetTracker | None = None
 
 
-def get_budget_tracker(monthly_limit: float | None = None, persist_path: Path | None = None) -> BudgetTracker:
+def get_budget_tracker(
+    monthly_limit: float | None = None, persist_path: Path | None = None
+) -> BudgetTracker:
     """Get or create the global budget tracker singleton."""
     global _global_tracker
     if _global_tracker is None:

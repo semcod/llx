@@ -5,7 +5,6 @@ import argparse
 from datetime import datetime
 
 from .._utils import cli_main
-from ..cli_utils import cmd_remove_wrapper
 from ..utils._cmd_remove import create_remove_handler
 from ..utils._cmd_cleanup import create_cleanup_handler
 
@@ -76,7 +75,7 @@ _cmd_remove = create_remove_handler(
     id_attr="queue_id",
     id_label="Queue",
     remove_func=lambda mgr, id: mgr.remove_queue(id),
-    save_func=lambda mgr: mgr.save_queues()
+    save_func=lambda mgr: mgr.save_queues(),
 )
 
 
@@ -136,9 +135,7 @@ def _cmd_metrics(args, mgr: QueueManager) -> bool:
 
 
 # Create cleanup handler
-_cmd_cleanup = create_cleanup_handler(
-    save_func=lambda mgr: mgr.save_queues()
-)
+_cmd_cleanup = create_cleanup_handler(save_func=lambda mgr: mgr.save_queues())
 
 
 def main():

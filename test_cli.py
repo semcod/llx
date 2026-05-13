@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
-import os
-sys.path.insert(0, '/home/tom/github/semcod/llx')
+
+sys.path.insert(0, "/home/tom/github/semcod/llx")
 
 from llx.cli.app import app
 

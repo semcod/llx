@@ -12,7 +12,7 @@ import logging
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Awaitable, Callable, Union
+from typing import Any, Awaitable, Callable
 
 import yaml
 
@@ -20,7 +20,6 @@ from llx.prellm.analyzers.context_engine import ContextEngine
 from llx.prellm.models import (
     ApprovalMode,
     AuditEntry,
-    GuardConfig,
     ProcessConfig,
     ProcessResult,
     ProcessStep,
@@ -64,6 +63,7 @@ class ProcessChain:
         self._guard = guard
         if not engine and not guard:
             from llx.prellm.core import PreLLM
+
             self._engine = PreLLM(config_path=guard_config_path)
 
         self.context_engine = ContextEngine(self.process_config.context_sources)
@@ -150,7 +150,9 @@ class ProcessChain:
 
         # 3. Approval gate
         if step.approval == ApprovalMode.MANUAL:
-            blocked = await self._handle_approval(step_result, step, enriched_prompt, approval_callback)
+            blocked = await self._handle_approval(
+                step_result, step, enriched_prompt, approval_callback
+            )
             if blocked:
                 return step_result
 
@@ -202,7 +204,11 @@ class ProcessChain:
             return True
 
     async def _run_dry_run(
-        self, step_result: StepResult, step: ProcessStep, enriched_prompt: str, step_start: float,
+        self,
+        step_result: StepResult,
+        step: ProcessStep,
+        enriched_prompt: str,
+        step_start: float,
     ) -> None:
         """Dry-run: analyze without calling LLM."""
         if self._engine:
@@ -216,19 +222,26 @@ class ProcessChain:
         logger.info(f"Step '{step.name}' (dry-run): {analysis}")
 
     async def _run_engine(
-        self, step_result: StepResult, step: ProcessStep, enriched_prompt: str, ctx: dict[str, str],
+        self,
+        step_result: StepResult,
+        step: ProcessStep,
+        enriched_prompt: str,
+        ctx: dict[str, str],
     ) -> None:
         """Execute step through v0.3 pipeline, v0.2 engine, or v0.1 guard."""
         try:
-            if hasattr(step, 'pipeline') and step.pipeline:
+            if hasattr(step, "pipeline") and step.pipeline:
                 from llx.prellm.core import preprocess_and_execute
+
                 response = await preprocess_and_execute(
                     query=enriched_prompt,
                     pipeline=step.pipeline,
                     user_context=ctx,
                 )
             elif self._engine:
-                response = await self._engine(enriched_prompt, strategy=step.strategy, extra_context=ctx)
+                response = await self._engine(
+                    enriched_prompt, strategy=step.strategy, extra_context=ctx
+                )
             elif self._guard:
                 response = await self._guard(enriched_prompt, extra_context=ctx)
             else:
@@ -242,7 +255,9 @@ class ProcessChain:
             step_result.error = str(e)
             logger.error(f"Step '{step.name}' failed: {e}")
             if step.rollback:
-                logger.warning(f"Step '{step.name}' has rollback=true — rollback should be triggered")
+                logger.warning(
+                    f"Step '{step.name}' has rollback=true — rollback should be triggered"
+                )
                 step_result.status = StepStatus.ROLLED_BACK
 
     def get_audit_log(self) -> list[dict[str, Any]]:

@@ -33,6 +33,7 @@ def _map_priority(priority: int | str) -> str:
             return "low"
     return priority if priority in ["critical", "high", "medium", "low"] else "medium"
 
+
 from llx.config import LlxConfig
 from llx.routing.client import LlxClient, ChatMessage
 from llx.planfile.executor.base import BackendType, TaskResult
@@ -52,7 +53,8 @@ def _extract_file_from_task(task: dict) -> str:
     if file_path:
         return file_path
     import re
-    m = re.search(r'in\s+([\w./]+\.py)', task.get("description", ""))
+
+    m = re.search(r"in\s+([\w./]+\.py)", task.get("description", ""))
     return m.group(1) if m else ""
 
 
@@ -116,9 +118,9 @@ def _extract_explanation(lines: list[str], indicators: list[str]) -> str:
         if any(ind in line.lower() for ind in indicators):
             context_lines = [line]
             for j in range(i + 1, min(i + 4, len(lines))):
-                if lines[j].strip() and not lines[j].startswith('```'):
+                if lines[j].strip() and not lines[j].startswith("```"):
                     context_lines.append(lines[j])
-            return ' '.join(context_lines)
+            return " ".join(context_lines)
     return ""
 
 
@@ -127,7 +129,9 @@ def _strip_fenced_code_blocks(text: str) -> str:
     return re.sub(r"```.*?```", "", text, flags=re.DOTALL)
 
 
-def _build_message(issue_not_found: bool, changes_made: bool, problem_fixed: bool, explanation: str) -> str:
+def _build_message(
+    issue_not_found: bool, changes_made: bool, problem_fixed: bool, explanation: str
+) -> str:
     """Build human-readable summary message from parsed flags."""
     if issue_not_found:
         return f"No changes needed: {explanation}"
@@ -152,9 +156,11 @@ def _parse_llm_response(response: str) -> dict:
 
     detailed_explanation = ""
     if issue_not_found:
-        detailed_explanation = _extract_explanation(prose_only.split('\n'), _NOT_FOUND_INDICATORS)
+        detailed_explanation = _extract_explanation(prose_only.split("\n"), _NOT_FOUND_INDICATORS)
         if not detailed_explanation:
-            detailed_explanation = "The issue described in the ticket was not found in the codebase."
+            detailed_explanation = (
+                "The issue described in the ticket was not found in the codebase."
+            )
 
     message = _build_message(issue_not_found, changes_made, problem_fixed, detailed_explanation)
 
@@ -163,7 +169,7 @@ def _parse_llm_response(response: str) -> dict:
         "problem_fixed": problem_fixed,
         "issue_not_found": issue_not_found,
         "message": message,
-        "detailed_explanation": detailed_explanation
+        "detailed_explanation": detailed_explanation,
     }
 
 
@@ -172,20 +178,20 @@ def _select_model(task: dict, config: LlxConfig, metrics: Any) -> str:
     # Get model hints from task
     model_hints = task.get("model_hints", {})
     preferred_tier = model_hints.get("tier", "balanced")
-    
+
     # Map tier to model
     model_map = {
         "fast": config.models.get("fast"),
         "cheap": config.models.get("cheap"),
         "balanced": config.models.get("balanced"),
-        "premium": config.models.get("premium")
+        "premium": config.models.get("premium"),
     }
-    
+
     model = model_map.get(preferred_tier, model_map.get("balanced"))
-    
+
     if model:
         return model.model_id
-    
+
     # Fallback to default
     default = config.models.get(config.default_tier)
     return default.model_id if default else "openai/gpt-5.4-mini"
@@ -199,25 +205,27 @@ def _build_task_prompt(task: dict, metrics: Any) -> str:
     # Fallback: extract file path from description (e.g. "Resolve issues in path/to/file.py")
     if not file_path:
         import re
+
         desc = task.get("description", "")
-        m = re.search(r'in\s+([\w./]+\.py)', desc)
+        m = re.search(r"in\s+([\w./]+\.py)", desc)
         if m:
             file_path = m.group(1)
 
-    prompt = f"""## Task: {task.get('name', 'Unnamed Task')}
+    prompt = f"""## Task: {task.get("name", "Unnamed Task")}
 
-Type: {task.get('task_type', 'feature')}
-Priority: {task.get('priority', 'medium')}
-Target File: {file_path if file_path else 'N/A'}
+Type: {task.get("task_type", "feature")}
+Priority: {task.get("priority", "medium")}
+Target File: {file_path if file_path else "N/A"}
 
 Description:
-{task.get('description', '')}
+{task.get("description", "")}
 """
 
     # Add file content if file is specified
     if file_path:
         try:
             from pathlib import Path
+
             file_full_path = Path(file_path)
             if not file_full_path.is_absolute():
                 file_full_path = Path.cwd() / file_path
@@ -246,7 +254,7 @@ CRITICAL RULES:
 3. Do NOT output code blocks for any other file path.
 
 Output format (use EXACTLY this):
-```python:{file_path if file_path else 'path/to/file.py'}
+```python:{file_path if file_path else "path/to/file.py"}
 <COMPLETE file content here>
 ```
 
@@ -263,10 +271,10 @@ def _run_mcp_backend(target_file: str, prompt: str, model: str) -> tuple[str, bo
     """Run MCP backend. Returns (response, changes_applied, effective_backend)."""
     try:
         from llx.mcp.client import MCPClient
+
         mcp_client = MCPClient()
         tool_result = mcp_client.call_tool(
-            "aider_edit_file",
-            {"file_path": target_file, "prompt": prompt, "model": model}
+            "aider_edit_file", {"file_path": target_file, "prompt": prompt, "model": model}
         )
         return str(tool_result), True, BackendType.MCP
     except Exception as e:
@@ -274,7 +282,9 @@ def _run_mcp_backend(target_file: str, prompt: str, model: str) -> tuple[str, bo
         return "", False, BackendType.LLM_CHAT
 
 
-def _run_cursor_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+def _run_cursor_backend(
+    project_root: Path, prompt: str, model: str, target_file: str
+) -> tuple[str, bool]:
     """Run Cursor backend. Returns (response, changes_applied)."""
     result = _run_cursor_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
     response = result.get("stdout", "") + "\n" + result.get("stderr", "")
@@ -284,9 +294,13 @@ def _run_cursor_backend(project_root: Path, prompt: str, model: str, target_file
     return response, success
 
 
-def _run_windsurf_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+def _run_windsurf_backend(
+    project_root: Path, prompt: str, model: str, target_file: str
+) -> tuple[str, bool]:
     """Run Windsurf backend. Returns (response, changes_applied)."""
-    result = _run_windsurf_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
+    result = _run_windsurf_edit(
+        workdir=project_root, prompt=prompt, model=model, files=[target_file]
+    )
     response = result.get("stdout", "") + "\n" + result.get("stderr", "")
     success = result.get("success", False)
     if not success:
@@ -294,9 +308,13 @@ def _run_windsurf_backend(project_root: Path, prompt: str, model: str, target_fi
     return response, success
 
 
-def _run_claude_code_backend(project_root: Path, prompt: str, model: str, target_file: str) -> tuple[str, bool]:
+def _run_claude_code_backend(
+    project_root: Path, prompt: str, model: str, target_file: str
+) -> tuple[str, bool]:
     """Run Claude Code backend. Returns (response, changes_applied)."""
-    result = _run_claude_code_edit(workdir=project_root, prompt=prompt, model=model, files=[target_file])
+    result = _run_claude_code_edit(
+        workdir=project_root, prompt=prompt, model=model, files=[target_file]
+    )
     response = result.get("stdout", "") + "\n" + result.get("stderr", "")
     success = result.get("success", False)
     if not success:
@@ -304,14 +322,16 @@ def _run_claude_code_backend(project_root: Path, prompt: str, model: str, target
     return response, success
 
 
-def _run_aider_backend(project_root: Path, prompt: str, model: str, target_file: str, use_docker: bool) -> tuple[str, bool]:
+def _run_aider_backend(
+    project_root: Path, prompt: str, model: str, target_file: str, use_docker: bool
+) -> tuple[str, bool]:
     """Run aider backend. Returns (response, changes_applied)."""
     result = _run_aider_fix(
         workdir=project_root,
         prompt=prompt,
         model=model,
         files=[target_file] if target_file else None,
-        use_docker=use_docker
+        use_docker=use_docker,
     )
     response = result.get("stdout", "") + "\n" + result.get("stderr", "")
     success = result.get("success", False)
@@ -327,15 +347,16 @@ def _apply_llm_code_blocks(response: str, default_file: str = "") -> bool:
     Returns True if any file was written.
     """
     import re
+
     written = False
 
     # Pattern: ```python:path/to/file.py
-    pattern = r'```python:([^\n]+)\n(.*?)```'
+    pattern = r"```python:([^\n]+)\n(.*?)```"
     matches = re.findall(pattern, response, re.DOTALL)
 
     if not matches and default_file:
         # Fallback: plain ```python blocks without a path header
-        plain = r'```python\n(.*?)```'
+        plain = r"```python\n(.*?)```"
         plain_matches = re.findall(plain, response, re.DOTALL)
         if plain_matches:
             matches = [(default_file, plain_matches[0])]
@@ -360,13 +381,17 @@ def _run_llm_chat_with_retry(prompt: str, model: str) -> str:
     client = LlxClient()
     messages = [
         ChatMessage(role="system", content="You are a helpful coding assistant."),
-        ChatMessage(role="user", content=prompt)
+        ChatMessage(role="user", content=prompt),
     ]
     response = client.chat(messages=messages, model=model, temperature=0.7)
     response_content = response.content
 
     validation = _parse_llm_response(response_content)
-    unclear = not validation["issue_not_found"] and not validation["changes_made"] and not validation["problem_fixed"]
+    unclear = (
+        not validation["issue_not_found"]
+        and not validation["changes_made"]
+        and not validation["problem_fixed"]
+    )
     if unclear:
         logger.warning("LLM response unclear; retrying with stricter instructions")
         strict_messages = [
@@ -376,9 +401,9 @@ def _run_llm_chat_with_retry(prompt: str, model: str) -> str:
                     "You are a precise coding assistant. "
                     "When you modify code you MUST wrap the full file in a ```python block. "
                     "If you make no changes, say exactly: 'No action needed'."
-                )
+                ),
             ),
-            ChatMessage(role="user", content=prompt)
+            ChatMessage(role="user", content=prompt),
         ]
         try:
             retry_response = client.chat(messages=strict_messages, model=model, temperature=0.1)
@@ -475,7 +500,7 @@ def _execute_task(
                 status="dry_run",
                 model_used=model,
                 response="",
-                execution_time=time.time() - start_time
+                execution_time=time.time() - start_time,
             )
 
         prompt = _build_task_prompt(task, metrics)
@@ -501,11 +526,13 @@ def _execute_task(
                     model_used=model,
                     response="",
                     error=str(e),
-                    execution_time=time.time() - start_time
+                    execution_time=time.time() - start_time,
                 )
 
         validation = _parse_llm_response(response_content)
-        status, file_changed, validation_message = _determine_task_status(validation, code_changes_applied)
+        status, file_changed, validation_message = _determine_task_status(
+            validation, code_changes_applied
+        )
 
         return TaskResult(
             ticket_id=ticket_id,
@@ -515,7 +542,7 @@ def _execute_task(
             response=response_content,
             execution_time=time.time() - start_time,
             file_changed=file_changed,
-            validation_message=validation_message
+            validation_message=validation_message,
         )
 
     except Exception as e:
@@ -527,5 +554,5 @@ def _execute_task(
             model_used=model_override or "unknown",
             response="",
             error=str(e),
-            execution_time=time.time() - start_time
+            execution_time=time.time() - start_time,
         )

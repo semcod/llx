@@ -139,46 +139,52 @@ class VSCodeOrchestrator:
             }
 
             for account in self.accounts.values():
-                data["accounts"].append({
-                    "account_id": account.account_id,
-                    "account_type": account.account_type.value,
-                    "name": account.name,
-                    "email": account.email,
-                    "auth_method": account.auth_method,
-                    "auth_config": account.auth_config,
-                    "max_concurrent_sessions": account.max_concurrent_sessions,
-                    "session_timeout_minutes": account.session_timeout_minutes,
-                    "auto_start": account.auto_start,
-                    "metadata": account.metadata,
-                })
+                data["accounts"].append(
+                    {
+                        "account_id": account.account_id,
+                        "account_type": account.account_type.value,
+                        "name": account.name,
+                        "email": account.email,
+                        "auth_method": account.auth_method,
+                        "auth_config": account.auth_config,
+                        "max_concurrent_sessions": account.max_concurrent_sessions,
+                        "session_timeout_minutes": account.session_timeout_minutes,
+                        "auto_start": account.auto_start,
+                        "metadata": account.metadata,
+                    }
+                )
 
             for cfg in self.instance_configs.values():
-                data["instances"].append({
-                    "instance_id": cfg.instance_id,
-                    "account_id": cfg.account_id,
-                    "port": cfg.port,
-                    "workspace_path": cfg.workspace_path,
-                    "extensions": cfg.extensions,
-                    "settings": cfg.settings,
-                    "environment": cfg.environment,
-                    "auto_start_browser": cfg.auto_start_browser,
-                    "metadata": cfg.metadata,
-                })
+                data["instances"].append(
+                    {
+                        "instance_id": cfg.instance_id,
+                        "account_id": cfg.account_id,
+                        "port": cfg.port,
+                        "workspace_path": cfg.workspace_path,
+                        "extensions": cfg.extensions,
+                        "settings": cfg.settings,
+                        "environment": cfg.environment,
+                        "auto_start_browser": cfg.auto_start_browser,
+                        "metadata": cfg.metadata,
+                    }
+                )
 
             for session in self.active_sessions.values():
-                data["sessions"].append({
-                    "session_id": session.session_id,
-                    "instance_id": session.instance_id,
-                    "account_id": session.account_id,
-                    "user_id": session.user_id,
-                    "browser_session": session.browser_session,
-                    "started_at": session.started_at.isoformat(),
-                    "last_activity": session.last_activity.isoformat(),
-                    "workspace_path": session.workspace_path,
-                    "active_files": session.active_files,
-                    "ai_tools_enabled": session.ai_tools_enabled,
-                    "metadata": session.metadata,
-                })
+                data["sessions"].append(
+                    {
+                        "session_id": session.session_id,
+                        "instance_id": session.instance_id,
+                        "account_id": session.account_id,
+                        "user_id": session.user_id,
+                        "browser_session": session.browser_session,
+                        "started_at": session.started_at.isoformat(),
+                        "last_activity": session.last_activity.isoformat(),
+                        "workspace_path": session.workspace_path,
+                        "active_files": session.active_files,
+                        "ai_tools_enabled": session.ai_tools_enabled,
+                        "metadata": session.metadata,
+                    }
+                )
 
             return save_json(self.config_file, data, "VS Code config")
 
@@ -429,16 +435,18 @@ class VSCodeOrchestrator:
             active = len(
                 [s for s in self.active_sessions.values() if s.account_id == account.account_id]
             )
-            accounts.append({
-                "account_id": account.account_id,
-                "name": account.name,
-                "account_type": account.account_type.value,
-                "email": account.email,
-                "auth_method": account.auth_method,
-                "max_concurrent_sessions": account.max_concurrent_sessions,
-                "active_sessions": active,
-                "auto_start": account.auto_start,
-            })
+            accounts.append(
+                {
+                    "account_id": account.account_id,
+                    "name": account.name,
+                    "account_type": account.account_type.value,
+                    "email": account.email,
+                    "auth_method": account.auth_method,
+                    "max_concurrent_sessions": account.max_concurrent_sessions,
+                    "active_sessions": active,
+                    "auto_start": account.auto_start,
+                }
+            )
         return accounts
 
     def list_instances(self, account_id: str = None) -> List[Dict[str, Any]]:
@@ -450,20 +458,22 @@ class VSCodeOrchestrator:
             active_sessions = [
                 s for s in self.active_sessions.values() if s.instance_id == instance_id
             ]
-            instances.append({
-                "instance_id": instance_id,
-                "account_id": config.account_id,
-                "port": config.port,
-                "workspace_path": config.workspace_path,
-                "status": inst_status["status"] if inst_status else "unknown",
-                "url": (
-                    f"http://localhost:{config.port}"
-                    if inst_status and inst_status["status"] == "running"
-                    else None
-                ),
-                "active_sessions": len(active_sessions),
-                "auto_start_browser": config.auto_start_browser,
-            })
+            instances.append(
+                {
+                    "instance_id": instance_id,
+                    "account_id": config.account_id,
+                    "port": config.port,
+                    "workspace_path": config.workspace_path,
+                    "status": inst_status["status"] if inst_status else "unknown",
+                    "url": (
+                        f"http://localhost:{config.port}"
+                        if inst_status and inst_status["status"] == "running"
+                        else None
+                    ),
+                    "active_sessions": len(active_sessions),
+                    "auto_start_browser": config.auto_start_browser,
+                }
+            )
         return instances
 
     def list_sessions(self, account_id: str = None) -> List[Dict[str, Any]]:
@@ -510,7 +520,9 @@ class VSCodeOrchestrator:
             if not account.auto_start:
                 continue
             account_instances = [
-                iid for iid, cfg in self.instance_configs.items() if cfg.account_id == account.account_id
+                iid
+                for iid, cfg in self.instance_configs.items()
+                if cfg.account_id == account.account_id
             ]
             for iid in account_instances:
                 inst_status = self.instance_manager.get_instance_status(iid)
@@ -562,11 +574,14 @@ class VSCodeOrchestrator:
         total_accounts = len(self.accounts)
         total_instances = len(self.instance_configs)
         active_sessions = len(self.active_sessions)
-        running_instances = len([
-            i for i in self.instance_configs.keys()
-            if self.instance_manager.get_instance_status(i)
-            and self.instance_manager.get_instance_status(i)["status"] == "running"
-        ])
+        running_instances = len(
+            [
+                i
+                for i in self.instance_configs.keys()
+                if self.instance_manager.get_instance_status(i)
+                and self.instance_manager.get_instance_status(i)["status"] == "running"
+            ]
+        )
 
         print(f"📊 Total Accounts: {total_accounts}")
         print(f"🏗️  Total Instances: {total_instances}")

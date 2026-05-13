@@ -7,7 +7,6 @@ import sys
 import time
 import json
 import argparse
-from pathlib import Path
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -57,8 +56,13 @@ For sub-command help:
 def _handle_status():
     """Print status summary for every sub-system."""
     from . import (
-        SessionManager, InstanceManager, RateLimiter,
-        QueueManager, RoutingEngine, VSCodeOrchestrator, LLMOrchestrator,
+        SessionManager,
+        InstanceManager,
+        RateLimiter,
+        QueueManager,
+        RoutingEngine,
+        VSCodeOrchestrator,
+        LLMOrchestrator,
     )
 
     print("📊 llx Orchestration System Status")
@@ -121,7 +125,8 @@ def _handle_monitor(interval: int, duration: int):
                 f"\r{ts} | Sessions: {len(sm.session_states)} "
                 f"| Instances: {len(im.instances)} "
                 f"| Queues: {len(qm.queues)}",
-                end="", flush=True,
+                end="",
+                flush=True,
             )
             time.sleep(interval)
     except KeyboardInterrupt:
@@ -147,6 +152,7 @@ def _delegate_to_subpackage(component: str, argv: list):
         return False
 
     import importlib
+
     mod = importlib.import_module(mod_name)
 
     # Replace sys.argv so the sub-package's argparse sees only its own args

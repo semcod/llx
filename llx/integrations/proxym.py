@@ -144,7 +144,9 @@ class ProxymClient:
         try:
             resp = self._http.get("/health", timeout=5.0)
             if resp.status_code != 200:
-                return ProxymStatus(available=False, url=self.base_url, error=f"HTTP {resp.status_code}")
+                return ProxymStatus(
+                    available=False, url=self.base_url, error=f"HTTP {resp.status_code}"
+                )
 
             data = resp.json()
 
@@ -249,10 +251,7 @@ class ProxymClient:
             data = resp.json()
             return self._parse_response(data)
         except httpx.ConnectError:
-            raise RuntimeError(
-                f"Proxym not running at {self.base_url}. "
-                "Start with: proxym-server"
-            )
+            raise RuntimeError(f"Proxym not running at {self.base_url}. Start with: proxym-server")
         except httpx.HTTPStatusError as e:
             raise RuntimeError(
                 f"Proxym error {e.response.status_code}: {e.response.text[:300]}"

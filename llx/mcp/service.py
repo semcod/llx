@@ -151,6 +151,7 @@ def create_service_app(state: McpServiceState | None = None, llx_server: Any | N
 
     if llx_server is None:
         from llx.mcp.server import server as _llx_server
+
         llx_server = _llx_server
 
     mcp_server = llx_server
@@ -162,13 +163,17 @@ def create_service_app(state: McpServiceState | None = None, llx_server: Any | N
 
     async def metrics(_request: Any) -> PlainTextResponse:
         service_state.mark_request("metrics")
-        return PlainTextResponse(service_state.metrics_text(), media_type="text/plain; version=0.0.4; charset=utf-8")
+        return PlainTextResponse(
+            service_state.metrics_text(), media_type="text/plain; version=0.0.4; charset=utf-8"
+        )
 
     async def handle_sse(request: Any) -> Response:
         service_state.mark_request("sse")
         service_state.mark_session_open()
         try:
-            async with transport.connect_sse(request.scope, request.receive, request._send) as streams:
+            async with transport.connect_sse(
+                request.scope, request.receive, request._send
+            ) as streams:
                 await mcp_server.run(
                     streams[0],
                     streams[1],
@@ -202,7 +207,9 @@ def create_service_app(state: McpServiceState | None = None, llx_server: Any | N
     )
 
 
-def run_service(host: str = "0.0.0.0", port: int = DEFAULT_MCP_PORT, state: McpServiceState | None = None) -> None:
+def run_service(
+    host: str = "0.0.0.0", port: int = DEFAULT_MCP_PORT, state: McpServiceState | None = None
+) -> None:
     """Run the persistent MCP service with uvicorn."""
     try:
         import uvicorn
@@ -216,7 +223,9 @@ def run_service(host: str = "0.0.0.0", port: int = DEFAULT_MCP_PORT, state: McpS
 
 def build_parser() -> argparse.ArgumentParser:
     """Build the CLI parser for the MCP service."""
-    parser = argparse.ArgumentParser(description="Run llx MCP as a persistent SSE service with health/metrics.")
+    parser = argparse.ArgumentParser(
+        description="Run llx MCP as a persistent SSE service with health/metrics."
+    )
     parser.add_argument(
         "--host",
         default=os.getenv("LLX_MCP_HOST", "0.0.0.0"),

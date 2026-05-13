@@ -189,9 +189,7 @@ def _make_backup(path: Path) -> Path:
     return backup_path
 
 
-def _resolve_container(
-    strategy: dict[str, Any], sprint_idx: Optional[int], section: str
-) -> Any:
+def _resolve_container(strategy: dict[str, Any], sprint_idx: Optional[int], section: str) -> Any:
     """Return the list / dict referenced by ``(sprint_idx, section)``.
 
     Returns None when the path does not exist in the planfile.

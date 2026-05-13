@@ -184,7 +184,11 @@ def build_fix_prompt(
     for issue in issue_list:
         issue_lines.append(issue_text(issue))
 
-    issue_block = "\n".join(f"- {line}" for line in issue_lines) if issue_lines else "- No structured issues were found."
+    issue_block = (
+        "\n".join(f"- {line}" for line in issue_lines)
+        if issue_lines
+        else "- No structured issues were found."
+    )
     analysis_block = json.dumps(analysis, indent=2, ensure_ascii=False) if analysis else "{}"
 
     # Include referenced file snippets so the LLM sees actual content
@@ -200,10 +204,7 @@ def build_fix_prompt(
     )
     if file_context:
         prompt += f"Referenced file contents:\n{file_context}\n\n"
-    prompt += (
-        f"Analysis payload:\n{analysis_block}\n\n"
-        "Return code edits only."
-    )
+    prompt += f"Analysis payload:\n{analysis_block}\n\nReturn code edits only."
     return prompt
 
 
@@ -212,8 +213,8 @@ def build_fix_prompt(
 
 _FILE_REF_RE = re.compile(
     r'(?:^|[\s`\'"(])('
-    r'[a-zA-Z0-9_./-]+'
-    r'\.(?:py|yml|yaml|ts|js|json|toml|cfg|ini|sh|dockerfile|css|html)'
+    r"[a-zA-Z0-9_./-]+"
+    r"\.(?:py|yml|yaml|ts|js|json|toml|cfg|ini|sh|dockerfile|css|html)"
     r')(?:[\s`\'",.;:)\]]|$)',
     re.IGNORECASE,
 )

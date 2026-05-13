@@ -10,11 +10,60 @@ stats:
   total: 68
   todo: 65
   done: 3
-tasks: []
+tasks:
+- id: TQL-5bce0e5363
+  title: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+    failed without detailed error output'
+  description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+    Failure #1:
+
+    One or more TestQL checks failed without detailed error output
+
+
+    Runbook:
+
+    - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+    --output json
+
+    - Fix failing DSL expectation or implementation code.'
+  action: fix
+  priority: 2
+  status: todo
+  labels:
+  - testql
+  - dsl-validation
+  - auto-generated
+  source: testql
 sprints:
 - id: sprint-1
   name: Code Quality Improvements
   duration: 2 weeks
   objectives:
   - Fix code quality issues
-  task_patterns: []
+  task_patterns:
+  - id: TQL-5bce0e5363
+    name: 'testql: generated-from-pytests.testql.toon.yaml :: One or more TestQL checks
+      failed without detailed error output'
+    description: 'TestQL scenario failed: testql-scenarios/generated-from-pytests.testql.toon.yaml
+
+
+      Failure #1:
+
+      One or more TestQL checks failed without detailed error output
+
+
+      Runbook:
+
+      - Re-run: testql run testql-scenarios/generated-from-pytests.testql.toon.yaml
+      --output json
+
+      - Fix failing DSL expectation or implementation code.'
+    task_type: fix
+    model_hints:
+      planning: balanced
+      implementation: balanced
+    priority: high
+    status: todo
+    file: ''

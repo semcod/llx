@@ -4,7 +4,6 @@ import json
 import argparse
 
 from .._utils import cli_main
-from ..cli_utils import cmd_remove_wrapper
 from ..utils._cmd_remove import create_remove_handler
 from ..utils._cmd_status import create_status_handler
 from ..utils._cmd_cleanup import create_cleanup_handler
@@ -17,7 +16,17 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="llx Instance Manager")
     parser.add_argument(
         "command",
-        choices=["create", "start", "stop", "remove", "list", "status", "metrics", "health", "cleanup"],
+        choices=[
+            "create",
+            "start",
+            "stop",
+            "remove",
+            "list",
+            "status",
+            "metrics",
+            "health",
+            "cleanup",
+        ],
     )
     parser.add_argument("--instance-id", help="Instance ID")
     parser.add_argument("--type", choices=["vscode", "ai_tools", "llm_proxy"], help="Instance type")
@@ -95,7 +104,7 @@ _cmd_remove = create_remove_handler(
     id_attr="instance_id",
     id_label="Instance",
     remove_func=lambda mgr, id: mgr.remove_instance(id),
-    save_func=lambda mgr: mgr.save_instances()
+    save_func=lambda mgr: mgr.save_instances(),
 )
 
 
@@ -110,10 +119,10 @@ def _cmd_list(args, mgr: InstanceManager) -> bool:
 
 # Create status handler
 _cmd_status = create_status_handler(
-    id_attr='instance_id',
-    entity_label='Instance',
+    id_attr="instance_id",
+    entity_label="Instance",
     get_status_func=lambda mgr, id: mgr.get_instance_status(id),
-    print_summary_func=lambda mgr: mgr.print_status_summary()
+    print_summary_func=lambda mgr: mgr.print_status_summary(),
 )
 
 
@@ -136,9 +145,7 @@ def _cmd_health(args, mgr: InstanceManager) -> bool:
 
 
 # Create cleanup handler
-_cmd_cleanup = create_cleanup_handler(
-    save_func=lambda mgr: mgr.save_instances()
-)
+_cmd_cleanup = create_cleanup_handler(save_func=lambda mgr: mgr.save_instances())
 
 
 def main():

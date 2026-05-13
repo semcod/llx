@@ -81,7 +81,6 @@ class LLMOrchestrator:
         try:
             data = load_json(self.config_file, "LLM config")
             if data is not None:
-
                 self.config.update(data.get("config", {}))
 
                 for provider_data in data.get("providers", []):
@@ -105,8 +104,7 @@ class LLMOrchestrator:
                             name=model_data["name"],
                             display_name=model_data["display_name"],
                             capabilities=[
-                                ModelCapability(cap)
-                                for cap in model_data.get("capabilities", [])
+                                ModelCapability(cap) for cap in model_data.get("capabilities", [])
                             ],
                             context_window=model_data.get("context_window", 4096),
                             max_tokens=model_data.get("max_tokens", 1000),
@@ -554,9 +552,7 @@ class LLMOrchestrator:
             "models_count": len(provider.models),
             "total_requests": len(provider_requests),
             "successful_requests": successful_requests,
-            "success_rate": (
-                successful_requests / len(provider_requests) * 100
-            )
+            "success_rate": (successful_requests / len(provider_requests) * 100)
             if provider_requests
             else 0,
             "rate_limits": provider.rate_limits,
@@ -606,7 +602,7 @@ class LLMOrchestrator:
         self._print_provider_status()
         self._print_model_summary()
         print()
-    
+
     def _print_usage_stats(self):
         """Print usage statistics."""
         usage_stats = self.get_usage_stats()
@@ -616,21 +612,21 @@ class LLMOrchestrator:
         print(f"📈 Success Rate: {usage_stats['success_rate']:.1f}%")
         print(f"💰 Total Cost: ${usage_stats['total_cost']:.4f}")
         print(f"🔤 Total Tokens: {usage_stats['total_tokens']}")
-    
+
     def _print_provider_status(self):
         """Print provider status information."""
         provider_status = self.get_provider_status()
-        
+
         print(f"\n🏢 Providers ({provider_status['total_providers']}):")
         print(f"  🟢 Healthy: {provider_status['healthy_providers']}")
         print(f"  🔴 Unhealthy: {provider_status['unhealthy_providers']}")
-        
+
         for pid, st in provider_status["providers"].items():
             print(
                 f"  • {pid}: {st['health_status']} "
                 f"({st['success_rate']:.1f}% success, {st['models_count']} models)"
             )
-    
+
     def _print_model_summary(self):
         """Print model capability summary."""
         print(f"\n🤖 Models ({len(self.model_cache)}):")

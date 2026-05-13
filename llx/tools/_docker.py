@@ -4,7 +4,6 @@ Eliminates repeated docker ps/exec/cp boilerplate across managers.
 """
 
 import subprocess
-from typing import Optional
 
 
 def is_container_running(container_name: str) -> bool:
@@ -12,7 +11,9 @@ def is_container_running(container_name: str) -> bool:
     try:
         result = subprocess.run(
             ["docker", "ps", "--format", "{{.Names}}"],
-            capture_output=True, text=True, timeout=10,
+            capture_output=True,
+            text=True,
+            timeout=10,
         )
         return container_name in result.stdout
     except Exception:
@@ -49,5 +50,7 @@ def docker_cp(src: str, dest: str, timeout: int = 30) -> subprocess.CompletedPro
     """Copy files between host and container via ``docker cp``."""
     return subprocess.run(
         ["docker", "cp", src, dest],
-        capture_output=True, text=True, timeout=timeout,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
     )

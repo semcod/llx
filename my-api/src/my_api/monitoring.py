@@ -4,18 +4,18 @@ Monitoring setup for the API using Prometheus metrics, structured logging, and h
 
 import logging
 import prometheus_client
-from prometheus_client import Gauge, Counter, Histogram
-from logging.handlers import SysLogHandler
+from prometheus_client import Gauge, Histogram
 from logging.config import dictConfig
 from flask import Flask
 from flask_healthcheck import HealthCheck
 
+
 # Define custom metrics
 class CustomMetrics:
     def __init__(self):
-        self.successful_requests = Gauge('successful_requests', 'Number of successful requests')
-        self.failed_requests = Gauge('failed_requests', 'Number of failed requests')
-        self.request_latency = Histogram('request_latency', 'Request latency in seconds')
+        self.successful_requests = Gauge("successful_requests", "Number of successful requests")
+        self.failed_requests = Gauge("failed_requests", "Number of failed requests")
+        self.request_latency = Histogram("request_latency", "Request latency in seconds")
 
     def increment_successful_requests(self):
         self.successful_requests.inc()
@@ -26,33 +26,32 @@ class CustomMetrics:
     def record_request_latency(self, latency):
         self.request_latency.observe(latency)
 
+
 # Define logging configuration
 logging_config = dict(
     version=1,
     formatters={
-        'default': {
-            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        "default": {
+            "format": "[%(asctime)s] %(levelname)s in %(module)s: %(message)s",
         }
     },
     handlers={
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'default',
-            'stream': 'ext://sys.stdout',
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+            "stream": "ext://sys.stdout",
         },
-        'syslog': {
-            'class': 'logging.handlers.SysLogHandler',
-            'formatter': 'default',
-            'address': '/dev/log',
+        "syslog": {
+            "class": "logging.handlers.SysLogHandler",
+            "formatter": "default",
+            "address": "/dev/log",
         },
     },
-    root={
-        'level': 'INFO',
-        'handlers': ['console', 'syslog']
-    }
+    root={"level": "INFO", "handlers": ["console", "syslog"]},
 )
 
 dictConfig(logging_config)
+
 
 # Define health checks
 class HealthChecks:
@@ -68,9 +67,10 @@ class HealthChecks:
         return True
 
     def register_healthchecks(self, app):
-        self.healthcheck.register_check('database_connection', self.check_database_connection)
-        self.healthcheck.register_check('api_endpoint', self.check_api_endpoint)
-        app.add_url_rule('/healthcheck', view_func=self.healthcheck.view_func)
+        self.healthcheck.register_check("database_connection", self.check_database_connection)
+        self.healthcheck.register_check("api_endpoint", self.check_api_endpoint)
+        app.add_url_rule("/healthcheck", view_func=self.healthcheck.view_func)
+
 
 # Define Prometheus metrics
 class PrometheusMetrics:
@@ -81,8 +81,10 @@ class PrometheusMetrics:
     def register_metrics(self, app):
         app.register_blueprint(self.prometheus_app)
 
+
 # Define Flask app
 app = Flask(__name__)
+
 
 # Define alerting rules
 class AlertingRules:
@@ -90,15 +92,12 @@ class AlertingRules:
         self.rules = []
 
     def add_rule(self, name, query, severity):
-        self.rules.append({
-            'name': name,
-            'query': query,
-            'severity': severity
-        })
+        self.rules.append({"name": name, "query": query, "severity": severity})
 
     def register_rules(self, alertmanager):
         for rule in self.rules:
-            alertmanager.add_rule(rule['name'], rule['query'], rule['severity'])
+            alertmanager.add_rule(rule["name"], rule["query"], rule["severity"])
+
 
 # Define main function
 def main() -> None:
@@ -115,11 +114,12 @@ def main() -> None:
 
     # Initialize alerting rules
     alerting_rules = AlertingRules()
-    alerting_rules.add_rule('high_request_latency', 'request_latency > 0.5', 'CRITICAL')
-    alerting_rules.add_rule('low_request_latency', 'request_latency < 0.1', 'INFO')
+    alerting_rules.add_rule("high_request_latency", "request_latency > 0.5", "CRITICAL")
+    alerting_rules.add_rule("low_request_latency", "request_latency < 0.1", "INFO")
 
     # Run the app
     app.run(debug=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

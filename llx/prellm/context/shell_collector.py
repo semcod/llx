@@ -11,7 +11,6 @@ import os
 import platform
 import socket
 import time
-from typing import Any
 
 from llx.prellm.models import (
     LocaleInfo,
@@ -25,19 +24,53 @@ logger = logging.getLogger("prellm.context.shell_collector")
 
 # Patterns in env var NAMES that indicate sensitive data
 _SENSITIVE_KEY_PATTERNS = (
-    "API_KEY", "TOKEN", "SECRET", "PASSWORD", "PRIVATE_KEY",
-    "CREDENTIAL", "AUTH", "SESSION", "COOKIE",
+    "API_KEY",
+    "TOKEN",
+    "SECRET",
+    "PASSWORD",
+    "PRIVATE_KEY",
+    "CREDENTIAL",
+    "AUTH",
+    "SESSION",
+    "COOKIE",
 )
 
 # Safe env var names (always allowed)
 _SAFE_KEYS = {
-    "LANG", "LC_ALL", "LC_CTYPE", "LC_MESSAGES", "LC_NUMERIC",
-    "TERM", "SHELL", "HOME", "USER", "LOGNAME", "PWD", "OLDPWD",
-    "PATH", "EDITOR", "VISUAL", "PAGER", "HOSTNAME", "COLUMNS", "LINES",
-    "SHLVL", "DISPLAY", "XDG_SESSION_TYPE", "XDG_CURRENT_DESKTOP",
-    "TZ", "VIRTUAL_ENV", "CONDA_DEFAULT_ENV", "PYTHONPATH",
-    "GOPATH", "RUSTUP_HOME", "CARGO_HOME", "NVM_DIR",
-    "SSH_TTY", "TERM_PROGRAM", "TERM_PROGRAM_VERSION",
+    "LANG",
+    "LC_ALL",
+    "LC_CTYPE",
+    "LC_MESSAGES",
+    "LC_NUMERIC",
+    "TERM",
+    "SHELL",
+    "HOME",
+    "USER",
+    "LOGNAME",
+    "PWD",
+    "OLDPWD",
+    "PATH",
+    "EDITOR",
+    "VISUAL",
+    "PAGER",
+    "HOSTNAME",
+    "COLUMNS",
+    "LINES",
+    "SHLVL",
+    "DISPLAY",
+    "XDG_SESSION_TYPE",
+    "XDG_CURRENT_DESKTOP",
+    "TZ",
+    "VIRTUAL_ENV",
+    "CONDA_DEFAULT_ENV",
+    "PYTHONPATH",
+    "GOPATH",
+    "RUSTUP_HOME",
+    "CARGO_HOME",
+    "NVM_DIR",
+    "SSH_TTY",
+    "TERM_PROGRAM",
+    "TERM_PROGRAM_VERSION",
 }
 
 

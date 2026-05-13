@@ -1,6 +1,5 @@
 # Imports used in this function:
 import os
-import re
 from pathlib import Path
 import typer
 from rich.panel import Panel
@@ -11,16 +10,20 @@ from llx.utils.issues import load_issue_source, build_fix_prompt
 
 # Assuming these are imported elsewhere in the file
 from rich.console import Console
+
 console = Console()
 from llx.utils.aider import _run_aider_fix, _format_aider_result, _extract_issue_files
 from llx.utils.formatting import _format_selection, _format_metrics
+
 try:
     from llx.prellm import preprocess_and_execute_sync
+
     PRELLM_AVAILABLE = True
 except ImportError:
     PRELLM_AVAILABLE = False
     preprocess_and_execute_sync = None
 from llx.utils.models import _select_small_model
+
 
 # Neighboring function:
 def apply_code_changes(workdir: Path, content: str) -> tuple[int, list[str]]:
@@ -64,7 +67,9 @@ def load_errors_data(errors: str | None, console: Console) -> list | dict | None
     return errors_data
 
 
-def select_model_for_fix(model: str | None, metrics: ProjectMetrics, config: LlxConfig, console: Console) -> tuple[str, SelectionResult | None]:
+def select_model_for_fix(
+    model: str | None, metrics: ProjectMetrics, config: LlxConfig, console: Console
+) -> tuple[str, SelectionResult | None]:
     """Select the model for fixing based on flags, env, or metrics."""
     env_model = os.environ.get("LLM_MODEL")
     if model:
@@ -79,22 +84,36 @@ def select_model_for_fix(model: str | None, metrics: ProjectMetrics, config: Llx
     return selected_model_id, selection
 
 
-def display_model_selection_and_metrics(selection: SelectionResult | None, selected_model_id: str, metrics: ProjectMetrics, console: Console) -> None:
+def display_model_selection_and_metrics(
+    selection: SelectionResult | None,
+    selected_model_id: str,
+    metrics: ProjectMetrics,
+    console: Console,
+) -> None:
     """Display model selection and project metrics."""
     console.print("\n[bold]Model Selection:[/bold]")
     console.print(Panel(_format_selection(selection, selected_model_id), border_style="green"))
     console.print(Panel(_format_metrics(metrics), title="Project Metrics", border_style="blue"))
 
 
-def prepare_fix_prompt(workdir_path: Path, errors_data: list | dict | None, selected_model_id: str, selection: SelectionResult | None) -> str:
+def prepare_fix_prompt(
+    workdir_path: Path,
+    errors_data: list | dict | None,
+    selected_model_id: str,
+    selection: SelectionResult | None,
+) -> str:
     """Prepare the fix prompt with issues and analysis."""
     issues_for_prompt = errors_data if errors_data is not None else []
-    analysis = {
-        "selection": {
-            "model_id": selected_model_id,
-            "tier": selection.tier.value if selection else "forced",
+    analysis = (
+        {
+            "selection": {
+                "model_id": selected_model_id,
+                "tier": selection.tier.value if selection else "forced",
+            }
         }
-    } if selected_model_id else None
+        if selected_model_id
+        else None
+    )
     prompt = build_fix_prompt(workdir_path, issues_for_prompt, analysis=analysis)
     return prompt
 
@@ -105,7 +124,16 @@ def handle_dry_run(prompt: str, console: Console) -> None:
     console.print(Panel(prompt, title="Fix Prompt", border_style="blue"))
 
 
-def execute_aider_fix(workdir_path: Path, prompt: str, selected_model_id: str, issues_for_prompt: list | dict | None, config: LlxConfig, apply: bool, verbose: bool, console: Console) -> None:
+def execute_aider_fix(
+    workdir_path: Path,
+    prompt: str,
+    selected_model_id: str,
+    issues_for_prompt: list | dict | None,
+    config: LlxConfig,
+    apply: bool,
+    verbose: bool,
+    console: Console,
+) -> None:
     """Execute fix using Aider."""
     if verbose:
         console.print("\n[bold]Generating fixes with Aider...[/bold]")
@@ -138,7 +166,15 @@ def execute_aider_fix(workdir_path: Path, prompt: str, selected_model_id: str, i
         console.print("\n[green]✓[/green] Aider applied changes directly.")
 
 
-def execute_prellm_fix(workdir_path: Path, prompt: str, selected_model_id: str, config: LlxConfig, apply: bool, verbose: bool, console: Console) -> None:
+def execute_prellm_fix(
+    workdir_path: Path,
+    prompt: str,
+    selected_model_id: str,
+    config: LlxConfig,
+    apply: bool,
+    verbose: bool,
+    console: Console,
+) -> None:
     """Execute fix using preLLM."""
     if not PRELLM_AVAILABLE:
         console.print("[red]✗[/red] preLLM not available. Install with: pip install llx[prellm]")
@@ -165,14 +201,19 @@ def execute_prellm_fix(workdir_path: Path, prompt: str, selected_model_id: str, 
         if apply and result.content:
             changes, files = apply_code_changes(workdir_path, result.content)
             if changes > 0:
-                console.print(f"\n[green]✓[/green] Applied {changes} changes to {len(files)} files: {', '.join(files)}")
+                console.print(
+                    f"\n[green]✓[/green] Applied {changes} changes to {len(files)} files: {', '.join(files)}"
+                )
             else:
-                console.print("\n[yellow]![/yellow] No code changes could be auto-applied. Manual review needed.")
+                console.print(
+                    "\n[yellow]![/yellow] No code changes could be auto-applied. Manual review needed."
+                )
 
     except Exception as e:
         console.print(f"[red]✗[/red] Error generating fixes: {e}")
         if verbose:
             import traceback
+
             console.print(traceback.format_exc())
         raise typer.Exit(1)
 
@@ -209,7 +250,9 @@ def fix(
         return
 
     if config.code_tool == "aider":
-        execute_aider_fix(workdir_path, prompt, selected_model_id, errors_data, config, apply, verbose, console)
+        execute_aider_fix(
+            workdir_path, prompt, selected_model_id, errors_data, config, apply, verbose, console
+        )
         return
 
     execute_prellm_fix(workdir_path, prompt, selected_model_id, config, apply, verbose, console)

@@ -114,21 +114,23 @@ class InstanceManager:
             data: Dict[str, Any] = {"instances": [], "states": {}}
 
             for config in self.instances.values():
-                data["instances"].append({
-                    "instance_id": config.instance_id,
-                    "instance_type": config.instance_type.value,
-                    "account": config.account,
-                    "provider": config.provider,
-                    "port": config.port,
-                    "image": config.image,
-                    "environment": config.environment,
-                    "volumes": config.volumes,
-                    "networks": config.networks,
-                    "auto_start": config.auto_start,
-                    "auto_restart": config.auto_restart,
-                    "max_uptime_hours": config.max_uptime_hours,
-                    "metadata": config.metadata,
-                })
+                data["instances"].append(
+                    {
+                        "instance_id": config.instance_id,
+                        "instance_type": config.instance_type.value,
+                        "account": config.account,
+                        "provider": config.provider,
+                        "port": config.port,
+                        "image": config.image,
+                        "environment": config.environment,
+                        "volumes": config.volumes,
+                        "networks": config.networks,
+                        "auto_start": config.auto_start,
+                        "auto_restart": config.auto_restart,
+                        "max_uptime_hours": config.max_uptime_hours,
+                        "metadata": config.metadata,
+                    }
+                )
 
             for state in self.instance_states.values():
                 data["states"][state.instance_id] = {
@@ -510,10 +512,12 @@ class InstanceManager:
                         print(f"🔄 Auto-restarting instance {instance_id}")
                         self.start_instance(instance_id)
                     else:
-                        print(f"⚠️  Instance {instance_id} has too many errors, skipping auto-restart")
-                elif (
-                    state.status == InstanceStatus.RUNNING
-                    and state.health_status in ("error", "timeout")
+                        print(
+                            f"⚠️  Instance {instance_id} has too many errors, skipping auto-restart"
+                        )
+                elif state.status == InstanceStatus.RUNNING and state.health_status in (
+                    "error",
+                    "timeout",
                 ):
                     if state.error_count < 2:
                         print(f"🔄 Restarting unhealthy instance {instance_id}")
@@ -535,20 +539,22 @@ class InstanceManager:
         for state in self.instance_states.values():
             status_counts[state.status.value] = status_counts.get(state.status.value, 0) + 1
         for config in self.instances.values():
-            type_counts[config.instance_type.value] = type_counts.get(config.instance_type.value, 0) + 1
+            type_counts[config.instance_type.value] = (
+                type_counts.get(config.instance_type.value, 0) + 1
+            )
 
         print(f"📊 Total Instances: {total}")
         print(f"📈 By Status: {dict(status_counts)}")
         print(f"🏷️  By Type: {dict(type_counts)}")
 
         health_results = self.health_check_all()
-        print(f"\n🏥 Health Status:")
+        print("\n🏥 Health Status:")
         print(f"  Running: {health_results['running_instances']}")
         print(f"  Healthy: {health_results['healthy_instances']}")
         print(f"  Unhealthy: {health_results['unhealthy_instances']}")
 
         port_status = self.port_allocator.get_status()
-        print(f"\n🔌 Port Allocation:")
+        print("\n🔌 Port Allocation:")
         print(f"  Used: {port_status['used_ports']}")
         print(f"  Available: {port_status['available_ports']}")
         print(f"  Range: {port_status['port_range']}")

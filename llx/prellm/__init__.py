@@ -52,10 +52,13 @@ from llx.prellm.context.shell_collector import ShellContextCollector
 from llx.prellm.context.folder_compressor import FolderCompressor
 from llx.prellm.context.schema_generator import ContextSchemaGenerator
 
+
 # ProcessChain - lazy loaded to avoid circular dependency
 def _get_process_chain():
     from llx.prellm.chains.process_chain import ProcessChain
+
     return ProcessChain
+
 
 # Logging
 from llx.prellm.logging_setup import setup_logging, get_logger

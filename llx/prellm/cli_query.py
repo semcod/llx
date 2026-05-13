@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import typer
 
@@ -51,7 +51,9 @@ def _handle_query_options(
     effective_large = large or env.large_model
     effective_strategy = strategy or env.strategy
 
-    effective_codebase = str(codebase) if codebase else (str(compress_folder) if compress_folder else None)
+    effective_codebase = (
+        str(codebase) if codebase else (str(compress_folder) if compress_folder else None)
+    )
     do_sanitize = not no_sanitize
     do_compress = compress_folder is not None
 
@@ -93,8 +95,10 @@ def _show_debug_info(options: dict) -> None:
 
         shell_ctx = ShellContextCollector().collect_all() if collect_env else None
         compressed = FolderCompressor().compress(compress_folder) if compress_folder else None
-        schema = ContextSchemaGenerator().generate(shell_context=shell_ctx, folder_compressed=compressed)
-        typer.echo(f"\n📋 Context Schema:")
+        schema = ContextSchemaGenerator().generate(
+            shell_context=shell_ctx, folder_compressed=compressed
+        )
+        typer.echo("\n📋 Context Schema:")
         typer.echo(schema.model_dump_json(indent=2))
         typer.echo("")
 
@@ -108,8 +112,10 @@ def _show_debug_info(options: dict) -> None:
         filt = SensitiveDataFilter()
         filt.filter_dict(all_vars)
         report = filt.get_filter_report()
-        typer.echo(f"\n🔒 Sensitive Filter Report:")
-        typer.echo(f"   Blocked:  {len(report.blocked_keys)} — {', '.join(report.blocked_keys[:10])}")
+        typer.echo("\n🔒 Sensitive Filter Report:")
+        typer.echo(
+            f"   Blocked:  {len(report.blocked_keys)} — {', '.join(report.blocked_keys[:10])}"
+        )
         typer.echo(f"   Masked:   {len(report.masked_keys)} — {', '.join(report.masked_keys[:10])}")
         typer.echo(f"   Safe:     {len(report.safe_keys)}")
         typer.echo("")
@@ -145,19 +151,21 @@ def _execute_and_format_result(options: dict, recorder: Optional[TraceRecorder])
     """Execute the query and format output."""
     from llx.prellm.core import preprocess_and_execute
 
-    result = asyncio.run(preprocess_and_execute(
-        query=options["prompt"],
-        small_llm=options["small_llm"],
-        large_llm=options["large_llm"],
-        strategy=options["strategy"],
-        user_context=options["user_context"],
-        config_path=options["config_path"],
-        memory_path=options["memory_path"],
-        codebase_path=options["codebase_path"],
-        collect_env=options["collect_env"],
-        compress_folder=options["compress_folder"],
-        sanitize=options["sanitize"],
-    ))
+    result = asyncio.run(
+        preprocess_and_execute(
+            query=options["prompt"],
+            small_llm=options["small_llm"],
+            large_llm=options["large_llm"],
+            strategy=options["strategy"],
+            user_context=options["user_context"],
+            config_path=options["config_path"],
+            memory_path=options["memory_path"],
+            codebase_path=options["codebase_path"],
+            collect_env=options["collect_env"],
+            compress_folder=options["compress_folder"],
+            sanitize=options["sanitize"],
+        )
+    )
 
     # Stop trace and output
     if recorder:
@@ -169,9 +177,9 @@ def _execute_and_format_result(options: dict, recorder: Optional[TraceRecorder])
     if options["json_output"]:
         typer.echo(result.model_dump_json(indent=2))
     else:
-        typer.echo(f"\n{'='*60}")
+        typer.echo(f"\n{'=' * 60}")
         typer.echo(f"🧠 preLLM [{options['small_llm']} → {options['large_llm']}]")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
         if result.decomposition and result.decomposition.classification:
             c = result.decomposition.classification
             typer.echo(f"   Intent: {c.intent} (confidence: {c.confidence:.2f})")
@@ -179,8 +187,10 @@ def _execute_and_format_result(options: dict, recorder: Optional[TraceRecorder])
             typer.echo(f"   Rule: {result.decomposition.matched_rule}")
         if result.decomposition and result.decomposition.missing_fields:
             typer.echo(f"   ⚠️  Missing: {', '.join(result.decomposition.missing_fields)}")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
         typer.echo(f"\n{result.content}")
-        typer.echo(f"\n{'='*60}")
-        typer.echo(f"   Small: {result.small_model_used} | Large: {result.model_used} | Retries: {result.retries}")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"\n{'=' * 60}")
+        typer.echo(
+            f"   Small: {result.small_model_used} | Large: {result.model_used} | Retries: {result.retries}"
+        )
+        typer.echo(f"{'=' * 60}")

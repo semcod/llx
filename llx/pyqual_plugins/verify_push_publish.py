@@ -24,17 +24,11 @@ def verify_push() -> bool:
     """Verify current commit is on origin/main."""
     try:
         local = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True,
-            text=True,
-            check=True
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
         ).stdout.strip()
 
         remote = subprocess.run(
-            ["git", "rev-parse", "origin/main"],
-            capture_output=True,
-            text=True,
-            check=True
+            ["git", "rev-parse", "origin/main"], capture_output=True, text=True, check=True
         ).stdout.strip()
 
         if local != remote:
@@ -55,10 +49,7 @@ def verify_publish(version: str, max_retries: int = 3, delay: int = 5) -> bool:
     for attempt in range(1, max_retries + 1):
         try:
             result = subprocess.run(
-                ["pip", "index", "versions", "llx"],
-                capture_output=True,
-                text=True,
-                timeout=30
+                ["pip", "index", "versions", "llx"], capture_output=True, text=True, timeout=30
             )
 
             if version in result.stdout:

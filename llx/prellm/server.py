@@ -14,7 +14,6 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import os
 import time
 import uuid
 from typing import Any, AsyncGenerator
@@ -25,14 +24,9 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from llx.prellm._nfo_compat import log_call
-from llx.prellm.core import PreLLM, preprocess_and_execute
-from llx.prellm.env_config import get_env_config, EnvConfig
+from llx.prellm.core import preprocess_and_execute
+from llx.prellm.env_config import get_env_config
 from llx.prellm.models import (
-    DecompositionStrategy,
-    DomainRule,
-    LLMProviderConfig,
-    PreLLMConfig,
     PreLLMResponse,
 )
 
@@ -54,6 +48,7 @@ MASTER_KEY = _env.master_key
 # Request / Response models (OpenAI-compatible)
 # ============================================================
 
+
 class ChatMessage(BaseModel):
     role: str = "user"
     content: str = ""
@@ -61,9 +56,10 @@ class ChatMessage(BaseModel):
 
 class PreLLMExtras(BaseModel):
     """preLLM-specific extensions in the request body."""
+
     user_context: str | dict[str, str] | None = None
     strategy: str | None = None
-    pipeline: str | None = None          # v0.3: pipeline name from pipelines.yaml
+    pipeline: str | None = None  # v0.3: pipeline name from pipelines.yaml
     response_format: str | None = None  # "yaml" | "json" | None
     show_stages: bool = False
     domain_rules: list[dict[str, Any]] | None = None
@@ -92,10 +88,11 @@ class UsageInfo(BaseModel):
 
 class PreLLMMeta(BaseModel):
     """preLLM metadata in the response."""
+
     small_model: str = ""
     large_model: str = ""
     strategy: str = ""
-    pipeline: str | None = None           # v0.3: pipeline name used
+    pipeline: str | None = None  # v0.3: pipeline name used
     intent: str | None = None
     confidence: float | None = None
     matched_rule: str | None = None
@@ -130,6 +127,7 @@ class HealthResponse(BaseModel):
 # ============================================================
 # Auth middleware (LITELLM_MASTER_KEY)
 # ============================================================
+
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """Bearer token auth using LITELLM_MASTER_KEY. Skips auth if key is not set."""
@@ -233,9 +231,9 @@ def _build_prellm_meta(result: PreLLMResponse, strategy: str) -> PreLLMMeta:
 # Endpoints
 # ============================================================
 
+
 @app.get("/health")
 async def health() -> HealthResponse:
-    import llx.prellm
     return HealthResponse(
         version=prellm.__version__,
         small_model=SMALL_MODEL,
@@ -364,7 +362,7 @@ async def _stream_response(
     chunk_size = max(1, len(words) // 5)
 
     for i in range(0, len(words), chunk_size):
-        chunk = " ".join(words[i:i + chunk_size])
+        chunk = " ".join(words[i : i + chunk_size])
         delta = {
             "id": request_id,
             "object": "chat.completion.chunk",
@@ -405,7 +403,9 @@ async def batch_process(items: list[BatchItem]):
             "content": result.content,
             "model_used": result.model_used,
             "small_model_used": result.small_model_used,
-            "prellm_meta": _build_prellm_meta(result, item.strategy or DEFAULT_STRATEGY).model_dump(),
+            "prellm_meta": _build_prellm_meta(
+                result, item.strategy or DEFAULT_STRATEGY
+            ).model_dump(),
         }
 
     results = await asyncio.gather(*[_process_one(item) for item in items])

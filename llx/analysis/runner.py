@@ -33,7 +33,10 @@ def check_tool(name: str) -> bool:
 
 
 def _run_tool(
-    tool: str, cmd: list[str], output_dir: Path, timeout: int = DEFAULT_TIMEOUT_SECONDS,
+    tool: str,
+    cmd: list[str],
+    output_dir: Path,
+    timeout: int = DEFAULT_TIMEOUT_SECONDS,
 ) -> ToolResult:
     """Generic tool runner with timeout and error handling."""
     if not check_tool(tool):
@@ -50,23 +53,54 @@ def _run_tool(
         return ToolResult(tool=tool, success=False, error=str(e))
 
 
-def run_code2llm(project_path: Path, output_dir: Path, fmt: str = DEFAULT_CODE2LLM_FORMAT) -> ToolResult:
-    return _run_tool("code2llm", [
-        "code2llm", str(project_path), "-f", fmt, "-o", str(output_dir),
-    ], output_dir)
+def run_code2llm(
+    project_path: Path, output_dir: Path, fmt: str = DEFAULT_CODE2LLM_FORMAT
+) -> ToolResult:
+    return _run_tool(
+        "code2llm",
+        [
+            "code2llm",
+            str(project_path),
+            "-f",
+            fmt,
+            "-o",
+            str(output_dir),
+        ],
+        output_dir,
+    )
 
 
 def run_redup(project_path: Path, output_dir: Path, fmt: str = DEFAULT_REDUP_FORMAT) -> ToolResult:
-    return _run_tool("redup", [
-        "redup", "scan", str(project_path), "--format", fmt, "--output", str(output_dir),
-    ], output_dir)
+    return _run_tool(
+        "redup",
+        [
+            "redup",
+            "scan",
+            str(project_path),
+            "--format",
+            fmt,
+            "--output",
+            str(output_dir),
+        ],
+        output_dir,
+    )
 
 
 def run_vallm(project_path: Path, output_dir: Path) -> ToolResult:
-    return _run_tool("vallm", [
-        "vallm", "batch", str(project_path), "--recursive",
-        "--no-imports", "--no-complexity", "--format", DEFAULT_VALLM_FORMAT,
-    ], output_dir)
+    return _run_tool(
+        "vallm",
+        [
+            "vallm",
+            "batch",
+            str(project_path),
+            "--recursive",
+            "--no-imports",
+            "--no-complexity",
+            "--format",
+            DEFAULT_VALLM_FORMAT,
+        ],
+        output_dir,
+    )
 
 
 def run_all_tools(
@@ -84,4 +118,3 @@ def run_all_tools(
             status = "done" if results[name].success else f"failed: {results[name].error}"
             on_progress(name, status)
     return results
-

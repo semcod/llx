@@ -88,9 +88,7 @@ def start_proxy(
         Popen process if background=True, None if foreground.
     """
     if not shutil.which("litellm"):
-        raise RuntimeError(
-            "litellm CLI not found. Install with: pip install codr[litellm]"
-        )
+        raise RuntimeError("litellm CLI not found. Install with: pip install codr[litellm]")
 
     # Generate config file if needed
     if config_path is None:
@@ -99,9 +97,12 @@ def start_proxy(
 
     cmd = [
         "litellm",
-        "--config", str(config_path),
-        "--host", config.proxy.host,
-        "--port", str(config.proxy.port),
+        "--config",
+        str(config_path),
+        "--host",
+        config.proxy.host,
+        "--port",
+        str(config.proxy.port),
     ]
 
     if background:
@@ -125,6 +126,7 @@ def check_proxy(base_url: str = "http://localhost:4000") -> bool:
     """Check if LiteLLM proxy is running."""
     try:
         import httpx
+
         resp = httpx.get(f"{base_url}/health", timeout=3.0)
         return resp.status_code == 200
     except Exception:

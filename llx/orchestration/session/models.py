@@ -8,6 +8,7 @@ from enum import Enum
 
 class SessionType(Enum):
     """Types of sessions."""
+
     LLM = "llm"
     VSCODE = "vscode"
     AI_TOOLS = "ai_tools"
@@ -15,6 +16,7 @@ class SessionType(Enum):
 
 class SessionStatus(Enum):
     """Session status."""
+
     IDLE = "idle"
     ACTIVE = "active"
     BUSY = "busy"
@@ -26,6 +28,7 @@ class SessionStatus(Enum):
 @dataclass
 class SessionConfig:
     """Configuration for a session."""
+
     session_id: str
     session_type: SessionType
     provider: str
@@ -41,6 +44,7 @@ class SessionConfig:
 @dataclass
 class SessionState:
     """Current state of a session."""
+
     session_id: str
     status: SessionStatus
     created_at: datetime

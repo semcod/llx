@@ -326,15 +326,11 @@ def _step_plan_validate(ctx: StepContext) -> StepOutput:
     require_scan = bool(ctx.step.params.get("require_scan") or False)
     fail_on_stale = bool(ctx.step.params.get("fail_on_stale") or False)
     cancel_stale = bool(
-        ctx.step.params.get("cancel_stale")
-        if "cancel_stale" in ctx.step.params
-        else True
+        ctx.step.params.get("cancel_stale") if "cancel_stale" in ctx.step.params else True
     )
     prune_stale = bool(ctx.step.params.get("prune_stale") or False)
     prune_unknown = bool(ctx.step.params.get("prune_unknown") or False)
-    backup = bool(
-        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
-    )
+    backup = bool(ctx.step.params.get("backup") if "backup" in ctx.step.params else True)
 
     report = validate_tickets_with_prefact(
         strategy_path=strategy,
@@ -408,9 +404,7 @@ def _step_plan_prune_stale(ctx: StepContext) -> StepOutput:
     from llx.planfile.ticket_pruner import prune_planfile_tickets
 
     strategy = str(ctx.step.params.get("strategy") or "planfile.yaml")
-    backup = bool(
-        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
-    )
+    backup = bool(ctx.step.params.get("backup") if "backup" in ctx.step.params else True)
 
     explicit_ids = ctx.step.params.get("ticket_ids")
     ids: set[str] = _coerce_skip_ids(explicit_ids) or set()
@@ -478,13 +472,9 @@ def _step_plan_clean(ctx: StepContext) -> StepOutput:
         statuses_iter = list(statuses_iter or ["canceled"]) + ["done"]
 
     update_todo = bool(
-        ctx.step.params.get("update_todo")
-        if "update_todo" in ctx.step.params
-        else True
+        ctx.step.params.get("update_todo") if "update_todo" in ctx.step.params else True
     )
-    backup = bool(
-        ctx.step.params.get("backup") if "backup" in ctx.step.params else True
-    )
+    backup = bool(ctx.step.params.get("backup") if "backup" in ctx.step.params else True)
     dry_run = bool(ctx.step.params.get("dry_run") or False)
     todo_path = ctx.step.params.get("todo_path")
 
@@ -577,8 +567,10 @@ def _step_plan_run(ctx: StepContext) -> StepOutput:
         status = getattr(result, "status", "unknown") or "unknown"
         counts[status] = counts.get(status, 0) + 1
 
-    overall = "success" if results and counts.get("failed", 0) == 0 else (
-        "failed" if counts.get("failed", 0) else "success"
+    overall = (
+        "success"
+        if results and counts.get("failed", 0) == 0
+        else ("failed" if counts.get("failed", 0) else "success")
     )
 
     return StepOutput(
@@ -663,22 +655,16 @@ def _step_testql(ctx: StepContext) -> StepOutput:
     url = str(ctx.step.params.get("url") or "http://localhost:8101")
     dry_run = bool(ctx.step.params.get("dry_run") or False)
     create_tickets = bool(
-        ctx.step.params.get("create_tickets")
-        if "create_tickets" in ctx.step.params
-        else True
+        ctx.step.params.get("create_tickets") if "create_tickets" in ctx.step.params else True
     )
     sync_targets = bool(
-        ctx.step.params.get("sync_targets")
-        if "sync_targets" in ctx.step.params
-        else True
+        ctx.step.params.get("sync_targets") if "sync_targets" in ctx.step.params else True
     )
     max_tickets = int(ctx.step.params.get("max_tickets") or 25)
     testql_bin = str(ctx.step.params.get("testql_bin") or "testql")
     testql_repo_path = ctx.step.params.get("testql_repo_path") or "/home/tom/github/semcod/testql"
     fail_on_failure = bool(
-        ctx.step.params.get("fail_on_failure")
-        if "fail_on_failure" in ctx.step.params
-        else True
+        ctx.step.params.get("fail_on_failure") if "fail_on_failure" in ctx.step.params else True
     )
 
     try:
@@ -865,11 +851,13 @@ def run_workflow(
                 on_failure=step.on_failure,
             )
             try:
-                output = handler(StepContext(
-                    project_root=project_root,
-                    step=resolved_step,
-                    outputs=outputs,
-                ))
+                output = handler(
+                    StepContext(
+                        project_root=project_root,
+                        step=resolved_step,
+                        outputs=outputs,
+                    )
+                )
             except Exception as exc:
                 output = StepOutput(status="failed", error=f"{type(exc).__name__}: {exc}")
         duration = time.perf_counter() - started

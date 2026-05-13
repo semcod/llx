@@ -3,8 +3,7 @@
 from pathlib import Path
 from typing import Any, List, Optional
 import logging
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 import yaml
 
@@ -63,15 +62,13 @@ def _append_task_note(target_task: dict, comment: str) -> None:
     if not isinstance(target_task["notes"], list):
         target_task["notes"] = [target_task["notes"]]
     from datetime import datetime
+
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     target_task["notes"].append(f"[{timestamp}] {comment}")
 
 
 def _update_task_in_planfile(
-    planfile_path: str | Path,
-    task_id: str,
-    status: str,
-    comment: str
+    planfile_path: str | Path, task_id: str, status: str, comment: str
 ) -> bool:
     """Update task status and add comment in planfile.
 
@@ -153,7 +150,7 @@ def _normalize_pattern_from_lookup(pattern: dict, task_lookup: dict) -> dict:
             "model_hints": pattern.get("model_hints", {}),
             "priority": _map_priority(task_data.get("priority", 3)),
             "file": task_data.get("file", ""),
-            "action": task_data.get("action", "")
+            "action": task_data.get("action", ""),
         }
     return {
         "id": pattern.get("id"),
@@ -161,7 +158,7 @@ def _normalize_pattern_from_lookup(pattern: dict, task_lookup: dict) -> dict:
         "description": pattern.get("description", ""),
         "task_type": pattern.get("task_type", "feature"),
         "model_hints": pattern.get("model_hints", {}),
-        "priority": pattern.get("priority", "medium")
+        "priority": pattern.get("priority", "medium"),
     }
 
 
@@ -174,7 +171,7 @@ def _normalize_v2_task(task: dict | str, strategy: dict) -> Optional[dict]:
             "description": task.get("description", ""),
             "task_type": task.get("type", "feature"),
             "model_hints": task.get("model_hints", {}),
-            "priority": task.get("priority", "medium")
+            "priority": task.get("priority", "medium"),
         }
     if isinstance(task, str):
         patterns = strategy.get("tasks", {}).get("patterns", [])
@@ -186,7 +183,7 @@ def _normalize_v2_task(task: dict | str, strategy: dict) -> Optional[dict]:
                     "description": pattern.get("description", ""),
                     "task_type": pattern.get("type", "feature"),
                     "model_hints": pattern.get("model_hints", {}),
-                    "priority": pattern.get("priority", "medium")
+                    "priority": pattern.get("priority", "medium"),
                 }
     return None
 
@@ -237,11 +234,14 @@ def _run_single_task_pattern(
     task_id = task.get("id")
     if not task_id:
         import hashlib
+
         stable_key = f"{task.get('name', 'Unnamed')}|{task.get('description', '')}"
         task_id = f"task-{hashlib.sha1(stable_key.encode('utf-8')).hexdigest()[:10]}"
 
     task_name = task.get("name", "Unnamed")
-    task_label = f"{task_id} ({task_name})" if task_id and task_id != task_name else (task_id or task_name)
+    task_label = (
+        f"{task_id} ({task_name})" if task_id and task_id != task_name else (task_id or task_name)
+    )
     task_with_id = task if task.get("id") else {**task, "id": task_id}
     if on_progress:
         on_progress(f"  [yellow]→[/yellow] {task_label}...")
@@ -253,7 +253,7 @@ def _run_single_task_pattern(
             model_override=model_override,
             dry_run=dry_run,
             backend=selected_backend,
-            project_root=project_path.resolve()
+            project_root=project_path.resolve(),
         )
         if on_progress:
             if result.status == "success":
@@ -261,7 +261,9 @@ def _run_single_task_pattern(
             elif result.status == "dry_run":
                 on_progress(f"  [blue]○[/blue] {task_label} (dry-run)")
             else:
-                on_progress(f"  [red]✗[/red] {task_label}: {result.error or result.validation_message}")
+                on_progress(
+                    f"  [red]✗[/red] {task_label}: {result.error or result.validation_message}"
+                )
         return result
     except Exception as e:
         logger.error(f"Task failed: {e}")
@@ -270,7 +272,9 @@ def _run_single_task_pattern(
         return None
 
 
-def _update_sprint_task_status(task: dict, result: TaskResult, strategy_path: str | Path, strategy: dict) -> None:
+def _update_sprint_task_status(
+    task: dict, result: TaskResult, strategy_path: str | Path, strategy: dict
+) -> None:
     """Update a sprint task's status and notes in-place and persist strategy."""
     task["status"] = result.status
     if "notes" not in task:
@@ -278,8 +282,11 @@ def _update_sprint_task_status(task: dict, result: TaskResult, strategy_path: st
     if not isinstance(task["notes"], list):
         task["notes"] = [task["notes"]]
     from datetime import datetime
+
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    task["notes"].append(f"[{ts}] {result.status}: {result.validation_message or result.error or 'no details'}")
+    task["notes"].append(
+        f"[{ts}] {result.status}: {result.validation_message or result.error or 'no details'}"
+    )
     _save_strategy(strategy_path, strategy)
 
 
@@ -306,7 +313,9 @@ def _execute_ticket_block(
         return []
 
     if on_progress:
-        on_progress(f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}")
+        on_progress(
+            f"\n[bold blue]Executing ticket:[/bold blue] {ticket_id} - {ticket.get('title', 'Unnamed')}"
+        )
 
     task_dict = {
         "id": ticket_id,
@@ -316,7 +325,7 @@ def _execute_ticket_block(
         "model_hints": {"tier": "balanced"},
         "priority": _map_priority(ticket.get("priority", 3)),
         "file": ticket.get("file", ""),
-        "action": ticket.get("action", "")
+        "action": ticket.get("action", ""),
     }
 
     try:
@@ -327,7 +336,7 @@ def _execute_ticket_block(
             model_override=model_override,
             dry_run=dry_run,
             backend=selected_backend,
-            project_root=project_path.resolve()
+            project_root=project_path.resolve(),
         )
         if on_progress:
             if result.status == "success":
@@ -335,12 +344,17 @@ def _execute_ticket_block(
             elif result.status == "dry_run":
                 on_progress(f"  [blue]○[/blue] {ticket_id} (dry-run)")
             else:
-                on_progress(f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}")
+                on_progress(
+                    f"  [red]✗[/red] {ticket_id}: {result.error or result.validation_message}"
+                )
 
         if not dry_run:
             from llx.planfile.executor.base import map_to_ticket_status
+
             ticket_status = map_to_ticket_status(result.status, result.file_changed)
-            _update_task_in_planfile(strategy_path, ticket_id, ticket_status, result.validation_message or "")
+            _update_task_in_planfile(
+                strategy_path, ticket_id, ticket_status, result.validation_message or ""
+            )
 
         return [result]
     except Exception as e:
@@ -362,7 +376,7 @@ def _select_execution_backend(use_aider: bool) -> str:
 
 def _extract_sprint_number(sprint: dict) -> int:
     """Extract numeric sprint number from sprint dict.
-    
+
     Tries 'sprint' field first, then extracts number from 'id' like 'sprint-1'.
     """
     if "sprint" in sprint:
@@ -405,11 +419,20 @@ def _execute_concurrent_tasks(
     total_tasks_processed = 0
     with ThreadPoolExecutor(max_workers=len(task_patterns)) as executor:
         futures = [
-            (task, executor.submit(
-                _run_single_task_pattern,
-                task, config, metrics, model_override, dry_run,
-                selected_backend, project_path, on_progress
-            ))
+            (
+                task,
+                executor.submit(
+                    _run_single_task_pattern,
+                    task,
+                    config,
+                    metrics,
+                    model_override,
+                    dry_run,
+                    selected_backend,
+                    project_path,
+                    on_progress,
+                ),
+            )
             for task in task_patterns
         ]
         for task, future in futures:
@@ -445,8 +468,14 @@ def _execute_sequential_tasks(
                 on_progress(f"[dim]Reached max_tasks limit ({max_tasks}), stopping.[/dim]")
             break
         result = _run_single_task_pattern(
-            task, config, metrics, model_override, dry_run,
-            selected_backend, project_path, on_progress
+            task,
+            config,
+            metrics,
+            model_override,
+            dry_run,
+            selected_backend,
+            project_path,
+            on_progress,
         )
         if result is not None:
             results.append(result)
@@ -484,8 +513,16 @@ def execute_strategy(
                 on_progress(f"[dim]Skipping {ticket_id}: pre-flight marked stale[/dim]")
             return []
         return _execute_ticket_block(
-            strategy, ticket_id, config, metrics, model_override,
-            dry_run, selected_backend, resolved_path, on_progress, strategy_path
+            strategy,
+            ticket_id,
+            config,
+            metrics,
+            model_override,
+            dry_run,
+            selected_backend,
+            resolved_path,
+            on_progress,
+            strategy_path,
         )
 
     all_results: List[TaskResult] = []
@@ -495,14 +532,18 @@ def execute_strategy(
 
         sprint_num = sprint.get("sprint", 0)
         if on_progress:
-            on_progress(f"\n[bold blue]Sprint {sprint_num}:[/bold blue] {sprint.get('name', 'Unnamed')}")
+            on_progress(
+                f"\n[bold blue]Sprint {sprint_num}:[/bold blue] {sprint.get('name', 'Unnamed')}"
+            )
 
         task_patterns = sprint.get("task_patterns", [])
         if skip_ids:
             filtered = [t for t in task_patterns if str(t.get("id") or "") not in skip_ids]
             dropped = len(task_patterns) - len(filtered)
             if dropped and on_progress:
-                on_progress(f"[dim]Pre-flight: skipped {dropped} stale task(s) in sprint {sprint_num}[/dim]")
+                on_progress(
+                    f"[dim]Pre-flight: skipped {dropped} stale task(s) in sprint {sprint_num}[/dim]"
+                )
             task_patterns = filtered
         if not task_patterns:
             if on_progress:
@@ -511,15 +552,31 @@ def execute_strategy(
 
         if max_concurrent > 1:
             sprint_results = _execute_concurrent_tasks(
-                task_patterns, config, metrics, model_override, dry_run,
-                selected_backend, resolved_path, on_progress, max_tasks,
-                strategy_path, strategy,
+                task_patterns,
+                config,
+                metrics,
+                model_override,
+                dry_run,
+                selected_backend,
+                resolved_path,
+                on_progress,
+                max_tasks,
+                strategy_path,
+                strategy,
             )
         else:
             sprint_results = _execute_sequential_tasks(
-                task_patterns, config, metrics, model_override, dry_run,
-                selected_backend, resolved_path, on_progress, max_tasks,
-                strategy_path, strategy,
+                task_patterns,
+                config,
+                metrics,
+                model_override,
+                dry_run,
+                selected_backend,
+                resolved_path,
+                on_progress,
+                max_tasks,
+                strategy_path,
+                strategy,
             )
         all_results.extend(sprint_results)
         if max_tasks is not None and len(all_results) >= max_tasks:

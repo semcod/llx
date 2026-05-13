@@ -23,7 +23,6 @@ import logging
 
 import typer
 from rich.console import Console
-from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from dotenv import load_dotenv
@@ -35,11 +34,21 @@ from llx.analysis.collector import analyze_project
 from llx.config import LlxConfig
 from llx.routing.selector import ModelTier, select_model, select_with_context_check
 from llx.cli.strategy_commands import strategy_app
-from llx.planfile.model_selector import ModelSelector, FREE_FILTER, CHEAP_FILTER, BALANCED_FILTER, LOCAL_FILTER
+from llx.planfile.model_selector import (
+    ModelSelector,
+    FREE_FILTER,
+    CHEAP_FILTER,
+    BALANCED_FILTER,
+    LOCAL_FILTER,
+)
 from llx.routing.client import LlxClient, ChatMessage
 
 console = Console()
-app = typer.Typer(name="llx", help="Intelligent LLM model router driven by real code metrics.", no_args_is_help=True)
+app = typer.Typer(
+    name="llx",
+    help="Intelligent LLM model router driven by real code metrics.",
+    no_args_is_help=True,
+)
 proxy_app = typer.Typer(help="Manage LiteLLM proxy server.")
 mcp_app = typer.Typer(help="MCP server management.")
 plan_app = typer.Typer(help="planfile strategy management.")
@@ -53,6 +62,7 @@ def _show_version_banner() -> None:
     """Show version banner if update is available."""
     try:
         from llx.cli.version_check import check_version, get_update_command
+
         outdated = check_version()
         if outdated:
             current, latest = outdated
@@ -62,7 +72,7 @@ def _show_version_banner() -> None:
                     f"[yellow]⚠ Update available:[/yellow] llx {current} → {latest}\n\n"
                     f"Run: [cyan]{update_cmd}[/cyan]",
                     title="Version Check",
-                    border_style="yellow"
+                    border_style="yellow",
                 )
             )
     except Exception:
@@ -77,6 +87,7 @@ _show_version_banner()
 def _run_analysis_tools(project_path: Path, config: LlxConfig) -> None:
     """Run code2llm/redup/vallm analysis tools."""
     from llx.analysis.runner import run_all_tools
+
     output_dir = project_path / ".llx"
 
     def on_progress(tool: str, status: str) -> None:
@@ -91,16 +102,23 @@ def _run_analysis_tools(project_path: Path, config: LlxConfig) -> None:
 @app.command()
 def analyze(
     path: str = typer.Argument(".", help="Project path to analyze"),
-    toon_dir: Optional[str] = typer.Option(None, "--toon-dir", "-t", help="Directory with .toon files"),
-    task: Optional[str] = typer.Option(None, "--task", help="Task hint: refactor, explain, quick_fix, review"),
+    toon_dir: Optional[str] = typer.Option(
+        None, "--toon-dir", "-t", help="Directory with .toon files"
+    ),
+    task: Optional[str] = typer.Option(
+        None, "--task", help="Task hint: refactor, explain, quick_fix, review"
+    ),
     local: bool = typer.Option(False, "--local", "-l", help="Force local model"),
-    max_tier: Optional[str] = typer.Option(None, "--max-tier", help="Max tier: free, cheap, balanced, premium"),
+    max_tier: Optional[str] = typer.Option(
+        None, "--max-tier", help="Max tier: free, cheap, balanced, premium"
+    ),
     run_tools: bool = typer.Option(False, "--run", "-r", help="Run code2llm/redup/vallm first"),
     verbose: bool = typer.Option(False, "--verbose", "-v"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
 ) -> None:
     """Analyze a project and recommend the optimal LLM model."""
     from llx.cli.formatters import output_json, output_rich
+
     project_path = Path(path).resolve()
     config = LlxConfig.load(project_path)
     config.verbose = config.verbose or verbose
@@ -112,7 +130,9 @@ def analyze(
         metrics = analyze_project(project_path, toon_dir=toon_dir)
 
     tier_limit = ModelTier(max_tier) if max_tier else None
-    result = select_with_context_check(metrics, config, prefer_local=local, max_tier=tier_limit, task_hint=task)
+    result = select_with_context_check(
+        metrics, config, prefer_local=local, max_tier=tier_limit, task_hint=task
+    )
 
     if json_output:
         output_json(metrics, result)
@@ -161,7 +181,9 @@ def chat(
     metrics = analyze_project(project_path, toon_dir=toon_dir)
 
     if free:
-        result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task, force_tier=ModelTier.FREE)
+        result = select_with_context_check(
+            metrics, config, prefer_local=local, task_hint=task, force_tier=ModelTier.FREE
+        )
     else:
         result = select_with_context_check(metrics, config, prefer_local=local, task_hint=task)
 
@@ -169,13 +191,16 @@ def chat(
     console.print(f"[bold]Model:[/bold] {model_id}  [dim]({result.tier.value})[/dim]")
 
     from llx.integrations.context_builder import build_context
+
     context = build_context(project_path, metrics, result.tier)
 
     with LlxClient(config) as client:
         with console.status(f"Querying {model_id}..."):
             response = client.chat_with_context(prompt, context, model=model_id)
     console.print(Panel(response.content, title="Response", border_style="green"))
-    console.print(f"[dim]Tokens: {response.prompt_tokens:,} in → {response.completion_tokens:,} out[/dim]")
+    console.print(
+        f"[dim]Tokens: {response.prompt_tokens:,} in → {response.completion_tokens:,} out[/dim]"
+    )
 
 
 @proxy_app.command("start")
@@ -186,6 +211,7 @@ def proxy_start(
 ) -> None:
     """Start LiteLLM proxy server with llx configuration."""
     from llx.integrations.proxy import start_proxy
+
     config = LlxConfig.load(".")
     config.proxy.port = port
     conf = Path(config_path) if config_path else None
@@ -203,6 +229,7 @@ def proxy_start(
 def proxy_config(output: str = typer.Option("litellm_config.yaml", "--output", "-o")) -> None:
     """Generate LiteLLM proxy config."""
     from llx.integrations.proxy import generate_proxy_config
+
     config = LlxConfig.load(".")
     generate_proxy_config(config, Path(output))
     console.print(f"[green]Config written to {output}[/green]")
@@ -212,6 +239,7 @@ def proxy_config(output: str = typer.Option("litellm_config.yaml", "--output", "
 def proxy_status() -> None:
     """Check if proxy is running."""
     from llx.integrations.proxy import check_proxy
+
     config = LlxConfig.load(".")
     running = check_proxy(config.litellm_base_url)
     icon = "[green]✓[/green]" if running else "[red]✗[/red]"
@@ -252,6 +280,7 @@ def plan_review(
 ) -> None:
     """Review strategy against project."""
     from llx.planfile import load_valid_strategy
+
     try:
         strat = load_valid_strategy(strategy)
         console.print(f"[green]✓[/green] Strategy '{strat.name}' loaded successfully")
@@ -271,16 +300,23 @@ def plan_execute(
 ) -> None:
     """Execute strategy to create tickets."""
     from llx.planfile import run_strategy
+
     console.print(f"[bold]Executing strategy:[/bold] {strategy}")
     run_strategy(
-        strategy_path=strategy,
-        project_path=str(project_path),
-        backend=backend,
-        dry_run=dry_run
+        strategy_path=strategy, project_path=str(project_path), backend=backend, dry_run=dry_run
     )
 
 
-def _print_run_params(strategy: str, project_path: Path, ticket_id: Optional[str], sprint: Optional[int], tier: Optional[str], dry_run: bool, use_aider: bool, console: Console) -> Any:
+def _print_run_params(
+    strategy: str,
+    project_path: Path,
+    ticket_id: Optional[str],
+    sprint: Optional[int],
+    tier: Optional[str],
+    dry_run: bool,
+    use_aider: bool,
+    console: Console,
+) -> Any:
     """Print plan_run parameter summary and detect backends if needed."""
     console.print(f"[bold]Running planfile:[/bold] {strategy}")
     console.print(f"[dim]Project:[/dim] {project_path}")
@@ -291,10 +327,11 @@ def _print_run_params(strategy: str, project_path: Path, ticket_id: Optional[str
     if tier:
         console.print(f"[dim]Tier:[/dim] {tier}")
     if dry_run:
-        console.print(f"[dim]Mode:[/dim] dry-run")
+        console.print("[dim]Mode:[/dim] dry-run")
     if use_aider:
-        console.print(f"[dim]Code editing:[/dim] auto-detecting backend...")
+        console.print("[dim]Code editing:[/dim] auto-detecting backend...")
         from llx.planfile.executor_simple import _detect_available_backends
+
         backends = _detect_available_backends()
         available = [k for k, v in backends.items() if v]
         console.print(f"[dim]Available backends:[/dim] {', '.join(available)}")
@@ -302,11 +339,14 @@ def _print_run_params(strategy: str, project_path: Path, ticket_id: Optional[str
     return None
 
 
-def _ensure_proxy_running(config: LlxConfig, dry_run: bool, auto_start_proxy: bool, console: Console) -> None:
+def _ensure_proxy_running(
+    config: LlxConfig, dry_run: bool, auto_start_proxy: bool, console: Console
+) -> None:
     """Auto-start proxy if not running (unless dry-run or disabled)."""
     if dry_run or not auto_start_proxy:
         return
     from llx.integrations.proxy import check_proxy, start_proxy
+
     proxy_url = config.litellm_base_url
     if check_proxy(proxy_url):
         return
@@ -318,15 +358,17 @@ def _ensure_proxy_running(config: LlxConfig, dry_run: bool, auto_start_proxy: bo
             console.print(f"[green]✓ Proxy started (PID {proc.pid})[/green]")
         else:
             console.print("[red]✗ Failed to start proxy[/red]")
-            console.print(f"[dim]Run manually: llx proxy start[/dim]")
+            console.print("[dim]Run manually: llx proxy start[/dim]")
             raise typer.Exit(1)
     except Exception as e:
         console.print(f"[red]✗ Failed to start proxy: {e}[/red]")
-        console.print(f"[dim]Run manually: llx proxy start[/dim]")
+        console.print("[dim]Run manually: llx proxy start[/dim]")
         raise typer.Exit(1)
 
 
-def _resolve_tier_override(tier: Optional[str], config: LlxConfig, console: Console) -> Optional[str]:
+def _resolve_tier_override(
+    tier: Optional[str], config: LlxConfig, console: Console
+) -> Optional[str]:
     """Map tier alias to model override id."""
     if not tier:
         return None
@@ -392,7 +434,9 @@ def _persist_failed_results(results, strategy: str) -> None:
 
         # Build contextual comment for the status change
         if result.status == "no_changes":
-            comment = f"Ticket canceled: {result.validation_message or 'Issue not found in codebase'}"
+            comment = (
+                f"Ticket canceled: {result.validation_message or 'Issue not found in codebase'}"
+            )
         elif result.status == "failed":
             comment = f"Execution blocked: {result.error or 'Technical error - can retry'}"
         else:
@@ -409,14 +453,16 @@ def _persist_failed_results(results, strategy: str) -> None:
 # Field whitelist whose strings get aggressively trimmed when rendering the
 # YAML payload inside markdown output (full data is still emitted by
 # `--format yaml` and `--output-yaml`).
-_MARKDOWN_TRUNCATE_FIELDS: frozenset[str] = frozenset({
-    "response",
-    "message",
-    "validation_message",
-    "error",
-    "stdout",
-    "stderr",
-})
+_MARKDOWN_TRUNCATE_FIELDS: frozenset[str] = frozenset(
+    {
+        "response",
+        "message",
+        "validation_message",
+        "error",
+        "stdout",
+        "stderr",
+    }
+)
 
 _MARKDOWN_TRUNCATE_LIMIT = 240
 
@@ -436,9 +482,7 @@ def _truncate_long_strings_for_markdown(
     """
     if isinstance(value, dict):
         return {
-            key: _truncate_long_strings_for_markdown(
-                item, limit=limit, parent_field=str(key)
-            )
+            key: _truncate_long_strings_for_markdown(item, limit=limit, parent_field=str(key))
             for key, item in value.items()
         }
     if isinstance(value, list):
@@ -451,13 +495,11 @@ def _truncate_long_strings_for_markdown(
             _truncate_long_strings_for_markdown(item, limit=limit, parent_field=parent_field)
             for item in value
         )
-    if (
-        isinstance(value, str)
-        and parent_field in _MARKDOWN_TRUNCATE_FIELDS
-        and len(value) > limit
-    ):
+    if isinstance(value, str) and parent_field in _MARKDOWN_TRUNCATE_FIELDS and len(value) > limit:
         omitted = len(value) - limit
-        suffix = f"… <truncated {omitted} chars; use --format yaml or --output-yaml for full output>"
+        suffix = (
+            f"… <truncated {omitted} chars; use --format yaml or --output-yaml for full output>"
+        )
         return value[:limit].rstrip() + suffix
     return value
 
@@ -541,9 +583,7 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
     total = int(summary.get("total") or 0)
 
     compact_payload = _drop_nullish_for_markdown(_truncate_long_strings_for_markdown(payload))
-    yaml_payload = _yaml.safe_dump(
-        compact_payload, sort_keys=False, allow_unicode=True
-    ).rstrip()
+    yaml_payload = _yaml.safe_dump(compact_payload, sort_keys=False, allow_unicode=True).rstrip()
 
     lines = [
         "## Execution Summary",
@@ -555,10 +595,12 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
     if payload.get("sprint") is not None:
         lines.append(f"- **Sprint:** {payload['sprint']}")
 
-    lines.extend([
-        f"- **Timestamp:** {payload.get('timestamp', 'N/A')}",
-        f"- **Total Tasks:** {total}",
-    ])
+    lines.extend(
+        [
+            f"- **Timestamp:** {payload.get('timestamp', 'N/A')}",
+            f"- **Total Tasks:** {total}",
+        ]
+    )
 
     status_icons = {
         "success": "✓ Success",
@@ -575,13 +617,15 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
         if summary.get(status, 0) > 0
     ]
     if rows:
-        lines.extend([
-            "",
-            "### Status Counts",
-            "",
-            "| Status | Count |",
-            "|--------|-------|",
-        ])
+        lines.extend(
+            [
+                "",
+                "### Status Counts",
+                "",
+                "| Status | Count |",
+                "|--------|-------|",
+            ]
+        )
         lines.extend(f"| {label} | {count} |" for label, count in rows)
     elif total == 0:
         lines.extend(["", "_No tasks executed._"])
@@ -590,15 +634,17 @@ def _build_results_markdown(payload: dict[str, Any]) -> str:
     if isinstance(freshness_report, dict):
         lines.extend(_build_freshness_summary_lines(freshness_report))
 
-    lines.extend([
-        "",
-        "### Results Payload",
-        "",
-        "```yaml",
-        yaml_payload,
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "### Results Payload",
+            "",
+            "```yaml",
+            yaml_payload,
+            "```",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -620,8 +666,8 @@ def _split_markdown_around_codeblock(markdown: str) -> tuple[str, Optional[str],
         return markdown, None, ""
 
     prefix = "\n".join(lines[:start]).rstrip() + "\n\n"
-    code = "\n".join(lines[start + 1:end])
-    suffix_text = "\n".join(lines[end + 1:]).rstrip()
+    code = "\n".join(lines[start + 1 : end])
+    suffix_text = "\n".join(lines[end + 1 :]).rstrip()
     suffix = ("\n" + suffix_text + "\n") if suffix_text else "\n"
     return prefix, code, suffix
 
@@ -638,7 +684,7 @@ def _render_markdown_inline(text: str) -> "Text":
     pos = 0
     for match in _MD_INLINE_RE.finditer(text):
         if match.start() > pos:
-            out.append(text[pos:match.start()])
+            out.append(text[pos : match.start()])
         bold, italic, code = match.group(1), match.group(2), match.group(3)
         if bold is not None:
             out.append(bold, style="bold")
@@ -731,6 +777,7 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
     console.print("\n[bold]Results:[/bold]")
     if use_aider and backends:
         from llx.planfile.executor_simple import _select_best_backend
+
         selected = _select_best_backend(backends)
         console.print(f"[dim]Backend used:[/dim] {selected}")
 
@@ -766,7 +813,11 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
                 color, icon = detail_colors[result.status]
                 label = result.task_name
                 if result.ticket_id:
-                    label = f"{result.ticket_id} ({result.task_name})" if result.ticket_id != result.task_name else result.ticket_id
+                    label = (
+                        f"{result.ticket_id} ({result.task_name})"
+                        if result.ticket_id != result.task_name
+                        else result.ticket_id
+                    )
                 console.print(f"  [{color}]{icon} {label}:[/{color}] {result.validation_message}")
 
     if counts["failed"] > 0:
@@ -775,7 +826,11 @@ def _print_results_summary(results, use_aider: bool, backends, console: Console)
             if result.status == "failed":
                 label = result.task_name
                 if result.ticket_id:
-                    label = f"{result.ticket_id} ({result.task_name})" if result.ticket_id != result.task_name else result.ticket_id
+                    label = (
+                        f"{result.ticket_id} ({result.task_name})"
+                        if result.ticket_id != result.task_name
+                        else result.ticket_id
+                    )
                 console.print(f"    [red]✗ {label}:[/red] {result.error}")
 
 
@@ -825,7 +880,9 @@ def _build_results_payload(
     }
 
 
-def _sync_todo_from_planfile(strategy: str, project_path: Path, results, dry_run: bool, console: Console) -> None:
+def _sync_todo_from_planfile(
+    strategy: str, project_path: Path, results, dry_run: bool, console: Console
+) -> None:
     """Sync TODO.md checkboxes using planfile reusable API when enabled in config."""
     if dry_run:
         return
@@ -901,15 +958,17 @@ def _build_freshness_markdown(report: dict[str, Any]) -> str:
         lines.extend(["", "### Needs review", ""])
         lines.extend(f"- `{tid}`" for tid in review_ids)
 
-    lines.extend([
-        "",
-        "### Freshness Payload",
-        "",
-        "```yaml",
-        yaml_payload,
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "### Freshness Payload",
+            "",
+            "```yaml",
+            yaml_payload,
+            "```",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -1058,22 +1117,63 @@ def plan_run(
     strategy: str = typer.Argument(..., help="Strategy YAML file (or 'planfile.yaml')"),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
     sprint: Optional[int] = typer.Option(None, "--sprint", "-s", help="Run specific sprint only"),
-    ticket_id: Optional[str] = typer.Option(None, "--ticket-id", "-i", help="Execute specific ticket ID from tasks section"),
-    tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"),
+    ticket_id: Optional[str] = typer.Option(
+        None, "--ticket-id", "-i", help="Execute specific ticket ID from tasks section"
+    ),
+    tier: Optional[str] = typer.Option(
+        None, "--tier", "-t", help="Force model tier: free, cheap, balanced, premium"
+    ),
     dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Simulate without executing"),
-    auto_start_proxy: bool = typer.Option(True, "--no-auto-start-proxy", help="Disable automatic proxy startup"),
-    max_concurrent: int = typer.Option(1, "--max-concurrent", "-j", help="Maximum number of tasks to run concurrently (default: 1)"),
-    max_tasks: Optional[int] = typer.Option(None, "--max-tasks", "-n", help="Maximum total number of tasks to process (default: unlimited)"),
-    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to also save YAML results file"),
-    use_aider: bool = typer.Option(False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"),
+    auto_start_proxy: bool = typer.Option(
+        True, "--no-auto-start-proxy", help="Disable automatic proxy startup"
+    ),
+    max_concurrent: int = typer.Option(
+        1, "--max-concurrent", "-j", help="Maximum number of tasks to run concurrently (default: 1)"
+    ),
+    max_tasks: Optional[int] = typer.Option(
+        None,
+        "--max-tasks",
+        "-n",
+        help="Maximum total number of tasks to process (default: unlimited)",
+    ),
+    output_yaml: Optional[str] = typer.Option(
+        None, "--output-yaml", "-o", help="Optional path to also save YAML results file"
+    ),
+    use_aider: bool = typer.Option(
+        False, "--use-aider", "-a", help="Use aider for code editing instead of LLM chat"
+    ),
     format: str = typer.Option("markdown", "--format", "-f", help="Output format: yaml, markdown"),
-    validate: bool = typer.Option(True, "--validate/--no-validate", help="Pre-flight: scan code with prefact and skip stale tickets"),
-    cancel_stale: bool = typer.Option(True, "--cancel-stale/--no-cancel-stale", help="Mark stale tickets as canceled in the planfile during pre-flight (default: on)"),
-    prune_stale: bool = typer.Option(False, "--prune-stale", help="Physically delete stale tickets from the planfile during pre-flight"),
-    prune_unknown: bool = typer.Option(False, "--prune-unknown", help="Also delete tickets reported as 'unknown' (insufficient_data) during pre-flight"),
-    backup: bool = typer.Option(True, "--backup/--no-backup", help="Create planfile.yaml.bak.<ts> before pruning (default: on)"),
-    prefact_yaml: Optional[str] = typer.Option(None, "--prefact-yaml", help="Optional explicit prefact.yaml for pre-flight scan"),
-    prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path for subprocess fallback"),
+    validate: bool = typer.Option(
+        True,
+        "--validate/--no-validate",
+        help="Pre-flight: scan code with prefact and skip stale tickets",
+    ),
+    cancel_stale: bool = typer.Option(
+        True,
+        "--cancel-stale/--no-cancel-stale",
+        help="Mark stale tickets as canceled in the planfile during pre-flight (default: on)",
+    ),
+    prune_stale: bool = typer.Option(
+        False,
+        "--prune-stale",
+        help="Physically delete stale tickets from the planfile during pre-flight",
+    ),
+    prune_unknown: bool = typer.Option(
+        False,
+        "--prune-unknown",
+        help="Also delete tickets reported as 'unknown' (insufficient_data) during pre-flight",
+    ),
+    backup: bool = typer.Option(
+        True,
+        "--backup/--no-backup",
+        help="Create planfile.yaml.bak.<ts> before pruning (default: on)",
+    ),
+    prefact_yaml: Optional[str] = typer.Option(
+        None, "--prefact-yaml", help="Optional explicit prefact.yaml for pre-flight scan"
+    ),
+    prefact_bin: Optional[str] = typer.Option(
+        None, "--prefact-bin", help="Optional prefact executable name/path for subprocess fallback"
+    ),
 ) -> None:
     """Execute planfile tasks locally with LLM (simpler alternative to 'execute')."""
     from llx.planfile.executor_simple import execute_strategy
@@ -1083,7 +1183,9 @@ def plan_run(
     if strategy == ".":
         strategy = "planfile.yaml"
 
-    backends = _print_run_params(strategy, project_path, ticket_id, sprint, tier, dry_run, use_aider, run_console)
+    backends = _print_run_params(
+        strategy, project_path, ticket_id, sprint, tier, dry_run, use_aider, run_console
+    )
 
     config = LlxConfig.load(str(project_path))
     _ensure_proxy_running(config, dry_run, auto_start_proxy, run_console)
@@ -1201,15 +1303,39 @@ def plan_run(
 def plan_validate(
     strategy: str = typer.Argument("planfile.yaml", help="Strategy / planfile YAML"),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
-    ticket_id: Optional[str] = typer.Option(None, "--ticket-id", "-i", help="Validate only this ticket ID"),
-    prefact_yaml: Optional[str] = typer.Option(None, "--prefact-yaml", help="Optional explicit prefact.yaml"),
-    prefact_bin: Optional[str] = typer.Option(None, "--prefact-bin", help="Optional prefact executable name/path"),
-    require_scan: bool = typer.Option(False, "--require-scan", help="Fail if prefact scan cannot run"),
-    fail_on_stale: bool = typer.Option(False, "--fail-on-stale", help="Exit non-zero when stale tickets are detected"),
-    cancel_stale: bool = typer.Option(True, "--cancel-stale/--no-cancel-stale", help="Mark stale tickets as canceled in the planfile (default: on)"),
-    prune_stale: bool = typer.Option(False, "--prune-stale", help="Physically delete stale tickets from the planfile"),
-    prune_unknown: bool = typer.Option(False, "--prune-unknown", help="Also delete tickets reported as 'unknown' (insufficient_data)"),
-    backup: bool = typer.Option(True, "--backup/--no-backup", help="Create planfile.yaml.bak.<ts> before pruning (default: on)"),
+    ticket_id: Optional[str] = typer.Option(
+        None, "--ticket-id", "-i", help="Validate only this ticket ID"
+    ),
+    prefact_yaml: Optional[str] = typer.Option(
+        None, "--prefact-yaml", help="Optional explicit prefact.yaml"
+    ),
+    prefact_bin: Optional[str] = typer.Option(
+        None, "--prefact-bin", help="Optional prefact executable name/path"
+    ),
+    require_scan: bool = typer.Option(
+        False, "--require-scan", help="Fail if prefact scan cannot run"
+    ),
+    fail_on_stale: bool = typer.Option(
+        False, "--fail-on-stale", help="Exit non-zero when stale tickets are detected"
+    ),
+    cancel_stale: bool = typer.Option(
+        True,
+        "--cancel-stale/--no-cancel-stale",
+        help="Mark stale tickets as canceled in the planfile (default: on)",
+    ),
+    prune_stale: bool = typer.Option(
+        False, "--prune-stale", help="Physically delete stale tickets from the planfile"
+    ),
+    prune_unknown: bool = typer.Option(
+        False,
+        "--prune-unknown",
+        help="Also delete tickets reported as 'unknown' (insufficient_data)",
+    ),
+    backup: bool = typer.Option(
+        True,
+        "--backup/--no-backup",
+        help="Create planfile.yaml.bak.<ts> before pruning (default: on)",
+    ),
     fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
 ) -> None:
     """Validate ticket freshness against an actual prefact source-code scan."""
@@ -1293,15 +1419,17 @@ def _build_clean_markdown(report: dict[str, Any]) -> str:
         lines.extend(["", "### Matched ticket IDs", ""])
         lines.extend(f"- `{tid}`" for tid in matched)
 
-    lines.extend([
-        "",
-        "### Clean Payload",
-        "",
-        "```yaml",
-        yaml_payload,
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "### Clean Payload",
+            "",
+            "```yaml",
+            yaml_payload,
+            "```",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -1315,28 +1443,31 @@ def plan_clean(
     strategy: str = typer.Argument("planfile.yaml", help="Strategy / planfile YAML"),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
     statuses: list[str] = typer.Option(
-        ["canceled"], "--status", "-s",
-        help="Ticket statuses considered resolved (repeat for multiple). Default: 'canceled'."
+        ["canceled"],
+        "--status",
+        "-s",
+        help="Ticket statuses considered resolved (repeat for multiple). Default: 'canceled'.",
     ),
     include_done: bool = typer.Option(
-        False, "--include-done",
-        help="Also remove tickets with status 'done' (already-completed work)."
+        False,
+        "--include-done",
+        help="Also remove tickets with status 'done' (already-completed work).",
     ),
     update_todo: bool = typer.Option(
-        True, "--todo-sync/--no-todo-sync",
-        help="Also strip mentioning lines from TODO.md (default: on)."
+        True,
+        "--todo-sync/--no-todo-sync",
+        help="Also strip mentioning lines from TODO.md (default: on).",
     ),
     todo_path: Optional[str] = typer.Option(
-        None, "--todo-path",
-        help="Explicit TODO.md path (default: <project>/TODO.md)."
+        None, "--todo-path", help="Explicit TODO.md path (default: <project>/TODO.md)."
     ),
     backup: bool = typer.Option(
-        True, "--backup/--no-backup",
-        help="Write timestamped .bak.<ts> files before pruning (default: on)."
+        True,
+        "--backup/--no-backup",
+        help="Write timestamped .bak.<ts> files before pruning (default: on).",
     ),
     dry_run: bool = typer.Option(
-        False, "--dry-run", "-d",
-        help="Only compute counts; do not modify any file."
+        False, "--dry-run", "-d", help="Only compute counts; do not modify any file."
     ),
     fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
 ) -> None:
@@ -1388,13 +1519,33 @@ def plan_testql(
     strategy: str = typer.Option("planfile.yaml", "--strategy", "-s", help="Target planfile YAML"),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
     url: str = typer.Option("http://localhost:8101", "--url", help="Base API URL for TestQL"),
-    dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Parse/validate scenario without full execution"),
-    create_tickets: bool = typer.Option(True, "--create-tickets/--no-create-tickets", help="Create tickets in planfile.yaml for TestQL failures"),
-    sync_targets: bool = typer.Option(True, "--sync/--no-sync", help="Sync generated tickets to TODO.md first and configured integrations"),
-    max_tickets: int = typer.Option(25, "--max-tickets", help="Maximum tickets generated from one TestQL run"),
-    testql_bin: str = typer.Option("testql", "--testql-bin", help="TestQL CLI executable name/path"),
-    testql_repo_path: Path = typer.Option(Path("/home/tom/github/semcod/testql"), "--testql-repo-path", help="Fallback path to local TestQL repository"),
-    output_yaml: Optional[str] = typer.Option(None, "--output-yaml", "-o", help="Optional path to save YAML results file"),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", "-d", help="Parse/validate scenario without full execution"
+    ),
+    create_tickets: bool = typer.Option(
+        True,
+        "--create-tickets/--no-create-tickets",
+        help="Create tickets in planfile.yaml for TestQL failures",
+    ),
+    sync_targets: bool = typer.Option(
+        True,
+        "--sync/--no-sync",
+        help="Sync generated tickets to TODO.md first and configured integrations",
+    ),
+    max_tickets: int = typer.Option(
+        25, "--max-tickets", help="Maximum tickets generated from one TestQL run"
+    ),
+    testql_bin: str = typer.Option(
+        "testql", "--testql-bin", help="TestQL CLI executable name/path"
+    ),
+    testql_repo_path: Path = typer.Option(
+        Path("/home/tom/github/semcod/testql"),
+        "--testql-repo-path",
+        help="Fallback path to local TestQL repository",
+    ),
+    output_yaml: Optional[str] = typer.Option(
+        None, "--output-yaml", "-o", help="Optional path to save YAML results file"
+    ),
 ) -> None:
     """Validate changes with TestQL DSL and optionally create/sync planfile tickets."""
     run_console = Console(stderr=True)
@@ -1440,12 +1591,15 @@ def plan_testql(
 
 @app.command()
 def models(
-    tag: Optional[str] = typer.Argument(None, help="Filter models by tag (e.g., FAST, FREE, PROGRAMMING)"),
+    tag: Optional[str] = typer.Argument(
+        None, help="Filter models by tag (e.g., FAST, FREE, PROGRAMMING)"
+    ),
     provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider"),
     tier: Optional[str] = typer.Option(None, "--tier", "-t", help="Filter by tier"),
 ) -> None:
     """Show available models with optional filtering by tags, provider, or tier."""
     from llx.cli.formatters import print_models_table
+
     config = LlxConfig.load(".")
     print_models_table(config, tag=tag, provider=provider, tier=tier)
 
@@ -1454,6 +1608,7 @@ def models(
 def info() -> None:
     """Show available tools, models, and configuration."""
     from llx.cli.formatters import print_info_tables
+
     print_info_tables(LlxConfig.load("."))
 
 
@@ -1468,6 +1623,7 @@ def fix(
 ) -> None:
     """Fix code issues using LLX-driven model selection (pyqual integration)."""
     from llx.commands.fix import fix as fix_cmd
+
     fix_cmd(workdir, errors, apply, model, dry_run, verbose)
 
 
@@ -1512,15 +1668,17 @@ def _build_workflow_markdown(report_dict: dict[str, Any]) -> str:
                 f"{step.get('error') or step.get('summary') or 'no details'}"
             )
 
-    lines.extend([
-        "",
-        "### Workflow Payload",
-        "",
-        "```yaml",
-        yaml_payload,
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "### Workflow Payload",
+            "",
+            "```yaml",
+            yaml_payload,
+            "```",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -1531,12 +1689,18 @@ def _print_workflow_markdown(report_dict: dict[str, Any], target: Console) -> No
 
 @app.command("run")
 def run_workflow_cmd(
-    workflow_name: str = typer.Argument("default", help="Workflow name to run (default: 'default')"),
+    workflow_name: str = typer.Argument(
+        "default", help="Workflow name to run (default: 'default')"
+    ),
     project_path: Path = typer.Option(Path("."), "--project", "-p"),
-    config: Optional[str] = typer.Option(None, "--config", "-c", help="Workflow YAML file (default: <project>/llx.yaml)"),
+    config: Optional[str] = typer.Option(
+        None, "--config", "-c", help="Workflow YAML file (default: <project>/llx.yaml)"
+    ),
     list_only: bool = typer.Option(False, "--list", "-l", help="List available workflows and exit"),
     fmt: str = typer.Option("markdown", "--format", "-f", help="Output format: markdown, yaml"),
-    fail_fast: bool = typer.Option(True, "--fail-fast/--no-fail-fast", help="Exit non-zero on workflow failure"),
+    fail_fast: bool = typer.Option(
+        True, "--fail-fast/--no-fail-fast", help="Exit non-zero on workflow failure"
+    ),
 ) -> None:
     """Run a named workflow declared in llx.yaml under 'workflows:'."""
     from llx.workflows import (
@@ -1569,8 +1733,7 @@ def run_workflow_cmd(
 
     if not workflows:
         run_console.print(
-            f"[yellow]No workflows defined in {yaml_path}. "
-            "Add a 'workflows:' section.[/yellow]"
+            f"[yellow]No workflows defined in {yaml_path}. Add a 'workflows:' section.[/yellow]"
         )
         raise typer.Exit(2)
 
@@ -1622,7 +1785,7 @@ def init(path: str = typer.Argument(".", help="Project path")) -> None:
     console.print(f"[green]Created {config_path}[/green]")
 
 
-_LLX_TOML_TEMPLATE = '''# llx — Intelligent LLM model router configuration
+_LLX_TOML_TEMPLATE = """# llx — Intelligent LLM model router configuration
 # Docs: https://github.com/wronai/llx
 
 [thresholds]
@@ -1665,13 +1828,17 @@ model_id = "openrouter/deepseek/deepseek-chat-v3-0324"
 port = 4000
 # redis_url = "redis://localhost:6379"
 # budget_limit = 50.0
-'''
-
+"""
 
 
 def _get_model_for_profile(profile: Optional[str], selector: ModelSelector) -> str:
     """Get model for profile (free/cheap/balanced/local)."""
-    profile_map = {"free": FREE_FILTER, "cheap": CHEAP_FILTER, "balanced": BALANCED_FILTER, "local": LOCAL_FILTER}
+    profile_map = {
+        "free": FREE_FILTER,
+        "cheap": CHEAP_FILTER,
+        "balanced": BALANCED_FILTER,
+        "local": LOCAL_FILTER,
+    }
     model_filter = profile_map.get(profile or "free", FREE_FILTER)
     selected_model = selector.select_model(model_filter)
     if not selected_model:
@@ -1682,22 +1849,44 @@ def _get_model_for_profile(profile: Optional[str], selector: ModelSelector) -> s
 
 def _load_sprint_mapping(project_name: str, description: str) -> Dict[int, Tuple[str, str]]:
     """Load sprint mapping from config or use fallback."""
-    config_path = os.path.join(os.path.dirname(__file__), '..', 'configs', 'planfile_config.yaml')
+    config_path = os.path.join(os.path.dirname(__file__), "..", "configs", "planfile_config.yaml")
     try:
-        with open(config_path, 'r') as f:
+        with open(config_path, "r") as f:
             plan_config = _yaml.safe_load(f)
-        return {int(k): (v['file'], v['prompt']) for k, v in plan_config['code']['sprint_files'].items()}
+        return {
+            int(k): (v["file"], v["prompt"]) for k, v in plan_config["code"]["sprint_files"].items()
+        }
     except Exception as e:
         console.print(f"[dim]Note: Using fallback code generation mapping ({e})[/dim]")
         return {
-            1: ("main.py", "Generate a complete FastAPI main.py for '{project_name}' ({description}). Return only Python code."),
-            2: ("models.py", "Generate Pydantic models for '{project_name}' ({description}). Return only Python code."),
-            3: ("test_api.py", "Generate pytest tests for '{project_name}' ({description}). Return only Python code."),
-            4: ("Dockerfile", "Generate a Dockerfile for '{project_name}' FastAPI app. Return only Dockerfile."),
+            1: (
+                "main.py",
+                "Generate a complete FastAPI main.py for '{project_name}' ({description}). Return only Python code.",
+            ),
+            2: (
+                "models.py",
+                "Generate Pydantic models for '{project_name}' ({description}). Return only Python code.",
+            ),
+            3: (
+                "test_api.py",
+                "Generate pytest tests for '{project_name}' ({description}). Return only Python code.",
+            ),
+            4: (
+                "Dockerfile",
+                "Generate a Dockerfile for '{project_name}' FastAPI app. Return only Dockerfile.",
+            ),
         }
 
 
-def _generate_sprint_code(client: LlxClient, sprint: dict, sprint_files: Dict[int, Tuple[str, str]], project_name: str, description: str, out: Path, selected_model: str) -> None:
+def _generate_sprint_code(
+    client: LlxClient,
+    sprint: dict,
+    sprint_files: Dict[int, Tuple[str, str]],
+    project_name: str,
+    description: str,
+    out: Path,
+    selected_model: str,
+) -> None:
     """Generate code for a single sprint."""
     sid = sprint.get("id") or sprint.get("number", 0)
     file_info = sprint_files.get(sid)
@@ -1726,7 +1915,9 @@ def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Opt
     selector = ModelSelector(".")
     selected_model = model or _get_model_for_profile(profile, selector)
 
-    console.print(f"[bold]Generating code for:[/bold] {project_name}\n  Strategy: {strategy}\n  Output: {out.resolve()}\n  Model: {selected_model}\n")
+    console.print(
+        f"[bold]Generating code for:[/bold] {project_name}\n  Strategy: {strategy}\n  Output: {out.resolve()}\n  Model: {selected_model}\n"
+    )
 
     config = LlxConfig.load(".")
     if config.code_tool == "aider":
@@ -1737,9 +1928,13 @@ def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Opt
     sprint_files = _load_sprint_mapping(project_name, description)
     with LlxClient(config) as client:
         for sprint in strat.get("sprints", []):
-            _generate_sprint_code(client, sprint, sprint_files, project_name, description, out, selected_model)
+            _generate_sprint_code(
+                client, sprint, sprint_files, project_name, description, out, selected_model
+            )
 
-    (out / "requirements.txt").write_text("fastapi\nuvicorn[standard]\npydantic>=2.0\n", encoding="utf-8")
+    (out / "requirements.txt").write_text(
+        "fastapi\nuvicorn[standard]\npydantic>=2.0\n", encoding="utf-8"
+    )
     console.print(f"\n[bold green]✅ Code generated in {out.resolve()}[/bold green]")
 
 

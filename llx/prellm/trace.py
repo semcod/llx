@@ -41,6 +41,7 @@ def set_current_trace(trace: "TraceRecorder | None") -> None:
 @dataclass
 class TraceStep:
     """A single recorded step in the execution trace."""
+
     name: str
     step_type: str = "action"  # "config", "llm_call", "pipeline_step", "agent", "action", "result"
     description: str = ""
@@ -56,6 +57,7 @@ class TraceStep:
 @dataclass
 class TraceRecorder:
     """Records execution trace and generates markdown documentation."""
+
     query: str = ""
     start_time: float = 0.0
     end_time: float = 0.0
@@ -119,148 +121,160 @@ class TraceRecorder:
         """Generate markdown header section."""
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return [
-            f"# preLLM Execution Trace",
-            f"",
+            "# preLLM Execution Trace",
+            "",
             f"> **Query**: `{self.query}`",
             f"> **Timestamp**: {ts}",
             f"> **Total duration**: {self.total_duration_ms:.0f}ms",
-            f"",
+            "",
         ]
-    
+
     def _generate_markdown_config(self) -> list[str]:
         """Generate markdown configuration section."""
         if not self.config:
             return []
-        
+
         lines = [
-            f"## Configuration",
-            f"",
-            f"| Parameter | Value |",
-            f"|---|---|",
+            "## Configuration",
+            "",
+            "| Parameter | Value |",
+            "|---|---|",
         ]
-        
+
         for key, val in self.config.items():
             lines.append(f"| `{key}` | `{val}` |")
-        
-        lines.append(f"")
+
+        lines.append("")
         return lines
-    
+
     def _generate_markdown_step_details(self, step: TraceStep, step_num: int) -> list[str]:
         """Generate markdown details for a single step."""
         icon = _step_icon(step.status)
         type_badge = f"`{step.step_type}`"
-        
+
         lines = [
             f"### Step {step_num}: {step.name} {icon}",
-            f"",
+            "",
         ]
-        
+
         if step.description:
-            lines.extend([step.description, f""])
-        
-        lines.extend([
-            f"- **Type**: {type_badge}",
-            f"- **Status**: {step.status}",
-        ])
-        
+            lines.extend([step.description, ""])
+
+        lines.extend(
+            [
+                f"- **Type**: {type_badge}",
+                f"- **Status**: {step.status}",
+            ]
+        )
+
         if step.duration_ms > 0:
             lines.append(f"- **Duration**: {step.duration_ms:.0f}ms")
-        
+
         if step.error:
             lines.append(f"- **Error**: `{step.error}`")
-        
-        lines.append(f"")
-        
+
+        lines.append("")
+
         # Inputs
         if step.inputs:
-            lines.extend([
-                f"<details>",
-                f"<summary>Inputs</summary>",
-                f"",
-                f"```json",
-                _safe_json(step.inputs),
-                f"```",
-                f"</details>",
-                f"",
-            ])
-        
+            lines.extend(
+                [
+                    "<details>",
+                    "<summary>Inputs</summary>",
+                    "",
+                    "```json",
+                    _safe_json(step.inputs),
+                    "```",
+                    "</details>",
+                    "",
+                ]
+            )
+
         # Outputs
         if step.outputs:
-            lines.extend([
-                f"<details>",
-                f"<summary>Outputs</summary>",
-                f"",
-                f"```json",
-                _safe_json(step.outputs),
-                f"```",
-                f"</details>",
-                f"",
-            ])
-        
+            lines.extend(
+                [
+                    "<details>",
+                    "<summary>Outputs</summary>",
+                    "",
+                    "```json",
+                    _safe_json(step.outputs),
+                    "```",
+                    "</details>",
+                    "",
+                ]
+            )
+
         # Metadata
         if step.metadata:
             for mk, mv in step.metadata.items():
                 lines.append(f"- **{mk}**: `{mv}`")
-            lines.append(f"")
-        
-        lines.extend([f"---", f""])
+            lines.append("")
+
+        lines.extend(["---", ""])
         return lines
-    
+
     def _generate_markdown_decision_path(self) -> list[str]:
         """Generate markdown decision path section."""
-        lines = [f"## Decision Path", f""]
-        
+        lines = ["## Decision Path", ""]
+
         for i, step in enumerate(self.steps, 1):
             lines.extend(self._generate_markdown_step_details(step, i))
-        
+
         return lines
-    
+
     def _generate_markdown_result(self) -> list[str]:
         """Generate markdown result section."""
         if not self.result_summary:
             return []
-        
-        lines = [f"## Result", f""]
-        
+
+        lines = ["## Result", ""]
+
         content = self.result_summary.get("content", "")
         if content:
-            lines.extend([
-                f"**Response** ({len(content)} chars):",
-                f"",
-                f"```",
-                content,
-                f"```",
-                f"",
-            ])
-        
+            lines.extend(
+                [
+                    f"**Response** ({len(content)} chars):",
+                    "",
+                    "```",
+                    content,
+                    "```",
+                    "",
+                ]
+            )
+
         for key, val in self.result_summary.items():
             if key != "content":
                 lines.append(f"- **{key}**: `{val}`")
-        
-        lines.append(f"")
+
+        lines.append("")
         return lines
-    
+
     def _generate_markdown_summary(self) -> list[str]:
         """Generate markdown summary section."""
         lines = [
-            f"## Summary",
-            f"",
-            f"| # | Step | Type | Duration | Status |",
-            f"|---|---|---|---|---|",
+            "## Summary",
+            "",
+            "| # | Step | Type | Duration | Status |",
+            "|---|---|---|---|---|",
         ]
-        
+
         for i, step in enumerate(self.steps, 1):
             dur = f"{step.duration_ms:.0f}ms" if step.duration_ms > 0 else "—"
-            lines.append(f"| {i} | {step.name} | `{step.step_type}` | {dur} | {_step_icon(step.status)} {step.status} |")
-        
-        lines.extend([
-            f"",
-            f"**Total**: {self.total_duration_ms:.0f}ms",
-            f"",
-        ])
-        
+            lines.append(
+                f"| {i} | {step.name} | `{step.step_type}` | {dur} | {_step_icon(step.status)} {step.status} |"
+            )
+
+        lines.extend(
+            [
+                "",
+                f"**Total**: {self.total_duration_ms:.0f}ms",
+                "",
+            ]
+        )
+
         return lines
-    
+
     def to_markdown(self) -> str:
         """Generate full markdown trace document."""
         sections = [
@@ -270,12 +284,12 @@ class TraceRecorder:
             self._generate_markdown_result(),
             self._generate_markdown_summary(),
         ]
-        
+
         # Combine all sections
         lines = []
         for section in sections:
             lines.extend(section)
-        
+
         return "\n".join(lines)
 
     def _collect_trace_data(self) -> dict:
@@ -323,11 +337,11 @@ class TraceRecorder:
         small = self.config.get("small_llm", "?")
         large = self.config.get("large_llm", "?")
         strategy = self.config.get("strategy", "?")
-        
+
         lines = [
             "",
             f"{'═' * W}",
-            f"  🧠 preLLM Trace",
+            "  🧠 preLLM Trace",
             f"{'─' * W}",
             f"  Query:    {self.query}",
             f"  Strategy: {strategy}",
@@ -335,16 +349,16 @@ class TraceRecorder:
             f"{'═' * W}",
         ]
         return lines
-    
+
     def _generate_decision_tree(self, W: int) -> list[str]:
         """Generate decision tree visualization."""
         lines = [
             "",
-            f"  📊 Decision Tree",
+            "  📊 Decision Tree",
             f"  {'─' * (W - 4)}",
             "",
         ]
-        
+
         # Collect data from steps for the tree
         data = self._collect_trace_data()
         classification = data["classification"]
@@ -355,99 +369,107 @@ class TraceRecorder:
         prep_ms = data["prep_ms"]
         exec_ms = data["exec_ms"]
         pipeline_steps = data["pipeline_steps"]
-        
+
         small = self.config.get("small_llm", "?")
         large = self.config.get("large_llm", "?")
         strategy = self.config.get("strategy", "?")
-        
+
         # USER node
-        lines.extend([
-            f"  👤 USER",
-            f"  │",
-            f"  │  \"{self.query}\"",
-            f"  │",
-            f"  ▼",
-        ])
-        
+        lines.extend(
+            [
+                "  👤 USER",
+                "  │",
+                f'  │  "{self.query}"',
+                "  │",
+                "  ▼",
+            ]
+        )
+
         # Small LLM node
-        lines.extend([
-            f"  🤖 Small LLM: {small}",
-            f"  │  Strategy: {strategy} | Time: {prep_ms:.0f}ms",
-            f"  │",
-        ])
-        
+        lines.extend(
+            [
+                f"  🤖 Small LLM: {small}",
+                f"  │  Strategy: {strategy} | Time: {prep_ms:.0f}ms",
+                "  │",
+            ]
+        )
+
         # Show pipeline sub-steps
         for i, ps in enumerate(pipeline_steps):
-            is_last = (i == len(pipeline_steps) - 1)
+            is_last = i == len(pipeline_steps) - 1
             icon = _step_icon(ps.status)
             step_name = ps.name.replace("Pipeline: ", "")
             connector = "└" if is_last else "├"
             cont = " " if is_last else "│"
-            
+
             lines.append(f"  │  {connector}── {icon} {step_name}")
-            
+
             # Show key output for this sub-step
             for key, val in ps.outputs.items():
                 val_str = _format_tree_value(val)
                 lines.append(f"  │  {cont}   {key}: {val_str}")
-            
+
             if ps.error:
                 lines.append(f"  │  {cont}   ✗ {ps.error}")
-        
-        lines.append(f"  │")
-        
+
+        lines.append("  │")
+
         # Show query transformation
         if composed_prompt:
             prompt_text = _extract_prompt_text(composed_prompt)
             if prompt_text and prompt_text != self.query:
-                lines.append(f"  │  📝 Composed prompt:")
+                lines.append("  │  📝 Composed prompt:")
                 for pline in _wrap_text(prompt_text, W - 10):
                     lines.append(f"  │     {pline}")
-                lines.append(f"  │")
-        
-        lines.extend([
-            f"  ▼",
-            f"  🧠 Large LLM: {large}",
-            f"  │  Time: {exec_ms:.0f}ms",
-            f"  │",
-            f"  ▼",
-            f"  📋 RESULT",
-            f"  {'─' * (W - 4)}",
-        ])
-        
+                lines.append("  │")
+
+        lines.extend(
+            [
+                "  ▼",
+                f"  🧠 Large LLM: {large}",
+                f"  │  Time: {exec_ms:.0f}ms",
+                "  │",
+                "  ▼",
+                "  📋 RESULT",
+                f"  {'─' * (W - 4)}",
+            ]
+        )
+
         return lines
-    
+
     def _generate_response_section(self, W: int) -> list[str]:
         """Generate response content section."""
         lines = [""]
-        
+
         data = self._collect_trace_data()
         final_content = data["final_content"]
-        
+
         if final_content:
-            lines.extend([
-                f"  📄 Response ({len(final_content)} chars):",
-                f"  {'─' * (W - 4)}",
-            ])
+            lines.extend(
+                [
+                    f"  📄 Response ({len(final_content)} chars):",
+                    f"  {'─' * (W - 4)}",
+                ]
+            )
             # Show full content with proper indentation
             for cline in final_content.split("\n"):
                 lines.append(f"  {cline}")
             lines.append(f"  {'─' * (W - 4)}")
-        
+
         return lines
-    
+
     def _generate_timing_breakdown(self, W: int) -> list[str]:
         """Generate timing breakdown section."""
         total_ms = self.total_duration_ms
         data = self._collect_trace_data()
         prep_ms = data["prep_ms"]
         exec_ms = data["exec_ms"]
-        
+
         lines = [
-            f"  ⏱  Timing Breakdown",
+            "  ⏱  Timing Breakdown",
             f"  {'─' * (W - 4)}",
         ]
-        
+
         timing_entries = []
         if prep_ms > 0:
             timing_entries.append(("Small LLM (preprocess)", prep_ms))
@@ -456,33 +478,35 @@ class TraceRecorder:
         overhead = total_ms - prep_ms - exec_ms
         if overhead > 50:
             timing_entries.append(("Overhead (context/io)", overhead))
-        
+
         # Use max of wall-clock and sum-of-steps as denominator
         sum_ms = sum(ms for _, ms in timing_entries)
         denom = max(total_ms, sum_ms, 1)
         bar_width = min(max(W - 55, 10), 40)
-        
+
         for label, ms in timing_entries:
-            pct = (ms / denom * 100)
+            pct = ms / denom * 100
             filled = max(0, min(bar_width, int(bar_width * ms / denom)))
             bar = "#" * filled + "." * (bar_width - filled)
             lines.append(f"  {label:<28s} [{bar}] {ms:>7.0f}ms ({pct:4.1f}%)")
-        
-        lines.extend([
-            f"  {'─' * (W - 4)}",
-            f"  {'Total:':<28s} {'':>{bar_width + 2}s} {total_ms:>7.0f}ms",
-        ])
-        
+
+        lines.extend(
+            [
+                f"  {'─' * (W - 4)}",
+                f"  {'Total:':<28s} {'':>{bar_width + 2}s} {total_ms:>7.0f}ms",
+            ]
+        )
+
         return lines
-    
+
     def _generate_step_log(self, W: int) -> list[str]:
         """Generate step log section."""
         lines = [
             "",
-            f"  📝 Step Log",
+            "  📝 Step Log",
             f"  {'─' * (W - 4)}",
         ]
-        
+
         for i, s in enumerate(self.steps, 1):
             icon = _step_icon(s.status)
             dur = f" ({s.duration_ms:.0f}ms)" if s.duration_ms > 0 else ""
@@ -490,16 +514,16 @@ class TraceRecorder:
             lines.append(f"  {i:>2}. {icon} {s.name}{dur}  {type_tag}")
             if s.error:
                 lines.append(f"      ✗ {s.error}")
-        
+
         return lines
-    
+
     def _generate_footer(self, W: int) -> list[str]:
         """Generate footer section."""
         total_ms = self.total_duration_ms
         model = self.result_summary.get("model_used", "")
         small_model = self.result_summary.get("small_model_used", "")
         retries = self.result_summary.get("retries", 0)
-        
+
         lines = [
             "",
             f"{'═' * W}",
@@ -508,11 +532,11 @@ class TraceRecorder:
             "",
         ]
         return lines
-    
+
     def to_stdout(self) -> str:
         """Generate rich terminal trace with decision tree visualization."""
         W = min(shutil.get_terminal_size(fallback=(100, 24)).columns, 120)
-        
+
         # Build all sections
         sections = [
             self._generate_header(W),
@@ -522,12 +546,12 @@ class TraceRecorder:
             self._generate_step_log(W),
             self._generate_footer(W),
         ]
-        
+
         # Combine all sections
         lines = []
         for section in sections:
             lines.extend(section)
-        
+
         return "\n".join(lines)
 
     def save(self, output_dir: Path | str | None = None) -> Path:

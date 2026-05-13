@@ -119,7 +119,9 @@ class UserMemory:
             doc_id = f"interaction_{int(ts * 1000)}"
             self._chroma_collection.add(
                 documents=[f"{query}\n---\n{response_summary}"],
-                metadatas=[{**{k: str(v) for k, v in meta.items()}, "timestamp": str(ts), "query": query}],
+                metadatas=[
+                    {**{k: str(v) for k, v in meta.items()}, "timestamp": str(ts), "query": query}
+                ],
                 ids=[doc_id],
             )
             logger.debug(f"Stored interaction (chromadb): {query[:80]}...")
@@ -150,12 +152,16 @@ class UserMemory:
                 for i, doc in enumerate(results["documents"][0]):
                     meta = results["metadatas"][0][i] if results["metadatas"] else {}
                     parts = doc.split("\n---\n", 1)
-                    items.append({
-                        "query": meta.get("query", parts[0] if parts else ""),
-                        "response_summary": parts[1] if len(parts) > 1 else "",
-                        "metadata": {k: v for k, v in meta.items() if k not in ("timestamp", "query")},
-                        "timestamp": float(meta.get("timestamp", 0)),
-                    })
+                    items.append(
+                        {
+                            "query": meta.get("query", parts[0] if parts else ""),
+                            "response_summary": parts[1] if len(parts) > 1 else "",
+                            "metadata": {
+                                k: v for k, v in meta.items() if k not in ("timestamp", "query")
+                            },
+                            "timestamp": float(meta.get("timestamp", 0)),
+                        }
+                    )
                 return items
             except Exception as e:
                 logger.warning(f"ChromaDB query failed: {e}")
@@ -171,12 +177,14 @@ class UserMemory:
         )
         results = []
         for row in cursor.fetchall():
-            results.append({
-                "query": row["query"],
-                "response_summary": row["response_summary"],
-                "metadata": json.loads(row["metadata_json"]),
-                "timestamp": row["timestamp"],
-            })
+            results.append(
+                {
+                    "query": row["query"],
+                    "response_summary": row["response_summary"],
+                    "metadata": json.loads(row["metadata_json"]),
+                    "timestamp": row["timestamp"],
+                }
+            )
         return results
 
     async def get_user_preferences(self) -> dict[str, str]:
@@ -247,7 +255,9 @@ class UserMemory:
             )
         for key, value in snapshot.preferences.items():
             await self.set_preference(key, value)
-        logger.info(f"Imported session '{snapshot.session_id}': {len(snapshot.interactions)} interactions, {len(snapshot.preferences)} preferences")
+        logger.info(
+            f"Imported session '{snapshot.session_id}': {len(snapshot.interactions)} interactions, {len(snapshot.preferences)} preferences"
+        )
 
     async def get_relevant_context(self, query: str, max_tokens: int = 1024) -> str:
         """RAG-style retrieval: return most relevant fragments from history.
@@ -300,6 +310,7 @@ class UserMemory:
         Equivalent to Oobabooga 'Dynamic Context' extension.
         """
         import re
+
         patterns = [
             (r"(?:prefer|preferuję|always use|domyślnie)\s+([\w.+-]+)", "preferred_tool"),
             (r"(?:language|język)[:\s]+([\w]+)", "preferred_language"),
@@ -321,12 +332,16 @@ class UserMemory:
                 for i, doc in enumerate(results.get("documents", [])):
                     meta = results["metadatas"][i] if results.get("metadatas") else {}
                     parts = doc.split("\n---\n", 1)
-                    items.append({
-                        "query": meta.get("query", parts[0] if parts else ""),
-                        "response_summary": parts[1] if len(parts) > 1 else "",
-                        "metadata": {k: v for k, v in meta.items() if k not in ("timestamp", "query")},
-                        "timestamp": float(meta.get("timestamp", 0)),
-                    })
+                    items.append(
+                        {
+                            "query": meta.get("query", parts[0] if parts else ""),
+                            "response_summary": parts[1] if len(parts) > 1 else "",
+                            "metadata": {
+                                k: v for k, v in meta.items() if k not in ("timestamp", "query")
+                            },
+                            "timestamp": float(meta.get("timestamp", 0)),
+                        }
+                    )
                 return items
             except Exception as e:
                 logger.warning(f"ChromaDB get_all failed: {e}")

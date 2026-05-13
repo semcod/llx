@@ -211,6 +211,7 @@ def remove_ticket_lines_from_todo(
     if removed_count and not dry_run:
         if backup:
             from time import strftime
+
             timestamp = strftime("%Y%m%d-%H%M%S")
             backup_path = path.with_name(f"{path.name}.bak.{timestamp}")
             backup_path.write_text(text, encoding="utf-8")
@@ -285,11 +286,7 @@ def clean_resolved_tickets(
 
     todo_report: Optional[dict[str, Any]] = None
     if update_todo and matched_ids:
-        resolved_todo = (
-            Path(todo_path)
-            if todo_path
-            else (project_root / "TODO.md")
-        )
+        resolved_todo = Path(todo_path) if todo_path else (project_root / "TODO.md")
         todo_report = remove_ticket_lines_from_todo(
             todo_path=resolved_todo,
             ticket_ids=matched_ids,

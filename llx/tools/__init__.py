@@ -12,11 +12,11 @@ from .health_checker import HealthChecker
 
 __all__ = [
     "DockerManager",
-    "AIToolsManager", 
+    "AIToolsManager",
     "VSCodeManager",
     "ModelManager",
     "ConfigManager",
-    "HealthChecker"
+    "HealthChecker",
 ]
 
 __version__ = "0.1.82"

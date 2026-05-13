@@ -7,6 +7,7 @@ from enum import Enum
 
 class RoutingStrategy(Enum):
     """Routing strategies."""
+
     ROUND_ROBIN = "round_robin"
     LEAST_LOADED = "least_loaded"
     PRIORITY_BASED = "priority_based"
@@ -17,6 +18,7 @@ class RoutingStrategy(Enum):
 
 class ResourceType(Enum):
     """Types of resources to route to."""
+
     LLM = "llm"
     VSCODE = "vscode"
     AI_TOOLS = "ai_tools"
@@ -24,6 +26,7 @@ class ResourceType(Enum):
 
 class RequestPriority(Enum):
     """Request priority levels (mirrors queue.models)."""
+
     URGENT = 1
     HIGH = 2
     NORMAL = 3
@@ -34,6 +37,7 @@ class RequestPriority(Enum):
 @dataclass
 class RoutingRequest:
     """A request to be routed."""
+
     request_id: str
     resource_type: ResourceType
     provider: Optional[str]
@@ -49,6 +53,7 @@ class RoutingRequest:
 @dataclass
 class RoutingDecision:
     """A routing decision."""
+
     request_id: str
     resource_type: ResourceType
     selected_resource: str
@@ -66,6 +71,7 @@ class RoutingDecision:
 @dataclass
 class RoutingMetrics:
     """Metrics for routing performance."""
+
     total_requests: int = 0
     successful_requests: int = 0
     failed_requests: int = 0

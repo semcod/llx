@@ -270,7 +270,9 @@ def test_plan_validate_cli_prune_unknown_too(monkeypatch, tmp_path: Path) -> Non
 # ---------------------------------------------------------------------------
 
 
-def test_workflow_plan_prune_stale_uses_previous_validate_output(monkeypatch, tmp_path: Path) -> None:
+def test_workflow_plan_prune_stale_uses_previous_validate_output(
+    monkeypatch, tmp_path: Path
+) -> None:
     from llx.workflows import (
         Workflow,
         WorkflowStep,
@@ -337,9 +339,7 @@ def test_prune_by_entry_ref_top_level_tasks_index(tmp_path: Path) -> None:
         },
     )
 
-    report = prune_planfile_tickets(
-        strategy, ticket_ids=["tasks[0]", "tasks[2]"], backup=False
-    )
+    report = prune_planfile_tickets(strategy, ticket_ids=["tasks[0]", "tasks[2]"], backup=False)
 
     assert report["removed"] == 2
     after = _read(strategy)

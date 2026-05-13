@@ -30,11 +30,11 @@ _DEFAULT_SENSITIVE_KEY_PATTERNS = [
 
 # Built-in sensitive value patterns (detect tokens by format)
 _DEFAULT_SENSITIVE_VALUE_PATTERNS = [
-    re.compile(r"sk-[a-zA-Z0-9]{20,}"),          # OpenAI
-    re.compile(r"sk-ant-[a-zA-Z0-9]{20,}"),       # Anthropic
-    re.compile(r"ghp_[a-zA-Z0-9]{36}"),            # GitHub PAT
-    re.compile(r"gsk_[a-zA-Z0-9]{20,}"),           # Groq
-    re.compile(r"sk-or-v1-[a-zA-Z0-9]{20,}"),     # OpenRouter
+    re.compile(r"sk-[a-zA-Z0-9]{20,}"),  # OpenAI
+    re.compile(r"sk-ant-[a-zA-Z0-9]{20,}"),  # Anthropic
+    re.compile(r"ghp_[a-zA-Z0-9]{36}"),  # GitHub PAT
+    re.compile(r"gsk_[a-zA-Z0-9]{20,}"),  # Groq
+    re.compile(r"sk-or-v1-[a-zA-Z0-9]{20,}"),  # OpenRouter
     re.compile(r"xox[bpsa]-[a-zA-Z0-9\-]{20,}"),  # Slack
 ]
 
@@ -48,9 +48,24 @@ _DEFAULT_MASKED_PATTERNS = [
 
 # Keys that are always safe
 _DEFAULT_SAFE_KEYS = {
-    "LANG", "TERM", "SHELL", "HOME", "USER", "PWD", "PATH",
-    "EDITOR", "VISUAL", "HOSTNAME", "COLUMNS", "LINES", "SHLVL",
-    "TZ", "LC_ALL", "LC_CTYPE", "VIRTUAL_ENV", "PYTHONPATH",
+    "LANG",
+    "TERM",
+    "SHELL",
+    "HOME",
+    "USER",
+    "PWD",
+    "PATH",
+    "EDITOR",
+    "VISUAL",
+    "HOSTNAME",
+    "COLUMNS",
+    "LINES",
+    "SHLVL",
+    "TZ",
+    "LC_ALL",
+    "LC_CTYPE",
+    "VIRTUAL_ENV",
+    "PYTHONPATH",
 }
 
 _DEFAULT_RULES_PATH = Path(__file__).parent.parent.parent / "configs" / "sensitive_rules.yaml"
@@ -148,7 +163,11 @@ class SensitiveDataFilter:
             # Use the more restrictive classification
             effective = max(
                 [key_level, val_level],
-                key=lambda x: [SensitivityLevel.SAFE, SensitivityLevel.MASKED, SensitivityLevel.BLOCKED].index(x),
+                key=lambda x: [
+                    SensitivityLevel.SAFE,
+                    SensitivityLevel.MASKED,
+                    SensitivityLevel.BLOCKED,
+                ].index(x),
             )
 
             if effective == SensitivityLevel.BLOCKED:
@@ -190,36 +209,36 @@ class SensitiveDataFilter:
     def _filter_dict_item(self, key: Any, value: Any) -> tuple[bool, Any]:
         """Filter a single dictionary item. Returns (should_include, filtered_value)."""
         str_key = str(key)
-        
+
         # Only apply key-based classification to env-var-style keys (ALL_CAPS)
         if self._looks_like_env_var(str_key):
             return self._filter_env_var_item(key, value, str_key)
         else:
             return self._filter_non_env_var_item(key, value)
-    
+
     def _filter_env_var_item(self, key: Any, value: Any, str_key: str) -> tuple[bool, Any]:
         """Filter environment variable style item."""
         key_level = self.classify_key(str_key)
-        
+
         # Block entirely if key is blocked
         if key_level == SensitivityLevel.BLOCKED:
             return False, None
-        
+
         # Check if value should be blocked
         val_str = str(value) if not isinstance(value, (dict, list)) else ""
         if val_str and self.classify_value(val_str) == SensitivityLevel.BLOCKED:
             return False, None
-        
+
         # Mask if key is masked
         if key_level == SensitivityLevel.MASKED:
             if isinstance(value, str):
                 return True, self._mask_value(value)
             else:
                 return True, self._filter_recursive(value)
-        
+
         # Keep as-is
         return True, self._filter_recursive(value)
-    
+
     def _filter_non_env_var_item(self, key: Any, value: Any) -> tuple[bool, Any]:
         """Filter non-environment variable style item."""
         # For non-env-var keys, sanitize value rather than dropping key
@@ -229,9 +248,9 @@ class SensitiveDataFilter:
                 return True, self.sanitize_text(value)
             else:
                 return False, None
-        
+
         return True, self._filter_recursive(value)
-    
+
     def _filter_recursive(self, data: Any) -> Any:
         """Recursively filter a data structure."""
         if isinstance(data, dict):

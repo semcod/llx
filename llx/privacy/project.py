@@ -9,14 +9,14 @@ Handles anonymization of entire codebases including:
 
 Usage:
     from llx.privacy.project import ProjectAnonymizer, AnonymizationContext
-    
+
     # Create context for the project
     ctx = AnonymizationContext(project_path="/path/to/project")
-    
+
     # Anonymize entire project
     anonymizer = ProjectAnonymizer(ctx)
     result = anonymizer.anonymize_project()
-    
+
     # Access anonymized files
     for file_path, content in result.files.items():
         print(f"{file_path}: {len(content)} chars")

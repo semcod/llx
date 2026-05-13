@@ -67,7 +67,7 @@ class ProjectDeanonymizer:
     def deanonymize_file(self, content: str, file_path: str | None = None) -> DeanonymizationResult:
         """Deanonymize file content, restoring code symbols and structure."""
         result = self.deanonymize_text(content)
-        if file_path and file_path.endswith('.py'):
+        if file_path and file_path.endswith(".py"):
             result.text = restore_imports(result.text, self._reverse_lookup)
             result.text = restore_decorators(result.text, self._reverse_lookup)
         return result
@@ -91,7 +91,7 @@ class ProjectDeanonymizer:
             if output_dir is not None:
                 output_path = Path(output_dir) / relative_path
                 output_path.parent.mkdir(parents=True, exist_ok=True)
-                output_path.write_text(file_result.text, encoding='utf-8')
+                output_path.write_text(file_result.text, encoding="utf-8")
 
         if anonymized_files:
             result.overall_confidence = total_confidence / len(anonymized_files)

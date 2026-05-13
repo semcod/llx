@@ -13,17 +13,11 @@ def _run_detect_secrets_subprocess(output_file: Path) -> bool:
     """Execute the detect-secrets subprocess and handle errors."""
     try:
         subprocess.run(
-            [
-                "detect-secrets",
-                "scan",
-                "--all-files",
-                "--force-use-all-plugins",
-                "--json"
-            ],
+            ["detect-secrets", "scan", "--all-files", "--force-use-all-plugins", "--json"],
             stdout=output_file.open("w"),
             stderr=subprocess.PIPE,
             check=True,
-            timeout=60
+            timeout=60,
         )
         print(f"✓ Secrets scan completed - results saved to {output_file}")
         return True
@@ -33,7 +27,7 @@ def _run_detect_secrets_subprocess(output_file: Path) -> bool:
     except FileNotFoundError:
         print("WARNING: detect-secrets not installed, skipping scan")
         return True
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         # detect-secrets may exit with findings
         print(f"detect-secrets completed - results saved to {output_file}")
         return True

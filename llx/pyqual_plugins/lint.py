@@ -20,7 +20,7 @@ def run_ruff_lint(output_dir: Path) -> bool:
             ["ruff", "check", "llx", "tests", "--output-format=json"],
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=60,
         )
         # Write output even if ruff finds issues
         output_file.write_text(result.stdout or "[]", encoding="utf-8")
@@ -48,7 +48,7 @@ def run_ruff_format_check() -> bool:
             ["ruff", "format", "--check", "llx", "tests"],
             capture_output=True,
             text=True,
-            timeout=60
+            timeout=60,
         )
 
         if result.returncode == 0:

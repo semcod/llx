@@ -47,9 +47,20 @@ tool_llx_analyze = McpTool(
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Project path to analyze", "default": "."},
-                "toon_dir": {"type": "string", "description": "Directory with .toon analysis files (optional)"},
-                "task": {"type": "string", "enum": ["refactor", "explain", "quick_fix", "review"], "description": "Task hint for model selection"},
+                "path": {
+                    "type": "string",
+                    "description": "Project path to analyze",
+                    "default": ".",
+                },
+                "toon_dir": {
+                    "type": "string",
+                    "description": "Directory with .toon analysis files (optional)",
+                },
+                "task": {
+                    "type": "string",
+                    "enum": ["refactor", "explain", "quick_fix", "review"],
+                    "description": "Task hint for model selection",
+                },
             },
         },
     ),
@@ -108,7 +119,9 @@ async def _handle_llx_chat(args: dict) -> dict:
         "usage": {
             "prompt_tokens": response.usage.prompt_tokens if response.usage else None,
             "completion_tokens": response.usage.completion_tokens if response.usage else None,
-        } if response.usage else None,
+        }
+        if response.usage
+        else None,
     }
 
 
@@ -121,7 +134,11 @@ tool_llx_chat = McpTool(
             "required": ["message"],
             "properties": {
                 "message": {"type": "string", "description": "The message to send"},
-                "path": {"type": "string", "default": ".", "description": "Project path for context-aware selection"},
+                "path": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Project path for context-aware selection",
+                },
                 "model": {"type": "string", "description": "Override model (optional)"},
                 "temperature": {"type": "number", "default": 0.7},
             },

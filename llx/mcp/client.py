@@ -75,7 +75,9 @@ class LlxMcpClient:
             "raw": result.model_dump(mode="json", by_alias=True, exclude_none=True),
         }
 
-    async def analyze(self, project_path: str, toon_dir: str | None = None, task: str = "quick_fix") -> dict[str, Any]:
+    async def analyze(
+        self, project_path: str, toon_dir: str | None = None, task: str = "quick_fix"
+    ) -> dict[str, Any]:
         """Run llx analysis and return the parsed payload."""
         payload = {"path": project_path, "task": task}
         if toon_dir:

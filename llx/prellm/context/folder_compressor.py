@@ -13,7 +13,6 @@ import logging
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 from llx.prellm.context.codebase_indexer import CodebaseIndex, CodebaseIndexer
 from llx.prellm.models import CompressedFolder
@@ -52,8 +51,7 @@ class FolderCompressor:
         token_estimate = self.estimate_token_count(toon_output)
 
         total_functions = sum(
-            len([s for s in f.symbols if s.kind in ("function", "method")])
-            for f in index.files
+            len([s for s in f.symbols if s.kind in ("function", "method")]) for f in index.files
         )
 
         return CompressedFolder(

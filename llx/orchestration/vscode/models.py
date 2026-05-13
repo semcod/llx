@@ -8,6 +8,7 @@ from enum import Enum
 
 class VSCodeAccountType(Enum):
     """Types of VS Code accounts."""
+
     LOCAL = "local"
     GITHUB = "github"
     MICROSOFT = "microsoft"
@@ -19,6 +20,7 @@ class VSCodeAccountType(Enum):
 @dataclass
 class VSCodeAccount:
     """VS Code account configuration."""
+
     account_id: str
     account_type: VSCodeAccountType
     name: str
@@ -34,6 +36,7 @@ class VSCodeAccount:
 @dataclass
 class VSCodeInstanceConfig:
     """Configuration for a VS Code instance."""
+
     instance_id: str
     account_id: str
     port: int
@@ -48,6 +51,7 @@ class VSCodeInstanceConfig:
 @dataclass
 class VSCodeSession:
     """Active VS Code session."""
+
     session_id: str
     instance_id: str
     account_id: str

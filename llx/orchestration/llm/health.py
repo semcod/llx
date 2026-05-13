@@ -17,7 +17,9 @@ def perform_health_checks(providers: dict[str, LLMProvider]) -> None:
             try:
                 response = requests.get(provider.health_check_endpoint, timeout=5)
                 if response.status_code != 200:
-                    print(f"⚠️  Provider {provider.provider_id} health check failed: HTTP {response.status_code}")
+                    print(
+                        f"⚠️  Provider {provider.provider_id} health check failed: HTTP {response.status_code}"
+                    )
             except Exception as e:
                 print(f"⚠️  Provider {provider.provider_id} health check error: {e}")
 

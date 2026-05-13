@@ -68,10 +68,12 @@ def setup_logging(
 
     # Suppress noisy litellm provider warnings and "Provider List" stdout spam
     import logging as _logging
+
     for _name in ("LiteLLM", "litellm", "httpx", "httpcore"):
         _logging.getLogger(_name).setLevel(_logging.WARNING)
     try:
         import litellm
+
         litellm.suppress_debug_info = True
     except ImportError:
         pass
@@ -98,6 +100,7 @@ def _get_version() -> str:
     """Read preLLM version without circular imports."""
     try:
         from llx.prellm import __version__
+
         return __version__
     except Exception:
         return "unknown"

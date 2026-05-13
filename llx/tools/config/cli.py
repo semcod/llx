@@ -92,7 +92,7 @@ def _cmd_add_model(args: argparse.Namespace, manager: ConfigManager) -> bool:
 _cmd_remove_model = create_simple_handler(
     arg_name="tier",
     arg_label="remove-model",
-    manager_method=lambda mgr, tier: mgr.remove_model(tier)
+    manager_method=lambda mgr, tier: mgr.remove_model(tier),
 )
 
 
@@ -104,7 +104,7 @@ def _cmd_backup(args: argparse.Namespace, manager: ConfigManager) -> bool:
 _cmd_restore = create_simple_handler(
     arg_name="backup_dir",
     arg_label="restore",
-    manager_method=lambda mgr, dir: mgr.restore_configs(dir)
+    manager_method=lambda mgr, dir: mgr.restore_configs(dir),
 )
 
 
@@ -116,7 +116,7 @@ def _cmd_docker_env(args: argparse.Namespace, manager: ConfigManager) -> bool:
 _cmd_create_profile = create_simple_handler(
     arg_name="profile",
     arg_label="create-profile",
-    manager_method=lambda mgr, profile: mgr.create_profile(profile)
+    manager_method=lambda mgr, profile: mgr.create_profile(profile),
 )
 
 
@@ -124,7 +124,7 @@ _cmd_create_profile = create_simple_handler(
 _cmd_load_profile = create_simple_handler(
     arg_name="profile",
     arg_label="load-profile",
-    manager_method=lambda mgr, profile: mgr.load_profile(profile)
+    manager_method=lambda mgr, profile: mgr.load_profile(profile),
 )
 
 
@@ -181,7 +181,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def _dispatch(args: argparse.Namespace, manager: ConfigManager) -> bool:
     """Dispatch command to appropriate handler using registry pattern.
-    
+
     CC reduced from 36 to ~3 by using handler registry instead of if-elif chain.
     """
     handler = _COMMAND_HANDLERS.get(args.command)

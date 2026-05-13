@@ -19,15 +19,21 @@ from llx.config import LlxConfig, ModelConfig, TierThresholds
 class ModelTier(str, Enum):
     """LLM model tiers ranked by capability and cost."""
 
-    PREMIUM = "premium"      # Opus-class: large coupled projects, deep refactoring
-    BALANCED = "balanced"    # Sonnet-class: medium projects, standard tasks
-    CHEAP = "cheap"          # Haiku-class: small projects, simple questions
-    FREE = "free"            # Gemini/free-tier: trivial tasks
-    LOCAL = "local"          # Ollama/vLLM: offline, privacy-sensitive
+    PREMIUM = "premium"  # Opus-class: large coupled projects, deep refactoring
+    BALANCED = "balanced"  # Sonnet-class: medium projects, standard tasks
+    CHEAP = "cheap"  # Haiku-class: small projects, simple questions
+    FREE = "free"  # Gemini/free-tier: trivial tasks
+    LOCAL = "local"  # Ollama/vLLM: offline, privacy-sensitive
     OPENROUTER = "openrouter"  # Fallback pool
 
 
-TIER_ORDER = [ModelTier.FREE, ModelTier.LOCAL, ModelTier.CHEAP, ModelTier.BALANCED, ModelTier.PREMIUM]
+TIER_ORDER = [
+    ModelTier.FREE,
+    ModelTier.LOCAL,
+    ModelTier.CHEAP,
+    ModelTier.BALANCED,
+    ModelTier.PREMIUM,
+]
 
 
 @dataclass
@@ -214,7 +220,7 @@ def _compute_tier(
     # Count premium signals and apply task adjustment
     premium = _count_premium_signals(m, t, reasons)
     premium = _apply_task_adjustment(premium, task_hint, reasons)
-    
+
     if premium >= 3:
         return ModelTier.PREMIUM
 
@@ -244,6 +250,7 @@ def _compute_alternative(tier: ModelTier, order: list[ModelTier]) -> ModelTier |
 # ---------------------------------------------------------------------------
 # Context-window aware selection
 # ---------------------------------------------------------------------------
+
 
 def check_context_fit(metrics: ProjectMetrics, model: ModelConfig) -> bool:
     """Check if the project context fits within the model's context window."""

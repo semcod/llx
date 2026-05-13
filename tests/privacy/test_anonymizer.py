@@ -1,10 +1,12 @@
-import pytest
 from llx.privacy.project import AnonymizationContext, ProjectAnonymizer
+
 
 class TestProjectAnonymizer:
     def test_anonymize_python_file(self, tmp_path):
         test_file = tmp_path / "test.py"
-        test_file.write_text("def calculate_total(items):\n    return sum(item.price for item in items)")
+        test_file.write_text(
+            "def calculate_total(items):\n    return sum(item.price for item in items)"
+        )
         ctx = AnonymizationContext(project_path=tmp_path)
         anonymizer = ProjectAnonymizer(ctx)
         result = anonymizer.anonymize_file(test_file)

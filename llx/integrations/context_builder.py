@@ -91,9 +91,13 @@ def _build_summary(m: ProjectMetrics) -> str:
         f"- **Estimated context**: ~{m.estimated_context_tokens:,} tokens",
     ]
     if m.dup_groups > 0:
-        lines.append(f"- **Duplicate groups**: {m.dup_groups} ({m.dup_saved_lines} lines recoverable)")
+        lines.append(
+            f"- **Duplicate groups**: {m.dup_groups} ({m.dup_saved_lines} lines recoverable)"
+        )
     if m.vallm_issues > 0:
-        lines.append(f"- **Validation issues**: {m.vallm_issues} ({m.vallm_pass_rate:.0%} pass rate)")
+        lines.append(
+            f"- **Validation issues**: {m.vallm_issues} ({m.vallm_pass_rate:.0%} pass rate)"
+        )
     return "\n".join(lines)
 
 

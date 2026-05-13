@@ -83,7 +83,9 @@ def _cmd_check(args, limiter: RateLimiter) -> bool:
         print("❌ --provider and --account required for check")
         return False
     request_type = LimitType(args.type) if args.type else LimitType.REQUESTS_PER_HOUR
-    allowed, reason = limiter.check_rate_limit(args.provider, args.account, request_type, args.tokens)
+    allowed, reason = limiter.check_rate_limit(
+        args.provider, args.account, request_type, args.tokens
+    )
     if allowed:
         print("✅ Request allowed")
     else:
@@ -96,7 +98,9 @@ def _cmd_record(args, limiter: RateLimiter) -> bool:
         print("❌ --provider and --account required for record")
         return False
     request_type = LimitType(args.type) if args.type else LimitType.REQUESTS_PER_HOUR
-    return limiter.record_request(args.provider, args.account, request_type, args.tokens, args.success)
+    return limiter.record_request(
+        args.provider, args.account, request_type, args.tokens, args.success
+    )
 
 
 def _cmd_release(args, limiter: RateLimiter) -> bool:
@@ -117,7 +121,9 @@ def _cmd_available(args, limiter: RateLimiter) -> bool:
     available = limiter.get_available_providers(request_type)
     print(f"📋 Available Providers ({len(available)}):")
     for p in available:
-        print(f"  • {p['provider']}:{p['account']} (score: {p['score']:.1f}, utilization: {p['utilization']:.1f}%)")
+        print(
+            f"  • {p['provider']}:{p['account']} (score: {p['score']:.1f}, utilization: {p['utilization']:.1f}%)"
+        )
     return True
 
 

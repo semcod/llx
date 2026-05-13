@@ -162,9 +162,27 @@ def analyze_project(
 # ---------------------------------------------------------------------------
 
 _CODE_EXTENSIONS = {
-    ".py", ".js", ".ts", ".jsx", ".tsx", ".go", ".rs", ".java",
-    ".c", ".cpp", ".h", ".hpp", ".cs", ".rb", ".php", ".swift",
-    ".kt", ".scala", ".lua", ".sh", ".bash",
+    ".py",
+    ".js",
+    ".ts",
+    ".jsx",
+    ".tsx",
+    ".go",
+    ".rs",
+    ".java",
+    ".c",
+    ".cpp",
+    ".h",
+    ".hpp",
+    ".cs",
+    ".rb",
+    ".php",
+    ".swift",
+    ".kt",
+    ".scala",
+    ".lua",
+    ".sh",
+    ".bash",
 }
 
 _SKIP_DIRS = {"__pycache__", "node_modules", ".git", "venv", ".venv", ".tox", "dist", "build"}
@@ -192,28 +210,44 @@ def _collect_filesystem_metrics(root: Path, m: ProjectMetrics) -> None:
 # code2llm — analysis.toon, evolution.toon, map.toon
 # ---------------------------------------------------------------------------
 
+
 def _collect_code2llm_metrics(search_dir: Path, m: ProjectMetrics) -> None:
     """Load metrics from code2llm analysis files (YAML or plain-text TOON)."""
     # analysis.toon.yaml — always valid YAML
-    analysis = _load_file(search_dir, [
-        "analysis.toon.yaml", "analysis_toon.yaml", "analysis.yaml",
-    ])
+    analysis = _load_file(
+        search_dir,
+        [
+            "analysis.toon.yaml",
+            "analysis_toon.yaml",
+            "analysis.yaml",
+        ],
+    )
     if isinstance(analysis, dict):
         _apply_analysis_yaml(analysis, m)
 
     # evolution.toon.yaml — may be YAML or plain-text
-    evolution = _load_file(search_dir, [
-        "evolution.toon.yaml", "evolution_toon.yaml", "evolution.yaml",
-    ])
+    evolution = _load_file(
+        search_dir,
+        [
+            "evolution.toon.yaml",
+            "evolution_toon.yaml",
+            "evolution.yaml",
+        ],
+    )
     if isinstance(evolution, dict):
         _apply_evolution_yaml(evolution, m)
     elif isinstance(evolution, str):
         _apply_evolution_text(evolution, m)
 
     # map.toon.yaml — often plain-text TOON with YAML-breaking syntax
-    map_data = _load_file(search_dir, [
-        "map.toon.yaml", "map_toon.yaml", "map.yaml",
-    ])
+    map_data = _load_file(
+        search_dir,
+        [
+            "map.toon.yaml",
+            "map_toon.yaml",
+            "map.yaml",
+        ],
+    )
     if isinstance(map_data, dict):
         _apply_map_yaml(map_data, m)
     elif isinstance(map_data, str):
@@ -292,12 +326,12 @@ def _apply_evolution_yaml(data: dict, m: ProjectMetrics) -> None:
     mt = data.get("metrics_target", data.get("METRICS-TARGET", {}))
     if isinstance(mt, dict):
         _extract_metrics_target(mt, m)
-    
+
     # Stats section (preLLM format)
     stats = data.get("stats", {})
     if isinstance(stats, dict):
         _extract_evolution_stats(stats, m)
-    
+
     # Refactoring actions
     actions = data.get("refactoring", {}).get("actions", [])
     _extract_evolution_actions(actions, m)
@@ -400,13 +434,14 @@ def _apply_map_text(text: str, m: ProjectMetrics) -> None:
             _parse_map_alerts_line(line, m)
         elif "hotspots" in line:
             _parse_map_hotspots_line(line, m)
-    
+
     _count_map_modules(text, m)
 
 
 # ---------------------------------------------------------------------------
 # redup / vallm
 # ---------------------------------------------------------------------------
+
 
 def _collect_redup_metrics(search_dir: Path, m: ProjectMetrics) -> None:
     """Load from redup duplication scan."""
@@ -432,6 +467,7 @@ def _collect_vallm_metrics(search_dir: Path, m: ProjectMetrics) -> None:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _load_file(directory: Path, candidates: list[str]) -> dict | str | None:
     """Try to load first matching file. Returns dict (YAML/JSON) or str (plain text)."""

@@ -1,6 +1,7 @@
 """
 LLX Strategy CLI commands.
 """
+
 import typer
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -10,7 +11,7 @@ from ..planfile import (
     load_valid_strategy,
     run_strategy,
     verify_strategy_post_execution,
-    Strategy
+    Strategy,
 )
 
 # Create strategy app
@@ -28,7 +29,7 @@ def create_strategy(
     print(f"Using model: {model} (local: {local})")
     print(f"Output will be saved to: {output}")
     print()
-    
+
     create_strategy_command(output=output, model=model, local=local)
 
 
@@ -63,12 +64,12 @@ def run_strategy_command(
     print(f"Backend: {backend}")
     print(f"Dry run: {dry_run}")
     print()
-    
+
     run_strategy(
         strategy_path=str(strategy_file),
         project_path=str(project_path),
         backend=backend,
-        dry_run=dry_run
+        dry_run=dry_run,
     )
 
 
@@ -82,15 +83,13 @@ def verify_strategy(
     print(f"🔍 Verifying strategy: {strategy_file}")
     print(f"Project path: {project_path}")
     print()
-    
+
     try:
         strategy: Strategy = load_valid_strategy(str(strategy_file))
         issues: Dict[str, List[str]] = verify_strategy_post_execution(
-            strategy=strategy,
-            project_path=str(project_path),
-            backend=backend
+            strategy=strategy, project_path=str(project_path), backend=backend
         )
-        
+
         if not any(issues.values()):
             print("✅ Strategy verification passed - no issues found!")
         else:
@@ -109,5 +108,3 @@ def verify_strategy(
 def add_strategy_commands(main_app: typer.Typer) -> None:
     """Add strategy commands to main typer app."""
     main_app.add_typer(strategy_app, name="strategy")
-
-

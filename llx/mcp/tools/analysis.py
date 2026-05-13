@@ -9,6 +9,7 @@ from llx.mcp.tools.base import McpTool
 async def _handle_code2llm_analyze(args: dict) -> dict:
     """Run code2llm analysis on project."""
     from llx.analysis.runner import run_code2llm
+
     path = Path(args.get("path", "."))
     output_dir = Path(args.get("output_dir", str(path / ".llx" / "code2llm")))
     result = run_code2llm(path, output_dir, format=args.get("format", "json"))
@@ -40,13 +41,16 @@ tool_code2llm_analyze = McpTool(
 async def _handle_redup_scan(args: dict) -> dict:
     """Run redup to detect code duplication."""
     from llx.analysis.runner import run_redup
+
     path = Path(args.get("path", "."))
     output_dir = Path(args.get("output_dir", str(path / ".llx" / "redup")))
     result = run_redup(path, output_dir, format=args.get("format", "json"))
     return {
         "success": result.success,
         "output_dir": str(result.output_dir),
-        "duplicates_found": result.duplicates_found if hasattr(result, "duplicates_found") else None,
+        "duplicates_found": result.duplicates_found
+        if hasattr(result, "duplicates_found")
+        else None,
         "error": result.error,
     }
 
@@ -74,6 +78,7 @@ async def _handle_vallm_validate(args: dict) -> dict:
         # Single-file validation via Python API
         try:
             from vallm import Proposal, validate
+
             proposal = Proposal(code=args["code"], language=args.get("language", "python"))
             result = validate(proposal)
             return {
@@ -86,10 +91,15 @@ async def _handle_vallm_validate(args: dict) -> dict:
     else:
         # Batch project validation via CLI
         from llx.analysis.runner import run_vallm
+
         path = Path(args.get("path", "."))
         output_dir = Path(args.get("output_dir", str(path / ".llx" / "vallm")))
         result = run_vallm(path, output_dir)
-        return {"success": result.success, "output_dir": str(result.output_dir), "error": result.error}
+        return {
+            "success": result.success,
+            "output_dir": str(result.output_dir),
+            "error": result.error,
+        }
 
 
 tool_vallm_validate = McpTool(

@@ -6,10 +6,19 @@ Includes scenarios from real projects:
 - vallm: 56 files, 8.6K lines, CC̄=3.5, max CC=42
 """
 
-import pytest
-from llx.analysis.collector import ProjectMetrics, _extract_cc_value, _apply_analysis_yaml, _apply_evolution_yaml
-from llx.routing.selector import ModelTier, select_model, check_context_fit, select_with_context_check
-from llx.config import LlxConfig, TierThresholds
+from llx.analysis.collector import (
+    ProjectMetrics,
+    _extract_cc_value,
+    _apply_analysis_yaml,
+    _apply_evolution_yaml,
+)
+from llx.routing.selector import (
+    ModelTier,
+    select_model,
+    check_context_fit,
+    select_with_context_check,
+)
+from llx.config import LlxConfig
 
 
 class TestProjectMetrics:
@@ -17,7 +26,9 @@ class TestProjectMetrics:
         assert ProjectMetrics().complexity_score == 0.0
 
     def test_complexity_score_high(self):
-        m = ProjectMetrics(avg_cc=8.0, max_cc=65, critical_count=12, god_modules=5, dependency_cycles=3)
+        m = ProjectMetrics(
+            avg_cc=8.0, max_cc=65, critical_count=12, god_modules=5, dependency_cycles=3
+        )
         assert m.complexity_score > 80
 
     def test_scale_score_small(self):
@@ -39,13 +50,21 @@ class TestModelSelection:
         assert select_model(m).tier == ModelTier.CHEAP
 
     def test_medium_gets_balanced(self):
-        m = ProjectMetrics(total_files=25, total_lines=8000, total_functions=100, avg_cc=4.5, max_fan_out=12)
+        m = ProjectMetrics(
+            total_files=25, total_lines=8000, total_functions=100, avg_cc=4.5, max_fan_out=12
+        )
         assert select_model(m).tier == ModelTier.BALANCED
 
     def test_large_gets_premium(self):
         m = ProjectMetrics(
-            total_files=100, total_lines=30000, total_functions=500,
-            avg_cc=7.0, max_cc=40, max_fan_out=35, dependency_cycles=2, critical_count=15,
+            total_files=100,
+            total_lines=30000,
+            total_functions=500,
+            avg_cc=7.0,
+            max_cc=40,
+            max_fan_out=35,
+            dependency_cycles=2,
+            critical_count=15,
         )
         assert select_model(m).tier == ModelTier.PREMIUM
 
@@ -55,8 +74,12 @@ class TestModelSelection:
 
     def test_max_tier_caps(self):
         m = ProjectMetrics(
-            total_files=100, total_lines=30000, avg_cc=7.0,
-            max_fan_out=35, dependency_cycles=2, critical_count=15,
+            total_files=100,
+            total_lines=30000,
+            avg_cc=7.0,
+            max_fan_out=35,
+            dependency_cycles=2,
+            critical_count=15,
         )
         assert select_model(m, max_tier=ModelTier.BALANCED).tier == ModelTier.BALANCED
 
@@ -84,18 +107,21 @@ class TestContextFit:
     def test_small_fits(self):
         m = ProjectMetrics(estimated_context_tokens=1000)
         from llx.config import ModelConfig
+
         model = ModelConfig(name="t", provider="t", model_id="t", max_context=32_000)
         assert check_context_fit(m, model)
 
     def test_huge_exceeds(self):
         m = ProjectMetrics(estimated_context_tokens=500_000)
         from llx.config import ModelConfig
+
         model = ModelConfig(name="t", provider="t", model_id="t", max_context=32_000)
         assert not check_context_fit(m, model)
 
     def test_context_auto_upgrade(self):
         m = ProjectMetrics(
-            total_files=5, total_lines=800,
+            total_files=5,
+            total_lines=800,
             estimated_context_tokens=500_000,  # huge context
         )
         result = select_with_context_check(m)
@@ -120,14 +146,21 @@ class TestHelpers:
 # Real project scenarios
 # ---------------------------------------------------------------------------
 
+
 class TestCode2LLMProject:
     """code2llm: 113 files, 21K lines, CC̄=4.6, max CC=65."""
 
     def test_selects_premium(self):
         m = ProjectMetrics(
-            total_files=113, total_lines=21128, total_functions=918,
-            avg_cc=4.6, max_cc=65, critical_count=12,
-            god_modules=5, max_fan_out=45, hotspot_count=5,
+            total_files=113,
+            total_lines=21128,
+            total_functions=918,
+            avg_cc=4.6,
+            max_cc=65,
+            critical_count=12,
+            god_modules=5,
+            max_fan_out=45,
+            hotspot_count=5,
         )
         result = select_model(m)
         assert result.tier == ModelTier.PREMIUM
@@ -138,9 +171,15 @@ class TestPreLLMProject:
 
     def test_selects_balanced_or_premium(self):
         m = ProjectMetrics(
-            total_files=31, total_lines=8900, total_functions=310,
-            avg_cc=5.0, max_cc=28, critical_count=10,
-            god_modules=3, max_fan_out=30, dependency_cycles=1,
+            total_files=31,
+            total_lines=8900,
+            total_functions=310,
+            avg_cc=5.0,
+            max_cc=28,
+            critical_count=10,
+            god_modules=3,
+            max_fan_out=30,
+            dependency_cycles=1,
         )
         result = select_model(m)
         # preLLM has high CC and god modules → at least balanced, likely premium
@@ -150,8 +189,12 @@ class TestPreLLMProject:
         """Test parsing the actual preLLM analysis.toon.yaml structure."""
         data = {
             "header": {
-                "files": 31, "lines": 8900, "functions": 310,
-                "avg_cc": 5.0, "critical_count": 10, "cycles": 1,
+                "files": 31,
+                "lines": 8900,
+                "functions": 310,
+                "avg_cc": 5.0,
+                "critical_count": 10,
+                "cycles": 1,
             },
             "health": {
                 "issues": [
@@ -173,8 +216,10 @@ class TestPreLLMProject:
         """Test parsing the preLLM evolution.toon.yaml structure."""
         data = {
             "stats": {
-                "total_funcs": 248, "total_files": 24,
-                "avg_cc": 5.1, "max_cc": 28,
+                "total_funcs": 248,
+                "total_files": 24,
+                "avg_cc": 5.1,
+                "max_cc": 28,
             },
             "metrics_target": {
                 "god_modules": {"current": 3, "target": 0},
@@ -200,8 +245,12 @@ class TestVallmProject:
 
     def test_selects_balanced(self):
         m = ProjectMetrics(
-            total_files=56, total_lines=8604, total_functions=91,
-            avg_cc=3.5, max_cc=42, critical_count=3,
+            total_files=56,
+            total_lines=8604,
+            total_functions=91,
+            avg_cc=3.5,
+            max_cc=42,
+            critical_count=3,
         )
         result = select_model(m)
         assert result.tier in (ModelTier.BALANCED, ModelTier.PREMIUM)

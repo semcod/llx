@@ -8,7 +8,6 @@ import pytest
 import yaml
 from typer.testing import CliRunner
 
-from llx import workflows as workflows_mod
 from llx.cli.app import app as llx_app
 from llx.workflows import (
     BUILTIN_STEP_HANDLERS,
@@ -65,7 +64,9 @@ def test_load_workflows_rejects_step_without_kind() -> None:
 
 
 def test_load_workflows_rejects_invalid_on_failure() -> None:
-    data = {"workflows": {"bad": {"steps": [{"name": "x", "kind": "shell", "on_failure": "ignore"}]}}}
+    data = {
+        "workflows": {"bad": {"steps": [{"name": "x", "kind": "shell", "on_failure": "ignore"}]}}
+    }
     with pytest.raises(WorkflowError):
         load_workflows_from_data(data)
 
@@ -325,7 +326,9 @@ def test_plan_validate_step_uses_freshness_api(monkeypatch, tmp_path: Path) -> N
     assert captured["strategy_path"] == "planfile.yaml"
 
 
-def test_plan_run_step_passes_skip_ticket_ids_from_previous_step(monkeypatch, tmp_path: Path) -> None:
+def test_plan_run_step_passes_skip_ticket_ids_from_previous_step(
+    monkeypatch, tmp_path: Path
+) -> None:
     received: dict[str, object] = {}
 
     class _FakeResult:
@@ -360,7 +363,9 @@ def test_plan_run_step_passes_skip_ticket_ids_from_previous_step(monkeypatch, tm
     monkeypatch.setattr(
         "llx.planfile.ticket_freshness.validate_tickets_with_prefact",
         lambda **_kwargs: {
-            "current": 1, "stale": 1, "unknown": 0,
+            "current": 1,
+            "stale": 1,
+            "unknown": 0,
             "stale_ticket_ids": ["S9"],
             "scan": {"available": True, "backend": "engine"},
         },
@@ -582,10 +587,22 @@ def test_testql_step_success_passes_payload_through(monkeypatch, tmp_path: Path)
         return {
             "scenario": kwargs["scenario"],
             "strategy": kwargs["strategy"],
-            "validation": {"ok": True, "passed": 3, "failed": 0, "exit_code": 0,
-                           "source": "real", "errors": [], "warnings": []},
-            "tickets": {"generated": 0, "created": 0, "skipped": 0,
-                        "created_ticket_ids": [], "sync": None},
+            "validation": {
+                "ok": True,
+                "passed": 3,
+                "failed": 0,
+                "exit_code": 0,
+                "source": "real",
+                "errors": [],
+                "warnings": [],
+            },
+            "tickets": {
+                "generated": 0,
+                "created": 0,
+                "skipped": 0,
+                "created_ticket_ids": [],
+                "sync": None,
+            },
         }
 
     monkeypatch.setattr("llx.cli.app._run_plan_testql_workflow", fake_workflow)
@@ -620,10 +637,22 @@ def test_testql_step_marks_failed_when_validation_not_ok(monkeypatch, tmp_path: 
         lambda **_kwargs: {
             "scenario": "x",
             "strategy": "planfile.yaml",
-            "validation": {"ok": False, "passed": 0, "failed": 2, "exit_code": 2,
-                           "source": "real", "errors": ["e"], "warnings": []},
-            "tickets": {"generated": 1, "created": 1, "skipped": 0,
-                        "created_ticket_ids": ["T1"], "sync": None},
+            "validation": {
+                "ok": False,
+                "passed": 0,
+                "failed": 2,
+                "exit_code": 2,
+                "source": "real",
+                "errors": ["e"],
+                "warnings": [],
+            },
+            "tickets": {
+                "generated": 1,
+                "created": 1,
+                "skipped": 0,
+                "created_ticket_ids": ["T1"],
+                "sync": None,
+            },
         },
     )
 
@@ -644,10 +673,22 @@ def test_testql_step_can_ignore_failure(monkeypatch, tmp_path: Path) -> None:
         lambda **_kwargs: {
             "scenario": "x",
             "strategy": "planfile.yaml",
-            "validation": {"ok": False, "passed": 0, "failed": 1, "exit_code": 2,
-                           "source": "real", "errors": [], "warnings": []},
-            "tickets": {"generated": 0, "created": 0, "skipped": 0,
-                        "created_ticket_ids": [], "sync": None},
+            "validation": {
+                "ok": False,
+                "passed": 0,
+                "failed": 1,
+                "exit_code": 2,
+                "source": "real",
+                "errors": [],
+                "warnings": [],
+            },
+            "tickets": {
+                "generated": 0,
+                "created": 0,
+                "skipped": 0,
+                "created_ticket_ids": [],
+                "sync": None,
+            },
         },
     )
 

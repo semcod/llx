@@ -4,9 +4,6 @@ Tests ProxymClient, tier mapping, header generation, and LlxClient
 metrics-aware routing — all without requiring a running proxym server.
 """
 
-import pytest
-from unittest.mock import patch, MagicMock
-
 from llx.analysis.collector import ProjectMetrics
 from llx.routing.selector import ModelTier
 
@@ -16,22 +13,27 @@ class TestTierMapping:
 
     def test_free_maps_to_trivial(self):
         from llx.integrations.proxym import _tier_to_proxym
+
         assert _tier_to_proxym(ModelTier.FREE) == "trivial"
 
     def test_local_maps_to_operational(self):
         from llx.integrations.proxym import _tier_to_proxym
+
         assert _tier_to_proxym(ModelTier.LOCAL) == "operational"
 
     def test_cheap_maps_to_operational(self):
         from llx.integrations.proxym import _tier_to_proxym
+
         assert _tier_to_proxym(ModelTier.CHEAP) == "operational"
 
     def test_balanced_maps_to_standard(self):
         from llx.integrations.proxym import _tier_to_proxym
+
         assert _tier_to_proxym(ModelTier.BALANCED) == "standard"
 
     def test_premium_maps_to_complex(self):
         from llx.integrations.proxym import _tier_to_proxym
+
         assert _tier_to_proxym(ModelTier.PREMIUM) == "complex"
 
 
@@ -40,19 +42,26 @@ class TestHeaderGeneration:
 
     def test_empty_metrics_no_headers(self):
         from llx.integrations.proxym import _build_llx_headers
+
         headers = _build_llx_headers(None, None)
         assert headers == {}
 
     def test_tier_only_sets_task_tier(self):
         from llx.integrations.proxym import _build_llx_headers
+
         headers = _build_llx_headers(None, ModelTier.BALANCED)
         assert headers == {"X-Task-Tier": "standard"}
 
     def test_metrics_generate_headers(self):
         from llx.integrations.proxym import _build_llx_headers
+
         m = ProjectMetrics(
-            total_files=50, total_lines=10000, avg_cc=5.5, max_cc=30,
-            god_modules=3, dependency_cycles=1,
+            total_files=50,
+            total_lines=10000,
+            avg_cc=5.5,
+            max_cc=30,
+            god_modules=3,
+            dependency_cycles=1,
         )
         headers = _build_llx_headers(m, ModelTier.PREMIUM)
         assert headers["X-Task-Tier"] == "complex"
@@ -67,6 +76,7 @@ class TestHeaderGeneration:
 
     def test_no_god_modules_omits_header(self):
         from llx.integrations.proxym import _build_llx_headers
+
         m = ProjectMetrics(total_files=5, total_lines=500, avg_cc=2.0, max_cc=5)
         headers = _build_llx_headers(m, ModelTier.CHEAP)
         assert "X-Llx-God-Modules" not in headers
@@ -78,18 +88,21 @@ class TestProxymClientStructure:
 
     def test_client_default_url(self):
         from llx.integrations.proxym import ProxymClient
+
         client = ProxymClient()
         assert client.base_url == "http://localhost:4000"
         client.close()
 
     def test_client_custom_url(self):
         from llx.integrations.proxym import ProxymClient
+
         client = ProxymClient(base_url="http://custom:8080")
         assert client.base_url == "http://custom:8080"
         client.close()
 
     def test_status_unreachable(self):
         from llx.integrations.proxym import ProxymClient
+
         client = ProxymClient(base_url="http://localhost:59999")
         status = client.status()
         assert status.available is False
@@ -98,21 +111,27 @@ class TestProxymClientStructure:
 
     def test_is_available_unreachable(self):
         from llx.integrations.proxym import ProxymClient
+
         client = ProxymClient(base_url="http://localhost:59999")
         assert client.is_available() is False
         client.close()
 
     def test_proxym_status_dataclass(self):
         from llx.integrations.proxym import ProxymStatus
-        s = ProxymStatus(available=True, url="http://localhost:4000", version="0.1.119", models_count=19)
+
+        s = ProxymStatus(
+            available=True, url="http://localhost:4000", version="0.1.119", models_count=19
+        )
         assert s.available
         assert s.version == "0.1.119"
         assert s.models_count == 19
 
     def test_proxym_response_dataclass(self):
         from llx.integrations.proxym import ProxymResponse
+
         r = ProxymResponse(
-            content="Hello", model="claude-sonnet",
+            content="Hello",
+            model="claude-sonnet",
             usage={"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
         )
         assert r.content == "Hello"
@@ -122,6 +141,7 @@ class TestProxymClientStructure:
 
     def test_proxym_response_no_usage(self):
         from llx.integrations.proxym import ProxymResponse
+
         r = ProxymResponse(content="", model="test")
         assert r.prompt_tokens == 0
         assert r.total_tokens == 0
@@ -132,10 +152,16 @@ class TestLlxClientMetrics:
 
     def test_metrics_headers_generated(self):
         from llx.routing.client import LlxClient
+
         m = ProjectMetrics(
-            total_files=100, total_lines=30000,
-            avg_cc=6.0, max_cc=50, critical_count=10,
-            god_modules=5, max_fan_out=25, dependency_cycles=2,
+            total_files=100,
+            total_lines=30000,
+            avg_cc=6.0,
+            max_cc=50,
+            critical_count=10,
+            god_modules=5,
+            max_fan_out=25,
+            dependency_cycles=2,
         )
         headers = LlxClient._metrics_headers(m)
         assert "X-Task-Tier" in headers
@@ -146,6 +172,7 @@ class TestLlxClientMetrics:
         """Verify the chat() signature accepts metrics parameter."""
         import inspect
         from llx.routing.client import LlxClient
+
         sig = inspect.signature(LlxClient.chat)
         assert "metrics" in sig.parameters
 
@@ -155,6 +182,7 @@ class TestListModelsUnavailable:
 
     def test_list_models_returns_empty(self):
         from llx.integrations.proxym import ProxymClient
+
         client = ProxymClient(base_url="http://localhost:59999")
         models = client.list_models()
         assert models == []
@@ -170,7 +198,10 @@ class TestBaseUrlNormalization:
         assert normalize_litellm_base_url("http://localhost:4000") == "http://localhost:4000"
         assert normalize_litellm_base_url("http://localhost:4000/v1") == "http://localhost:4000"
         assert normalize_litellm_base_url("http://localhost:4000/v1/") == "http://localhost:4000"
-        assert normalize_litellm_base_url("http://localhost:4000/api/v1") == "http://localhost:4000/api"
+        assert (
+            normalize_litellm_base_url("http://localhost:4000/api/v1")
+            == "http://localhost:4000/api"
+        )
 
     def test_llx_client_normalizes_config_base_url(self):
         from llx.config import LlxConfig

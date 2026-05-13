@@ -1,10 +1,8 @@
 """VS Code orchestrator CLI — _build_parser + _dispatch pattern."""
 
-import json
 import argparse
 
 from .._utils import cli_main
-from ..cli_utils import cmd_remove_wrapper
 from ..utils._cmd_remove import create_remove_handler
 from ..utils._cmd_status import create_status_handler
 from ..utils._cmd_cleanup import create_cleanup_handler
@@ -18,9 +16,17 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "command",
         choices=[
-            "add-account", "remove-account", "list-accounts",
-            "create", "remove", "start", "stop",
-            "list", "sessions", "status", "cleanup",
+            "add-account",
+            "remove-account",
+            "list-accounts",
+            "create",
+            "remove",
+            "start",
+            "stop",
+            "list",
+            "sessions",
+            "status",
+            "cleanup",
         ],
     )
     parser.add_argument("--account-id", help="Account ID")
@@ -82,14 +88,14 @@ _cmd_remove_account = create_remove_handler(
     id_attr="account_id",
     id_label="Account",
     remove_func=lambda orch, id: orch.remove_account(id),
-    save_func=lambda orch: orch.save_config()
+    save_func=lambda orch: orch.save_config(),
 )
 
 _cmd_remove = create_remove_handler(
     id_attr="instance_id",
     id_label="Instance",
     remove_func=lambda orch, id: orch.remove_instance(id),
-    save_func=lambda orch: orch.save_config()
+    save_func=lambda orch: orch.save_config(),
 )
 
 
@@ -97,7 +103,9 @@ def _cmd_list_accounts(args, orch: VSCodeOrchestrator) -> bool:
     accounts = orch.list_accounts()
     print(f"📋 Accounts ({len(accounts)}):")
     for a in accounts:
-        print(f"  • {a['account_id']}: {a['name']} ({a['account_type']}, {a['active_sessions']} sessions)")
+        print(
+            f"  • {a['account_id']}: {a['name']} ({a['account_type']}, {a['active_sessions']} sessions)"
+        )
     return True
 
 
@@ -147,7 +155,9 @@ def _cmd_list(args, orch: VSCodeOrchestrator) -> bool:
     instances = orch.list_instances(args.account_id)
     print(f"📋 Instances ({len(instances)}):")
     for inst in instances:
-        print(f"  • {inst['instance_id']}: {inst['status']} (port {inst['port']}, {inst['active_sessions']} sessions)")
+        print(
+            f"  • {inst['instance_id']}: {inst['status']} (port {inst['port']}, {inst['active_sessions']} sessions)"
+        )
     return True
 
 
@@ -156,23 +166,23 @@ def _cmd_sessions(args, orch: VSCodeOrchestrator) -> bool:
     print(f"📋 Sessions ({len(sessions)}):")
     for s in sessions:
         if s:
-            print(f"  • {s['session_id']}: {s['instance_id']} ({s['session_duration_minutes']:.1f} min)")
+            print(
+                f"  • {s['session_id']}: {s['instance_id']} ({s['session_duration_minutes']:.1f} min)"
+            )
     return True
 
 
 # Create status handler
 _cmd_status = create_status_handler(
-    id_attr='session_id',
-    entity_label='Session',
+    id_attr="session_id",
+    entity_label="Session",
     get_status_func=lambda orch, id: orch.get_session_status(id),
-    print_summary_func=lambda orch: orch.print_status_summary()
+    print_summary_func=lambda orch: orch.print_status_summary(),
 )
 
 
 # Create cleanup handler
-_cmd_cleanup = create_cleanup_handler(
-    save_func=lambda orch: orch.save_config()
-)
+_cmd_cleanup = create_cleanup_handler(save_func=lambda orch: orch.save_config())
 
 
 def main():

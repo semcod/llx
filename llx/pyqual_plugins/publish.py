@@ -21,10 +21,7 @@ def check_version_on_pypi(version: str) -> bool:
     """Check if version already exists on PyPI."""
     try:
         result = subprocess.run(
-            ["pip", "index", "versions", "llx"],
-            capture_output=True,
-            text=True,
-            timeout=30
+            ["pip", "index", "versions", "llx"], capture_output=True, text=True, timeout=30
         )
         return version in result.stdout
     except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
@@ -39,7 +36,7 @@ def upload_to_pypi() -> int:
             ["python", "-m", "twine", "upload", "dist/*"],
             check=True,
             capture_output=True,
-            text=True
+            text=True,
         )
         print(result.stdout)
         return 0

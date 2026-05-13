@@ -4,7 +4,6 @@ FastAPI main.py for the API.
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List
 
 app = FastAPI()
 
@@ -20,25 +19,30 @@ data = {
     ],
 }
 
+
 class User(BaseModel):
     id: int
     name: str
     email: str
+
 
 class Product(BaseModel):
     id: int
     name: str
     price: float
 
+
 # Health endpoint
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
+
 # Users endpoints
 @app.get("/users/")
 async def read_users():
     return data["users"]
+
 
 @app.get("/users/{user_id}")
 async def read_user(user_id: int):
@@ -47,10 +51,12 @@ async def read_user(user_id: int):
             return user
     raise HTTPException(status_code=404, detail="User not found")
 
+
 @app.post("/users/")
 async def create_user(user: User):
     data["users"].append(user.dict())
     return user
+
 
 @app.put("/users/{user_id}")
 async def update_user(user_id: int, user: User):
@@ -60,6 +66,7 @@ async def update_user(user_id: int, user: User):
             return user
     raise HTTPException(status_code=404, detail="User not found")
 
+
 @app.delete("/users/{user_id}")
 async def delete_user(user_id: int):
     for i, user in enumerate(data["users"]):
@@ -68,10 +75,12 @@ async def delete_user(user_id: int):
             return {"message": "User deleted"}
     raise HTTPException(status_code=404, detail="User not found")
 
+
 # Products endpoints
 @app.get("/products/")
 async def read_products():
     return data["products"]
+
 
 @app.get("/products/{product_id}")
 async def read_product(product_id: int):
@@ -80,10 +89,12 @@ async def read_product(product_id: int):
             return product
     raise HTTPException(status_code=404, detail="Product not found")
 
+
 @app.post("/products/")
 async def create_product(product: Product):
     data["products"].append(product.dict())
     return product
+
 
 @app.put("/products/{product_id}")
 async def update_product(product_id: int, product: Product):
@@ -92,6 +103,7 @@ async def update_product(product_id: int, product: Product):
             data["products"][i] = product.dict()
             return product
     raise HTTPException(status_code=404, detail="Product not found")
+
 
 @app.delete("/products/{product_id}")
 async def delete_product(product_id: int):
@@ -104,4 +116,5 @@ async def delete_product(product_id: int):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -8,6 +8,7 @@ from enum import Enum
 
 class InstanceType(Enum):
     """Types of instances."""
+
     VSCODE = "vscode"
     AI_TOOLS = "ai_tools"
     LLM_PROXY = "llm_proxy"
@@ -15,6 +16,7 @@ class InstanceType(Enum):
 
 class InstanceStatus(Enum):
     """Instance status."""
+
     CREATING = "creating"
     RUNNING = "running"
     STOPPING = "stopping"
@@ -26,6 +28,7 @@ class InstanceStatus(Enum):
 @dataclass
 class InstanceConfig:
     """Configuration for an instance."""
+
     instance_id: str
     instance_type: InstanceType
     account: str
@@ -44,6 +47,7 @@ class InstanceConfig:
 @dataclass
 class InstanceState:
     """Current state of an instance."""
+
     instance_id: str
     status: InstanceStatus = InstanceStatus.STOPPED
     container_id: Optional[str] = None

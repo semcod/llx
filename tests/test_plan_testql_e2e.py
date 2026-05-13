@@ -57,7 +57,11 @@ sprints: []
 
     fake_planfile.run_testql_validation = run_testql_validation
     fake_planfile.build_testql_tickets = lambda *_, **__: []
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: {"created": 0, "skipped": 0, "created_ticket_ids": []}
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: {
+        "created": 0,
+        "skipped": 0,
+        "created_ticket_ids": [],
+    }
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)
@@ -83,7 +87,9 @@ sprints: []
     assert payload["tickets"]["created_ticket_ids"] == []
 
 
-def test_testql_workflow_with_failing_validation_creates_tickets(tmp_path: Path, monkeypatch) -> None:
+def test_testql_workflow_with_failing_validation_creates_tickets(
+    tmp_path: Path, monkeypatch
+) -> None:
     """Test that a failing TestQL validation creates tickets."""
     scenario_path = tmp_path / "failing.testql.toon.yaml"
     scenario_path.write_text(
@@ -213,7 +219,10 @@ sprints: []
 
     fake_planfile.run_testql_validation = run_testql_validation
     fake_planfile.build_testql_tickets = lambda *_, **__: (calls.update({"build": True}), [])[1]
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: (calls.update({"upsert": True}), {"created": 0, "skipped": 0, "created_ticket_ids": []})[1]
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: (
+        calls.update({"upsert": True}),
+        {"created": 0, "skipped": 0, "created_ticket_ids": []},
+    )[1]
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)
@@ -295,7 +304,11 @@ sprints: []
 
     fake_planfile.run_testql_validation = run_testql_validation
     fake_planfile.build_testql_tickets = build_testql_tickets
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: {"created": 5, "skipped": 5, "created_ticket_ids": ["TQL-0", "TQL-1", "TQL-2", "TQL-3", "TQL-4"]}
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: {
+        "created": 5,
+        "skipped": 5,
+        "created_ticket_ids": ["TQL-0", "TQL-1", "TQL-2", "TQL-3", "TQL-4"],
+    }
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)
@@ -364,14 +377,24 @@ sprints: []
         }
         return {
             "sync_order": ["markdown"],
-            "integrations": [
-                {"integration": "markdown", "created": 1, "skipped": 0, "failed": 0}
-            ],
+            "integrations": [{"integration": "markdown", "created": 1, "skipped": 0, "failed": 0}],
         }
 
     fake_planfile.run_testql_validation = run_testql_validation
-    fake_planfile.build_testql_tickets = lambda *_, **__: [{"id": "TQL-1", "title": "Test ticket", "description": "desc", "labels": ["testql"], "priority": "high"}]
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: {"created": 1, "skipped": 0, "created_ticket_ids": ["TQL-1"]}
+    fake_planfile.build_testql_tickets = lambda *_, **__: [
+        {
+            "id": "TQL-1",
+            "title": "Test ticket",
+            "description": "desc",
+            "labels": ["testql"],
+            "priority": "high",
+        }
+    ]
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: {
+        "created": 1,
+        "skipped": 0,
+        "created_ticket_ids": ["TQL-1"],
+    }
     fake_planfile.sync_testql_tickets = sync_testql_tickets
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)
@@ -435,7 +458,10 @@ sprints: []
 
     fake_planfile.run_testql_validation = run_testql_validation
     fake_planfile.build_testql_tickets = lambda *_, **__: (calls.update({"build": True}), [])[1]
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: (calls.update({"upsert": True}), {"created": 0, "skipped": 0, "created_ticket_ids": []})[1]
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: (
+        calls.update({"upsert": True}),
+        {"created": 0, "skipped": 0, "created_ticket_ids": []},
+    )[1]
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)
@@ -523,7 +549,15 @@ sprints:
         return {"created": 1, "skipped": 0, "created_ticket_ids": ["TQL-1"]}
 
     fake_planfile.run_testql_validation = run_testql_validation
-    fake_planfile.build_testql_tickets = lambda *_, **__: [{"id": "TQL-1", "title": "Test ticket", "description": "desc", "labels": ["testql"], "priority": "high"}]
+    fake_planfile.build_testql_tickets = lambda *_, **__: [
+        {
+            "id": "TQL-1",
+            "title": "Test ticket",
+            "description": "desc",
+            "labels": ["testql"],
+            "priority": "high",
+        }
+    ]
     fake_planfile.upsert_testql_tickets = upsert_testql_tickets
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
@@ -572,9 +606,15 @@ sprints: []
     )
 
     fake_planfile = ModuleType("planfile")
-    fake_planfile.run_testql_validation = lambda **_: (_ for _ in ()).throw(Exception("TestQL binary not found"))
+    fake_planfile.run_testql_validation = lambda **_: (_ for _ in ()).throw(
+        Exception("TestQL binary not found")
+    )
     fake_planfile.build_testql_tickets = lambda *_, **__: []
-    fake_planfile.upsert_testql_tickets = lambda *_, **__: {"created": 0, "skipped": 0, "created_ticket_ids": []}
+    fake_planfile.upsert_testql_tickets = lambda *_, **__: {
+        "created": 0,
+        "skipped": 0,
+        "created_ticket_ids": [],
+    }
     fake_planfile.sync_testql_tickets = lambda *_, **__: {}
 
     monkeypatch.setitem(sys.modules, "planfile", fake_planfile)

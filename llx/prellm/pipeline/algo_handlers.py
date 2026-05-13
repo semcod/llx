@@ -34,29 +34,47 @@ class AlgoHandlersMixin:
             return {key: state.get(key) for key in step_input}
         return state.get(step_input)
 
-    def _algo_domain_rule_matcher(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_domain_rule_matcher(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return {"matched": False, "inputs": inputs, "config": config}
 
-    def _algo_field_validator(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_field_validator(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return {"valid": True, "inputs": inputs, "config": config}
 
-    def _algo_yaml_formatter(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_yaml_formatter(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return inputs
 
-    def _algo_runtime_collector(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_runtime_collector(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return state
 
-    def _algo_sensitive_filter(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_sensitive_filter(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return inputs
 
-    def _algo_session_injector(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_session_injector(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return inputs
 
-    def _algo_shell_context_collector(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_shell_context_collector(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return inputs
 
-    def _algo_folder_compressor(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_folder_compressor(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return inputs
 
-    def _algo_context_schema_generator(self, inputs: Any, config: dict[str, Any], state: dict[str, Any]) -> Any:
+    def _algo_context_schema_generator(
+        self, inputs: Any, config: dict[str, Any], state: dict[str, Any]
+    ) -> Any:
         return config.get("schema", {})

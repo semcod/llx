@@ -119,17 +119,21 @@ class ChunkedProcessor:
                     if buffer:
                         chunk_num += 1
                         anonymized = anonymizer_func(buffer)
-                        yield ChunkResult(content=anonymized, chunk_number=chunk_num, is_complete=False)
+                        yield ChunkResult(
+                            content=anonymized, chunk_number=chunk_num, is_complete=False
+                        )
                         buffer = ""
                         buffer_size = 0
 
                     line_bytes = line.encode("utf-8")
                     for i in range(0, len(line_bytes), self.max_chunk_size):
-                        chunk_bytes = line_bytes[i:i + self.max_chunk_size]
+                        chunk_bytes = line_bytes[i : i + self.max_chunk_size]
                         chunk_str = chunk_bytes.decode("utf-8", errors="replace")
                         chunk_num += 1
                         anonymized = anonymizer_func(chunk_str)
-                        yield ChunkResult(content=anonymized, chunk_number=chunk_num, is_complete=False)
+                        yield ChunkResult(
+                            content=anonymized, chunk_number=chunk_num, is_complete=False
+                        )
                     continue
 
                 if buffer_size + line_size > self.max_chunk_size and buffer:

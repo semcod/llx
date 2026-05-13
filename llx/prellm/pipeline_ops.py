@@ -50,13 +50,15 @@ async def execute_v3_pipeline(
     from llx.prellm.context_ops import prepare_context, build_pipeline_context
     from llx.prellm.extractors import build_decomposition_result
     from llx.prellm.models import PreLLMResponse
-    
+
     max_tokens = kwargs.pop("max_tokens", 2048)
     temperature = kwargs.pop("temperature", 0.7)
 
     # Build LLM providers
     small_llm_config = LLMProviderConfig(model=small_llm, max_tokens=512, temperature=0.0)
-    large_llm_config = LLMProviderConfig(model=large_llm, max_tokens=max_tokens, temperature=temperature)
+    large_llm_config = LLMProviderConfig(
+        model=large_llm, max_tokens=max_tokens, temperature=temperature
+    )
 
     small_provider = LLMProvider(small_llm_config)
     large_provider = LLMProvider(large_llm_config)
@@ -108,6 +110,7 @@ async def execute_v3_pipeline(
 
     # 3. Build system_prompt from preprocessing + FULL context for the large LLM
     from llx.prellm.extractors import build_executor_system_prompt
+
     system_prompt = build_executor_system_prompt(prep_result, extra_context)
 
     # 4. Run execution with sanitization (large LLM)
@@ -120,8 +123,18 @@ async def execute_v3_pipeline(
 
     # 6. Build response
     trace = get_current_trace()
-    record_trace(trace, pipeline, small_llm, large_llm, query, pipeline_context,
-                 prep_result, exec_result, prep_duration_ms, exec_duration_ms)
+    record_trace(
+        trace,
+        pipeline,
+        small_llm,
+        large_llm,
+        query,
+        pipeline_context,
+        prep_result,
+        exec_result,
+        prep_duration_ms,
+        exec_duration_ms,
+    )
 
     decomposition_result = build_decomposition_result(query, pipeline, prep_result)
 
@@ -132,7 +145,8 @@ async def execute_v3_pipeline(
         small_model_used=small_llm,
         retries=exec_result.retries,
         clarified=bool(decomposition_result and decomposition_result.missing_fields),
-        needs_more_context=bool(decomposition_result and decomposition_result.missing_fields) and not exec_result.content,
+        needs_more_context=bool(decomposition_result and decomposition_result.missing_fields)
+        and not exec_result.content,
     )
 
     if trace:
@@ -226,9 +240,12 @@ def record_trace(
     # Record individual pipeline steps from preprocessor
     if prep_result.decomposition and prep_result.decomposition.steps_executed:
         for ps in prep_result.decomposition.steps_executed:
-            step_type = "context_collection" if ps.step_type == "algo" and ps.step_name in (
-                "collect_runtime", "inject_session", "sanitize"
-            ) else ("pipeline_step" if ps.step_type == "algo" else "llm_call")
+            step_type = (
+                "context_collection"
+                if ps.step_type == "algo"
+                and ps.step_name in ("collect_runtime", "inject_session", "sanitize")
+                else ("pipeline_step" if ps.step_type == "algo" else "llm_call")
+            )
             trace.step(
                 name=f"Pipeline: {ps.step_name}",
                 step_type=step_type,

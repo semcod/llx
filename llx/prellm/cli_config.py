@@ -5,8 +5,6 @@ This module contains the config_app subcommands for managing preLLM configuratio
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -20,9 +18,13 @@ config_app = typer.Typer(
 
 @config_app.command("set")
 def config_set_cmd(
-    key: str = typer.Argument(..., help="Config key (e.g. openrouter-key, model, small-model, strategy)"),
+    key: str = typer.Argument(
+        ..., help="Config key (e.g. openrouter-key, model, small-model, strategy)"
+    ),
     value: str = typer.Argument(..., help="Value to set"),
-    global_: bool = typer.Option(False, "--global", "-g", help="Save to ~/.prellm/.env (user-wide) instead of project .env"),
+    global_: bool = typer.Option(
+        False, "--global", "-g", help="Save to ~/.prellm/.env (user-wide) instead of project .env"
+    ),
 ):
     """Set a config value persistently.
 
@@ -108,8 +110,8 @@ def config_list_cmd(
         typer.echo("   Example:  prellm config set openrouter-key sk-or-v1-abc123")
         return
 
-    typer.echo(f"\n🧠 preLLM Configuration")
-    typer.echo(f"{'='*60}")
+    typer.echo("\n🧠 preLLM Configuration")
+    typer.echo(f"{'=' * 60}")
 
     for title, lines in _format_config_sections(entries).items():
         if lines:
@@ -117,7 +119,7 @@ def config_list_cmd(
             for line in lines:
                 typer.echo(line)
 
-    typer.echo(f"\n{'='*60}")
+    typer.echo(f"\n{'=' * 60}")
 
 
 @config_app.command("show")
@@ -130,8 +132,8 @@ def config_show_cmd():
     from llx.prellm.env_config import get_env_config
 
     env = get_env_config()
-    typer.echo(f"\n🧠 preLLM Effective Configuration")
-    typer.echo(f"{'='*60}")
+    typer.echo("\n🧠 preLLM Effective Configuration")
+    typer.echo(f"{'=' * 60}")
     typer.echo(f"   Small LLM:     {env.small_model}")
     typer.echo(f"   Large LLM:     {env.large_model}")
     typer.echo(f"   Strategy:      {env.strategy}")
@@ -147,19 +149,21 @@ def config_show_cmd():
     if env.config_path:
         typer.echo(f"   Config file:   {env.config_path}")
 
-    typer.echo(f"\n🔌 Providers:")
+    typer.echo("\n🔌 Providers:")
     for name, info in env.providers.items():
         if info["has_key"] or name == "ollama":
             typer.echo(f"   ✓ {name.upper():14s} {info.get('base_url', '')}")
         else:
             typer.echo(f"   ✗ {name.upper():14s} ({info.get('key_var', '')} not set)")
 
-    typer.echo(f"\n{'='*60}")
+    typer.echo(f"\n{'=' * 60}")
 
 
 @config_app.command("init-env")
 def config_init_env(
-    global_: bool = typer.Option(False, "--global", "-g", help="Create ~/.prellm/.env instead of project .env"),
+    global_: bool = typer.Option(
+        False, "--global", "-g", help="Create ~/.prellm/.env instead of project .env"
+    ),
     force: bool = typer.Option(False, "--force", "-f", help="Overwrite existing file"),
 ):
     """Generate a starter .env file with all available settings.
@@ -229,4 +233,4 @@ PRELLM_STRATEGY=classify
         f.write(template)
 
     typer.echo(f"✅ Created {path}")
-    typer.echo(f"   Edit the file to add your API keys.")
+    typer.echo("   Edit the file to add your API keys.")

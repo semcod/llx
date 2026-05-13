@@ -8,6 +8,7 @@ from enum import Enum
 
 class LimitType(Enum):
     """Types of rate limits."""
+
     REQUESTS_PER_HOUR = "requests_per_hour"
     TOKENS_PER_HOUR = "tokens_per_hour"
     REQUESTS_PER_MINUTE = "requests_per_minute"
@@ -17,6 +18,7 @@ class LimitType(Enum):
 @dataclass
 class RateLimitConfig:
     """Configuration for rate limiting."""
+
     provider: str
     account: str
     limits: Dict[LimitType, int] = field(default_factory=dict)
@@ -29,6 +31,7 @@ class RateLimitConfig:
 @dataclass
 class RateLimitState:
     """Current state of rate limiting."""
+
     provider: str
     account: str
     current_usage: Dict[LimitType, int] = field(default_factory=dict)

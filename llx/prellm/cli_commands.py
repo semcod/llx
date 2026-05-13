@@ -15,10 +15,16 @@ import typer
 
 def process(
     config: Path = typer.Argument(..., help="Path to process chain YAML"),
-    guard_config: Path = typer.Option("rules.yaml", "--guard-config", "-g", help="Path to guard YAML config"),
-    dry_run: bool = typer.Option(False, "--dry-run", "-d", help="Analyze steps without calling LLM"),
+    guard_config: Path = typer.Option(
+        "rules.yaml", "--guard-config", "-g", help="Path to guard YAML config"
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", "-d", help="Analyze steps without calling LLM"
+    ),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
-    env: Optional[str] = typer.Option(None, "--env", "-e", help="Environment override (e.g., production)"),
+    env: Optional[str] = typer.Option(
+        None, "--env", "-e", help="Environment override (e.g., production)"
+    ),
 ) -> None:
     """Execute a DevOps process chain."""
     from llx.prellm.chains.process_chain import ProcessChain
@@ -34,11 +40,11 @@ def process(
     if json_output:
         typer.echo(result.model_dump_json(indent=2))
     else:
-        typer.echo(f"\n{'='*60}")
+        typer.echo(f"\n{'=' * 60}")
         typer.echo(f"🔗 Process: {result.process_name}")
         typer.echo(f"   Status: {'✅ Completed' if result.completed else '⏸️  Incomplete'}")
         typer.echo(f"   Duration: {result.total_duration_seconds:.2f}s")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
         for step in result.steps:
             icon = {
                 "completed": "✅",
@@ -46,16 +52,25 @@ def process(
                 "awaiting_approval": "⏳",
                 "rolled_back": "↩️",
             }.get(step.status.value, "🔄")
-            typer.echo(f"   {icon} {step.step_name}: {step.status.value} ({step.duration_seconds:.2f}s)")
+            typer.echo(
+                f"   {icon} {step.step_name}: {step.status.value} ({step.duration_seconds:.2f}s)"
+            )
             if step.error:
                 typer.echo(f"      Error: {step.error}")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
 
 
 def decompose(
     query: str = typer.Argument(..., help="The prompt/query to decompose"),
-    config: Path = typer.Option("configs/prellm_config.yaml", "--config", "-c", help="Path to preLLM v0.2 YAML config"),
-    strategy: str = typer.Option("classify", "--strategy", "-s", help="Decomposition strategy: classify|structure|split|enrich|passthrough"),
+    config: Path = typer.Option(
+        "configs/prellm_config.yaml", "--config", "-c", help="Path to preLLM v0.2 YAML config"
+    ),
+    strategy: str = typer.Option(
+        "classify",
+        "--strategy",
+        "-s",
+        help="Decomposition strategy: classify|structure|split|enrich|passthrough",
+    ),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
 ) -> None:
     """[v0.2] Decompose a query using small LLM without calling the large model."""
@@ -70,52 +85,75 @@ def decompose(
     if json_output:
         typer.echo(json.dumps(result, indent=2, default=str))
     else:
-        typer.echo(f"\n{'='*60}")
+        typer.echo(f"\n{'=' * 60}")
         typer.echo(f"🧠 preLLM Decomposition [{strategy}]")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
         typer.echo(f"   Original: {result['original_query']}")
-        if result.get('classification'):
-            c = result['classification']
+        if result.get("classification"):
+            c = result["classification"]
             typer.echo(f"   Intent: {c['intent']} (confidence: {c['confidence']:.2f})")
             typer.echo(f"   Domain: {c['domain']}")
-        if result.get('structure'):
-            s = result['structure']
+        if result.get("structure"):
+            s = result["structure"]
             typer.echo(f"   Action: {s['action']}, Target: {s['target']}")
-        if result.get('sub_queries'):
+        if result.get("sub_queries"):
             typer.echo(f"   Sub-queries: {result['sub_queries']}")
-        if result.get('missing_fields'):
+        if result.get("missing_fields"):
             typer.echo(f"   ⚠️  Missing: {', '.join(result['missing_fields'])}")
-        if result.get('matched_rule'):
+        if result.get("matched_rule"):
             typer.echo(f"   Matched rule: {result['matched_rule']}")
         typer.echo(f"   Composed: {result.get('composed_prompt', '')[:200]}")
-        typer.echo(f"{'='*60}")
+        typer.echo(f"{'=' * 60}")
 
 
 def init(
-    output: Path = typer.Option("prellm_config.yaml", "--output", "-o", help="Output path for config"),
-    devops: bool = typer.Option(False, "--devops", help="Include DevOps-specific domain rules and context sources"),
+    output: Path = typer.Option(
+        "prellm_config.yaml", "--output", "-o", help="Output path for config"
+    ),
+    devops: bool = typer.Option(
+        False, "--devops", help="Include DevOps-specific domain rules and context sources"
+    ),
 ) -> None:
     """Generate a starter preLLM config file."""
     import yaml
 
     config = {
-        "small_model": {"model": "phi3:mini", "fallback": ["qwen2:1.5b"], "max_tokens": 512, "temperature": 0.0},
+        "small_model": {
+            "model": "phi3:mini",
+            "fallback": ["qwen2:1.5b"],
+            "max_tokens": 512,
+            "temperature": 0.0,
+        },
         "large_model": {"model": "gpt-5.4-mini", "fallback": ["llama3"], "max_tokens": 2048},
         "default_strategy": "classify",
         "policy": "devops" if devops else "strict",
         "domain_rules": [
-            {"name": "production_deploy", "keywords": ["deploy", "push", "release"],
-             "intent": "deploy", "required_fields": ["environment_details", "version"],
-             "severity": "critical", "strategy": "structure"},
-            {"name": "database_operation", "keywords": ["delete", "drop", "migrate"],
-             "intent": "database", "required_fields": ["target_database", "backup_confirmed"],
-             "severity": "critical", "strategy": "structure"},
-        ] if devops else [],
+            {
+                "name": "production_deploy",
+                "keywords": ["deploy", "push", "release"],
+                "intent": "deploy",
+                "required_fields": ["environment_details", "version"],
+                "severity": "critical",
+                "strategy": "structure",
+            },
+            {
+                "name": "database_operation",
+                "keywords": ["delete", "drop", "migrate"],
+                "intent": "database",
+                "required_fields": ["target_database", "backup_confirmed"],
+                "severity": "critical",
+                "strategy": "structure",
+            },
+        ]
+        if devops
+        else [],
         "context_sources": [
             {"env": ["CLUSTER", "NAMESPACE", "GIT_SHA", "ENV"]},
             {"git": ["branch", "short_sha", "last_commit_msg"]},
             {"system": ["hostname", "os"]},
-        ] if devops else [],
+        ]
+        if devops
+        else [],
     }
 
     with open(output, "w") as f:
@@ -127,11 +165,19 @@ def init(
 def serve(
     host: str = typer.Option("0.0.0.0", "--host", "-H", help="Bind host"),
     port: int = typer.Option(8080, "--port", "-p", help="Bind port"),
-    small: Optional[str] = typer.Option(None, "--small", "-s", help="Override small LLM (default: from .env)"),
-    large: Optional[str] = typer.Option(None, "--large", "-l", help="Override large LLM (default: from .env)"),
-    strategy: Optional[str] = typer.Option(None, "--strategy", "-S", help="Override strategy (default: from .env)"),
+    small: Optional[str] = typer.Option(
+        None, "--small", "-s", help="Override small LLM (default: from .env)"
+    ),
+    large: Optional[str] = typer.Option(
+        None, "--large", "-l", help="Override large LLM (default: from .env)"
+    ),
+    strategy: Optional[str] = typer.Option(
+        None, "--strategy", "-S", help="Override strategy (default: from .env)"
+    ),
     config: Optional[Path] = typer.Option(None, "--config", "-c", help="YAML config file"),
-    env_file: Optional[Path] = typer.Option(None, "--env-file", help="Path to .env file (default: .env)"),
+    env_file: Optional[Path] = typer.Option(
+        None, "--env-file", help="Path to .env file (default: .env)"
+    ),
     reload: bool = typer.Option(False, "--reload", help="Auto-reload on code changes (dev mode)"),
 ) -> None:
     """Start the OpenAI-compatible API server.
@@ -164,12 +210,12 @@ def serve(
 
     auth_status = "ON (LITELLM_MASTER_KEY)" if env.master_key else "OFF (no key set)"
 
-    typer.echo(f"\n🧠 preLLM API Server")
+    typer.echo("\n🧠 preLLM API Server")
     typer.echo(f"   http://{host}:{port}")
     typer.echo(f"   Small: {effective_small} | Large: {effective_large}")
     typer.echo(f"   Strategy: {effective_strategy} | Auth: {auth_status}")
-    typer.echo(f"   Endpoints: /v1/chat/completions, /v1/batch, /v1/models, /health")
-    typer.echo(f"{'='*60}\n")
+    typer.echo("   Endpoints: /v1/chat/completions, /v1/batch, /v1/models, /health")
+    typer.echo(f"{'=' * 60}\n")
 
     uvicorn.run(
         "llx.prellm.server:app",
@@ -205,6 +251,7 @@ def _doctor_check_providers(env, live: bool = False) -> list[str]:
     if live:
         import asyncio
         from llx.prellm.env_config import check_providers_live
+
         results = asyncio.run(check_providers_live(env))
     else:
         results = check_providers(env)
@@ -230,9 +277,9 @@ def _doctor_check_files(env_file: Path | None) -> list[str]:
 
     example_path = Path(".env.example")
     if example_path.is_file():
-        lines.append(f"   ✓ .env.example (available)")
+        lines.append("   ✓ .env.example (available)")
     else:
-        lines.append(f"   ✗ .env.example (not found)")
+        lines.append("   ✗ .env.example (not found)")
 
     config_yaml = Path("configs/prellm_config.yaml")
     if config_yaml.is_file():
@@ -256,23 +303,23 @@ def doctor(
 
     env = get_env_config(str(env_file) if env_file else None)
 
-    typer.echo(f"\n🧠 preLLM Doctor")
-    typer.echo(f"{'='*60}")
+    typer.echo("\n🧠 preLLM Doctor")
+    typer.echo(f"{'=' * 60}")
 
-    typer.echo(f"\n📋 Configuration:")
+    typer.echo("\n📋 Configuration:")
     for line in _doctor_check_config(env):
         typer.echo(line)
 
-    typer.echo(f"\n🔌 Providers:")
+    typer.echo("\n🔌 Providers:")
     for line in _doctor_check_providers(env, live=live):
         typer.echo(line)
 
-    typer.echo(f"\n📄 Files:")
+    typer.echo("\n📄 Files:")
     for line in _doctor_check_files(env_file):
         typer.echo(line)
 
-    typer.echo(f"\n{'='*60}")
-    typer.echo(f"✅ Doctor complete. Use --live to test connectivity.\n")
+    typer.echo(f"\n{'=' * 60}")
+    typer.echo("✅ Doctor complete. Use --live to test connectivity.\n")
 
 
 def budget(
@@ -301,35 +348,42 @@ def budget(
 
     if json_output:
         import json
+
         typer.echo(json.dumps(summary, indent=2, default=str))
         return
 
-    typer.echo(f"\n💰 preLLM Budget")
-    typer.echo(f"{'='*60}")
+    typer.echo("\n💰 preLLM Budget")
+    typer.echo(f"{'=' * 60}")
     typer.echo(f"   Month:      {summary['month']}")
     typer.echo(f"   Spent:      ${summary['total_cost']:.4f}")
-    if summary['monthly_limit'] is not None:
+    if summary["monthly_limit"] is not None:
         typer.echo(f"   Limit:      ${summary['monthly_limit']:.2f}")
         typer.echo(f"   Remaining:  ${summary['remaining']:.4f}")
-        pct = (summary['total_cost'] / summary['monthly_limit'] * 100) if summary['monthly_limit'] > 0 else 0
+        pct = (
+            (summary["total_cost"] / summary["monthly_limit"] * 100)
+            if summary["monthly_limit"] > 0
+            else 0
+        )
         bar_len = 30
         filled = int(bar_len * min(pct, 100) / 100)
         bar = "█" * filled + "░" * (bar_len - filled)
         typer.echo(f"   Usage:      [{bar}] {pct:.1f}%")
     else:
-        typer.echo(f"   Limit:      not set (PRELLM_MONTHLY_BUDGET)")
+        typer.echo("   Limit:      not set (PRELLM_MONTHLY_BUDGET)")
     typer.echo(f"   Requests:   {summary['requests']}")
 
-    if summary['by_model']:
-        typer.echo(f"\n   By model:")
-        for model, cost in sorted(summary['by_model'].items(), key=lambda x: -x[1]):
+    if summary["by_model"]:
+        typer.echo("\n   By model:")
+        for model, cost in sorted(summary["by_model"].items(), key=lambda x: -x[1]):
             typer.echo(f"     {model}: ${cost:.4f}")
 
-    typer.echo(f"\n{'='*60}")
+    typer.echo(f"\n{'=' * 60}")
 
 
 def models(
-    provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider (e.g. openrouter, ollama, openai)"),
+    provider: Optional[str] = typer.Option(
+        None, "--provider", "-p", help="Filter by provider (e.g. openrouter, ollama, openai)"
+    ),
     search: Optional[str] = typer.Option(None, "--search", "-s", help="Search model name"),
 ) -> None:
     """List popular model pairs and provider examples.
@@ -344,23 +398,23 @@ def models(
     pairs = list_model_pairs(provider=provider, search=search)
     or_models = list_openrouter_models(provider=provider, search=search)
 
-    typer.echo(f"\n🤖 preLLM Model Pairs")
-    typer.echo(f"{'='*60}")
+    typer.echo("\n🤖 preLLM Model Pairs")
+    typer.echo(f"{'=' * 60}")
 
     if pairs:
         typer.echo(f"\n{'Name':<25s} {'Small LLM':<30s} {'Large LLM':<45s} {'Cost':>6s}")
-        typer.echo(f"{'-'*25} {'-'*30} {'-'*45} {'-'*6}")
+        typer.echo(f"{'-' * 25} {'-' * 30} {'-' * 45} {'-' * 6}")
         for m in pairs:
             typer.echo(f"{m['name']:<25s} {m['small']:<30s} {m['large']:<45s} {m['cost']:>6s}")
 
     if or_models:
-        typer.echo(f"\n🌐 OpenRouter Models (use with --large):")
+        typer.echo("\n🌐 OpenRouter Models (use with --large):")
         for m in or_models:
             typer.echo(f"   {m['model_id']}")
             typer.echo(f"      {m['description']}")
 
-    typer.echo(f"\n💡 Usage:")
-    typer.echo(f'   prellm "Deploy app" --large openrouter/moonshotai/kimi-k2.5')
-    typer.echo(f"   prellm config set model openrouter/moonshotai/kimi-k2.5")
-    typer.echo(f"   prellm config set openrouter-key sk-or-v1-abc123")
-    typer.echo(f"\n{'='*60}")
+    typer.echo("\n💡 Usage:")
+    typer.echo('   prellm "Deploy app" --large openrouter/moonshotai/kimi-k2.5')
+    typer.echo("   prellm config set model openrouter/moonshotai/kimi-k2.5")
+    typer.echo("   prellm config set openrouter-key sk-or-v1-abc123")
+    typer.echo(f"\n{'=' * 60}")

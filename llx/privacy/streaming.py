@@ -5,16 +5,16 @@ Provides progress callbacks and memory-efficient processing.
 
 Usage:
     from llx.privacy.streaming import StreamingProjectAnonymizer, ChunkedProcessor
-    
+
     # Stream anonymization
     streamer = StreamingProjectAnonymizer(project_path)
-    
+
     for progress in streamer.anonymize_streaming(
         chunk_size=100,  # files per chunk
         progress_callback=lambda p: print(f"{p.percent}% done")
     ):
         print(f"Processed {progress.files_completed}/{progress.total_files}")
-    
+
     # Chunked processing for very large files
     processor = ChunkedProcessor(max_chunk_size=1024*1024)  # 1MB chunks
     for chunk_result in processor.process_file("large_file.py"):

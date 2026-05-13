@@ -10,6 +10,7 @@ from enum import Enum
 
 class LLMProviderType(Enum):
     """Types of LLM providers."""
+
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GOOGLE = "google"
@@ -21,6 +22,7 @@ class LLMProviderType(Enum):
 
 class ModelCapability(Enum):
     """Model capabilities."""
+
     CODE_GENERATION = "code_generation"
     TEXT_GENERATION = "text_generation"
     REASONING = "reasoning"
@@ -34,6 +36,7 @@ class ModelCapability(Enum):
 @dataclass
 class LLMModel:
     """LLM model configuration."""
+
     model_id: str
     provider: LLMProviderType
     name: str
@@ -52,6 +55,7 @@ class LLMModel:
 @dataclass
 class LLMProvider:
     """LLM provider configuration."""
+
     provider_id: str
     provider_type: LLMProviderType
     name: str
@@ -68,6 +72,7 @@ class LLMProvider:
 @dataclass
 class LLMRequest:
     """LLM request."""
+
     request_id: str
     provider: str
     model: str
@@ -86,6 +91,7 @@ class LLMRequest:
 @dataclass
 class LLMResponse:
     """LLM response."""
+
     request_id: str
     provider: str
     model: str

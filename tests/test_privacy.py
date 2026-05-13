@@ -1,8 +1,6 @@
 """Tests for privacy/anonymization module."""
 
-import pytest
-
-from llx.privacy import Anonymizer, AnonymizationResult, quick_anonymize, quick_deanonymize
+from llx.privacy import Anonymizer, quick_anonymize, quick_deanonymize
 
 
 class TestAnonymizationPatterns:

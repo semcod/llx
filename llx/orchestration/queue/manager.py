@@ -9,11 +9,10 @@ import heapq
 import threading
 from typing import Dict, List, Optional, Any
 from datetime import datetime
-from dataclasses import field
 from pathlib import Path
 from collections import deque
 
-from .models import QueueStatus, RequestPriority, QueueRequest, QueueConfig, QueueState
+from .models import QueueStatus, QueueRequest, QueueConfig, QueueState
 from .._utils import save_json
 
 
@@ -101,16 +100,18 @@ class QueueManager:
             data: Dict[str, Any] = {"queues": [], "states": {}}
 
             for config in self.queues.values():
-                data["queues"].append({
-                    "queue_id": config.queue_id,
-                    "provider": config.provider,
-                    "account": config.account,
-                    "max_size": config.max_size,
-                    "max_concurrent": config.max_concurrent,
-                    "default_timeout": config.default_timeout,
-                    "retry_policy": config.retry_policy,
-                    "metadata": config.metadata,
-                })
+                data["queues"].append(
+                    {
+                        "queue_id": config.queue_id,
+                        "provider": config.provider,
+                        "account": config.account,
+                        "max_size": config.max_size,
+                        "max_concurrent": config.max_concurrent,
+                        "default_timeout": config.default_timeout,
+                        "retry_policy": config.retry_policy,
+                        "metadata": config.metadata,
+                    }
+                )
 
             for state in self.queue_states.values():
                 data["states"][state.queue_id] = {
@@ -279,7 +280,9 @@ class QueueManager:
                 state.failed_requests += 1
                 if request.retry_count < request.max_retries:
                     request.retry_count += 1
-                    retry_delay = self._calculate_retry_delay(request.retry_count, request.created_at)
+                    retry_delay = self._calculate_retry_delay(
+                        request.retry_count, request.created_at
+                    )
                     if retry_delay > 0:
                         threading.Timer(
                             retry_delay, self._retry_request, args=[queue_id, request]
@@ -434,15 +437,14 @@ class QueueManager:
                 print(f"🔄 Retrying request {request.request_id} (attempt {request.retry_count})")
 
     def _calculate_retry_delay(self, retry_count: int, created_at: datetime) -> float:
-        return min(300, (2 ** retry_count))
+        return min(300, (2**retry_count))
 
     def _update_averages(self, queue_id: str, processing_time: float):
         state = self.queue_states[queue_id]
         if state.processed_requests > 0:
             state.average_processing_time = (
-                (state.average_processing_time * (state.processed_requests - 1) + processing_time)
-                / state.processed_requests
-            )
+                state.average_processing_time * (state.processed_requests - 1) + processing_time
+            ) / state.processed_requests
         wait_times = []
         for request in self.completed_requests[queue_id]:
             wt = (request.created_at - state.created_at).total_seconds()

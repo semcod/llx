@@ -22,9 +22,7 @@ def add_limit(self, config: RateLimitConfig) -> bool:
         key = f"{config.provider}:{config.account}"
         self.limits[key] = config
         if key not in self.states:
-            self.states[key] = RateLimitState(
-                provider=config.provider, account=config.account
-            )
+            self.states[key] = RateLimitState(provider=config.provider, account=config.account)
         print(f"✅ Added rate limit for {config.provider}:{config.account}")
         return True
 

@@ -14,10 +14,7 @@ def check_version_on_pypi(version: str) -> bool:
     """Check if version already exists on PyPI."""
     try:
         result = subprocess.run(
-            ["pip", "index", "versions", "llx"],
-            capture_output=True,
-            text=True,
-            timeout=30
+            ["pip", "index", "versions", "llx"], capture_output=True, text=True, timeout=30
         )
         return version in result.stdout
     except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
@@ -52,7 +49,7 @@ def update_pyproject_toml(toml_path: Path, old_version: str, new_version: str) -
         rf'^version = "{re.escape(old_version)}"',
         f'version = "{new_version}"',
         content,
-        flags=re.MULTILINE
+        flags=re.MULTILINE,
     )
     toml_path.write_text(new_content, encoding="utf-8")
     print(f"Updated {toml_path} to {new_version}")
@@ -61,15 +58,16 @@ def update_pyproject_toml(toml_path: Path, old_version: str, new_version: str) -
 def git_commit_version_bump(old_version: str, new_version: str) -> None:
     """Commit version bump changes."""
     try:
+        subprocess.run(["git", "add", "VERSION", "pyproject.toml"], check=True, capture_output=True)
         subprocess.run(
-            ["git", "add", "VERSION", "pyproject.toml"],
+            [
+                "git",
+                "commit",
+                "-m",
+                f"chore: auto-bump version {old_version} -> {new_version} [pyqual]",
+            ],
             check=True,
-            capture_output=True
-        )
-        subprocess.run(
-            ["git", "commit", "-m", f"chore: auto-bump version {old_version} -> {new_version} [pyqual]"],
-            check=True,
-            capture_output=True
+            capture_output=True,
         )
         print(f"Committed version bump: {old_version} -> {new_version}")
     except subprocess.CalledProcessError as e:

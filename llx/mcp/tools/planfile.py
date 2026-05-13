@@ -1,6 +1,5 @@
 """Planfile MCP tools: strategy generation and application."""
 
-from pathlib import Path
 from mcp.types import Tool
 
 from llx.mcp.tools.base import McpTool
@@ -21,7 +20,8 @@ async def _handle_planfile_generate(args: dict) -> dict:
 
         # Save to temporary file if no output specified
         import tempfile
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             save_strategy_yaml(strategy, f.name)
 
         return {
@@ -29,18 +29,15 @@ async def _handle_planfile_generate(args: dict) -> dict:
             "strategy_file": f.name,
             "sprints": len(strategy.get("sprints", [])),
             "focus": focus,
-            "model": model
+            "model": model,
         }
     except ImportError:
         return {
             "success": False,
-            "error": "planfile not installed. Install with: pip install planfile"
+            "error": "planfile not installed. Install with: pip install planfile",
         }
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}
 
 
 tool_planfile_generate = McpTool(
@@ -50,10 +47,22 @@ tool_planfile_generate = McpTool(
         inputSchema={
             "type": "object",
             "properties": {
-                "project_path": {"type": "string", "default": ".", "description": "Project path to analyze"},
+                "project_path": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Project path to analyze",
+                },
                 "model": {"type": "string", "description": "LLM model to use for generation"},
-                "sprints": {"type": "integer", "default": 3, "description": "Number of sprints to plan"},
-                "focus": {"type": "string", "enum": ["complexity", "duplication", "tests", "docs"], "description": "Focus area for refactoring"},
+                "sprints": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Number of sprints to plan",
+                },
+                "focus": {
+                    "type": "string",
+                    "enum": ["complexity", "duplication", "tests", "docs"],
+                    "description": "Focus area for refactoring",
+                },
             },
         },
     ),
@@ -72,10 +81,7 @@ async def _handle_planfile_apply(args: dict) -> dict:
         dry_run = args.get("dry_run", False)
 
         if not strategy_path:
-            return {
-                "success": False,
-                "error": "strategy_path is required"
-            }
+            return {"success": False, "error": "strategy_path is required"}
 
         results = execute_strategy(
             strategy_path=strategy_path,
@@ -102,18 +108,12 @@ async def _handle_planfile_apply(args: dict) -> dict:
                     "error": r.error,
                 }
                 for r in results
-            ]
+            ],
         }
     except ImportError as e:
-        return {
-            "success": False,
-            "error": f"planfile not installed: {e}"
-        }
+        return {"success": False, "error": f"planfile not installed: {e}"}
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e)
-        }
+        return {"success": False, "error": str(e)}
 
 
 tool_planfile_apply = McpTool(
@@ -125,9 +125,20 @@ tool_planfile_apply = McpTool(
             "required": ["strategy_path"],
             "properties": {
                 "strategy_path": {"type": "string", "description": "Path to strategy.yaml file"},
-                "project_path": {"type": "string", "default": ".", "description": "Project root path"},
-                "sprint": {"type": "integer", "description": "Execute only specific sprint (optional)"},
-                "dry_run": {"type": "boolean", "default": False, "description": "Preview without execution"},
+                "project_path": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Project root path",
+                },
+                "sprint": {
+                    "type": "integer",
+                    "description": "Execute only specific sprint (optional)",
+                },
+                "dry_run": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Preview without execution",
+                },
             },
         },
     ),

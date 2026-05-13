@@ -7,11 +7,10 @@ This keeps llx.prellm importable without optional nfo dependency.
 from __future__ import annotations
 
 import functools
-import io
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Callable, Optional, Protocol, TextIO, TypeVar, Union
+from typing import Any, Callable, Optional, TextIO, TypeVar
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -22,6 +21,7 @@ try:
     from nfo import Logger as _nfo_Logger
     from nfo import MarkdownSink as _nfo_MarkdownSink
     from nfo import TerminalSink as _nfo_TerminalSink
+
     NFO_AVAILABLE = True
 except ImportError:
     NFO_AVAILABLE = False
@@ -36,9 +36,10 @@ except ImportError:
 # Fallback Logger Implementation
 # ============================================================
 
+
 class _FallbackLogger:
     """Fallback logger using stdlib logging."""
-    
+
     def __init__(self, name: str = "prellm", level: int = logging.INFO):
         self.name = name
         self._logger = logging.getLogger(name)
@@ -47,27 +48,25 @@ class _FallbackLogger:
         if not self._logger.handlers:
             handler = logging.StreamHandler(sys.stderr)
             handler.setLevel(level)
-            formatter = logging.Formatter(
-                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-            )
+            formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
             handler.setFormatter(formatter)
             self._logger.addHandler(handler)
-    
+
     def debug(self, msg: str, **kwargs: Any) -> None:
         self._logger.debug(msg)
-    
+
     def info(self, msg: str, **kwargs: Any) -> None:
         self._logger.info(msg)
-    
+
     def warning(self, msg: str, **kwargs: Any) -> None:
         self._logger.warning(msg)
-    
+
     def error(self, msg: str, **kwargs: Any) -> None:
         self._logger.error(msg)
-    
+
     def critical(self, msg: str, **kwargs: Any) -> None:
         self._logger.critical(msg)
-    
+
     def exception(self, msg: str, **kwargs: Any) -> None:
         self._logger.exception(msg)
 
@@ -76,9 +75,10 @@ class _FallbackLogger:
 # Fallback Sink Classes
 # ============================================================
 
+
 class _FallbackTerminalSink:
     """Fallback terminal sink using stdlib logging."""
-    
+
     def __init__(
         self,
         format: str = "markdown",
@@ -98,7 +98,7 @@ class _FallbackTerminalSink:
 
 class _FallbackMarkdownSink:
     """Fallback markdown sink that writes to a file."""
-    
+
     def __init__(self, file_path: str | Path):
         self.file_path = Path(file_path)
         # Ensure parent directory exists
@@ -108,6 +108,7 @@ class _FallbackMarkdownSink:
 # ============================================================
 # Configure Function
 # ============================================================
+
 
 def configure(
     name: str = "prellm",
@@ -121,7 +122,7 @@ def configure(
     **kwargs: Any,
 ) -> Any:
     """Configure logging.
-    
+
     Uses nfo.configure if available, otherwise sets up stdlib logging.
     """
     if NFO_AVAILABLE and _nfo_configure is not None:
@@ -136,7 +137,7 @@ def configure(
             force=force,
             **kwargs,
         )
-    
+
     # Fallback: return stdlib-based logger
     level_map = {
         "DEBUG": logging.DEBUG,
@@ -158,12 +159,12 @@ import asyncio
 
 def log_call(func: F) -> F:
     """Decorator that logs function calls.
-    
+
     Uses nfo.log_call if available, otherwise falls back to stdlib logging.
     """
     if NFO_AVAILABLE and _nfo_log_call is not None:
         return _nfo_log_call(func)
-    
+
     # Fallback: stdlib logging decorator
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -176,7 +177,7 @@ def log_call(func: F) -> F:
         except Exception as e:
             logger.warning(f"{func.__name__} failed: {e}")
             raise
-    
+
     @functools.wraps(func)
     async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
         logger = logging.getLogger(func.__module__)
@@ -188,7 +189,7 @@ def log_call(func: F) -> F:
         except Exception as e:
             logger.warning(f"{func.__name__} failed: {e}")
             raise
-    
+
     # Return appropriate wrapper based on whether function is async
     if asyncio.iscoroutinefunction(func):
         return async_wrapper  # type: ignore[return-value]

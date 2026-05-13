@@ -9,28 +9,28 @@ from typing import Any
 
 def _extract_issue_files(issues: list | dict | None) -> list[str]:
     """Extract file paths from issues data.
-    
+
     Args:
         issues: Issues data - can be a list of issues or a dict with 'issues' key,
                or None.
-    
+
     Returns:
         List of file paths extracted from issues.
     """
     if issues is None:
         return []
-    
+
     files = set()
-    
+
     # Handle dict with 'issues' key
     if isinstance(issues, dict):
         issues_list = issues.get("issues", [])
     else:
         issues_list = issues
-    
+
     if not isinstance(issues_list, list):
         return []
-    
+
     for issue in issues_list:
         if isinstance(issue, dict):
             # Try common file path keys
@@ -38,7 +38,7 @@ def _extract_issue_files(issues: list | dict | None) -> list[str]:
                 if key in issue and issue[key]:
                     files.add(str(issue[key]))
                     break
-    
+
     return sorted(files)
 
 
@@ -50,19 +50,19 @@ def _run_aider_fix(
     use_docker: bool = False,
 ) -> dict[str, Any]:
     """Run aider to fix code issues.
-    
+
     Args:
         workdir: Working directory path
         prompt: The prompt/instruction for aider
         model: Model to use (e.g., "ollama/qwen2.5-coder:7b")
         files: Specific files to edit (optional)
         use_docker: Whether to use Docker to run aider
-    
+
     Returns:
         Dict with success status, stdout, stderr, command, path, and method.
     """
     files = files or []
-    
+
     # Try Docker first if requested
     if use_docker:
         import os
@@ -71,41 +71,62 @@ def _run_aider_fix(
         if "openrouter" in model:
             # OpenRouter configuration
             docker_cmd = [
-                "docker", "run", "--rm",
-                "-v", f"{workdir}:/app",
-                "-w", "/app",
-                "-e", "OPENROUTER_API_KEY=" + os.getenv("OPENROUTER_API_KEY", ""),
-                "-e", "OPENAI_API_BASE=https://openrouter.ai/api/v1",
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                f"{workdir}:/app",
+                "-w",
+                "/app",
+                "-e",
+                "OPENROUTER_API_KEY=" + os.getenv("OPENROUTER_API_KEY", ""),
+                "-e",
+                "OPENAI_API_BASE=https://openrouter.ai/api/v1",
                 "paulgauthier/aider",
-                "--model", model,
-                "--message", prompt
+                "--model",
+                model,
+                "--message",
+                prompt,
             ]
         elif "ollama" in model:
             # Ollama configuration
             docker_cmd = [
-                "docker", "run", "--rm",
-                "-v", f"{workdir}:/app",
-                "-w", "/app",
-                "-e", "OLLAMA_API_BASE=http://172.17.0.1:11434",
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                f"{workdir}:/app",
+                "-w",
+                "/app",
+                "-e",
+                "OLLAMA_API_BASE=http://172.17.0.1:11434",
                 "paulgauthier/aider",
-                "--model", model.replace("ollama/", "ollama_chat/"),
-                "--message", prompt
+                "--model",
+                model.replace("ollama/", "ollama_chat/"),
+                "--message",
+                prompt,
             ]
         else:
             # Default configuration
             docker_cmd = [
-                "docker", "run", "--rm",
-                "-v", f"{workdir}:/app",
-                "-w", "/app",
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                f"{workdir}:/app",
+                "-w",
+                "/app",
                 "paulgauthier/aider",
-                "--model", model,
-                "--message", prompt
+                "--model",
+                model,
+                "--message",
+                prompt,
             ]
-        
+
         # Add specific files if provided
         if files:
             docker_cmd.extend(files)
-        
+
         try:
             result = subprocess.run(
                 docker_cmd,
@@ -113,7 +134,7 @@ def _run_aider_fix(
                 text=True,
                 timeout=300,  # 5 minute timeout
             )
-            
+
             return {
                 "success": result.returncode == 0,
                 "stdout": result.stdout,
@@ -134,14 +155,14 @@ def _run_aider_fix(
         except FileNotFoundError:
             # Docker not available, fall through to local
             pass
-    
+
     # Build aider command for local execution
     cmd = ["aider", "--model", model, "--message", prompt]
-    
+
     # Add specific files if provided
     if files:
         cmd.extend(files)
-    
+
     # Run aider in project directory
     try:
         result = subprocess.run(
@@ -151,7 +172,7 @@ def _run_aider_fix(
             text=True,
             timeout=300,  # 5 minute timeout
         )
-        
+
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout,
@@ -191,29 +212,29 @@ def _run_aider_fix(
 
 def _format_aider_result(result: dict[str, Any]) -> str:
     """Format aider result for display.
-    
+
     Args:
         result: Result dict from _run_aider_fix.
-    
+
     Returns:
         Formatted string for display.
     """
     lines = []
-    
+
     if result.get("success"):
         lines.append("[green]✓[/green] Aider completed successfully")
     else:
         lines.append("[red]✗[/red] Aider failed")
-    
+
     lines.append(f"Method: {result.get('method', 'unknown')}")
     lines.append(f"Command: {result.get('command', 'N/A')}")
-    
+
     if result.get("stdout"):
         lines.append("\n[bold]Output:[/bold]")
         lines.append(result["stdout"])
-    
+
     if result.get("stderr"):
         lines.append("\n[bold red]Errors:[/bold red]")
         lines.append(result["stderr"])
-    
+
     return "\n".join(lines)

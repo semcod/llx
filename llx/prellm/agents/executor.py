@@ -15,7 +15,7 @@ import logging
 from typing import Any
 
 from llx.prellm._nfo_compat import log_call
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from llx.prellm.llm_provider import LLMProvider
 from llx.prellm.validators import ResponseValidator, ValidationResult
@@ -25,6 +25,7 @@ logger = logging.getLogger("prellm.agents.executor")
 
 class ExecutorResult(BaseModel):
     """Output of the ExecutorAgent."""
+
     content: str = ""
     model_used: str = ""
     schema_valid: bool | None = None
@@ -115,6 +116,7 @@ class ExecutorAgent:
             return None
 
         import json
+
         try:
             data = json.loads(content)
             if isinstance(data, dict):
@@ -123,6 +125,4 @@ class ExecutorAgent:
             pass
 
         # Non-JSON responses: validate as {"content": content}
-        return self.response_validator.validate(
-            {"content": content}, self.response_schema_name
-        )
+        return self.response_validator.validate({"content": content}, self.response_schema_name)

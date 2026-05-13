@@ -29,9 +29,7 @@ class TestMcpAnalyze:
     def test_analyze_returns_metrics(self, event_loop, tmp_path):
         # Create minimal Python file
         (tmp_path / "main.py").write_text("def hello():\n    pass\n")
-        result = event_loop.run_until_complete(
-            _handle_llx_analyze({"path": str(tmp_path)})
-        )
+        result = event_loop.run_until_complete(_handle_llx_analyze({"path": str(tmp_path)}))
         assert "metrics" in result
         assert "selection" in result
         assert result["metrics"]["total_files"] >= 1
@@ -47,9 +45,7 @@ class TestMcpAnalyze:
 class TestMcpSelect:
     def test_select_returns_tier(self, event_loop, tmp_path):
         (tmp_path / "main.py").write_text("pass\n")
-        result = event_loop.run_until_complete(
-            _handle_llx_select({"path": str(tmp_path)})
-        )
+        result = event_loop.run_until_complete(_handle_llx_select({"path": str(tmp_path)}))
         assert "tier" in result
         assert "model_id" in result
 
@@ -108,8 +104,14 @@ class TestMcpServerEntryPoint:
 
         called = {}
 
-        with patch.object(mcp_server, "run_sse_server", side_effect=lambda host, port: called.update({"host": host, "port": port})) as mock_sse, \
-             patch.object(mcp_server.asyncio, "run") as mock_asyncio_run:
+        with (
+            patch.object(
+                mcp_server,
+                "run_sse_server",
+                side_effect=lambda host, port: called.update({"host": host, "port": port}),
+            ) as mock_sse,
+            patch.object(mcp_server.asyncio, "run") as mock_asyncio_run,
+        ):
             rc = mcp_server.main(["--sse", "--host", "127.0.0.1", "--port", "8123"])
 
         assert rc == 0
@@ -123,8 +125,12 @@ class TestMcpServerEntryPoint:
         def fake_asyncio_run(coro):
             coro.close()
 
-        with patch.object(mcp_server, "run_sse_server") as mock_sse, \
-             patch.object(mcp_server.asyncio, "run", side_effect=fake_asyncio_run) as mock_asyncio_run:
+        with (
+            patch.object(mcp_server, "run_sse_server") as mock_sse,
+            patch.object(
+                mcp_server.asyncio, "run", side_effect=fake_asyncio_run
+            ) as mock_asyncio_run,
+        ):
             rc = mcp_server.main([])
 
         assert rc == 0

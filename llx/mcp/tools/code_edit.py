@@ -1,7 +1,6 @@
 """Code editing MCP tools: aider integration."""
 
 import subprocess
-import json
 from pathlib import Path
 from mcp.types import Tool
 
@@ -20,17 +19,25 @@ async def _handle_aider(args: dict) -> dict:
     if use_docker:
         # Docker-based aider execution
         cmd = [
-            "docker", "run", "--rm",
-            "-v", f"{path.resolve()}:/workspace",
-            "-w", "/workspace",
+            "docker",
+            "run",
+            "--rm",
+            "-v",
+            f"{path.resolve()}:/workspace",
+            "-w",
+            "/workspace",
         ]
         for arg in docker_args:
             cmd.append(arg)
-        cmd.extend([
-            "wronai/aider",
-            "--model", model,
-            "--message", prompt,
-        ])
+        cmd.extend(
+            [
+                "wronai/aider",
+                "--model",
+                model,
+                "--message",
+                prompt,
+            ]
+        )
         if files:
             cmd.extend(files)
     else:
@@ -45,27 +52,19 @@ async def _handle_aider(args: dict) -> dict:
             capture_output=True,
             text=True,
             timeout=300,
-            cwd=str(path) if not use_docker else None
+            cwd=str(path) if not use_docker else None,
         )
 
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout,
             "stderr": result.stderr,
-            "command": " ".join(cmd)
+            "command": " ".join(cmd),
         }
     except subprocess.TimeoutExpired:
-        return {
-            "success": False,
-            "error": "Command timed out after 300s",
-            "command": " ".join(cmd)
-        }
+        return {"success": False, "error": "Command timed out after 300s", "command": " ".join(cmd)}
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e),
-            "command": " ".join(cmd)
-        }
+        return {"success": False, "error": str(e), "command": " ".join(cmd)}
 
 
 tool_aider = McpTool(
@@ -78,10 +77,26 @@ tool_aider = McpTool(
             "properties": {
                 "prompt": {"type": "string", "description": "The prompt/instruction for aider"},
                 "path": {"type": "string", "default": ".", "description": "Project directory path"},
-                "model": {"type": "string", "default": "ollama/qwen2.5-coder:7b", "description": "Model to use (Ollama format)"},
-                "files": {"type": "array", "items": {"type": "string"}, "description": "Specific files to edit (optional)"},
-                "use_docker": {"type": "boolean", "default": False, "description": "Use Docker instead of local installation"},
-                "docker_args": {"type": "array", "items": {"type": "string"}, "description": "Additional Docker arguments (optional)"},
+                "model": {
+                    "type": "string",
+                    "default": "ollama/qwen2.5-coder:7b",
+                    "description": "Model to use (Ollama format)",
+                },
+                "files": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Specific files to edit (optional)",
+                },
+                "use_docker": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Use Docker instead of local installation",
+                },
+                "docker_args": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Additional Docker arguments (optional)",
+                },
             },
         },
     ),

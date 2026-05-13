@@ -30,21 +30,24 @@ _DEFAULT_PIPELINES_PATH = Path(__file__).parent.parent / "configs" / "pipelines.
 # Pipeline Config Models
 # ============================================================
 
+
 class PipelineStep(BaseModel):
     """Configuration for a single pipeline step."""
+
     name: str
-    prompt: str | None = None        # prompt name from PromptRegistry (LLM step)
-    type: str | None = None           # algorithmic step type (non-LLM step)
+    prompt: str | None = None  # prompt name from PromptRegistry (LLM step)
+    type: str | None = None  # algorithmic step type (non-LLM step)
     input: str | list[str] = "query"
     output: str = ""
     condition: str | None = None
     parallel: bool = False
     config: dict[str, Any] = Field(default_factory=dict)
-    output_schema: str | None = None   # schema name for output validation
+    output_schema: str | None = None  # schema name for output validation
 
 
 class PipelineConfig(BaseModel):
     """Configuration for a complete pipeline."""
+
     name: str
     description: str = ""
     steps: list[PipelineStep] = Field(default_factory=list)
@@ -52,6 +55,7 @@ class PipelineConfig(BaseModel):
 
 class StepExecutionResult(BaseModel):
     """Result of executing a single pipeline step."""
+
     step_name: str
     step_type: str = "llm"  # "llm" or "algo"
     output_key: str = ""
@@ -62,6 +66,7 @@ class StepExecutionResult(BaseModel):
 
 class PipelineResult(BaseModel):
     """Result of executing a full pipeline."""
+
     state: dict[str, Any] = Field(default_factory=dict)
     steps_executed: list[StepExecutionResult] = Field(default_factory=list)
     pipeline_name: str = ""
@@ -72,6 +77,7 @@ class PipelineResult(BaseModel):
 # ============================================================
 # Pipeline Engine
 # ============================================================
+
 
 class PromptPipeline:
     """Generic pipeline — executes a sequence of LLM + algorithmic steps.
@@ -148,17 +154,19 @@ class PromptPipeline:
         for step_raw in pipe_data.get("steps", []):
             # Normalize input field
             input_val = step_raw.get("input", "query")
-            steps.append(PipelineStep(
-                name=step_raw["name"],
-                prompt=step_raw.get("prompt"),
-                type=step_raw.get("type"),
-                input=input_val,
-                output=step_raw.get("output", ""),
-                condition=step_raw.get("condition"),
-                parallel=step_raw.get("parallel", False),
-                config=step_raw.get("config", {}),
-                output_schema=step_raw.get("schema"),
-            ))
+            steps.append(
+                PipelineStep(
+                    name=step_raw["name"],
+                    prompt=step_raw.get("prompt"),
+                    type=step_raw.get("type"),
+                    input=input_val,
+                    output=step_raw.get("output", ""),
+                    condition=step_raw.get("condition"),
+                    parallel=step_raw.get("parallel", False),
+                    config=step_raw.get("config", {}),
+                    output_schema=step_raw.get("schema"),
+                )
+            )
 
         config = PipelineConfig(
             name=pipeline_name,
@@ -272,8 +280,10 @@ class PromptPipeline:
         """Execute an algorithmic (non-LLM) step."""
         handler = self._algo_handlers.get(step.type or "")
         if handler is None:
-            raise ValueError(f"Unknown algorithmic step type: '{step.type}'. "
-                           f"Available: {sorted(self._algo_handlers.keys())}")
+            raise ValueError(
+                f"Unknown algorithmic step type: '{step.type}'. "
+                f"Available: {sorted(self._algo_handlers.keys())}"
+            )
 
         inputs = self._gather_inputs(step, state)
         return handler(inputs, state, step.config)
@@ -378,10 +388,7 @@ class PromptPipeline:
             "original_query": query,
             "composed_prompt": meta_prompt if isinstance(meta_prompt, str) else str(meta_prompt),
             "context": state.get("context", {}),
-            "pipeline_state": {
-                k: v for k, v in state.items()
-                if k not in ("query", "context")
-            },
+            "pipeline_state": {k: v for k, v in state.items() if k not in ("query", "context")},
         }
 
     @staticmethod
@@ -391,6 +398,7 @@ class PromptPipeline:
         """Collect RuntimeContext and add to state."""
         try:
             from llx.prellm.analyzers.context_engine import ContextEngine
+
             engine = ContextEngine()
             runtime = engine.gather_runtime()
             return runtime.model_dump()
@@ -405,6 +413,7 @@ class PromptPipeline:
         """Filter state through SensitiveDataFilter before output."""
         try:
             from llx.prellm.context.sensitive_filter import SensitiveDataFilter
+
             sf = SensitiveDataFilter()
             # Filter the composed prompt text
             text = ""
@@ -427,10 +436,12 @@ class PromptPipeline:
         """Inject relevant context from UserMemory (RAG-style)."""
         try:
             import asyncio
+
             memory_path = state.get("context", {}).get("memory_path")
             if not memory_path:
                 return ""
             from llx.prellm.context.user_memory import UserMemory
+
             memory = UserMemory(path=memory_path)
             query = state.get("query", "")
             # Run async in sync context
@@ -451,6 +462,7 @@ class PromptPipeline:
     ) -> dict[str, Any]:
         """Collect shell context as an algo step."""
         from llx.prellm.context.shell_collector import ShellContextCollector
+
         collector = ShellContextCollector()
         ctx = collector.collect_all()
         return ctx.model_dump()
@@ -461,6 +473,7 @@ class PromptPipeline:
     ) -> dict[str, Any]:
         """Compress folder as an algo step."""
         from llx.prellm.context.folder_compressor import FolderCompressor
+
         codebase_path = state.get("context", {}).get("codebase_path", ".")
         compressor = FolderCompressor()
         compressed = compressor.compress(codebase_path)
@@ -473,6 +486,7 @@ class PromptPipeline:
         """Generate context schema as an algo step."""
         from llx.prellm.context.schema_generator import ContextSchemaGenerator
         from llx.prellm.models import ShellContext, CompressedFolder
+
         shell_data = inputs.get("shell_context")
         folder_data = inputs.get("compressed_folder")
         shell_ctx = ShellContext(**shell_data) if isinstance(shell_data, dict) else None
@@ -480,4 +494,3 @@ class PromptPipeline:
         gen = ContextSchemaGenerator()
         schema = gen.generate(shell_context=shell_ctx, folder_compressed=folder_ctx)
         return schema.model_dump()
-

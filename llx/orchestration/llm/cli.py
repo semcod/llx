@@ -7,7 +7,6 @@ import json
 import argparse
 
 from .._utils import cli_main
-from ..cli_utils import cmd_remove_wrapper
 from ..utils._cmd_remove import create_remove_handler
 from ..utils._cmd_cleanup import create_cleanup_handler
 
@@ -21,9 +20,17 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "command",
         choices=[
-            "add-provider", "remove-provider", "list-providers",
-            "add-model", "list-models", "model-info",
-            "complete", "cancel", "status", "usage", "cleanup",
+            "add-provider",
+            "remove-provider",
+            "list-providers",
+            "add-model",
+            "list-models",
+            "model-info",
+            "complete",
+            "cancel",
+            "status",
+            "usage",
+            "cleanup",
         ],
     )
     parser.add_argument("--provider-id", help="Provider ID")
@@ -67,6 +74,7 @@ def _dispatch(args: argparse.Namespace, orchestrator: LLMOrchestrator) -> bool:
 
 # ── Individual command handlers ─────────────────────────────
 
+
 def _cmd_add_provider(args, orch: LLMOrchestrator) -> bool:
     if not args.provider_id or not args.type or not args.name:
         print("❌ --provider-id, --type, and --name required for add-provider")
@@ -89,7 +97,7 @@ _cmd_remove_provider = create_remove_handler(
     id_attr="provider_id",
     id_label="Provider",
     remove_func=lambda orch, id: orch.remove_provider(id),
-    save_func=lambda orch: orch.save_config()
+    save_func=lambda orch: orch.save_config(),
 )
 
 
@@ -144,9 +152,7 @@ def _cmd_usage(args, orch: LLMOrchestrator) -> bool:
 
 
 # Create cleanup handler
-_cmd_cleanup = create_cleanup_handler(
-    save_func=lambda orch: orch.save_config()
-)
+_cmd_cleanup = create_cleanup_handler(save_func=lambda orch: orch.save_config())
 
 
 def main():

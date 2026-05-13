@@ -43,7 +43,9 @@ class ModelConfig:
     max_context: int = 200_000
     cost_per_1k_input: float = 0.0
     cost_per_1k_output: float = 0.0
-    tags: list[str] = field(default_factory=list)  # Model capabilities: FREE, FAST, PROGRAMMING, etc.
+    tags: list[str] = field(
+        default_factory=list
+    )  # Model capabilities: FREE, FAST, PROGRAMMING, etc.
 
 
 @dataclass
@@ -84,40 +86,65 @@ class TierThresholds:
 
 DEFAULT_MODELS: dict[str, ModelConfig] = {
     "premium": ModelConfig(
-        name="premium", provider="anthropic",
+        name="premium",
+        provider="anthropic",
         model_id="claude-opus-4-20250514",
-        max_context=200_000, cost_per_1k_input=0.015, cost_per_1k_output=0.075,
-        tags=["EXPENSIVE", "HIGH_QUALITY", "REFACTORING", "ARCHITECTURE", "COMPLEX_REASONING", "SLOW"]
+        max_context=200_000,
+        cost_per_1k_input=0.015,
+        cost_per_1k_output=0.075,
+        tags=[
+            "EXPENSIVE",
+            "HIGH_QUALITY",
+            "REFACTORING",
+            "ARCHITECTURE",
+            "COMPLEX_REASONING",
+            "SLOW",
+        ],
     ),
     "balanced": ModelConfig(
-        name="balanced", provider="openrouter",
+        name="balanced",
+        provider="openrouter",
         model_id="openrouter/qwen/qwen-2.5-coder-32b-instruct",
-        max_context=200_000, cost_per_1k_input=0.003, cost_per_1k_output=0.015,
-        tags=["PROGRAMMING", "GENERATING", "ANALYSIS", "DEBUGGING", "FAST", "RELIABLE"]
+        max_context=200_000,
+        cost_per_1k_input=0.003,
+        cost_per_1k_output=0.015,
+        tags=["PROGRAMMING", "GENERATING", "ANALYSIS", "DEBUGGING", "FAST", "RELIABLE"],
     ),
     "cheap": ModelConfig(
-        name="cheap", provider="anthropic",
+        name="cheap",
+        provider="anthropic",
         model_id="claude-haiku-4-5-20251001",
-        max_context=200_000, cost_per_1k_input=0.0008, cost_per_1k_output=0.004,
-        tags=["FAST", "CHEAP", "PROGRAMMING", "QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION"]
+        max_context=200_000,
+        cost_per_1k_input=0.0008,
+        cost_per_1k_output=0.004,
+        tags=["FAST", "CHEAP", "PROGRAMMING", "QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION"],
     ),
     "free": ModelConfig(
-        name="free", provider="openrouter",
+        name="free",
+        provider="openrouter",
         model_id="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
-        max_context=32_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
-        tags=["FREE", "FAST", "GENERAL_PURPOSE"]
+        max_context=32_000,
+        cost_per_1k_input=0.0,
+        cost_per_1k_output=0.0,
+        tags=["FREE", "FAST", "GENERAL_PURPOSE"],
     ),
     "local": ModelConfig(
-        name="local", provider="ollama",
+        name="local",
+        provider="ollama",
         model_id="ollama/qwen2.5-coder:7b",
-        max_context=32_000, cost_per_1k_input=0.0, cost_per_1k_output=0.0,
-        tags=["FREE", "OFFLINE", "PRIVATE", "PROGRAMMING", "CODE_SPECIALIZED", "FAST"]
+        max_context=32_000,
+        cost_per_1k_input=0.0,
+        cost_per_1k_output=0.0,
+        tags=["FREE", "OFFLINE", "PRIVATE", "PROGRAMMING", "CODE_SPECIALIZED", "FAST"],
     ),
     "openrouter": ModelConfig(
-        name="openrouter", provider="openrouter",
+        name="openrouter",
+        provider="openrouter",
         model_id="openrouter/deepseek/deepseek-chat-v3-0324",
-        max_context=128_000, cost_per_1k_input=0.0005, cost_per_1k_output=0.002,
-        tags=["CHEAP", "FAST", "PROGRAMMING", "REASONING", "COST_EFFECTIVE", "BACKUP_OPTION"]
+        max_context=128_000,
+        cost_per_1k_input=0.0005,
+        cost_per_1k_output=0.002,
+        tags=["CHEAP", "FAST", "PROGRAMMING", "REASONING", "COST_EFFECTIVE", "BACKUP_OPTION"],
     ),
 }
 
@@ -175,14 +202,16 @@ class LlxConfig:
     enable_vallm: bool = True
     verbose: bool = False
     code_tool: str = "internal"  # internal, aider, etc.
-    run_env: str = "local"     # local, docker, k8s, etc.
+    run_env: str = "local"  # local, docker, k8s, etc.
     litellm_config: LiteLLMConfig = field(default_factory=LiteLLMConfig._default_config)
     # Privacy settings
-    privacy: dict[str, Any] = field(default_factory=lambda: {
-        "enable_anonymization": False,
-        "patterns": ["api_key", "token", "password", "secret", "email", "phone", "ssn_pl"],
-        "exclude_patterns": [],
-    })
+    privacy: dict[str, Any] = field(
+        default_factory=lambda: {
+            "enable_anonymization": False,
+            "patterns": ["api_key", "token", "password", "secret", "email", "phone", "ssn_pl"],
+            "exclude_patterns": [],
+        }
+    )
 
     def __post_init__(self) -> None:
         self.litellm_base_url = normalize_litellm_base_url(self.litellm_base_url)
@@ -337,36 +366,36 @@ def _apply_yaml(config: LlxConfig, data: dict[str, Any]) -> LlxConfig:
             config.litellm_base_url = context.get("base_url", config.litellm_base_url)
         if "models" in selection:
             _apply_yaml_models(config, selection["models"])
-    
+
     # Apply proxy settings
     if "proxy" in data:
         _apply_yaml_proxy(config, data["proxy"])
-    
+
     # Apply analysis settings
     if "analysis" in data:
         analysis = data["analysis"]
         if "thresholds" in analysis:
             _apply_yaml_thresholds(config, analysis["thresholds"])
-    
+
     # Apply budget settings
     if "budget" in data:
         budget = data["budget"]
         if "limits" in budget:
             limits = budget["limits"]
             config.proxy.budget_limit = limits.get("monthly", config.proxy.budget_limit)
-    
+
     # Apply logging settings
     if "logging" in data:
         logging = data["logging"]
         if "level" in logging:
             config.verbose = logging["level"].upper() == "DEBUG"
-    
+
     # Apply development settings
     if "development" in data:
         dev = data["development"]
         if "debug" in dev:
             config.verbose = dev["debug"]
-    
+
     return config
 
 

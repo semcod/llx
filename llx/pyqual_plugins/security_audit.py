@@ -4,7 +4,6 @@
 Runs pip-audit for CVE checks and bandit for security scanning.
 """
 
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -20,7 +19,7 @@ def run_pip_audit(output_dir: Path) -> bool:
             ["pip-audit", "--format=json", f"--output={output_file}"],
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=120,
         )
         # pip-audit returns non-zero if vulnerabilities found
         print(f"pip-audit results saved to {output_file}")
@@ -47,7 +46,7 @@ def run_bandit(output_dir: Path) -> bool:
             ["bandit", "-r", "llx", "-f", "json", "-o", str(output_file), "-ll"],
             check=True,
             capture_output=True,
-            timeout=120
+            timeout=120,
         )
         print(f"✓ Bandit scan passed - results saved to {output_file}")
         return True

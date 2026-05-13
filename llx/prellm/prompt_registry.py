@@ -7,7 +7,6 @@ Prompts are defined in configs/prompts.yaml and rendered with Jinja2 templating.
 from __future__ import annotations
 
 import logging
-from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -32,7 +31,9 @@ class PromptEntry:
 
     __slots__ = ("name", "system_template", "max_tokens", "temperature")
 
-    def __init__(self, name: str, system_template: str, max_tokens: int = 512, temperature: float = 0.1):
+    def __init__(
+        self, name: str, system_template: str, max_tokens: int = 512, temperature: float = 0.1
+    ):
         self.name = name
         self.system_template = system_template
         self.max_tokens = max_tokens
@@ -103,7 +104,9 @@ class PromptRegistry:
         self._ensure_loaded()
         entry = self._entries.get(prompt_name)
         if entry is None:
-            raise PromptNotFoundError(f"Prompt '{prompt_name}' not found in registry. Available: {self.list_prompts()}")
+            raise PromptNotFoundError(
+                f"Prompt '{prompt_name}' not found in registry. Available: {self.list_prompts()}"
+            )
 
         return self._render(entry.system_template, variables)
 
@@ -122,7 +125,9 @@ class PromptRegistry:
         self._ensure_loaded()
         entry = self._entries.get(name)
         if entry is None:
-            raise PromptNotFoundError(f"Prompt '{name}' not found in registry. Available: {self.list_prompts()}")
+            raise PromptNotFoundError(
+                f"Prompt '{name}' not found in registry. Available: {self.list_prompts()}"
+            )
         return entry
 
     def list_prompts(self) -> list[str]:
@@ -153,7 +158,9 @@ class PromptRegistry:
 
         return errors
 
-    def register(self, name: str, system_template: str, max_tokens: int = 512, temperature: float = 0.1) -> None:
+    def register(
+        self, name: str, system_template: str, max_tokens: int = 512, temperature: float = 0.1
+    ) -> None:
         """Register a prompt programmatically (useful for testing or dynamic prompts)."""
         self._ensure_loaded()
         self._entries[name] = PromptEntry(

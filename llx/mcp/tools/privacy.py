@@ -10,7 +10,6 @@ from llx.mcp.tools.base import McpTool
 async def _handle_llx_project_anonymize(args: dict) -> dict:
     """Anonymize entire project for secure LLM processing."""
     from llx.privacy.project import ProjectAnonymizer, AnonymizationContext
-    from pathlib import Path
 
     path = Path(args.get("path", "."))
     output_dir = args.get("output_dir")
@@ -68,11 +67,31 @@ tool_llx_project_anonymize = McpTool(
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "default": ".", "description": "Project path to anonymize"},
-                "output_dir": {"type": "string", "description": "Output directory for anonymized files (temp if not specified)"},
-                "include": {"type": "array", "items": {"type": "string"}, "description": "File patterns to include", "default": ["*.py", "*.js", "*.ts", "*.java", "*.go"]},
-                "exclude": {"type": "array", "items": {"type": "string"}, "description": "File patterns to exclude"},
-                "max_file_size": {"type": "integer", "description": "Max file size in bytes", "default": 10485760},
+                "path": {
+                    "type": "string",
+                    "default": ".",
+                    "description": "Project path to anonymize",
+                },
+                "output_dir": {
+                    "type": "string",
+                    "description": "Output directory for anonymized files (temp if not specified)",
+                },
+                "include": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "File patterns to include",
+                    "default": ["*.py", "*.js", "*.ts", "*.java", "*.go"],
+                },
+                "exclude": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "File patterns to exclude",
+                },
+                "max_file_size": {
+                    "type": "integer",
+                    "description": "Max file size in bytes",
+                    "default": 10485760,
+                },
             },
         },
     ),
@@ -84,7 +103,6 @@ async def _handle_llx_project_deanonymize(args: dict) -> dict:
     """Deanonymize project files or LLM response using saved context."""
     from llx.privacy.deanonymize import ProjectDeanonymizer
     from llx.privacy.project import AnonymizationContext
-    from pathlib import Path
 
     context_path = args.get("context_path")
     if not context_path:
@@ -153,10 +171,22 @@ tool_llx_project_deanonymize = McpTool(
             "type": "object",
             "required": ["context_path"],
             "properties": {
-                "context_path": {"type": "string", "description": "Path to .anonymization_context.json file"},
-                "text": {"type": "string", "description": "LLM response text to deanonymize (alternative to input_dir)"},
-                "input_dir": {"type": "string", "description": "Directory with anonymized files to restore"},
-                "output_dir": {"type": "string", "description": "Output directory for restored files"},
+                "context_path": {
+                    "type": "string",
+                    "description": "Path to .anonymization_context.json file",
+                },
+                "text": {
+                    "type": "string",
+                    "description": "LLM response text to deanonymize (alternative to input_dir)",
+                },
+                "input_dir": {
+                    "type": "string",
+                    "description": "Directory with anonymized files to restore",
+                },
+                "output_dir": {
+                    "type": "string",
+                    "description": "Output directory for restored files",
+                },
             },
         },
     ),
@@ -222,8 +252,15 @@ tool_llx_privacy_scan = McpTool(
             "type": "object",
             "properties": {
                 "text": {"type": "string", "description": "Text content to scan"},
-                "path": {"type": "string", "description": "File path to scan (alternative to text)"},
-                "anonymize": {"type": "boolean", "description": "Also return anonymized version", "default": False},
+                "path": {
+                    "type": "string",
+                    "description": "File path to scan (alternative to text)",
+                },
+                "anonymize": {
+                    "type": "boolean",
+                    "description": "Also return anonymized version",
+                    "default": False,
+                },
             },
         },
     ),

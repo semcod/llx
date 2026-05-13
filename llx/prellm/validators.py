@@ -22,6 +22,7 @@ _DEFAULT_SCHEMAS_PATH = Path(__file__).parent.parent / "configs" / "response_sch
 
 class ValidationResult(BaseModel):
     """Result of validating data against a schema."""
+
     valid: bool = True
     errors: list[str] = Field(default_factory=list)
     schema_name: str = ""
@@ -30,6 +31,7 @@ class ValidationResult(BaseModel):
 
 class SchemaDefinition(BaseModel):
     """Parsed schema definition from YAML."""
+
     name: str
     required_fields: list[str] = Field(default_factory=list)
     types: dict[str, str] = Field(default_factory=dict)
@@ -149,7 +151,9 @@ class ResponseValidator(LazyLoader):
 
         while not result.valid and retries < max_retries:
             retries += 1
-            logger.info(f"Validation failed for '{schema_name}', retry {retries}/{max_retries}: {result.errors}")
+            logger.info(
+                f"Validation failed for '{schema_name}', retry {retries}/{max_retries}: {result.errors}"
+            )
             data = retry_fn()
             result = self.validate(data, schema_name)
 
@@ -205,8 +209,12 @@ class ResponseValidator(LazyLoader):
         # List length constraints
         if isinstance(value, list):
             if "min_length" in constraint and len(value) < constraint["min_length"]:
-                errors.append(f"Field '{field}': list length {len(value)} below minimum {constraint['min_length']}")
+                errors.append(
+                    f"Field '{field}': list length {len(value)} below minimum {constraint['min_length']}"
+                )
             if "max_length" in constraint and len(value) > constraint["max_length"]:
-                errors.append(f"Field '{field}': list length {len(value)} above maximum {constraint['max_length']}")
+                errors.append(
+                    f"Field '{field}': list length {len(value)} above maximum {constraint['max_length']}"
+                )
 
         return errors

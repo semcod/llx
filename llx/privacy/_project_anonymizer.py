@@ -18,7 +18,9 @@ class ProjectAnonymizationResult:
 
 
 class ProjectAnonymizer:
-    def __init__(self, context: AnonymizationContext | None = None, project_path: str | Path | None = None):
+    def __init__(
+        self, context: AnonymizationContext | None = None, project_path: str | Path | None = None
+    ):
         if context is None:
             if project_path is None:
                 raise ValueError("Either context or project_path must be provided")
@@ -33,11 +35,28 @@ class ProjectAnonymizer:
         exclude_patterns: list[str] | None = None,
         max_file_size: int = 10 * 1024 * 1024,
     ) -> ProjectAnonymizationResult:
-        include = include_patterns or ["*.py", "*.js", "*.ts", "*.java", "*.go", "*.rs", "*.yaml", "*.json", "*.toml"]
+        include = include_patterns or [
+            "*.py",
+            "*.js",
+            "*.ts",
+            "*.java",
+            "*.go",
+            "*.rs",
+            "*.yaml",
+            "*.json",
+            "*.toml",
+        ]
         exclude = exclude_patterns or [
-            "**/.git/**", "**/venv/**", "**/.venv/**", "**/node_modules/**",
-            "**/__pycache__/**", "**/.pytest_cache/**", "**/*.pyc",
-            "**/.llx/**", "**/dist/**", "**/build/**",
+            "**/.git/**",
+            "**/venv/**",
+            "**/.venv/**",
+            "**/node_modules/**",
+            "**/__pycache__/**",
+            "**/.pytest_cache/**",
+            "**/*.pyc",
+            "**/.llx/**",
+            "**/dist/**",
+            "**/build/**",
         ]
 
         result = ProjectAnonymizationResult(context=self.context)
@@ -106,9 +125,9 @@ class ProjectAnonymizer:
         result = content
 
         patterns = [
-            (r'\b(def|function|func)\s+([a-zA-Z_][a-zA-Z0-9_]*)', 'function'),
-            (r'\b(class|struct|interface)\s+([a-zA-Z_][a-zA-Z0-9_]*)', 'class'),
-            (r'\b(var|let|const)?\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*[=:]', 'variable'),
+            (r"\b(def|function|func)\s+([a-zA-Z_][a-zA-Z0-9_]*)", "function"),
+            (r"\b(class|struct|interface)\s+([a-zA-Z_][a-zA-Z0-9_]*)", "class"),
+            (r"\b(var|let|const)?\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*[=:]", "variable"),
         ]
 
         for pattern, symbol_type in patterns:
@@ -132,10 +151,14 @@ class ProjectAnonymizer:
 
     def anonymize_string(self, text: str, file_hint: str | None = None) -> str:
         result = text
-        for match in re.finditer(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b', text):
+        for match in re.finditer(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b", text):
             word = match.group(0)
             if word not in ASTAnonymizer.RESERVED_NAMES and len(word) > 2:
-                if word in self.context.variables or word in self.context.functions or word in self.context.classes:
+                if (
+                    word in self.context.variables
+                    or word in self.context.functions
+                    or word in self.context.classes
+                ):
                     anon = self.context.get_or_create_symbol(word, "variable", file_hint)
                     result = result.replace(word, anon)
 

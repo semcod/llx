@@ -151,9 +151,7 @@ class RoutingEngine:
     def _get_llm_candidates(self, request: RoutingRequest) -> List[Dict[str, Any]]:
         """Get LLM candidates."""
         candidates = []
-        available_sessions = self.session_manager.list_sessions(
-            SessionType.LLM, SessionStatus.IDLE
-        )
+        available_sessions = self.session_manager.list_sessions(SessionType.LLM, SessionStatus.IDLE)
 
         for session in available_sessions:
             if request.provider and session["provider"] != request.provider:
@@ -169,18 +167,22 @@ class RoutingEngine:
                 continue
 
             score = self._calculate_llm_score(session, request)
-            candidates.append({
-                "resource_id": session["session_id"],
-                "type": "session",
-                "provider": session["provider"],
-                "account": session["account"],
-                "model": session["model"],
-                "score": score,
-                "utilization": session.get("utilization", 0),
-                "estimated_wait_time": session.get("time_until_available", 0),
-                "cost_per_token": self._get_cost_per_token(session["provider"], session["model"]),
-                "performance": self._get_provider_performance(session["provider"]),
-            })
+            candidates.append(
+                {
+                    "resource_id": session["session_id"],
+                    "type": "session",
+                    "provider": session["provider"],
+                    "account": session["account"],
+                    "model": session["model"],
+                    "score": score,
+                    "utilization": session.get("utilization", 0),
+                    "estimated_wait_time": session.get("time_until_available", 0),
+                    "cost_per_token": self._get_cost_per_token(
+                        session["provider"], session["model"]
+                    ),
+                    "performance": self._get_provider_performance(session["provider"]),
+                }
+            )
         return candidates
 
     def _get_vscode_candidates(self, request: RoutingRequest) -> List[Dict[str, Any]]:
@@ -197,18 +199,20 @@ class RoutingEngine:
                 continue
 
             score = self._calculate_vscode_score(inst, request)
-            candidates.append({
-                "resource_id": inst["instance_id"],
-                "type": "instance",
-                "provider": inst["provider"],
-                "account": inst["account"],
-                "model": inst.get("image", "vscode"),
-                "score": score,
-                "utilization": inst.get("cpu_usage", 0),
-                "estimated_wait_time": 0,
-                "cost_per_hour": self._get_vscode_cost_per_hour(inst["provider"]),
-                "performance": inst.get("health_status", "unknown"),
-            })
+            candidates.append(
+                {
+                    "resource_id": inst["instance_id"],
+                    "type": "instance",
+                    "provider": inst["provider"],
+                    "account": inst["account"],
+                    "model": inst.get("image", "vscode"),
+                    "score": score,
+                    "utilization": inst.get("cpu_usage", 0),
+                    "estimated_wait_time": 0,
+                    "cost_per_hour": self._get_vscode_cost_per_hour(inst["provider"]),
+                    "performance": inst.get("health_status", "unknown"),
+                }
+            )
         return candidates
 
     def _get_ai_tools_candidates(self, request: RoutingRequest) -> List[Dict[str, Any]]:
@@ -225,18 +229,20 @@ class RoutingEngine:
                 continue
 
             score = self._calculate_ai_tools_score(inst, request)
-            candidates.append({
-                "resource_id": inst["instance_id"],
-                "type": "instance",
-                "provider": inst["provider"],
-                "account": inst["account"],
-                "model": inst.get("image", "ai-tools"),
-                "score": score,
-                "utilization": inst.get("cpu_usage", 0),
-                "estimated_wait_time": 0,
-                "cost_per_hour": self._get_ai_tools_cost_per_hour(inst["provider"]),
-                "performance": inst.get("health_status", "unknown"),
-            })
+            candidates.append(
+                {
+                    "resource_id": inst["instance_id"],
+                    "type": "instance",
+                    "provider": inst["provider"],
+                    "account": inst["account"],
+                    "model": inst.get("image", "ai-tools"),
+                    "score": score,
+                    "utilization": inst.get("cpu_usage", 0),
+                    "estimated_wait_time": 0,
+                    "cost_per_hour": self._get_ai_tools_cost_per_hour(inst["provider"]),
+                    "performance": inst.get("health_status", "unknown"),
+                }
+            )
         return candidates
 
     # ── Filtering ───────────────────────────────────────────
@@ -297,7 +303,10 @@ class RoutingEngine:
 
         for fallback in self.routing_config["fallback_strategies"]:
             decision = self._apply_strategy(request, candidates, fallback)
-            if decision and decision.confidence >= self.routing_config["confidence_threshold"] * 0.8:
+            if (
+                decision
+                and decision.confidence >= self.routing_config["confidence_threshold"] * 0.8
+            ):
                 return decision
 
         if candidates:
@@ -332,7 +341,10 @@ class RoutingEngine:
         index = hash(request.request_id) % len(candidates)
         selected = candidates[index]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.ROUND_ROBIN, 0.7,
+            request,
+            selected,
+            RoutingStrategy.ROUND_ROBIN,
+            0.7,
             ["Round-robin selection", f"Selected index {index} of {len(candidates)} candidates"],
         )
 
@@ -341,7 +353,10 @@ class RoutingEngine:
             return None
         selected = sorted(candidates, key=lambda x: x["utilization"])[0]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.LEAST_LOADED, 0.8,
+            request,
+            selected,
+            RoutingStrategy.LEAST_LOADED,
+            0.8,
             ["Least-loaded selection", f"Utilization: {selected['utilization']:.1f}%"],
         )
 
@@ -350,7 +365,10 @@ class RoutingEngine:
             return None
         selected = sorted(candidates, key=lambda x: x["score"], reverse=True)[0]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.PRIORITY_BASED, 0.9,
+            request,
+            selected,
+            RoutingStrategy.PRIORITY_BASED,
+            0.9,
             ["Priority-based selection", f"Score: {selected['score']:.2f}"],
         )
 
@@ -360,7 +378,10 @@ class RoutingEngine:
         cost_key = "cost_per_token" if candidates[0]["type"] == "session" else "cost_per_hour"
         selected = sorted(candidates, key=lambda x: x.get(cost_key, float("inf")))[0]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.COST_OPTIMIZED, 0.8,
+            request,
+            selected,
+            RoutingStrategy.COST_OPTIMIZED,
+            0.8,
             ["Cost-optimized selection", f"Cost: {selected.get(cost_key, 'unknown')}"],
         )
 
@@ -369,8 +390,14 @@ class RoutingEngine:
             return None
         selected = sorted(candidates, key=lambda x: x.get("performance", 0), reverse=True)[0]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.PERFORMANCE_OPTIMIZED, 0.85,
-            ["Performance-optimized selection", f"Performance: {selected.get('performance', 'unknown')}"],
+            request,
+            selected,
+            RoutingStrategy.PERFORMANCE_OPTIMIZED,
+            0.85,
+            [
+                "Performance-optimized selection",
+                f"Performance: {selected.get('performance', 'unknown')}",
+            ],
         )
 
     def _availability_first_strategy(self, request, candidates):
@@ -378,8 +405,14 @@ class RoutingEngine:
             return None
         selected = sorted(candidates, key=lambda x: x.get("estimated_wait_time", 0))[0]
         return self._create_decision_from_candidate(
-            request, selected, RoutingStrategy.AVAILABILITY_FIRST, 0.9,
-            ["Availability-first selection", f"Wait time: {selected.get('estimated_wait_time', 0)}s"],
+            request,
+            selected,
+            RoutingStrategy.AVAILABILITY_FIRST,
+            0.9,
+            [
+                "Availability-first selection",
+                f"Wait time: {selected.get('estimated_wait_time', 0)}s",
+            ],
         )
 
     # ── Decision helpers ────────────────────────────────────
@@ -397,9 +430,13 @@ class RoutingEngine:
 
         estimated_cost = 0.0
         if candidate["type"] == "session":
-            estimated_cost = candidate.get("cost_per_token", 0) * request.requirements.get("estimated_tokens", 1000)
+            estimated_cost = candidate.get("cost_per_token", 0) * request.requirements.get(
+                "estimated_tokens", 1000
+            )
         else:
-            estimated_cost = candidate.get("cost_per_hour", 0) * request.requirements.get("estimated_hours", 1)
+            estimated_cost = candidate.get("cost_per_hour", 0) * request.requirements.get(
+                "estimated_hours", 1
+            )
 
         return RoutingDecision(
             request_id=request.request_id,
@@ -441,9 +478,14 @@ class RoutingEngine:
         return RoutingDecision(
             request_id=request.request_id,
             resource_type=request.resource_type,
-            selected_resource="", provider="", account="", model="",
+            selected_resource="",
+            provider="",
+            account="",
+            model="",
             strategy_used=request.strategy or self.routing_config["default_strategy"],
-            confidence=0.0, estimated_wait_time=float("inf"), estimated_cost=0.0,
+            confidence=0.0,
+            estimated_wait_time=float("inf"),
+            estimated_cost=0.0,
             reasoning=["No available resources"],
             metadata={"error": "no_resources"},
         )
@@ -452,9 +494,14 @@ class RoutingEngine:
         return RoutingDecision(
             request_id=request.request_id,
             resource_type=request.resource_type,
-            selected_resource="", provider="", account="", model="",
+            selected_resource="",
+            provider="",
+            account="",
+            model="",
             strategy_used=request.strategy or self.routing_config["default_strategy"],
-            confidence=0.0, estimated_wait_time=float("inf"), estimated_cost=0.0,
+            confidence=0.0,
+            estimated_wait_time=float("inf"),
+            estimated_cost=0.0,
             reasoning=["Routing failed"],
             metadata={"error": "routing_failed"},
         )
@@ -463,9 +510,14 @@ class RoutingEngine:
         return RoutingDecision(
             request_id=request.request_id,
             resource_type=request.resource_type,
-            selected_resource="", provider="", account="", model="",
+            selected_resource="",
+            provider="",
+            account="",
+            model="",
             strategy_used=request.strategy or self.routing_config["default_strategy"],
-            confidence=0.0, estimated_wait_time=float("inf"), estimated_cost=0.0,
+            confidence=0.0,
+            estimated_wait_time=float("inf"),
+            estimated_cost=0.0,
             reasoning=["Validation failed"],
             metadata={"error": "validation_failed"},
         )
@@ -531,8 +583,8 @@ class RoutingEngine:
 
             total = self.metrics.successful_requests + self.metrics.failed_requests
             self.metrics.average_routing_time = (
-                (self.metrics.average_routing_time * (total - 1) + routing_time) / total
-            )
+                self.metrics.average_routing_time * (total - 1) + routing_time
+            ) / total
 
             if decision:
                 strategy = decision.strategy_used.value

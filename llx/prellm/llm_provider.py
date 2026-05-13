@@ -22,6 +22,7 @@ logger = logging.getLogger("prellm.llm_provider")
 try:
     import litellm
     from litellm import acompletion
+
     LITELLM_AVAILABLE = True
 except ImportError:
     LITELLM_AVAILABLE = False
@@ -80,7 +81,11 @@ class LLMProvider:
                             messages=messages,
                             max_tokens=kwargs.get("max_tokens", self.config.max_tokens),
                             temperature=kwargs.get("temperature", self.config.temperature),
-                            **{k: v for k, v in kwargs.items() if k not in ("max_tokens", "temperature")},
+                            **{
+                                k: v
+                                for k, v in kwargs.items()
+                                if k not in ("max_tokens", "temperature")
+                            },
                         ),
                         timeout=self.config.timeout,
                     )
@@ -92,14 +97,18 @@ class LLMProvider:
 
                 except asyncio.TimeoutError:
                     last_error = f"Timeout after {self.config.timeout}s for model {model}"
-                    logger.warning(f"Attempt {retry + 1}/{self.config.max_retries} timeout for {model}")
+                    logger.warning(
+                        f"Attempt {retry + 1}/{self.config.max_retries} timeout for {model}"
+                    )
                 except Exception as e:
                     last_error = str(e)
-                    logger.warning(f"Attempt {retry + 1}/{self.config.max_retries} failed for {model}: {e}")
+                    logger.warning(
+                        f"Attempt {retry + 1}/{self.config.max_retries} failed for {model}: {e}"
+                    )
 
                 # Wait before retry with exponential backoff
                 if retry < self.config.max_retries - 1:
-                    await asyncio.sleep(2 ** retry)
+                    await asyncio.sleep(2**retry)
 
         # All models and retries exhausted
         raise RuntimeError(f"All LLM attempts failed. Last error: {last_error}")

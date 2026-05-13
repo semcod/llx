@@ -30,15 +30,16 @@ except ImportError:
     # Fallback decorators when nfo is not available
     def catch(func):
         return func
+
     def log_call(func):
         return func
+
 
 from llx.prellm.analyzers.context_engine import ContextEngine
 from llx.routing.client import LlxClient as LLMProvider
 from llx.prellm.models import (
     AuditEntry,
     DecompositionPrompts,
-    DecompositionResult,
     DecompositionStrategy,
     DomainRule,
     LLMProviderConfig,
@@ -47,15 +48,10 @@ from llx.prellm.models import (
     PreLLMResponse,
 )
 from llx.prellm.query_decomposer import QueryDecomposer
-from llx.prellm.agents.executor import ExecutorAgent
-from llx.prellm.agents.preprocessor import PreprocessorAgent
-from llx.prellm.pipeline import PromptPipeline
-from llx.prellm.prompt_registry import PromptRegistry
-from llx.prellm.validators import ResponseValidator
 from llx.prellm.trace import get_current_trace
 
 # Import new modules for delegation (v0.4 refactor)
-from llx.prellm import extractors, context_ops, pipeline_ops
+from llx.prellm import pipeline_ops
 
 logger = logging.getLogger("prellm")
 
@@ -119,6 +115,7 @@ def _trace_preprocess_configuration(
 # ============================================================
 # 1-function API — like litellm.completion() but with preprocessing
 # ============================================================
+
 
 @catch
 async def preprocess_and_execute(
@@ -252,20 +249,23 @@ def preprocess_and_execute_sync(
         result = preprocess_and_execute_sync("Deploy app", large_llm="gpt-5.4-mini")
     """
     import asyncio
-    return asyncio.run(preprocess_and_execute(
-        query=query,
-        small_llm=small_llm,
-        large_llm=large_llm,
-        strategy=strategy,
-        user_context=user_context,
-        config_path=config_path,
-        domain_rules=domain_rules,
-        pipeline=pipeline,
-        prompts_path=prompts_path,
-        pipelines_path=pipelines_path,
-        schemas_path=schemas_path,
-        **kwargs,
-    ))
+
+    return asyncio.run(
+        preprocess_and_execute(
+            query=query,
+            small_llm=small_llm,
+            large_llm=large_llm,
+            strategy=strategy,
+            user_context=user_context,
+            config_path=config_path,
+            domain_rules=domain_rules,
+            pipeline=pipeline,
+            prompts_path=prompts_path,
+            pipelines_path=pipelines_path,
+            schemas_path=schemas_path,
+            **kwargs,
+        )
+    )
 
 
 # Backward-compatible alias
@@ -275,6 +275,7 @@ preprocess_and_execute_v3 = preprocess_and_execute
 # ============================================================
 # v0.2 — PreLLM (class-based architecture, backward compat)
 # ============================================================
+
 
 class PreLLM:
     """preLLM v0.2/v0.3 — small LLM decomposition before large LLM routing.
@@ -368,7 +369,8 @@ class PreLLM:
             small_model_used=self.config.small_model.model,
             retries=retries,
             clarified=bool(decomposition.missing_fields),
-            needs_more_context=bool(decomposition.missing_fields) and content == "No response from any model.",
+            needs_more_context=bool(decomposition.missing_fields)
+            and content == "No response from any model.",
         )
 
         # Audit
@@ -398,7 +400,9 @@ class PreLLM:
         return {
             "strategy": decomposition.strategy.value,
             "original_query": decomposition.original_query,
-            "classification": decomposition.classification.model_dump() if decomposition.classification else None,
+            "classification": decomposition.classification.model_dump()
+            if decomposition.classification
+            else None,
             "structure": decomposition.structure.model_dump() if decomposition.structure else None,
             "sub_queries": decomposition.sub_queries,
             "missing_fields": decomposition.missing_fields,
@@ -419,7 +423,9 @@ class PreLLM:
             policy=self.config.policy,
             metadata={
                 "small_model": response.small_model_used,
-                "strategy": response.decomposition.strategy.value if response.decomposition else "unknown",
+                "strategy": response.decomposition.strategy.value
+                if response.decomposition
+                else "unknown",
             },
         )
         self.audit_log.append(entry)
@@ -432,14 +438,18 @@ class PreLLM:
 
         # Parse small_model
         small_raw = raw.get("small_model", {})
-        small_model = LLMProviderConfig(**small_raw) if isinstance(small_raw, dict) and small_raw else LLMProviderConfig(
-            model="phi3:mini", max_tokens=512, temperature=0.0
+        small_model = (
+            LLMProviderConfig(**small_raw)
+            if isinstance(small_raw, dict) and small_raw
+            else LLMProviderConfig(model="phi3:mini", max_tokens=512, temperature=0.0)
         )
 
         # Parse large_model
         large_raw = raw.get("large_model", {})
-        large_model = LLMProviderConfig(**large_raw) if isinstance(large_raw, dict) and large_raw else LLMProviderConfig(
-            model="gpt-5.4-mini", max_tokens=2048
+        large_model = (
+            LLMProviderConfig(**large_raw)
+            if isinstance(large_raw, dict) and large_raw
+            else LLMProviderConfig(model="gpt-5.4-mini", max_tokens=2048)
         )
 
         # Parse domain_rules
@@ -450,7 +460,11 @@ class PreLLM:
 
         # Parse prompts
         prompts_raw = raw.get("prompts", {})
-        prompts = DecompositionPrompts(**prompts_raw) if isinstance(prompts_raw, dict) and prompts_raw else DecompositionPrompts()
+        prompts = (
+            DecompositionPrompts(**prompts_raw)
+            if isinstance(prompts_raw, dict) and prompts_raw
+            else DecompositionPrompts()
+        )
 
         # Parse default_strategy
         strategy_str = raw.get("default_strategy", "classify")

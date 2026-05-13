@@ -17,10 +17,32 @@ logger = logging.getLogger("prellm.context.schema_generator")
 
 # Common tools to detect
 _TOOL_COMMANDS = [
-    "git", "docker", "kubectl", "helm", "terraform", "ansible",
-    "npm", "yarn", "pnpm", "pip", "poetry", "cargo", "go",
-    "make", "cmake", "gcc", "rustc", "node", "python3", "java",
-    "curl", "wget", "jq", "yq", "ssh", "rsync",
+    "git",
+    "docker",
+    "kubectl",
+    "helm",
+    "terraform",
+    "ansible",
+    "npm",
+    "yarn",
+    "pnpm",
+    "pip",
+    "poetry",
+    "cargo",
+    "go",
+    "make",
+    "cmake",
+    "gcc",
+    "rustc",
+    "node",
+    "python3",
+    "java",
+    "curl",
+    "wget",
+    "jq",
+    "yq",
+    "ssh",
+    "rsync",
 ]
 
 # Project type detection by file presence (checked in folder compression)
@@ -113,9 +135,7 @@ class ContextSchemaGenerator:
 
         return "\n".join(lines)
 
-    def estimate_relevance(
-        self, schema: ContextSchema, query: str
-    ) -> dict[str, float]:
+    def estimate_relevance(self, schema: ContextSchema, query: str) -> dict[str, float]:
         """Score which context parts are relevant for the query (0-1)."""
         query_lower = query.lower()
         scores: dict[str, float] = {}
@@ -127,7 +147,9 @@ class ContextSchemaGenerator:
             scores["platform"] = 0.3
 
         # Project relevance
-        if any(w in query_lower for w in ("code", "refactor", "function", "class", "module", "project")):
+        if any(
+            w in query_lower for w in ("code", "refactor", "function", "class", "module", "project")
+        ):
             scores["project"] = 0.9
         else:
             scores["project"] = 0.2
@@ -143,7 +165,9 @@ class ContextSchemaGenerator:
             scores["history"] = 0.0
 
         # Locale relevance
-        if any(w in query_lower for w in ("polish", "polski", "pl_", "locale", "language", "timezone")):
+        if any(
+            w in query_lower for w in ("polish", "polski", "pl_", "locale", "language", "timezone")
+        ):
             scores["locale"] = 0.8
         else:
             scores["locale"] = 0.1

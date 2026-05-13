@@ -49,16 +49,21 @@ def output_rich(metrics: ProjectMetrics, result: SelectionResult, verbose: bool)
     metrics_text = "\n".join(lines)
 
     console.print(Panel(metrics_text, title="Project Metrics", border_style="blue"))
-    console.print(Panel(
-        f"[bold green]{result.model_id}[/bold green]  (tier: {result.tier.value})",
-        title="Selected Model", border_style="green",
-    ))
+    console.print(
+        Panel(
+            f"[bold green]{result.model_id}[/bold green]  (tier: {result.tier.value})",
+            title="Selected Model",
+            border_style="green",
+        )
+    )
 
     for reason in result.reasons:
         console.print(f"  • {reason}")
 
     if verbose:
-        console.print(f"\n  [dim]Scores: complexity={result.scores['complexity']:.{SCORE_DECIMALS}f} scale={result.scores['scale']:.{SCORE_DECIMALS}f} coupling={result.scores['coupling']:.{SCORE_DECIMALS}f}[/dim]")
+        console.print(
+            f"\n  [dim]Scores: complexity={result.scores['complexity']:.{SCORE_DECIMALS}f} scale={result.scores['scale']:.{SCORE_DECIMALS}f} coupling={result.scores['coupling']:.{SCORE_DECIMALS}f}[/dim]"
+        )
     if result.alternative_tier:
         console.print(f"\n  [dim]Alternative: {result.alternative_tier.value}[/dim]")
 
@@ -107,9 +112,9 @@ def _filter_models(
             continue
         if tag and tag.upper() not in [t.upper() for t in model.tags]:
             continue
-        
+
         filtered_models[tier_name] = model
-    
+
     return filtered_models
 
 
@@ -119,15 +124,15 @@ def _build_model_row(model: any) -> dict[str, str]:
     display_name = model.model_id
     if len(display_name) > MAX_DISPLAY_NAME_LENGTH:
         # Split on first slash or dash to get shorter name
-        if '/' in display_name:
-            parts = display_name.split('/')
+        if "/" in display_name:
+            parts = display_name.split("/")
             if len(parts) > MIN_PARTS_FOR_SPLIT:
                 display_name = parts[LAST_PART_INDEX]  # Take last part
-        if '-' in display_name and len(display_name) > MAX_DISPLAY_NAME_LENGTH:
-            display_name = display_name.split('-')[FIRST_PART_INDEX]
+        if "-" in display_name and len(display_name) > MAX_DISPLAY_NAME_LENGTH:
+            display_name = display_name.split("-")[FIRST_PART_INDEX]
         if len(display_name) > MAX_DISPLAY_NAME_LENGTH:
             display_name = f"{display_name[:MAX_DISPLAY_NAME_TRUNCATION]}..."
-    
+
     # Color code tags for better readability
     colored_tags = []
     for tag_item in model.tags:
@@ -143,9 +148,9 @@ def _build_model_row(model: any) -> dict[str, str]:
             colored_tags.append(f"[cyan]{tag_item}[/cyan]")
         else:
             colored_tags.append(f"[yellow]{tag_item}[/yellow]")
-    
+
     tags_colored = " ".join(colored_tags) if colored_tags else "—"
-    
+
     return {
         "tier": "",  # Will be set by caller
         "display_name": display_name,
@@ -181,9 +186,12 @@ def _render_models_table(rows: list[dict[str, str]], title: str) -> None:
 def _build_title(tag: str | None, provider: str | None, tier: str | None) -> str:
     """Build table title from filters."""
     title_parts = ["Available Models"]
-    if tag: title_parts.append(f"Tag: {tag.upper()}")
-    if provider: title_parts.append(f"Provider: {provider}")
-    if tier: title_parts.append(f"Tier: {tier}")
+    if tag:
+        title_parts.append(f"Tag: {tag.upper()}")
+    if provider:
+        title_parts.append(f"Provider: {provider}")
+    if tier:
+        title_parts.append(f"Tier: {tier}")
     return " | ".join(title_parts)
 
 
@@ -191,23 +199,26 @@ def print_models_table(config, tag: str = None, provider: str = None, tier: str 
     """Print models table with optional filtering."""
     # Filter models
     filtered_models = _filter_models(config.models, tag, provider, tier)
-    
+
     if not filtered_models:
         filter_desc = []
-        if tag: filter_desc.append(f"tag='{tag}'")
-        if provider: filter_desc.append(f"provider='{provider}'")
-        if tier: filter_desc.append(f"tier='{tier}'")
-        
+        if tag:
+            filter_desc.append(f"tag='{tag}'")
+        if provider:
+            filter_desc.append(f"provider='{provider}'")
+        if tier:
+            filter_desc.append(f"tier='{tier}'")
+
         console.print(f"[red]No models found for filter: {', '.join(filter_desc)}[/red]")
         return
-    
+
     # Build rows
     rows = []
     for tier_name, model in filtered_models.items():
         row = _build_model_row(model)
         row["tier"] = tier_name
         rows.append(row)
-    
+
     # Render table
     title = _build_title(tag, provider, tier)
     _render_models_table(rows, title)
@@ -216,10 +227,12 @@ def print_models_table(config, tag: str = None, provider: str = None, tier: str 
     all_tags = set()
     for model in config.models.values():
         all_tags.update(model.tags)
-    
+
     if all_tags:
         console.print(f"\n[dim]Available tags for filtering: {', '.join(sorted(all_tags))}[/dim]")
-        console.print("[dim]Usage: llx models <tag>  or  llx models --provider <provider>  or  llx models --tier <tier>[/dim]")
+        console.print(
+            "[dim]Usage: llx models <tag>  or  llx models --provider <provider>  or  llx models --tier <tier>[/dim]"
+        )
 
 
 def _render_tools_table() -> None:
@@ -256,7 +269,7 @@ def _render_tiers_table(config) -> None:
     for tier_name, model in config.models.items():
         row = _build_model_row(model)
         row["tier"] = tier_name
-        
+
         model_table.add_row(
             row["tier"],
             row["display_name"],
@@ -290,13 +303,26 @@ def _render_tags_legend() -> None:
     console.print("\n[bold]Tags Legend:[/bold]")
     tag_groups = [
         ("Cost & Speed", ["FREE", "FAST", "CHEAP", "EXPENSIVE", "SLOW"]),
-        ("Capabilities", ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING", "GENERATING", "ANALYSIS", "DEBUGGING"]),
+        (
+            "Capabilities",
+            [
+                "PROGRAMMING",
+                "CODE_SPECIALIZED",
+                "REFACTORING",
+                "GENERATING",
+                "ANALYSIS",
+                "DEBUGGING",
+            ],
+        ),
         ("Quality", ["HIGH_QUALITY", "COMPLEX_REASONING", "RELIABLE"]),
         ("Environment", ["OFFLINE", "PRIVATE", "LARGE_CONTEXT"]),
-        ("Use Case", ["QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION", "ARCHITECTURE", "GENERAL_PURPOSE"]),
+        (
+            "Use Case",
+            ["QUICK_TASKS", "DOCUMENTATION", "CODE_COMPLETION", "ARCHITECTURE", "GENERAL_PURPOSE"],
+        ),
         ("Other", ["COST_EFFECTIVE", "BACKUP_OPTION"]),
     ]
-    
+
     for group_name, tags in tag_groups:
         colored_tags = []
         for tag in tags:
@@ -304,7 +330,14 @@ def _render_tags_legend() -> None:
                 colored_tags.append(f"[green]{tag}[/green]")
             elif tag in ["EXPENSIVE", "SLOW"]:
                 colored_tags.append(f"[red]{tag}[/red]")
-            elif tag in ["PROGRAMMING", "CODE_SPECIALIZED", "REFACTORING", "GENERATING", "ANALYSIS", "DEBUGGING"]:
+            elif tag in [
+                "PROGRAMMING",
+                "CODE_SPECIALIZED",
+                "REFACTORING",
+                "GENERATING",
+                "ANALYSIS",
+                "DEBUGGING",
+            ]:
                 colored_tags.append(f"[blue]{tag}[/blue]")
             elif tag in ["HIGH_QUALITY", "COMPLEX_REASONING", "RELIABLE"]:
                 colored_tags.append(f"[magenta]{tag}[/magenta]")
@@ -312,7 +345,7 @@ def _render_tags_legend() -> None:
                 colored_tags.append(f"[cyan]{tag}[/cyan]")
             else:
                 colored_tags.append(f"[yellow]{tag}[/yellow]")
-        
+
         console.print(f"  [dim]{group_name}:[/dim] {' '.join(colored_tags)}")
 
 

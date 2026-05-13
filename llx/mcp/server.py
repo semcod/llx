@@ -20,7 +20,6 @@ import argparse
 import asyncio
 import json
 import os
-from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
@@ -34,9 +33,11 @@ TOOLS = MCP_TOOLS
 
 _TOOL_HANDLERS = {tool.definition.name: tool.handler for tool in TOOLS}
 
+
 @server.list_tools()
 async def list_tools() -> list[Tool]:
     return [t.definition for t in TOOLS]
+
 
 @server.call_tool()
 async def call_tool(name: str, arguments: dict) -> list[TextContent]:
@@ -45,6 +46,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
     result = await handler(arguments)
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
+
 
 async def run_stdio_server() -> None:
     """Run the MCP server over stdio for desktop clients."""
@@ -133,9 +135,11 @@ def main(argv: list[str] | None = None) -> int:
         asyncio.run(run_stdio_server())
     return 0
 
+
 def main_sync(argv: list[str] | None = None):
     """Synchronous entry point for CLI."""
     return main(argv)
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

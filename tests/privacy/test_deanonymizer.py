@@ -1,6 +1,6 @@
-import pytest
 from llx.privacy.project import AnonymizationContext
 from llx.privacy.deanonymize import ProjectDeanonymizer
+
 
 class TestProjectDeanonymizer:
     def test_deanonymize_symbol(self):

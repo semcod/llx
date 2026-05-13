@@ -6,7 +6,7 @@ import hashlib
 import re
 import uuid
 from dataclasses import dataclass, field
-from typing import Any, Callable, Pattern
+from typing import Pattern
 
 
 @dataclass
@@ -52,15 +52,31 @@ class Anonymizer:
     # Default patterns for common sensitive data
     DEFAULT_PATTERNS: list[tuple[str, str, str]] = [
         # Credentials
-        ("api_key", r"\b(sk-[a-zA-Z0-9]{12,}|api[_-]?key[_-]?[\"']?[:=\s]+[a-zA-Z0-9\-_]{8,})", "[APIKEY_"),
-        ("token", r"\b([a-zA-Z0-9_\-]*token[a-zA-Z0-9_\-]*[:=\s]+[\"']?[a-zA-Z0-9\-_/+=]{8,})", "[TOKEN_"),
+        (
+            "api_key",
+            r"\b(sk-[a-zA-Z0-9]{12,}|api[_-]?key[_-]?[\"']?[:=\s]+[a-zA-Z0-9\-_]{8,})",
+            "[APIKEY_",
+        ),
+        (
+            "token",
+            r"\b([a-zA-Z0-9_\-]*token[a-zA-Z0-9_\-]*[:=\s]+[\"']?[a-zA-Z0-9\-_/+=]{8,})",
+            "[TOKEN_",
+        ),
         ("password", r"\b(password|passwd|pwd)[\s]*[:=\s]+[\"']?[^\s\"']{3,}", "[PASSWORD_"),
         ("secret", r"\b([a-zA-Z_]*secret[a-zA-Z_]*[:=\s]+[\"']?[a-zA-Z0-9\-_/+=]{6,})", "[SECRET_"),
         # Personal Information
         ("email", r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", "[EMAIL_"),
         # Phone: requires country code (+) or area code in parentheses
-        ("phone", r"(?:\+\d{1,3}[-.\s]?)(?:\(?\d{1,4}\)?[-.\s]?)?(?:\d{3}[-.\s]?){1,2}\d{3,4}|(?:\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4})", "[PHONE_"),
-        ("ssn_pl", r"\b\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{5}\b", "[PESEL_"),  # Polish PESEL (with date validation)
+        (
+            "phone",
+            r"(?:\+\d{1,3}[-.\s]?)(?:\(?\d{1,4}\)?[-.\s]?)?(?:\d{3}[-.\s]?){1,2}\d{3,4}|(?:\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4})",
+            "[PHONE_",
+        ),
+        (
+            "ssn_pl",
+            r"\b\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{5}\b",
+            "[PESEL_",
+        ),  # Polish PESEL (with date validation)
         ("credit_card", r"\b(?:\d{4}[-\s]?){3}\d{4}\b", "[CC_"),
         # System paths
         ("home_path", r"/home/[a-zA-Z0-9_]+", "[HOMEPATH_"),

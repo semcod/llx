@@ -56,6 +56,7 @@ class ContextEngine:
         Uses SensitiveDataFilter if available.
         """
         from llx.prellm.models import RuntimeContext
+
         t0 = time.monotonic()
 
         # Env — auto-collect with sensitive filtering
@@ -99,6 +100,7 @@ class ContextEngine:
         """Collect all env vars, filter through SensitiveDataFilter. Returns (safe_dict, blocked_count)."""
         try:
             from llx.prellm.context.sensitive_filter import SensitiveDataFilter
+
             sf = SensitiveDataFilter()
             raw = dict(os.environ)
             filtered = sf.filter_dict(raw)
@@ -108,8 +110,18 @@ class ContextEngine:
             logger.warning(f"Auto env collection failed, falling back to safe keys: {e}")
             # Fallback: only known-safe keys
             safe_keys = {
-                "LANG", "TERM", "SHELL", "HOME", "USER", "PWD", "PATH",
-                "EDITOR", "HOSTNAME", "TZ", "VIRTUAL_ENV", "PYTHONPATH",
+                "LANG",
+                "TERM",
+                "SHELL",
+                "HOME",
+                "USER",
+                "PWD",
+                "PATH",
+                "EDITOR",
+                "HOSTNAME",
+                "TZ",
+                "VIRTUAL_ENV",
+                "PYTHONPATH",
             }
             return {k: v for k, v in os.environ.items() if k in safe_keys}, 0
 
@@ -132,6 +144,7 @@ class ContextEngine:
     def _gather_locale() -> dict[str, str]:
         """LANG, timezone, encoding — critical for Bielik (Polish locale)."""
         import sys
+
         tz = ""
         try:
             tz = time.tzname[0] if time.tzname else ""
@@ -180,6 +193,7 @@ class ContextEngine:
     def _gather_git_gitpython(fields: list[str]) -> dict[str, str]:
         """Gather git info using gitpython (pip install prellm[git])."""
         import git as gitmodule
+
         result = {}
         try:
             repo = gitmodule.Repo(search_parent_directories=True)
@@ -198,7 +212,9 @@ class ContextEngine:
                 elif field == "short_sha":
                     result[field] = repo.head.commit.hexsha[:7]
                 elif field == "tag":
-                    tags = sorted(repo.tags, key=lambda t: t.commit.committed_datetime, reverse=True)
+                    tags = sorted(
+                        repo.tags, key=lambda t: t.commit.committed_datetime, reverse=True
+                    )
                     if tags:
                         result[field] = tags[0].name
                 elif field == "remote_url":
@@ -235,6 +251,7 @@ class ContextEngine:
     def _gather_system(fields: list[str]) -> dict[str, str]:
         result = {}
         import platform
+
         system_map = {
             "hostname": platform.node,
             "os": platform.system,

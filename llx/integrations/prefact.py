@@ -136,7 +136,7 @@ def _scan_with_engine(
         config.project_root = project_path
         config.dry_run = True
         result = RefactoringEngine(config).scan_only()
-    except TypeError as exc:
+    except TypeError:
         # Config schema mismatch (e.g., unknown key in yaml) – fallback to subprocess
         return None
     except Exception as exc:  # pragma: no cover - defensive, prefer fallback
@@ -183,12 +183,7 @@ def _normalise_subprocess_payload(
     if isinstance(data, list):
         iterable = data
     elif isinstance(data, dict):
-        iterable = (
-            data.get("issues")
-            or data.get("issues_found")
-            or data.get("results")
-            or []
-        )
+        iterable = data.get("issues") or data.get("issues_found") or data.get("results") or []
     else:
         iterable = []
 

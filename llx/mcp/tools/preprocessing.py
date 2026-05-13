@@ -55,8 +55,16 @@ tool_llx_preprocess = McpTool(
                 "query": {"type": "string", "description": "The query to preprocess"},
                 "small_llm": {"type": "string", "default": "ollama/qwen2.5:3b"},
                 "large_llm": {"type": "string", "default": "gpt-5.4-mini"},
-                "strategy": {"type": "string", "enum": ["auto", "decompose", "direct"], "default": "auto"},
-                "execute": {"type": "boolean", "default": False, "description": "Also execute with large LLM"},
+                "strategy": {
+                    "type": "string",
+                    "enum": ["auto", "decompose", "direct"],
+                    "default": "auto",
+                },
+                "execute": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Also execute with large LLM",
+                },
             },
         },
     ),

@@ -91,9 +91,9 @@ def test_scan_with_prefact_uses_engine(monkeypatch, tmp_path: Path) -> None:
     def fake_engine_scan(project_path, prefact_yaml):  # noqa: ARG001
         return PrefactScanReport(
             issues=[
-                rec for rec in (
-                    _record_from_issue(item, project_path) for item in issues
-                ) if rec is not None
+                rec
+                for rec in (_record_from_issue(item, project_path) for item in issues)
+                if rec is not None
             ],
             files_scanned=1,
             backend="engine",
@@ -121,7 +121,16 @@ def test_scan_with_prefact_falls_back_to_subprocess(monkeypatch, tmp_path: Path)
     monkeypatch.setattr(prefact_adapter, "_scan_with_engine", lambda *a, **k: None)
 
     fallback_report = PrefactScanReport(
-        issues=[{"rule_id": "wildcard-imports", "file": "src/a.py", "line": 2, "col": 1, "severity": "error", "message": "x"}],
+        issues=[
+            {
+                "rule_id": "wildcard-imports",
+                "file": "src/a.py",
+                "line": 2,
+                "col": 1,
+                "severity": "error",
+                "message": "x",
+            }
+        ],
         files_scanned=1,
         backend="subprocess",
         raw_total=1,
@@ -150,7 +159,9 @@ def test_scan_with_prefact_raises_when_no_backend(monkeypatch, tmp_path: Path) -
 # ---------------------------------------------------------------------------
 
 
-def _patch_scan(monkeypatch, issues: list[dict[str, Any]] | None, *, backend: str = "engine") -> None:
+def _patch_scan(
+    monkeypatch, issues: list[dict[str, Any]] | None, *, backend: str = "engine"
+) -> None:
     def fake_scan(project_path, **kwargs):  # noqa: ARG001
         if issues is None:
             raise PrefactError("prefact unavailable in this test")
@@ -174,7 +185,16 @@ def test_validate_tickets_with_prefact_marks_current_and_stale(monkeypatch, tmp_
 
     _patch_scan(
         monkeypatch,
-        [{"rule_id": "unused-imports", "file": "src/a.py", "line": 1, "col": 1, "severity": "info", "message": ""}],
+        [
+            {
+                "rule_id": "unused-imports",
+                "file": "src/a.py",
+                "line": 1,
+                "col": 1,
+                "severity": "info",
+                "message": "",
+            }
+        ],
     )
 
     report = validate_tickets_with_prefact(strategy_path=strategy, project_path=tmp_path)
@@ -226,7 +246,16 @@ def test_plan_validate_emits_markdown_with_yaml_codeblock(monkeypatch, tmp_path:
 
     _patch_scan(
         monkeypatch,
-        [{"rule_id": "unused-imports", "file": "src/a.py", "line": 1, "col": 1, "severity": "info", "message": ""}],
+        [
+            {
+                "rule_id": "unused-imports",
+                "file": "src/a.py",
+                "line": 1,
+                "col": 1,
+                "severity": "info",
+                "message": "",
+            }
+        ],
     )
 
     runner = CliRunner()
@@ -249,7 +278,16 @@ def test_plan_validate_yaml_format_emits_pure_yaml(monkeypatch, tmp_path: Path) 
 
     _patch_scan(
         monkeypatch,
-        [{"rule_id": "unused-imports", "file": "src/a.py", "line": 1, "col": 1, "severity": "info", "message": ""}],
+        [
+            {
+                "rule_id": "unused-imports",
+                "file": "src/a.py",
+                "line": 1,
+                "col": 1,
+                "severity": "info",
+                "message": "",
+            }
+        ],
     )
 
     runner = CliRunner()
@@ -322,7 +360,9 @@ def test_load_planfile_validator_raises_prefacterror_when_missing(monkeypatch) -
         tf._load_planfile_validator()
 
 
-def test_validate_tickets_with_prefact_uses_submodule_validator(monkeypatch, tmp_path: Path) -> None:
+def test_validate_tickets_with_prefact_uses_submodule_validator(
+    monkeypatch, tmp_path: Path
+) -> None:
     """End-to-end: when only the submodule export exists, validation still works."""
     import sys
     import types
@@ -334,12 +374,17 @@ def test_validate_tickets_with_prefact_uses_submodule_validator(monkeypatch, tmp
     def fake_validator(**kwargs):
         captured.update(kwargs)
         return {
-            "current": 1, "stale": 0, "unknown": 0,
-            "stale_ticket_ids": [], "review_needed_ticket_ids": [],
-            "tickets": [], "filtered_ticket_ids": [],
+            "current": 1,
+            "stale": 0,
+            "unknown": 0,
+            "stale_ticket_ids": [],
+            "review_needed_ticket_ids": [],
+            "tickets": [],
+            "filtered_ticket_ids": [],
             "strategy_path": str(kwargs["strategy_path"]),
             "project_path": str(kwargs["project_path"]),
-            "scan_available": True, "total": 1,
+            "scan_available": True,
+            "total": 1,
             "confirmed_current_ticket_ids": ["F1"],
         }
 
@@ -377,7 +422,16 @@ def test_plan_validate_fail_on_stale_returns_nonzero(monkeypatch, tmp_path: Path
 
     _patch_scan(
         monkeypatch,
-        [{"rule_id": "unused-imports", "file": "src/a.py", "line": 1, "col": 1, "severity": "info", "message": ""}],
+        [
+            {
+                "rule_id": "unused-imports",
+                "file": "src/a.py",
+                "line": 1,
+                "col": 1,
+                "severity": "info",
+                "message": "",
+            }
+        ],
     )
 
     runner = CliRunner()

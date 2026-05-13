@@ -9,20 +9,20 @@ Both modes support the OpenAI-compatible API format.
 
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import dataclass, field
-from typing import Any, AsyncIterator, Iterator
+from typing import Any
 
 import httpx
 
-from llx.config import LlxConfig, ModelConfig
+from llx.config import LlxConfig
 from llx.config import normalize_litellm_base_url
 from llx.analysis.collector import ProjectMetrics
 
 
 try:
     from llx.privacy import Anonymizer, AnonymizationResult
+
     PRIVACY_AVAILABLE = True
 except ImportError:
     PRIVACY_AVAILABLE = False
@@ -66,13 +66,11 @@ class ChatResponse:
         """Return response with original values restored."""
         if not self._anonymization_mapping:
             return self
-        
+
         if not PRIVACY_AVAILABLE:
             return self
-            
-        restored_content = Anonymizer().deanonymize(
-            self.content, self._anonymization_mapping
-        )
+
+        restored_content = Anonymizer().deanonymize(self.content, self._anonymization_mapping)
         return ChatResponse(
             content=restored_content,
             model=self.model,
@@ -91,7 +89,7 @@ class LlxClient:
             model="anthropic/claude-sonnet-4-20250514",
             messages=[ChatMessage(role="user", content="Explain this code")],
         )
-    
+
     With anonymization:
         client = LlxClient(config, anonymize=True)
         response = client.chat_with_context(prompt, context)
@@ -109,11 +107,14 @@ class LlxClient:
             self._anonymizer = Anonymizer()
 
         headers = {"Content-Type": "application/json"}
-        
+
         # Determine if we are hitting OpenRouter directly or a proxy
-        self.is_localhost = "localhost" in self.config.litellm_base_url or "127.0.0.1" in self.config.litellm_base_url
+        self.is_localhost = (
+            "localhost" in self.config.litellm_base_url
+            or "127.0.0.1" in self.config.litellm_base_url
+        )
         is_openrouter = "openrouter.ai" in self.config.litellm_base_url
-        
+
         # Add auth header for OpenRouter direct API calls (highest priority if hitting OpenRouter)
         if is_openrouter:
             openrouter_key = os.environ.get("OPENROUTER_API_KEY")
@@ -164,7 +165,9 @@ class LlxClient:
             model = default.model_id if default else "anthropic/claude-sonnet-4-20250514"
 
         # Determine if we should anonymize for this request
-        should_anonymize = self._anonymize if anonymize is None else (anonymize and PRIVACY_AVAILABLE)
+        should_anonymize = (
+            self._anonymize if anonymize is None else (anonymize and PRIVACY_AVAILABLE)
+        )
 
         # Anonymize messages if enabled
         processed_messages = messages
@@ -189,14 +192,14 @@ class LlxClient:
 
         try:
             response = self._http.post("/v1/chat/completions", json=payload, headers=extra_headers)
-            
+
             # Special case: if localhost returns 404, it might be another service (like Express)
             # instead of LiteLLM proxy. Fallback to direct call.
             if response.status_code == 404 and self.is_localhost:
                 if model.startswith("openrouter/"):
                     return self._direct_openrouter_call(payload, anonymization_mapping)
                 return self._fallback_direct(payload, model, anonymization_mapping)
-                
+
             response.raise_for_status()
             data = response.json()
             return self._parse_response(data, model, anonymization_mapping)
@@ -233,7 +236,8 @@ class LlxClient:
         return self.chat(
             messages=[ChatMessage(role="user", content=combined)],
             model=model,
-            system=system or "You are an expert code analyst. Use the project metrics and structure provided to give precise, actionable recommendations.",
+            system=system
+            or "You are an expert code analyst. Use the project metrics and structure provided to give precise, actionable recommendations.",
         )
 
     def _build_payload(
@@ -247,7 +251,7 @@ class LlxClient:
         # Strip 'openrouter/' prefix if hitting OpenRouter directly or via proxy
         # OpenRouter itself doesn't want the prefix in the model ID
         if model.startswith("openrouter/"):
-            model = model[len("openrouter/"):]
+            model = model[len("openrouter/") :]
 
         msg_list = []
         if system:
@@ -261,7 +265,9 @@ class LlxClient:
             "max_tokens": max_tokens,
         }
 
-    def _direct_openrouter_call(self, payload: dict[str, Any], anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
+    def _direct_openrouter_call(
+        self, payload: dict[str, Any], anonymization_mapping: dict[str, str] | None = None
+    ) -> ChatResponse:
         """Call OpenRouter API directly using httpx."""
         key = os.environ.get("OPENROUTER_API_KEY")
         headers = {
@@ -271,25 +277,25 @@ class LlxClient:
         }
         if key:
             headers["Authorization"] = f"Bearer {key}"
-        
+
         # OpenRouter direct API doesn't need the 'openrouter/' prefix
         direct_model = payload["model"]
         if direct_model.startswith("openrouter/"):
-            direct_model = direct_model[len("openrouter/"):]
-        
+            direct_model = direct_model[len("openrouter/") :]
+
         payload = payload.copy()
         payload["model"] = direct_model
-        
+
         with httpx.Client(timeout=120.0) as client:
             resp = client.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                json=payload,
-                headers=headers
+                "https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers
             )
             resp.raise_for_status()
             return self._parse_response(resp.json(), payload["model"], anonymization_mapping)
 
-    def _parse_response(self, data: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
+    def _parse_response(
+        self, data: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None
+    ) -> ChatResponse:
         """Parse API response with optional anonymization mapping."""
         choices = data.get("choices", [])
         content = choices[0]["message"]["content"] if choices else ""
@@ -307,10 +313,16 @@ class LlxClient:
             _anonymization_mapping=anonymization_mapping or {},
         )
 
-    def _fallback_direct(self, payload: dict[str, Any], model: str, anonymization_mapping: dict[str, str] | None = None) -> ChatResponse:
+    def _fallback_direct(
+        self,
+        payload: dict[str, Any],
+        model: str,
+        anonymization_mapping: dict[str, str] | None = None,
+    ) -> ChatResponse:
         """Fallback to direct litellm call when proxy is not running."""
         try:
             import litellm
+
             response = litellm.completion(**payload)
             return ChatResponse(
                 content=response.choices[0].message.content,
@@ -332,8 +344,9 @@ class LlxClient:
     @staticmethod
     def _metrics_headers(metrics: ProjectMetrics) -> dict[str, str]:
         """Build X-Llx-* headers for proxym metrics-aware routing."""
-        from llx.integrations.proxym import _build_llx_headers, _tier_to_proxym
-        from llx.routing.selector import select_model, ModelTier
+        from llx.integrations.proxym import _build_llx_headers
+        from llx.routing.selector import select_model
+
         result = select_model(metrics)
         return _build_llx_headers(metrics, result.tier)
 

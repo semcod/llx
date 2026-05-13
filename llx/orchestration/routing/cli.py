@@ -69,18 +69,23 @@ def _cmd_route(args, engine: RoutingEngine) -> bool:
 
     decision = engine.route_request(request)
     if decision:
-        print(json.dumps({
-            "request_id": decision.request_id,
-            "selected_resource": decision.selected_resource,
-            "provider": decision.provider,
-            "account": decision.account,
-            "model": decision.model,
-            "strategy": decision.strategy_used.value,
-            "confidence": decision.confidence,
-            "estimated_wait_time": decision.estimated_wait_time,
-            "estimated_cost": decision.estimated_cost,
-            "reasoning": decision.reasoning,
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "request_id": decision.request_id,
+                    "selected_resource": decision.selected_resource,
+                    "provider": decision.provider,
+                    "account": decision.account,
+                    "model": decision.model,
+                    "strategy": decision.strategy_used.value,
+                    "confidence": decision.confidence,
+                    "estimated_wait_time": decision.estimated_wait_time,
+                    "estimated_cost": decision.estimated_cost,
+                    "reasoning": decision.reasoning,
+                },
+                indent=2,
+            )
+        )
         return True
     print("❌ Routing failed")
     return False
@@ -104,9 +109,7 @@ def _cmd_optimize(args, engine: RoutingEngine) -> bool:
 
 
 # Create cleanup handler
-_cmd_cleanup = create_cleanup_handler(
-    save_func=lambda engine: engine.save_config()
-)
+_cmd_cleanup = create_cleanup_handler(save_func=lambda engine: engine.save_config())
 
 
 def main():

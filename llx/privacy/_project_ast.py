@@ -223,4 +223,6 @@ class ASTAnonymizer(ast.NodeTransformer):
 
     def _is_builtin(self, name: str) -> bool:
         """Check if name is a Python builtin."""
-        return name in __builtins__ if isinstance(__builtins__, dict) else hasattr(__builtins__, name)
+        return (
+            name in __builtins__ if isinstance(__builtins__, dict) else hasattr(__builtins__, name)
+        )

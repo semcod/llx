@@ -28,7 +28,15 @@ def test_run_plan_testql_workflow_generates_and_syncs_tickets(monkeypatch) -> No
 
     def build_testql_tickets(report, scenario_path, max_tickets):
         calls["build"] = {"scenario_path": scenario_path, "max_tickets": max_tickets}
-        return [{"id": "TQL-1", "title": "t", "description": "d", "labels": ["testql"], "priority": "high"}]
+        return [
+            {
+                "id": "TQL-1",
+                "title": "t",
+                "description": "d",
+                "labels": ["testql"],
+                "priority": "high",
+            }
+        ]
 
     def upsert_testql_tickets(strategy_path, tickets, project_path):
         calls["upsert"] = {
@@ -44,7 +52,10 @@ def test_run_plan_testql_workflow_generates_and_syncs_tickets(monkeypatch) -> No
             "project_path": project_path,
             "include_configured": include_configured,
         }
-        return {"sync_order": ["markdown"], "integrations": [{"integration": "markdown", "created": 1, "skipped": 0, "failed": 0}]}
+        return {
+            "sync_order": ["markdown"],
+            "integrations": [{"integration": "markdown", "created": 1, "skipped": 0, "failed": 0}],
+        }
 
     fake_planfile.run_testql_validation = run_testql_validation
     fake_planfile.build_testql_tickets = build_testql_tickets

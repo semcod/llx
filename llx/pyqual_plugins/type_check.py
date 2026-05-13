@@ -16,16 +16,10 @@ def run_mypy(output_dir: Path) -> bool:
 
     try:
         result = subprocess.run(
-            [
-                "mypy",
-                "llx",
-                "--ignore-missing-imports",
-                "--show-error-codes",
-                "--json"
-            ],
+            ["mypy", "llx", "--ignore-missing-imports", "--show-error-codes", "--json"],
             capture_output=True,
             text=True,
-            timeout=120
+            timeout=120,
         )
 
         # Write JSON output
@@ -36,6 +30,7 @@ def run_mypy(output_dir: Path) -> bool:
         else:
             # Count errors from JSON output
             import json
+
             try:
                 errors = json.loads(result.stdout or "[]")
                 print(f"Mypy found {len(errors)} type issues")

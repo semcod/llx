@@ -28,12 +28,7 @@ def _detect_available_backends() -> dict[str, bool]:
 
     # Check local aider
     try:
-        subprocess.run(
-            ["aider", "--version"],
-            capture_output=True,
-            check=True,
-            timeout=10
-        )
+        subprocess.run(["aider", "--version"], capture_output=True, check=True, timeout=10)
         backends[BackendType.LOCAL] = True
         logger.info("Local aider is available")
     except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
@@ -41,12 +36,7 @@ def _detect_available_backends() -> dict[str, bool]:
 
     # Check Docker
     try:
-        subprocess.run(
-            ["docker", "--version"],
-            capture_output=True,
-            check=True,
-            timeout=10
-        )
+        subprocess.run(["docker", "--version"], capture_output=True, check=True, timeout=10)
         backends[BackendType.DOCKER] = True
         logger.info("Docker is available")
     except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
@@ -55,12 +45,7 @@ def _detect_available_backends() -> dict[str, bool]:
     # Check MCP server (check if llx mcp can connect)
     try:
         # Try to check MCP status
-        subprocess.run(
-            ["llx", "mcp", "status"],
-            capture_output=True,
-            check=False,
-            timeout=10
-        )
+        subprocess.run(["llx", "mcp", "status"], capture_output=True, check=False, timeout=10)
         # If command exists, assume MCP is available
         backends[BackendType.MCP] = True
         logger.info("MCP is available")
@@ -84,21 +69,13 @@ def _discover_mcp_services() -> dict[str, dict]:
 
     # Try to get MCP server list from llx
     try:
-        result = subprocess.run(
-            ["llx", "mcp", "list"],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
+        result = subprocess.run(["llx", "mcp", "list"], capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
             # Parse the output to extract services
-            lines = result.stdout.strip().split('\n')
+            lines = result.stdout.strip().split("\n")
             for line in lines:
                 if line.strip():
-                    services[line.strip()] = {
-                        "type": "mcp_service",
-                        "available": True
-                    }
+                    services[line.strip()] = {"type": "mcp_service", "available": True}
     except (subprocess.CalledProcessError, FileNotFoundError, subprocess.TimeoutExpired):
         pass
 
@@ -114,13 +91,14 @@ def _discover_mcp_services() -> dict[str, dict]:
             try:
                 with open(config_path, "r") as f:
                     import json
+
                     config = json.load(f)
                     if "mcpServers" in config:
                         for name, server_config in config["mcpServers"].items():
                             services[name] = {
                                 "type": "mcp_service",
                                 "config": server_config,
-                                "available": True
+                                "available": True,
                             }
             except Exception as e:
                 logger.error(f"Failed to read MCP config from {config_path}: {e}")
@@ -158,13 +136,7 @@ def _run_cursor_edit(
         cmd.extend(files)
 
     try:
-        result = subprocess.run(
-            cmd,
-            cwd=str(workdir),
-            capture_output=True,
-            text=True,
-            timeout=300
-        )
+        result = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True, timeout=300)
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout,
@@ -196,13 +168,7 @@ def _run_windsurf_edit(
         cmd.extend(files)
 
     try:
-        result = subprocess.run(
-            cmd,
-            cwd=str(workdir),
-            capture_output=True,
-            text=True,
-            timeout=300
-        )
+        result = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True, timeout=300)
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout,
@@ -234,13 +200,7 @@ def _run_claude_code_edit(
         cmd.extend(files)
 
     try:
-        result = subprocess.run(
-            cmd,
-            cwd=str(workdir),
-            capture_output=True,
-            text=True,
-            timeout=300
-        )
+        result = subprocess.run(cmd, cwd=str(workdir), capture_output=True, text=True, timeout=300)
         return {
             "success": result.returncode == 0,
             "stdout": result.stdout,

@@ -26,24 +26,34 @@ class RateLimiter:
 
         self.default_limits = {
             "anthropic": {
-                "requests_per_hour": 50, "tokens_per_hour": 100000,
-                "requests_per_minute": 5, "concurrent_requests": 3,
+                "requests_per_hour": 50,
+                "tokens_per_hour": 100000,
+                "requests_per_minute": 5,
+                "concurrent_requests": 3,
             },
             "openai": {
-                "requests_per_hour": 100, "tokens_per_hour": 200000,
-                "requests_per_minute": 10, "concurrent_requests": 5,
+                "requests_per_hour": 100,
+                "tokens_per_hour": 200000,
+                "requests_per_minute": 10,
+                "concurrent_requests": 5,
             },
             "google": {
-                "requests_per_hour": 60, "tokens_per_hour": 150000,
-                "requests_per_minute": 8, "concurrent_requests": 4,
+                "requests_per_hour": 60,
+                "tokens_per_hour": 150000,
+                "requests_per_minute": 8,
+                "concurrent_requests": 4,
             },
             "openrouter": {
-                "requests_per_hour": 200, "tokens_per_hour": 500000,
-                "requests_per_minute": 20, "concurrent_requests": 10,
+                "requests_per_hour": 200,
+                "tokens_per_hour": 500000,
+                "requests_per_minute": 20,
+                "concurrent_requests": 10,
             },
             "ollama": {
-                "requests_per_hour": 1000, "tokens_per_hour": 1000000,
-                "requests_per_minute": 60, "concurrent_requests": 20,
+                "requests_per_hour": 1000,
+                "tokens_per_hour": 1000000,
+                "requests_per_minute": 60,
+                "concurrent_requests": 20,
             },
         }
 
@@ -120,15 +130,17 @@ class RateLimiter:
             data: Dict[str, Any] = {"limits": [], "states": {}}
 
             for config in self.limits.values():
-                data["limits"].append({
-                    "provider": config.provider,
-                    "account": config.account,
-                    "limits": {k.value: v for k, v in config.limits.items()},
-                    "cooldown_minutes": config.cooldown_minutes,
-                    "penalty_multiplier": config.penalty_multiplier,
-                    "max_penalties": config.max_penalties,
-                    "metadata": config.metadata,
-                })
+                data["limits"].append(
+                    {
+                        "provider": config.provider,
+                        "account": config.account,
+                        "limits": {k.value: v for k, v in config.limits.items()},
+                        "cooldown_minutes": config.cooldown_minutes,
+                        "penalty_multiplier": config.penalty_multiplier,
+                        "max_penalties": config.max_penalties,
+                        "metadata": config.metadata,
+                    }
+                )
 
             for state in self.states.values():
                 key = f"{state.provider}:{state.account}"
@@ -176,9 +188,7 @@ class RateLimiter:
             key = f"{config.provider}:{config.account}"
             self.limits[key] = config
             if key not in self.states:
-                self.states[key] = RateLimitState(
-                    provider=config.provider, account=config.account
-                )
+                self.states[key] = RateLimitState(provider=config.provider, account=config.account)
             print(f"✅ Added rate limit for {config.provider}:{config.account}")
             return True
 
@@ -291,9 +301,7 @@ class RateLimiter:
     # ── Query methods ───────────────────────────────────────
 
     @staticmethod
-    def _build_utilization(
-        state: RateLimitState, config: RateLimitConfig
-    ) -> Dict[str, Any]:
+    def _build_utilization(state: RateLimitState, config: RateLimitConfig) -> Dict[str, Any]:
         """Build utilization dict for a rate-limit state/config pair."""
         utilization: Dict[str, Any] = {}
         for limit_type, limit in config.limits.items():
@@ -388,14 +396,16 @@ class RateLimiter:
 
                 score = 100 - (utilization * 100) - (state.penalty_count * 10)
 
-                available.append({
-                    "provider": provider,
-                    "account": account,
-                    "score": score,
-                    "utilization": utilization,
-                    "penalty_count": state.penalty_count,
-                    "concurrent_requests": state.concurrent_requests,
-                })
+                available.append(
+                    {
+                        "provider": provider,
+                        "account": account,
+                        "score": score,
+                        "utilization": utilization,
+                        "penalty_count": state.penalty_count,
+                        "concurrent_requests": state.concurrent_requests,
+                    }
+                )
 
             available.sort(key=lambda x: x["score"], reverse=True)
             return available
@@ -432,15 +442,13 @@ class RateLimiter:
 
         state.penalty_count += 1
         cooldown_minutes = int(
-            config.cooldown_minutes * (config.penalty_multiplier ** state.penalty_count)
+            config.cooldown_minutes * (config.penalty_multiplier**state.penalty_count)
         )
         state.cooldown_until = datetime.now() + timedelta(minutes=cooldown_minutes)
 
         for limit_type in config.limits.keys():
             if limit_type in (LimitType.REQUESTS_PER_HOUR, LimitType.TOKENS_PER_HOUR):
-                state.current_usage[limit_type] = int(
-                    state.current_usage.get(limit_type, 0) * 0.8
-                )
+                state.current_usage[limit_type] = int(state.current_usage.get(limit_type, 0) * 0.8)
 
         print(f"⚠️  Applied penalty to {key}: {cooldown_minutes} minutes cooldown")
 
@@ -493,9 +501,7 @@ class RateLimiter:
         provider_stats: Dict[str, Dict[str, int]] = {}
         for key, state in self.states.items():
             provider = key.split(":")[0]
-            ps = provider_stats.setdefault(
-                provider, {"requests": 0, "rejected": 0, "penalties": 0}
-            )
+            ps = provider_stats.setdefault(provider, {"requests": 0, "rejected": 0, "penalties": 0})
             ps["requests"] += state.total_requests
             ps["rejected"] += state.rejected_requests
             ps["penalties"] += state.penalty_count
