@@ -129,6 +129,15 @@
 - Update README.md with model tier configuration examples
 - Update examples/planfile/README.md with backend system documentation
 
+## [0.1.85] - 2026-06-29
+
+### Docs
+- Update README.md
+
+### Other
+- Update VERSION
+- Update llx/__init__.py
+
 ## [0.1.82] - 2026-04-26
 
 ### Docs

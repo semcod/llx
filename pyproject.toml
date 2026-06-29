@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llx"
-version = "0.1.84"
+version = "0.1.85"
 description = "Intelligent LLM model router driven by real code metrics — successor to preLLM"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,12 +31,10 @@ dependencies = [
     "requests>=2.31",
     "docker>=6.0",
     "psutil>=5.9",
-    "planfile>=0.1.30",
+    "planfile>=0.1.103",
 ]
 
-[project.license]
-text = "Apache-2.0"
-
+license = "Apache-2.0"
 [project.scripts]
 llx = "llx.cli.app:main"
 llx-tools = "llx.tools.cli:main"
@@ -137,6 +135,11 @@ target-version = "py310"
 testpaths = ["tests"]
 addopts = "-v --tb=short"
 asyncio_default_fixture_loop_scope = "function"
+# Never collect generated example/scaffold projects (e.g. `my-api`, `test-api-qwen`).
+# These are output produced by llx's example generator, not part of the published
+# `llx` wheel, and carry their own deps (fastapi, etc.) that are absent from llx's env.
+# Keep the pytest defaults and add the generated dirs (incl. their `my_api`/`test_api_qwen` symlinks).
+norecursedirs = [".*", "*.egg", "build", "dist", "node_modules", "venv", "my-api", "my_api", "test-api-qwen", "test_api_qwen"]
 
 [tool.pfix]
 # Self-healing Python configuration
@@ -167,3 +170,8 @@ max_commits = 50
 
 # Cost thresholds for badge colors (USD)
 badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }
+
+[dependency-groups]
+dev = [
+    "jinja2>=3.1.6",
+]
