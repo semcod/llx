@@ -1,0 +1,19 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: llx 0.1.85 (python) at /home/tom/github/semcod/llx
+# deps declared: 44 | with local source: 11
+
+## LOCAL DEPS  (dep | required | local source (version) | installed | status)
+code2llm | >=0.5 | /home/tom/github/semcod/code2llm (0.5.169) | 0.5.144 non-editable | STALE-INSTALL (local 0.5.169) -> fix: pip install -e /home/tom/github/semcod/code2llm  [pyproject.toml[code2llm]]
+code2llm | >=0.5 | /home/tom/github/wronai/teLLMe/code2llm-src (0.5.23) | 0.5.144 non-editable | STALE-INSTALL (local 0.5.23) -> fix: pip install -e /home/tom/github/wronai/teLLMe/code2llm-src  [pyproject.toml[code2llm]]
+costs | >=0.1.20 | /home/tom/github/semcod/costs (0.1.53) | 0.1.50 non-editable | STALE-INSTALL (local 0.1.53) -> fix: pip install -e /home/tom/github/semcod/costs  [pyproject.toml[ci]]
+goal | >=2.1.218 | /home/tom/github/semcod/goal (2.1.266) | 2.1.218 non-editable | STALE-INSTALL (local 2.1.266) -> fix: pip install -e /home/tom/github/semcod/goal  [pyproject.toml[ci]]
+nfo | >=0.1 | /home/tom/github/semcod/nfo (0.2.22) | - | NOT-INSTALLED  [pyproject.toml[prellm]]
+ollama | >=0.3 | /home/tom/github/wronai/contract/tools/reclapp-setup (?) | - | NOT-INSTALLED  [pyproject.toml[ollama]]
+pfix | >=0.1.60 | /home/tom/github/semcod/pfix (0.1.76) | 0.1.72 non-editable | STALE-INSTALL (local 0.1.76) -> fix: pip install -e /home/tom/github/semcod/pfix  [pyproject.toml[ci]]
+planfile | >=0.1.103 | /home/tom/github/semcod/planfile (0.1.106) | 0.1.103 non-editable | STALE-INSTALL (local 0.1.106) -> fix: pip install -e /home/tom/github/semcod/planfile  [pyproject.toml]
+pyqual | >=0.1.36 | /home/tom/github/semcod/pyqual (0.1.150) | - | NOT-INSTALLED  [pyproject.toml[ci]]
+redup | >=0.4 | /home/tom/github/semcod/redup (0.4.32) | 0.4.22 non-editable | STALE-INSTALL (local 0.4.32) -> fix: pip install -e /home/tom/github/semcod/redup  [pyproject.toml[redup]]
+vallm | >=0.1 | /home/tom/github/semcod/vallm (0.1.93) | 0.1.87 non-editable | STALE-INSTALL (local 0.1.93) -> fix: pip install -e /home/tom/github/semcod/vallm  [pyproject.toml[vallm]]
+
+## EXTERNAL DEPS (no local source, 33): black, chromadb, docker, fastapi, flake8, flask, flask-healthcheck, httpx, instructor, isort, jinja2, litellm, mcp, mypy, prometheus_client, psutil, pydantic, pydantic-settings, pydantic-yaml, pytest, pytest-asyncio, pytest-cov, pyyaml, redis, requests, rich, ruff, sse-starlette, starlette, tomli, tree-sitter, typer, uvicorn
