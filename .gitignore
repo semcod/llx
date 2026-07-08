@@ -232,3 +232,8 @@ __marimo__/
 .aider*
 .redsl/
 *.bak
+.aider/
+.aider.tags.cache.v4/
+.github/
+.llx/
+.taskill/
