@@ -31,7 +31,7 @@ dependencies = [
     "requests>=2.31",
     "docker>=6.0",
     "psutil>=5.9",
-    "planfile>=0.1.103",
+    "planfile>=0.1.117",
 ]
 
 license = "Apache-2.0"
