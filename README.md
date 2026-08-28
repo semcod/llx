@@ -114,6 +114,14 @@ python -m llx.mcp --sse --port 8000
 - `aider`, `planfile_generate`, `planfile_apply` — workflow and refactoring helpers
 - `llx_privacy_scan`, `llx_project_anonymize`, `llx_project_deanonymize` — privacy tooling
 
+Mutating tools are safe-by-default: `aider` only returns an approval proposal and
+`planfile_apply` defaults to `dry_run: true`. Live execution requires the server-side
+capability `LLX_MCP_ALLOW_WRITE=1` plus an `actor` and the exact `approval_hash`
+returned for the proposed prompt or strategy contents.
+
+Privacy scans redact exact matches by default, and deanonymization through MCP is
+disabled unless the server is started with `LLX_MCP_ALLOW_SECRET_OUTPUT=1`.
+
 ### Claude Desktop setup
 
 ```json

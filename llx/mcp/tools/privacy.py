@@ -2,68 +2,91 @@
 
 from pathlib import Path
 from typing import Any
+
 from mcp.types import Tool
 
+from llx.mcp.tools.approval import (
+    MCP_SECRET_ENV,
+    approval_response,
+    content_manifest_sha256,
+    resolve_workspace_path,
+    secret_output_enabled,
+)
 from llx.mcp.tools.base import McpTool
+
+_MAX_FILE_SIZE = 50 * 1024 * 1024
+_MAX_TEXT_CHARS = 50_000
 
 
 async def _handle_llx_project_anonymize(args: dict) -> dict:
-    """Anonymize entire project for secure LLM processing."""
+    """Preview project anonymization; writing requires exact output approval."""
     from llx.privacy.project import ProjectAnonymizer, AnonymizationContext
 
-    path = Path(args.get("path", "."))
-    output_dir = args.get("output_dir")
-    include = args.get("include", ["*.py", "*.js", "*.ts", "*.java", "*.go"])
-    exclude = args.get("exclude", [])
-    max_file_size = args.get("max_file_size", 10 * 1024 * 1024)
+    try:
+        path = Path(args.get("path", ".")).expanduser().resolve()
+        if not path.is_dir():
+            return {"success": False, "error": f"Project path is not a directory: {path}"}
+        raw_output = str(args.get("output_dir") or ".llx/anonymized")
+        output_dir = resolve_workspace_path(raw_output, str(path))
+        include = list(args.get("include") or ["*.py", "*.js", "*.ts", "*.java", "*.go"])
+        exclude = list(args.get("exclude") or [])
+        max_file_size = max(1, min(int(args.get("max_file_size", 10 * 1024 * 1024)), _MAX_FILE_SIZE))
+    except (TypeError, ValueError) as exc:
+        return {"success": False, "error": str(exc)}
 
-    ctx = AnonymizationContext()
-    anonymizer = ProjectAnonymizer(ctx)
-
-    # Collect all files
-    files_to_anonymize: dict[str, str] = {}
-    for pattern in include:
-        for file_path in path.rglob(pattern):
-            if file_path.is_file() and file_path.stat().st_size <= max_file_size:
-                # Check exclude patterns
-                excluded = False
-                for excl in exclude:
-                    if file_path.match(excl):
-                        excluded = True
-                        break
-                if excluded:
-                    continue
-
-                try:
-                    relative = str(file_path.relative_to(path))
-                    content = file_path.read_text(encoding="utf-8", errors="ignore")
-                    files_to_anonymize[relative] = content
-                except Exception:
-                    continue
-
-    # Anonymize all files
-    result = anonymizer.anonymize_project(
-        files_to_anonymize,
-        output_dir=output_dir,
+    ctx = AnonymizationContext(project_path=path)
+    result = ProjectAnonymizer(ctx).anonymize_project(
+        include_patterns=include,
+        exclude_patterns=exclude,
+        max_file_size=max_file_size,
     )
+    approval = approval_response(
+        "llx_project_anonymize",
+        {
+            "project_path": str(path),
+            "output_dir": str(output_dir),
+            "output_manifest_sha256": content_manifest_sha256(result.files),
+            "files": len(result.files),
+        },
+        actor=str(args.get("actor") or ""),
+        supplied_hash=str(args.get("approval_hash") or ""),
+    )
+    dry_run = bool(args.get("dry_run", True))
+    if not dry_run and approval["requires_approval"]:
+        return {
+            "success": False,
+            "status": "approval_required",
+            **approval,
+        }
 
-    # Save context for later deanonymization
-    ctx.save()
+    context_file = output_dir / ".anonymization_context.json"
+    if not dry_run:
+        for relative, content in result.files.items():
+            target = resolve_workspace_path(relative, str(output_dir))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
+        context_file.parent.mkdir(parents=True, exist_ok=True)
+        ctx.save(context_file)
 
     return {
         "success": True,
+        "dry_run": dry_run,
         "files_anonymized": len(result.files),
-        "output_dir": output_dir or str(path / "anonymized"),
-        "context_file": str(ctx.context_path),
-        "symbols_replaced": len(ctx.mapping),
-        "paths_anonymized": len(ctx.path_mapping),
+        "output_dir": str(output_dir),
+        "context_file": str(context_file),
+        "symbols_replaced": sum(ctx.stats.values()),
+        "errors": result.errors[:100],
+        **approval,
     }
 
 
 tool_llx_project_anonymize = McpTool(
     definition=Tool(
         name="llx_project_anonymize",
-        description="Anonymize entire project: AST symbols (variables, functions, classes), file paths, and sensitive data. Creates anonymized copy with mapping file for later deanonymization.",
+        description=(
+            "Preview project anonymization. Writing the anonymized copy and mapping requires "
+            "operator capability and exact output approval."
+        ),
         inputSchema={
             "type": "object",
             "properties": {
@@ -92,6 +115,13 @@ tool_llx_project_anonymize = McpTool(
                     "description": "Max file size in bytes",
                     "default": 10485760,
                 },
+                "dry_run": {
+                    "type": "boolean",
+                    "default": True,
+                    "description": "Analyze without writing output files",
+                },
+                "actor": {"type": "string", "description": "Approver identity"},
+                "approval_hash": {"type": "string", "description": "Exact approval hash"},
             },
         },
     ),
@@ -107,6 +137,12 @@ async def _handle_llx_project_deanonymize(args: dict) -> dict:
     context_path = args.get("context_path")
     if not context_path:
         return {"error": "context_path is required (path to .anonymization_context.json)"}
+    if not secret_output_enabled():
+        return {
+            "success": False,
+            "error": "Secret output is disabled for MCP deanonymization.",
+            "required_env": MCP_SECRET_ENV,
+        }
 
     # Load context
     try:
@@ -118,9 +154,12 @@ async def _handle_llx_project_deanonymize(args: dict) -> dict:
 
     # Handle text input (LLM response)
     if "text" in args:
-        text = args["text"]
+        text = str(args["text"])
+        if len(text) > _MAX_TEXT_CHARS:
+            return {"success": False, "error": f"text exceeds {_MAX_TEXT_CHARS} characters"}
         result = deanonymizer.deanonymize_text(text)
         return {
+            "success": True,
             "deanonymized_text": result.text,
             "restorations": len(result.restorations),
             "unknown_tokens": result.unknown_tokens[:10],
@@ -134,7 +173,17 @@ async def _handle_llx_project_deanonymize(args: dict) -> dict:
     if not input_dir:
         return {"error": "Either text or input_dir must be provided"}
 
-    input_path = Path(input_dir)
+    try:
+        project_root = Path(ctx.project_path).expanduser().resolve()
+        input_path = resolve_workspace_path(str(input_dir), str(project_root), must_exist=True)
+        if not input_path.is_dir():
+            return {"success": False, "error": f"input_dir is not a directory: {input_path}"}
+        output_path = resolve_workspace_path(
+            str(output_dir or ".llx/deanonymized"),
+            str(project_root),
+        )
+    except ValueError as exc:
+        return {"success": False, "error": str(exc)}
 
     # Collect all files
     files_to_deanonymize: dict[str, str] = {}
@@ -150,16 +199,42 @@ async def _handle_llx_project_deanonymize(args: dict) -> dict:
     # Deanonymize all files
     result = deanonymizer.deanonymize_project_files(
         files_to_deanonymize,
-        output_dir=output_dir,
+        output_dir=None,
     )
+    approval = approval_response(
+        "llx_project_deanonymize",
+        {
+            "project_path": str(project_root),
+            "input_dir": str(input_path),
+            "output_dir": str(output_path),
+            "output_manifest_sha256": content_manifest_sha256(result.files),
+            "files": len(result.files),
+        },
+        actor=str(args.get("actor") or ""),
+        supplied_hash=str(args.get("approval_hash") or ""),
+    )
+    dry_run = bool(args.get("dry_run", True))
+    if not dry_run and approval["requires_approval"]:
+        return {
+            "success": False,
+            "status": "approval_required",
+            **approval,
+        }
+    if not dry_run:
+        for relative, content in result.files.items():
+            target = resolve_workspace_path(relative, str(output_path))
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(content, encoding="utf-8")
 
     return {
         "success": True,
+        "dry_run": dry_run,
         "files_restored": len(result.files),
-        "output_dir": output_dir,
+        "output_dir": str(output_path),
         "overall_confidence": result.overall_confidence,
         "restorations_by_file": result.restorations,
         "unknown_tokens_count": sum(len(v) for v in result.unknowns.values()),
+        **approval,
     }
 
 
@@ -187,6 +262,13 @@ tool_llx_project_deanonymize = McpTool(
                     "type": "string",
                     "description": "Output directory for restored files",
                 },
+                "dry_run": {
+                    "type": "boolean",
+                    "default": True,
+                    "description": "Analyze restorations without writing files",
+                },
+                "actor": {"type": "string", "description": "Approver identity"},
+                "approval_hash": {"type": "string", "description": "Exact approval hash"},
             },
         },
     ),
@@ -218,11 +300,13 @@ async def _handle_llx_privacy_scan(args: dict) -> dict:
     # Scan for sensitive data
     findings = anon.scan(text)
 
+    include_values = bool(args.get("include_sensitive_values", False)) and secret_output_enabled()
     result: dict[str, Any] = {
         "scan": {
             "total_findings": sum(len(v) for v in findings.values()),
             "patterns_found": list(findings.keys()),
-            "details": findings,
+            "details": findings if include_values else {key: len(values) for key, values in findings.items()},
+            "sensitive_values_included": include_values,
         }
     }
 
@@ -234,12 +318,10 @@ async def _handle_llx_privacy_scan(args: dict) -> dict:
             "mapping_count": len(anon_result.mapping),
             "stats": anon_result.stats,
         }
-        # Show sample of original values (truncated)
-        sample = {}
-        for token, original in list(anon_result.mapping.items())[:5]:
-            sample[token] = original[:50] + "..." if len(original) > 50 else original
-        if anon_result.mapping:
-            result["anonymized"]["sample_mapping"] = sample
+        if include_values and anon_result.mapping:
+            result["anonymized"]["sample_mapping"] = dict(
+                list(anon_result.mapping.items())[:5]
+            )
 
     return result
 
@@ -247,7 +329,10 @@ async def _handle_llx_privacy_scan(args: dict) -> dict:
 tool_llx_privacy_scan = McpTool(
     definition=Tool(
         name="llx_privacy_scan",
-        description="Scan text or files for sensitive data (API keys, passwords, emails, etc.) and optionally anonymize. Returns findings and anonymized text with token mapping.",
+        description=(
+            "Scan text or files for sensitive data and optionally anonymize. Sensitive values "
+            "are redacted unless the server explicitly enables secret output."
+        ),
         inputSchema={
             "type": "object",
             "properties": {
@@ -260,6 +345,13 @@ tool_llx_privacy_scan = McpTool(
                     "type": "boolean",
                     "description": "Also return anonymized version",
                     "default": False,
+                },
+                "include_sensitive_values": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": (
+                        "Return exact matches only when LLX_MCP_ALLOW_SECRET_OUTPUT=1"
+                    ),
                 },
             },
         },

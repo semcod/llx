@@ -2,6 +2,7 @@
 
 from mcp.types import Tool
 
+from llx.mcp.tools.approval import approval_response, file_sha256, resolve_workspace_path
 from llx.mcp.tools.base import McpTool
 
 
@@ -13,7 +14,7 @@ async def _handle_planfile_generate(args: dict) -> dict:
 
         project_path = args.get("project_path", ".")
         model = args.get("model")
-        sprints = args.get("sprints", 3)
+        sprints = max(1, min(int(args.get("sprints", 3)), 100))
         focus = args.get("focus")
 
         strategy = generate_strategy(project_path, model=model, sprints=sprints, focus=focus)
@@ -55,6 +56,8 @@ tool_planfile_generate = McpTool(
                 "model": {"type": "string", "description": "LLM model to use for generation"},
                 "sprints": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
                     "default": 3,
                     "description": "Number of sprints to plan",
                 },
@@ -71,21 +74,49 @@ tool_planfile_generate = McpTool(
 
 
 async def _handle_planfile_apply(args: dict) -> dict:
-    """Apply strategy.yaml — execute each task with optimal model selection."""
+    """Preview a strategy by default; applying it requires operator approval."""
     try:
         from llx.planfile.executor import execute_strategy
 
         strategy_path = args.get("strategy_path")
-        project_path = args.get("project_path", ".")
+        project_path = str(args.get("project_path", "."))
         sprint = args.get("sprint")
-        dry_run = args.get("dry_run", False)
+        dry_run = bool(args.get("dry_run", True))
+        actor = str(args.get("actor") or "")
+        supplied_hash = str(args.get("approval_hash") or "")
 
         if not strategy_path:
             return {"success": False, "error": "strategy_path is required"}
+        project = resolve_workspace_path(".", project_path, must_exist=True)
+        strategy = resolve_workspace_path(str(strategy_path), str(project), must_exist=True)
+        if not strategy.is_file():
+            return {"success": False, "error": f"strategy_path is not a file: {strategy}"}
+
+        approval = approval_response(
+            "planfile_apply",
+            {
+                "project_path": str(project),
+                "strategy_path": str(strategy),
+                "strategy_sha256": file_sha256(strategy),
+                "sprint": sprint,
+            },
+            actor=actor,
+            supplied_hash=supplied_hash,
+        )
+        if not dry_run and approval["requires_approval"]:
+            return {
+                "success": False,
+                "status": "approval_required",
+                **approval,
+                "message": (
+                    "Enable LLX_MCP_ALLOW_WRITE=1 and repeat with actor plus the exact "
+                    "approval_hash."
+                ),
+            }
 
         results = execute_strategy(
-            strategy_path=strategy_path,
-            project_path=project_path,
+            strategy_path=str(strategy),
+            project_path=str(project),
             sprint_filter=sprint,
             dry_run=dry_run,
         )
@@ -100,6 +131,8 @@ async def _handle_planfile_apply(args: dict) -> dict:
             "total_tasks": total,
             "successful": success,
             "failed": failed,
+            "dry_run": dry_run,
+            **approval,
             "results": [
                 {
                     "task": r.task_name,
@@ -119,7 +152,10 @@ async def _handle_planfile_apply(args: dict) -> dict:
 tool_planfile_apply = McpTool(
     definition=Tool(
         name="planfile_apply",
-        description="Execute strategy.yaml plan — each task with automatic model selection based on complexity and context.",
+        description=(
+            "Preview strategy.yaml by default. Live execution requires operator capability and "
+            "actor-bound approval of the exact strategy file."
+        ),
         inputSchema={
             "type": "object",
             "required": ["strategy_path"],
@@ -136,8 +172,13 @@ tool_planfile_apply = McpTool(
                 },
                 "dry_run": {
                     "type": "boolean",
-                    "default": False,
+                    "default": True,
                     "description": "Preview without execution",
+                },
+                "actor": {"type": "string", "description": "Approver identity"},
+                "approval_hash": {
+                    "type": "string",
+                    "description": "Hash returned by the preceding preview or approval response",
                 },
             },
         },

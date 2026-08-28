@@ -32,6 +32,7 @@ server = Server("llx")
 TOOLS = MCP_TOOLS
 
 _TOOL_HANDLERS = {tool.definition.name: tool.handler for tool in TOOLS}
+_MAX_TOOL_RESULT_CHARS = 50_000
 
 
 @server.list_tools()
@@ -45,7 +46,17 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     if not handler:
         return [TextContent(type="text", text=f"Unknown tool: {name}")]
     result = await handler(arguments)
-    return [TextContent(type="text", text=json.dumps(result, indent=2))]
+    payload = json.dumps(result, indent=2)
+    if len(payload) > _MAX_TOOL_RESULT_CHARS:
+        payload = json.dumps(
+            {
+                "truncated": True,
+                "original_chars": len(payload),
+                "preview": payload[:_MAX_TOOL_RESULT_CHARS],
+            },
+            indent=2,
+        )
+    return [TextContent(type="text", text=payload)]
 
 
 async def run_stdio_server() -> None:
