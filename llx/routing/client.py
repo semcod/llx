@@ -122,7 +122,7 @@ class LlxClient:
                 headers["Authorization"] = f"Bearer {openrouter_key}"
             else:
                 headers["HTTP-Referer"] = "https://github.com/wronai/llx"
-                headers["X-Title"] = "LLX"
+                headers["X-OpenRouter-Title"] = os.getenv("OPENROUTER_APP_NAME", "LLX")
         # Add auth header for local proxy
         elif self.is_localhost and self.config.proxy.master_key:
             headers["Authorization"] = f"Bearer {self.config.proxy.master_key}"
@@ -273,7 +273,7 @@ class LlxClient:
         headers = {
             "Content-Type": "application/json",
             "HTTP-Referer": "https://github.com/wronai/llx",
-            "X-Title": "LLX",
+            "X-OpenRouter-Title": os.getenv("OPENROUTER_APP_NAME", "LLX"),
         }
         if key:
             headers["Authorization"] = f"Bearer {key}"
