@@ -76,7 +76,7 @@ dev-full = [
 
 # ── RUNTIME LAYERS ──────────────────────────────────────────────
 # MCP server support
-mcp = ["mcp>=1.0", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
+mcp = ["mcp>=1.0,<2", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
 
 # PreLLM server support
 prellm = [
