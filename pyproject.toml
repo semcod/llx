@@ -60,7 +60,6 @@ lint = [
 ci = [
     "goal>=2.1.218",
     "costs>=0.1.20",
-    "pfix>=0.1.60",
     "pyqual>=0.1.36",
 ]
 
@@ -76,7 +75,7 @@ dev-full = [
 
 # ── RUNTIME LAYERS ──────────────────────────────────────────────
 # MCP server support
-mcp = ["mcp>=1.0", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
+mcp = ["mcp>=1.0,<2", "starlette>=0.37", "sse-starlette>=2.0", "uvicorn>=0.29"]
 
 # PreLLM server support
 prellm = [
@@ -140,22 +139,6 @@ asyncio_default_fixture_loop_scope = "function"
 # `llx` wheel, and carry their own deps (fastapi, etc.) that are absent from llx's env.
 # Keep the pytest defaults and add the generated dirs (incl. their `my_api`/`test_api_qwen` symlinks).
 norecursedirs = [".*", "*.egg", "build", "dist", "node_modules", "venv", "my-api", "my_api", "test-api-qwen", "test_api_qwen"]
-
-[tool.pfix]
-# Self-healing Python configuration
-model = "openrouter/deep/deep-v4-pro"
-auto_apply = true
-auto_install_deps = true
-auto_restart = false
-max_retries = 3
-create_backups = false
-git_auto_commit = false
-
-[tool.pfix.runtime_todo]
-enabled = true
-todo_file = "TODO.md"
-min_severity = "low"
-deduplicate = true
 
 [tool.costs]
 # AI Cost tracking configuration — disabled to speed up goal -a runs
