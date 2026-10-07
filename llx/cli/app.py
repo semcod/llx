@@ -1939,5 +1939,14 @@ def _plan_code_impl(strategy: str, out: Path, model: Optional[str], profile: Opt
 
 
 def main() -> None:
+    try:
+        from .autoupdate import check_for_updates
+        check_for_updates("llx")
+    except Exception:
+        try:
+            from llx.autoupdate import check_for_updates
+            check_for_updates("llx")
+        except Exception:
+            pass
     """CLI entry point for llx."""
     app()
